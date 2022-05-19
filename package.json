@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "yarn --cwd backend start",
+    "build": "yarn --cwd frontend build"
+  },
+  "packageManager": "yarn@3.2.0"
+}
