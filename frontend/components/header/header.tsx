@@ -64,6 +64,7 @@ export const Header = (props: BoxProps) => {
             aria-label="Toggle theme"
             variant="ghost"
             onClick={toggleColorMode}
+            w="min-content"
           />
         </HStack>
       </Container>
