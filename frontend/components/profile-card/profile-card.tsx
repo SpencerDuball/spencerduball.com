@@ -1,0 +1,98 @@
+import {
+  Grid,
+  GridProps,
+  useColorMode,
+  Text,
+  VStack,
+  HStack,
+  Link,
+  LinkProps,
+  Icon,
+  PropsOf,
+  Avatar,
+} from "@chakra-ui/react";
+import { RiGithubFill, RiTwitterFill } from "react-icons/ri";
+import { PrintablesIcon } from "components/printables-icon/printables-icon";
+
+const SocialLink = (
+  props: LinkProps & { as: PropsOf<typeof Icon>["as"]; ariaLabel: string }
+) => {
+  const { as, ariaLabel, ...rest } = props;
+  return (
+    <Link {...rest}>
+      <Grid placeItems="center" h="8" w="8">
+        <Icon as={as} h="4" w="4" aria-label={ariaLabel} />
+      </Grid>
+    </Link>
+  );
+};
+
+export const ProfileCard = (props: GridProps) => {
+  const { colorMode } = useColorMode();
+
+  // get the colors for the linear gradient background
+  const firstColor =
+    colorMode === "light"
+      ? "var(--chakra-colors-yellowA-6)"
+      : "var(--chakra-colors-yellowDarkA-6)";
+  const secondColor =
+    colorMode === "light"
+      ? "var(--chakra-colors-crimsonA-6)"
+      : "var(--chakra-colors-crimsonDarkA-6)";
+
+  return (
+    <Grid
+      {...props}
+      w="full"
+      bg={`linear-gradient(120deg, ${firstColor}, ${secondColor})`}
+      borderRadius="lg"
+      gridAutoFlow="column"
+      justifyContent="space-between"
+      p="8"
+    >
+      <VStack alignItems="start" spacing="4">
+        {/* Name & Title */}
+        <VStack spacing="1" alignItems="start">
+          <Text
+            as="p"
+            fontSize="4xl"
+            fontWeight="bold"
+            lineHeight="normal"
+            letterSpacing="tight"
+          >
+            Spencer Duball
+          </Text>
+          <Text as="p" fontSize="md" fontWeight="bold">
+            Software Engineer
+          </Text>
+        </VStack>
+        {/* Description */}
+        <Text as="p" maxW="sm" fontSize="md">
+          Building on the web, printing in 3D, creating circuits, and writing
+          about all the things.
+        </Text>
+        {/* Links */}
+        <HStack>
+          <SocialLink
+            as={RiTwitterFill}
+            href="https://twitter.com/SpencerDuball"
+            ariaLabel="Twitter"
+          />
+          <SocialLink
+            as={RiGithubFill}
+            href="https://github.com/SpencerDuball"
+            ariaLabel="Github"
+          />
+          <SocialLink
+            as={PrintablesIcon}
+            href="https://www.printables.com/social/212303-spencer_duball/about"
+            ariaLabel="Printables"
+          />
+        </HStack>
+      </VStack>
+      <VStack>
+        <Avatar size="2xl" name="Spencer Duball" src="/images/profile.webp" />
+      </VStack>
+    </Grid>
+  );
+};
