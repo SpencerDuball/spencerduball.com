@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   BoxProps,
@@ -31,7 +32,6 @@ const NavLink = (props: LinkProps & { href: string }) => {
 };
 
 export const Header = (props: BoxProps) => {
-  const router = useRouter();
   const { toggleColorMode, colorMode } = useColorMode();
 
   return (

@@ -8,6 +8,8 @@ import { theme } from "@dub-stack/chakra-radix-colors";
 
 // 2. Call `extendTheme` and pass your custom values
 const newTheme = extendTheme({
+  initialColorMode: "light",
+  useSystemColorMode: true,
   fonts: {
     heading: "Inter, sans-serif",
     body: "Inter, sans-serif",
