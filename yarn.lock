@@ -3119,6 +3119,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@markdoc/markdoc@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@markdoc/markdoc@npm:0.1.2"
+  checksum: 451610178fc8ec1d3dfbb6a8be9e0e82b140cb89fc20b01ce9cd646e901e477af2fd65bea463f8c8ab72c076d5262643a593c470612567d047d926fcb9f2bf8b
+  languageName: node
+  linkType: hard
+
+"@markdoc/next.js@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@markdoc/next.js@npm:0.1.4"
+  dependencies:
+    js-yaml: ^4.1.0
+  peerDependencies:
+    "@markdoc/markdoc": ^0.1.1
+    next: "*"
+    react: "*"
+  checksum: 049caa5884075473f739189fe85df2fcc597de905e8896d05cb66f86cd10509dcca774eb01eeb21f044e0126b05db6de4c62a13ae6cb44090f90823b20bcc7d2
+  languageName: node
+  linkType: hard
+
 "@mdx-js/mdx@npm:^1.6.22":
   version: 1.6.22
   resolution: "@mdx-js/mdx@npm:1.6.22"
@@ -9664,6 +9684,8 @@ __metadata:
     "@emotion/react": ^11
     "@emotion/styled": ^11
     "@fontsource/inter": ^4.5.10
+    "@markdoc/markdoc": ^0.1.2
+    "@markdoc/next.js": ^0.1.4
     "@radix-ui/colors": ^0.1.8
     "@storybook/addon-actions": 6.5.0
     "@storybook/addon-essentials": 6.5.0

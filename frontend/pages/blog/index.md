@@ -1,0 +1,8 @@
+---
+title: Getting started with Markdoc
+description: How to get started with Markdoc
+---
+
+# Get started with Markdoc
+
+{% button variant="solid" %}Button{% /button %}

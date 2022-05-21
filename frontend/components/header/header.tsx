@@ -49,7 +49,6 @@ export const Header = (props: BoxProps) => {
           <NavLink href="/">Home</NavLink>
           <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/projects">Projects</NavLink>
-          {/* <NavLink href="/iot">IoT</NavLink> */}
         </HStack>
         {/* Site Controls */}
         <HStack>
