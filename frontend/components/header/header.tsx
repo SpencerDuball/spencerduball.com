@@ -45,10 +45,10 @@ export const Header = (props: BoxProps) => {
         justifyContent="space-between"
       >
         {/* Navigation */}
-        <HStack as="nav" spacing="8">
+        <HStack as="nav" spacing={{ base: "4", sm: "8" }}>
           <NavLink href="/">Home</NavLink>
           <NavLink href="/blog">Blog</NavLink>
-          <NavLink href="/prints">3D Printing</NavLink>
+          <NavLink href="/projects">Projects</NavLink>
           {/* <NavLink href="/iot">IoT</NavLink> */}
         </HStack>
         {/* Site Controls */}

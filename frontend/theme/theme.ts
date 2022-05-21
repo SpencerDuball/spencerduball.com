@@ -12,6 +12,14 @@ const newTheme = extendTheme({
     heading: "Inter, sans-serif",
     body: "Inter, sans-serif",
   },
+  breakpoints: {
+    xs: "22em",
+    sm: "30em",
+    md: "48em",
+    lg: "62em",
+    xl: "80em",
+    "2xl": "96em",
+  },
   colors: {
     // add all of the colors in ...
     ...theme.colors,

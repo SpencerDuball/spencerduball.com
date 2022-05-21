@@ -46,13 +46,24 @@ export const ProfileCard = (props: GridProps) => {
       w="full"
       bg={`linear-gradient(120deg, ${firstColor}, ${secondColor})`}
       borderRadius="lg"
-      gridAutoFlow="column"
+      gridTemplate="auto auto / auto auto"
       justifyContent="space-between"
       p="8"
+      gap="8"
     >
-      <VStack alignItems="start" spacing="4">
+      <VStack
+        spacing="4"
+        gridRow={{ base: "2 / span 1", sm: "1 / span 2" }}
+        gridColumn={{ base: "1 / span 2", sm: "1 / span 1" }}
+        alignItems={{ base: "center", sm: "start" }}
+        sx={{
+          "& p": {
+            textAlign: { base: "center", sm: "initial" },
+          },
+        }}
+      >
         {/* Name & Title */}
-        <VStack spacing="1" alignItems="start">
+        <VStack spacing="1" alignItems="inherit">
           <Text
             as="p"
             fontSize="4xl"
@@ -90,7 +101,10 @@ export const ProfileCard = (props: GridProps) => {
           />
         </HStack>
       </VStack>
-      <VStack>
+      <VStack
+        gridRow={{ base: "1 / span 1", sm: "1 / span 2" }}
+        gridColumn={{ base: "1 / span 2", sm: "2 / span 1" }}
+      >
         <Avatar size="2xl" name="Spencer Duball" src="/images/profile.webp" />
       </VStack>
     </Grid>
