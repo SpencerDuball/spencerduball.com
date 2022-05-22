@@ -79,8 +79,8 @@ export const ProfileCard = (props: GridProps) => {
         </VStack>
         {/* Description */}
         <Text as="p" maxW="sm" fontSize="md">
-          Building on the web, printing in 3D, creating circuits, and writing
-          about all the things.
+          Creating on the web, 3D printing, building circuits, and writing about
+          all these topics.
         </Text>
         {/* Links */}
         <HStack>
