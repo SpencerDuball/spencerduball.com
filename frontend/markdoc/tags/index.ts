@@ -1,14 +1,7 @@
-import { Button } from "@chakra-ui/react";
-
-export const button = {
-  render: Button,
-  attributes: {
-    variant: String,
-  },
-};
+import { image } from "./image.markdoc";
 
 const tags = {
-  button,
+  image,
 };
 
 export default tags;

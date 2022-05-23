@@ -19,19 +19,32 @@ This is another content
 
 #### Here is the h4
 
-{% button variant="solid" %}Button{% /button %}
-
-{% link %}[Here](/){% /link %}
+[Here](/)
 
 > Here is a blockquote for reference.
 
 - hello
 - this
 - is
-  - this is indent 1
-    - this is indent 2
+  - **this is indent 1**
+    - _this is indent 2_
       - this is indent 3
 
 1. this
 2. is
 3. a
+
+This is some `code`
+
+```ts
+let a = someCode();
+a = someMoreCode();
+```
+
+{% image src="/vercel.svg" alt="Square" size="md" aspectRatio=4.5 /%}
+
+| Name     | Type      | Price |
+| :------- | --------- | ----- |
+| Apple    | Fruit     | 2.00  |
+| Carrot   | Vegetable | 1.00  |
+| Broccoli | Vegetable | 3.00  |
