@@ -1,4 +1,4 @@
-import { generateIdFromText } from "utils/markdoc-helpers";
+import { generateIdFromText } from "utils/markdown-utils";
 import { Text, TextProps } from "@chakra-ui/react";
 
 const Heading = (props: TextProps & { level: number }) => {

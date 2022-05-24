@@ -18,12 +18,17 @@ const NavLink = (props: LinkProps & { href: string }) => {
   const { href, ...rest } = props;
   const c = useThemedColor();
   const { pathname } = useRouter();
+
+  let isActive = false;
+  if (href === "/") isActive = pathname === href;
+  else isActive = pathname.startsWith(href);
+
   return (
     <NextLink href={href} passHref>
       <Link
         fontWeight="semibold"
         _hover={{ textDecoration: "none", color: c("_gray.12") }}
-        color={pathname === href ? c("_gray.12") : c("_gray.10")}
+        color={isActive ? c("_gray.12") : c("_gray.10")}
         {...rest}
       />
     </NextLink>
