@@ -9,5 +9,8 @@
     "start": "yarn --cwd backend start",
     "build": "yarn --cwd frontend build"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.2.0",
+  "devDependencies": {
+    "esbuild": "^0.14.39"
+  }
 }
