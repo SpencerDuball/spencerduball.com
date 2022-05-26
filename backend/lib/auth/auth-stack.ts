@@ -1,15 +1,13 @@
 import { Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import { Permission } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import {
   CfnApi,
   CfnIntegration,
   CfnRoute,
   CfnStage,
-  CfnDeployment,
 } from "aws-cdk-lib/aws-apigatewayv2";
-import { Effect, PolicyStatement, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import path from "path";
 
 export class AuthStack extends Stack {
