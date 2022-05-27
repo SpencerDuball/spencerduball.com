@@ -1,6 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { ProfileCard } from "components/profile-card/profile-card";
+import { Button } from "@chakra-ui/react";
+import axios from "axios";
 
 const Home: NextPage = () => {
   return (
@@ -11,6 +13,12 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ProfileCard />
+      <form
+        action="https://api.spencerduball.com/auth/signin/github"
+        method="POST"
+      >
+        <Button type="submit">Github Login</Button>
+      </form>
     </>
   );
 };
