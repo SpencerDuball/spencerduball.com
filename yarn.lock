@@ -15,6 +15,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-cdk/aws-apigatewayv2-alpha@npm:^2.25.0-alpha.0":
+  version: 2.25.0-alpha.0
+  resolution: "@aws-cdk/aws-apigatewayv2-alpha@npm:2.25.0-alpha.0"
+  peerDependencies:
+    aws-cdk-lib: ^2.25.0
+    constructs: ^10.0.0
+  checksum: 8f1602b350230421843580ac797245ccbdf36d689661ffb7877f4781829399e21da4587f6d6c4f38524c2b74797b3e6510b8646522dda512083c6e1c3b667db6
+  languageName: node
+  linkType: hard
+
+"@aws-cdk/aws-apigatewayv2-integrations-alpha@npm:^2.25.0-alpha.0":
+  version: 2.25.0-alpha.0
+  resolution: "@aws-cdk/aws-apigatewayv2-integrations-alpha@npm:2.25.0-alpha.0"
+  peerDependencies:
+    "@aws-cdk/aws-apigatewayv2-alpha": 2.25.0-alpha.0
+    aws-cdk-lib: ^2.25.0
+    constructs: ^10.0.0
+  checksum: 69327e2339558c8b706ea19425cbdadd631ede01400b8890baf416dbef76e632e18fc13deb59afdfa7469a514146d08b36dd0b413b53ac688496cd2e98a45ff5
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.16.7, @babel/code-frame@npm:^7.5.5, @babel/code-frame@npm:^7.8.3":
   version: 7.16.7
   resolution: "@babel/code-frame@npm:7.16.7"
@@ -7644,6 +7665,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "backend@workspace:backend"
   dependencies:
+    "@aws-cdk/aws-apigatewayv2-alpha": ^2.25.0-alpha.0
+    "@aws-cdk/aws-apigatewayv2-integrations-alpha": ^2.25.0-alpha.0
     "@types/aws-lambda": ^8.10.97
     "@types/jest": ^27.5.0
     "@types/node": ^17.0.35
