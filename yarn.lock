@@ -113,6 +113,47 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/client-cognito-identity-provider@npm:^3.100.0":
+  version: 3.100.0
+  resolution: "@aws-sdk/client-cognito-identity-provider@npm:3.100.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": 2.0.0
+    "@aws-crypto/sha256-js": 2.0.0
+    "@aws-sdk/client-sts": 3.100.0
+    "@aws-sdk/config-resolver": 3.80.0
+    "@aws-sdk/credential-provider-node": 3.100.0
+    "@aws-sdk/fetch-http-handler": 3.78.0
+    "@aws-sdk/hash-node": 3.78.0
+    "@aws-sdk/invalid-dependency": 3.78.0
+    "@aws-sdk/middleware-content-length": 3.78.0
+    "@aws-sdk/middleware-host-header": 3.78.0
+    "@aws-sdk/middleware-logger": 3.78.0
+    "@aws-sdk/middleware-retry": 3.80.0
+    "@aws-sdk/middleware-serde": 3.78.0
+    "@aws-sdk/middleware-signing": 3.78.0
+    "@aws-sdk/middleware-stack": 3.78.0
+    "@aws-sdk/middleware-user-agent": 3.78.0
+    "@aws-sdk/node-config-provider": 3.80.0
+    "@aws-sdk/node-http-handler": 3.94.0
+    "@aws-sdk/protocol-http": 3.78.0
+    "@aws-sdk/smithy-client": 3.99.0
+    "@aws-sdk/types": 3.78.0
+    "@aws-sdk/url-parser": 3.78.0
+    "@aws-sdk/util-base64-browser": 3.58.0
+    "@aws-sdk/util-base64-node": 3.55.0
+    "@aws-sdk/util-body-length-browser": 3.55.0
+    "@aws-sdk/util-body-length-node": 3.55.0
+    "@aws-sdk/util-defaults-mode-browser": 3.99.0
+    "@aws-sdk/util-defaults-mode-node": 3.99.0
+    "@aws-sdk/util-user-agent-browser": 3.78.0
+    "@aws-sdk/util-user-agent-node": 3.80.0
+    "@aws-sdk/util-utf8-browser": 3.55.0
+    "@aws-sdk/util-utf8-node": 3.55.0
+    tslib: ^2.3.1
+  checksum: e5bc286531b3f04d7909402f0da0a69c370a8031b940b2d39a8e58bb281c21c19084d9bcf0f5c9a0a86a014423e21eafcdf3adcc285328aa253243b8e1117566
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/client-dynamodb@npm:^3.100.0":
   version: 3.100.0
   resolution: "@aws-sdk/client-dynamodb@npm:3.100.0"
@@ -154,6 +195,47 @@ __metadata:
     tslib: ^2.3.1
     uuid: ^8.3.2
   checksum: 3a22ad49beb6393dda88a9e51f49b76e32f12086b77353443c746fb1c0e6b315e8007283f3c207dc9a36f66bf81438b0e0486927303b5a9cbb51429cb30da6ea
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/client-kms@npm:^3.100.0":
+  version: 3.100.0
+  resolution: "@aws-sdk/client-kms@npm:3.100.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": 2.0.0
+    "@aws-crypto/sha256-js": 2.0.0
+    "@aws-sdk/client-sts": 3.100.0
+    "@aws-sdk/config-resolver": 3.80.0
+    "@aws-sdk/credential-provider-node": 3.100.0
+    "@aws-sdk/fetch-http-handler": 3.78.0
+    "@aws-sdk/hash-node": 3.78.0
+    "@aws-sdk/invalid-dependency": 3.78.0
+    "@aws-sdk/middleware-content-length": 3.78.0
+    "@aws-sdk/middleware-host-header": 3.78.0
+    "@aws-sdk/middleware-logger": 3.78.0
+    "@aws-sdk/middleware-retry": 3.80.0
+    "@aws-sdk/middleware-serde": 3.78.0
+    "@aws-sdk/middleware-signing": 3.78.0
+    "@aws-sdk/middleware-stack": 3.78.0
+    "@aws-sdk/middleware-user-agent": 3.78.0
+    "@aws-sdk/node-config-provider": 3.80.0
+    "@aws-sdk/node-http-handler": 3.94.0
+    "@aws-sdk/protocol-http": 3.78.0
+    "@aws-sdk/smithy-client": 3.99.0
+    "@aws-sdk/types": 3.78.0
+    "@aws-sdk/url-parser": 3.78.0
+    "@aws-sdk/util-base64-browser": 3.58.0
+    "@aws-sdk/util-base64-node": 3.55.0
+    "@aws-sdk/util-body-length-browser": 3.55.0
+    "@aws-sdk/util-body-length-node": 3.55.0
+    "@aws-sdk/util-defaults-mode-browser": 3.99.0
+    "@aws-sdk/util-defaults-mode-node": 3.99.0
+    "@aws-sdk/util-user-agent-browser": 3.78.0
+    "@aws-sdk/util-user-agent-node": 3.80.0
+    "@aws-sdk/util-utf8-browser": 3.55.0
+    "@aws-sdk/util-utf8-node": 3.55.0
+    tslib: ^2.3.1
+  checksum: 91c902e6c65cff24d2f0cf24f59605d6b8882c53a0ae9086f419043bce27169b599611140abbecc23dfa500e041de923ea5a23c8118b1049308597dcac6cdeea
   languageName: node
   linkType: hard
 
@@ -8459,7 +8541,9 @@ __metadata:
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": ^2.25.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": ^2.25.0-alpha.0
+    "@aws-sdk/client-cognito-identity-provider": ^3.100.0
     "@aws-sdk/client-dynamodb": ^3.100.0
+    "@aws-sdk/client-kms": ^3.100.0
     "@types/aws-lambda": ^8.10.97
     "@types/jest": ^27.5.0
     "@types/node": ^17.0.35
