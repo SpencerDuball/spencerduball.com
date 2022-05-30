@@ -1,12 +1,3 @@
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
+.sst
+.build
 node_modules
-
-
-# Contentlayer
-.contentlayer

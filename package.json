@@ -1,16 +1,24 @@
 {
+  "name": "spencerduball.com",
+  "version": "0.0.0",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend",
-    "packages/*"
-  ],
   "scripts": {
-    "start": "yarn --cwd backend start",
-    "build": "yarn --cwd frontend build"
+    "start": "sst start",
+    "build": "sst build",
+    "deploy": "sst deploy",
+    "remove": "sst remove",
+    "console": "sst console",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
-  "packageManager": "yarn@3.2.0",
   "devDependencies": {
-    "esbuild": "^0.14.39"
-  }
+    "@serverless-stack/cli": "^1.2.11",
+    "@serverless-stack/resources": "^1.2.11",
+    "@tsconfig/node16": "^1.0.2",
+    "typescript": "^4.7.2",
+    "vitest": "^0.13.0"
+  },
+  "workspaces": [
+    "backend"
+  ]
 }
