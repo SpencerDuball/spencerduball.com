@@ -15,7 +15,7 @@ export interface ApiStackProps extends StackProps {
 export class ApiStack extends Stack {
   public httpApi: HttpApi;
 
-  constructor(scope: Construct, id: string, props?: ApiStackProps) {
+  constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, props);
 
     // create the domain name
@@ -35,7 +35,7 @@ export class ApiStack extends Stack {
     });
 
     // create stage
-    if (process.env.NODE_ENV === "PROD") {
+    if (this.node.tryGetContext("NODE_ENV") === "DEV") {
       // maps -> https://api.my-domain.com/dev
       new HttpStage(this, "HttpApiDevStage", {
         httpApi: this.httpApi,
@@ -45,7 +45,7 @@ export class ApiStack extends Stack {
           mappingKey: "dev",
         },
       });
-    } else if (process.env.NOD_ENV === "DEV") {
+    } else if (this.node.tryGetContext("NODE_ENV") === "PROD") {
       // maps -> https://api.my-domain.com
       new HttpStage(this, "HttpApiProdStage", {
         httpApi: this.httpApi,

@@ -1,51 +1,25 @@
 import { Stack, StackProps, RemovalPolicy, Duration } from "aws-cdk-lib";
-import {
-  AwsCustomResource,
-  PhysicalResourceId,
-  AwsCustomResourcePolicy,
-} from "aws-cdk-lib/custom-resources";
 import { Construct } from "constructs";
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import {
-  HttpApi,
-  HttpMethod,
-  DomainName,
-  CorsHttpMethod,
-} from "@aws-cdk/aws-apigatewayv2-alpha";
-import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
-import { StringParameter } from "aws-cdk-lib/aws-ssm";
-import { Table, AttributeType, BillingMode } from "aws-cdk-lib/aws-dynamodb";
 import {
   UserPool,
   AccountRecovery,
   ClientAttributes,
 } from "aws-cdk-lib/aws-cognito";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
+import { getSecureSSMParameter } from "../app/constructs/secure-ssm-parameter";
+import { Table, AttributeType, BillingMode } from "aws-cdk-lib/aws-dynamodb";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
+import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
+import { HttpApi, HttpMethod } from "@aws-cdk/aws-apigatewayv2-alpha";
 import path from "path";
 
+export interface AuthStackProps extends StackProps {
+  httpApi: HttpApi;
+}
+
 export class AuthStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: AuthStackProps) {
     super(scope, id, props);
-
-    // create the domain name
-    const domainName = new DomainName(this, "HttpApiDomainName", {
-      domainName: "api.spencerduball.com",
-      certificate: Certificate.fromCertificateArn(
-        this,
-        "DomainNameCertificate",
-        `arn:aws:acm:${this.region}:${this.account}:certificate/0dcc1656-ee38-4f9d-81cd-30686d1469b3`
-      ),
-    });
-
-    // create the api
-    const httpApi = new HttpApi(this, "AuthApi", {
-      apiName: "AuthApi",
-      defaultDomainMapping: { domainName },
-      corsPreflight: {
-        allowOrigins: ["https://spencerduball.com"],
-        allowMethods: [CorsHttpMethod.ANY],
-      },
-    });
 
     /////////////////////////////////////////////////////////////////////////////
     // (1) Custom User Pool
@@ -59,12 +33,11 @@ export class AuthStack extends Stack {
     // This is how we will actually manage the users in our apps, but we will use
     // github to sign in.
     /////////////////////////////////////////////////////////////////////////////
-    // create the user pool and client
+    // create the user pool
     const pool = new UserPool(this, "UserPool", {
       accountRecovery: AccountRecovery.NONE,
-      autoVerify: { email: true },
       enableSmsRole: false,
-      removalPolicy: RemovalPolicy.RETAIN,
+      removalPolicy: RemovalPolicy.DESTROY,
       selfSignUpEnabled: false,
       signInCaseSensitive: false,
       standardAttributes: {
@@ -76,11 +49,11 @@ export class AuthStack extends Stack {
           required: true,
           mutable: true,
         },
-        email: {
-          required: true,
-          mutable: true,
-        },
       },
+    });
+    new StringParameter(this, "UserPoolId", {
+      parameterName: "/spencerduball/env/USER_POOL_ID",
+      stringValue: pool.userPoolId,
     });
     const client = pool.addClient("UserPoolClient", {
       accessTokenValidity: Duration.minutes(60),
@@ -95,29 +68,9 @@ export class AuthStack extends Stack {
       }),
     });
     new StringParameter(this, "UserPoolClientId", {
-      parameterName: "/spencerduball/env/PUBLIC_USER_POOL_CLIENT_ID",
+      parameterName: "/spencerduball/env/USER_POOL_CLIENT_ID",
       stringValue: client.userPoolClientId,
     });
-
-    // retrieve the cipher info used to encrypt the admin defined passwords
-    const decryptPasswordCipherInfo = new AwsCustomResource(
-      this,
-      "DecryptedPasswordCipherInfo",
-      {
-        onCreate: {
-          service: "SSM",
-          action: "getParameter",
-          parameters: {
-            Name: "/spencerduball/env/PASSWORD_CIPHER_INFO",
-            WithDecryption: true,
-          },
-          physicalResourceId: PhysicalResourceId.fromResponse("Parameter.ARN"),
-        },
-        policy: AwsCustomResourcePolicy.fromSdkCalls({
-          resources: AwsCustomResourcePolicy.ANY_RESOURCE,
-        }),
-      }
-    );
 
     /////////////////////////////////////////////////////////////////////////////
     // (2) Github OAuth Sign In
@@ -133,20 +86,25 @@ export class AuthStack extends Stack {
     // routes used for signin and callback.
     /////////////////////////////////////////////////////////////////////////////
     // get environment variables
-    const GITHUB_CLIENT_ID = StringParameter.fromStringParameterName(
+    const githubClientId = getSecureSSMParameter(
       this,
-      "env-GITHUB_CLIENT_ID",
+      "GithubClientId",
       "/spencerduball/env/GITHUB_CLIENT_ID"
     );
-    const GITHUB_CLIENT_SECRET = StringParameter.fromStringParameterName(
+    const githubClientSecret = StringParameter.fromStringParameterName(
       this,
-      "env-GITHUB_CLIENT_SECRET",
+      "GithubClientSecret",
       "/spencerduball/env/GITHUB_CLIENT_SECRET"
     );
-    const GITHUB_CLIENT_CALLBACK = StringParameter.fromStringParameterName(
+    const githubClientCallback = StringParameter.fromStringParameterName(
       this,
-      "env-GITHUB_CLIENT_CALLBACK",
+      "GithubClientCallback",
       "/spencerduball/env/GITHUB_CLIENT_CALLBACK"
+    );
+    const cipherInfo = getSecureSSMParameter(
+      this,
+      "CipherInfo",
+      "/spencerduball/env/CIPHER_INFO"
     );
 
     // create oauth CSRF validation table
@@ -162,16 +120,16 @@ export class AuthStack extends Stack {
       entry: path.join(__dirname, "lambda", "github-signin.ts"),
       handler: "githubSignin",
       environment: {
-        GITHUB_CLIENT_ID: GITHUB_CLIENT_ID.stringValue,
+        GITHUB_CLIENT_ID: githubClientId.getResponseField("Parameter.Value"),
         DDB_TABLE_NAME: csrfTable.tableName,
-        DDB_TABLE_REGION: this.region,
+        REGION: this.region,
       },
     });
     const githubSigninIntegration = new HttpLambdaIntegration(
       "GithubAuthIntegration",
       githubSigninFn
     );
-    httpApi.addRoutes({
+    props.httpApi.addRoutes({
       path: "/auth/signin/github",
       methods: [HttpMethod.POST],
       integration: githubSigninIntegration,
@@ -186,15 +144,14 @@ export class AuthStack extends Stack {
         entry: path.join(__dirname, "lambda", "github-oauth-callback.ts"),
         handler: "githubOAuthCallback",
         environment: {
-          GITHUB_CLIENT_ID: GITHUB_CLIENT_ID.stringValue,
-          GITHUB_CLIENT_SECRET: GITHUB_CLIENT_SECRET.stringValue,
-          GITHUB_CLIENT_CALLBACK: GITHUB_CLIENT_CALLBACK.stringValue,
+          GITHUB_CLIENT_ID: githubClientId.getResponseField("Parameter.Value"),
+          GITHUB_CLIENT_SECRET: githubClientSecret.stringValue,
+          GITHUB_CLIENT_CALLBACK: githubClientCallback.stringValue,
           DDB_TABLE_NAME: csrfTable.tableName,
           REGION: this.region,
           USER_POOL_ID: pool.userPoolId,
           USER_POOL_CLIENT_ID: client.userPoolClientId,
-          PASSWORD_CIPHER_INFO:
-            decryptPasswordCipherInfo.getResponseField("Parameter.Value"),
+          PASSWORD_CIPHER_INFO: cipherInfo.getResponseField("Parameter.Value"),
         },
       }
     );
@@ -202,7 +159,7 @@ export class AuthStack extends Stack {
       "GithubOAuthCallbackIntegration",
       githubOAuthCallbackFn
     );
-    httpApi.addRoutes({
+    props.httpApi.addRoutes({
       path: "/auth/github/callback",
       methods: [HttpMethod.GET],
       integration: githubOAuthCallbackIntegration,
