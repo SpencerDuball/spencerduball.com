@@ -25,6 +25,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-cdk/aws-apigatewayv2-authorizers-alpha@npm:^2.25.0-alpha.0":
+  version: 2.25.0-alpha.0
+  resolution: "@aws-cdk/aws-apigatewayv2-authorizers-alpha@npm:2.25.0-alpha.0"
+  peerDependencies:
+    "@aws-cdk/aws-apigatewayv2-alpha": 2.25.0-alpha.0
+    aws-cdk-lib: ^2.25.0
+    constructs: ^10.0.0
+  checksum: ae9c2a06fd8cac395db476feb5a0d4bebe0a196d1c7907400e04aebb7b0c3b39e796162deb98e77023918c1355d4b14d1a8be6cc5e39840f5eb89f6cb07a364a
+  languageName: node
+  linkType: hard
+
 "@aws-cdk/aws-apigatewayv2-integrations-alpha@npm:^2.25.0-alpha.0":
   version: 2.25.0-alpha.0
   resolution: "@aws-cdk/aws-apigatewayv2-integrations-alpha@npm:2.25.0-alpha.0"
@@ -8540,6 +8551,7 @@ __metadata:
   resolution: "backend@workspace:backend"
   dependencies:
     "@aws-cdk/aws-apigatewayv2-alpha": ^2.25.0-alpha.0
+    "@aws-cdk/aws-apigatewayv2-authorizers-alpha": ^2.25.0-alpha.0
     "@aws-cdk/aws-apigatewayv2-integrations-alpha": ^2.25.0-alpha.0
     "@aws-sdk/client-cognito-identity-provider": ^3.100.0
     "@aws-sdk/client-dynamodb": ^3.100.0
