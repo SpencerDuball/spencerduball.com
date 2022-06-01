@@ -1,5 +1,5 @@
 {
-  "name": "spencerduball.com",
+  "name": "spencerduball",
   "region": "us-east-1",
   "main": "stacks/index.ts"
 }
