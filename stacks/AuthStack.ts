@@ -145,7 +145,7 @@ export function AuthStack({ stack, app }: StackContext) {
     },
   });
 
-  // create the initial RSA keys and jwks.json + openid-configuration files
+  // create the initial RSA keys and openid-configuration files
   new Script(stack, "InitialAuthInfo", {
     onCreate: {
       handler: "functions/scripts/create-rsa-keys.handler",

@@ -1,5 +1,5 @@
 import { CdkCustomResourceHandler } from "aws-lambda";
-import { generateKeyInfo, IJWK } from "util/generate-key-info";
+import { generateKeyInfo } from "util/generate-key-info";
 import {
   DynamoDBClient,
   BatchWriteItemCommand,
@@ -63,14 +63,6 @@ export const handler: CdkCustomResourceHandler = async (event) => {
   try {
     const s3 = new S3Client({ region: process.env.AWS_REGION });
 
-    // write the jwks.json file
-    const putJwksJson = new PutObjectCommand({
-      Bucket: process.env.WELL_KNOWN_BUCKET,
-      Key: ".well-known/jwks.json",
-      Body: JSON.stringify({ keys: [keyInfo.jwk] }),
-      ContentType: "application/json",
-    });
-
     // write the openid-configuration file
     const putOpenIdConfig = new PutObjectCommand({
       Bucket: process.env.WELL_KNOWN_BUCKET,
@@ -82,7 +74,7 @@ export const handler: CdkCustomResourceHandler = async (event) => {
       ContentType: "application/json",
     });
 
-    await Promise.all([s3.send(putJwksJson), s3.send(putOpenIdConfig)]);
+    await s3.send(putOpenIdConfig);
   } catch (e) {
     console.error(e);
     return { statusCode: 500 };
