@@ -4,10 +4,8 @@ import {
   GetItemCommand,
   BatchWriteItemCommand,
   UpdateItemCommand,
-  ScanCommand,
 } from "@aws-sdk/client-dynamodb";
 import { generateKeyInfo } from "util/generate-key-info";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 function newKeyItem(PK: string, keyInfo: ReturnType<typeof generateKeyInfo>) {
   const { jwk, ...rest } = keyInfo;
@@ -84,45 +82,6 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       },
     });
     await ddb.send(createKeys);
-
-    //////////////////////////////////////////////////////////////////////////
-    // (3) Update the jwks.json file with the full key list
-    //////////////////////////////////////////////////////////////////////////
-    // get all available keys
-    const getAllKeys = new ScanCommand({
-      TableName: process.env.KEY_TABLE,
-      ProjectionExpression: "#pk, #alg, #use, #kid, #kty, #n, #e",
-      ExpressionAttributeNames: {
-        "#pk": "PK",
-        "#alg": "alg",
-        "#use": "use",
-        "#kid": "kid",
-        "#kty": "kty",
-        "#n": "n",
-        "#e": "e",
-      },
-    });
-    const allKeys = await ddb.send(getAllKeys);
-
-    // create the jwks.json content
-    const normalizedKeys = allKeys.Items?.filter(
-      (item) => item.PK.S !== "KEY#ACTIVE"
-    ).map((item) =>
-      Object.entries(item)
-        .filter(([k]) => k !== "PK")
-        .reduce((prev, [k, v]) => ({ [k]: v.S, ...prev }), {})
-    );
-    const jwksJson = JSON.stringify({ keys: normalizedKeys });
-
-    // send to s3
-    const s3 = new S3Client({ region: process.env.AWS_REGION });
-    const putJwksJson = new PutObjectCommand({
-      Bucket: process.env.WELL_KNOWN_BUCKET,
-      Key: ".well-known/jwks.json",
-      Body: jwksJson,
-      ContentType: "application/json",
-    });
-    await s3.send(putJwksJson);
 
     return { statusCode: 200 };
   } catch (e) {

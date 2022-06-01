@@ -63,18 +63,6 @@ export function AuthStack({ stack, app }: StackContext) {
   const RefreshTokenLength = ms("7 days") / 1000;
   const AccessTokenLength = ms("1 hour") / 1000;
 
-  // create a table to store the RSA keys
-  const keyTable = new Table(stack, "KeyTable", {
-    fields: { PK: "string" },
-    primaryIndex: { partitionKey: "PK" },
-    cdk: {
-      table: {
-        removalPolicy: RemovalPolicy.DESTROY,
-        timeToLiveAttribute: "expires_at",
-      },
-    },
-  });
-
   // create a bucket to hold the jwks.json & openid-configuration files
   const wellKnownBucket = new Bucket(stack, "WellKnownBucket", {
     cors: [{ allowedMethods: ["GET"], allowedOrigins: ["*"] }],
@@ -86,6 +74,29 @@ export function AuthStack({ stack, app }: StackContext) {
         autoDeleteObjects: true,
       },
     },
+  });
+
+  // create a table to store the RSA keys
+  const keyTable = new Table(stack, "KeyTable", {
+    fields: { PK: "string" },
+    primaryIndex: { partitionKey: "PK" },
+    cdk: {
+      table: {
+        removalPolicy: RemovalPolicy.DESTROY,
+        timeToLiveAttribute: "expires_at",
+      },
+    },
+    stream: true,
+  });
+  keyTable.addConsumers(stack, {
+    updateJwks: new Function(stack, "UpdateJwks", {
+      handler: "functions/auth/update-jwks.handler",
+      environment: {
+        WELL_KNOWN_BUCKET: wellKnownBucket.bucketName,
+        KEY_TABLE: keyTable.tableName,
+      },
+      permissions: [wellKnownBucket, keyTable],
+    }),
   });
 
   // create a table to store the auth & github CSRF one-time-codes
