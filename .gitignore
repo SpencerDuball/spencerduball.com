@@ -1,5 +1,6 @@
 .sst
 .build
+.env
 node_modules
 
 scripts/generated

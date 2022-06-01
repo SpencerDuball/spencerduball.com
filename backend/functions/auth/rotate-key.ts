@@ -4,8 +4,10 @@ import {
   GetItemCommand,
   BatchWriteItemCommand,
   UpdateItemCommand,
+  ScanCommand,
 } from "@aws-sdk/client-dynamodb";
 import { generateKeyInfo } from "util/generate-key-info";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 function newKeyItem(PK: string, keyInfo: ReturnType<typeof generateKeyInfo>) {
   const { jwk, ...rest } = keyInfo;
@@ -35,6 +37,9 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
   }
 
   try {
+    //////////////////////////////////////////////////////////////////////////
+    // (1) Get the Active Key and add "expires_at"
+    //////////////////////////////////////////////////////////////////////////
     // get the active key
     const ddb = new DynamoDBClient({ region: process.env.AWS_REGION });
     const getKey = new GetItemCommand({
@@ -43,12 +48,12 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     });
     const getKeyRes = await ddb.send(getKey);
 
-    // if the key was found, update TTL
+    // if the key was found, update expires_at
     if (getKeyRes.Item) {
       // get the kid
       const kid = getKeyRes.Item.kid.S;
 
-      // assign a TTL to the old key, it will be auto-deleted
+      // assign an "expires_at" to the old key, it will be auto-deleted
       const updateKey = new UpdateItemCommand({
         TableName: process.env.KEY_TABLE,
         Key: { PK: { S: `KEY#${kid}` } },
@@ -65,6 +70,9 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       await ddb.send(updateKey);
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    // (2) Create the new Keys and assign to Active key
+    //////////////////////////////////////////////////////////////////////////
     // create a new key and set it to be the active key
     const newKey = generateKeyInfo();
     const createKeys = new BatchWriteItemCommand({
@@ -76,6 +84,45 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       },
     });
     await ddb.send(createKeys);
+
+    //////////////////////////////////////////////////////////////////////////
+    // (3) Update the jwks.json file with the full key list
+    //////////////////////////////////////////////////////////////////////////
+    // get all available keys
+    const getAllKeys = new ScanCommand({
+      TableName: process.env.KEY_TABLE,
+      ProjectionExpression: "#pk, #alg, #use, #kid, #kty, #n, #e",
+      ExpressionAttributeNames: {
+        "#pk": "PK",
+        "#alg": "alg",
+        "#use": "use",
+        "#kid": "kid",
+        "#kty": "kty",
+        "#n": "n",
+        "#e": "e",
+      },
+    });
+    const allKeys = await ddb.send(getAllKeys);
+
+    // create the jwks.json content
+    const normalizedKeys = allKeys.Items?.filter(
+      (item) => item.PK.S !== "KEY#ACTIVE"
+    ).map((item) =>
+      Object.entries(item)
+        .filter(([k]) => k !== "PK")
+        .reduce((prev, [k, v]) => ({ [k]: v.S, ...prev }), {})
+    );
+    const jwksJson = JSON.stringify({ keys: normalizedKeys });
+
+    // send to s3
+    const s3 = new S3Client({ region: process.env.AWS_REGION });
+    const putJwksJson = new PutObjectCommand({
+      Bucket: process.env.WELL_KNOWN_BUCKET,
+      Key: ".well-known/jwks.json",
+      Body: jwksJson,
+      ContentType: "application/json",
+    });
+    await s3.send(putJwksJson);
 
     return { statusCode: 200 };
   } catch (e) {

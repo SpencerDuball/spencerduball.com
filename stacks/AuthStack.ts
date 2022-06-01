@@ -100,9 +100,10 @@ export function AuthStack({ stack, app }: StackContext) {
     handler: "functions/auth/rotate-key.handler",
     environment: {
       KEY_TABLE: keyTable.tableName,
+      WELL_KNOWN_BUCKET: wellKnownBucket.bucketName,
       REFRESH_TOKEN_LENGTH: RefreshTokenLength.toString(),
     },
-    permissions: [keyTable],
+    permissions: [keyTable, wellKnownBucket],
   });
   let api = new Api(stack, "AuthApi", {
     routes: {
@@ -120,6 +121,8 @@ export function AuthStack({ stack, app }: StackContext) {
           environment: {
             KEY_TABLE: keyTable.tableName,
             OTC_TABLE: otcTable.tableName,
+            REFRESH_TOKEN_LENGTH: RefreshTokenLength.toString(),
+            ACCESS_TOKEN_LENGTH: AccessTokenLength.toString(),
           },
           permissions: [keyTable, otcTable],
         },
