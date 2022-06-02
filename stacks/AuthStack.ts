@@ -88,6 +88,8 @@ export function AuthStack({ stack, app }: StackContext) {
     },
     stream: true,
   });
+
+  // listen to the keyTable for INSERT & DELETE events to update the jwks.json file
   keyTable.addConsumers(stack, {
     updateJwks: new Function(stack, "UpdateJwks", {
       handler: "functions/auth/update-jwks.handler",
@@ -148,7 +150,7 @@ export function AuthStack({ stack, app }: StackContext) {
   // create the initial RSA keys and openid-configuration files
   new Script(stack, "InitialAuthInfo", {
     onCreate: {
-      handler: "functions/scripts/create-rsa-keys.handler",
+      handler: "functions/scripts/initialize-auth.handler",
       environment: {
         KEY_TABLE: keyTable.tableName,
         WELL_KNOWN_BUCKET: wellKnownBucket.bucketName,
@@ -162,6 +164,5 @@ export function AuthStack({ stack, app }: StackContext) {
   new Cron(stack, "PeriodicKeyRotate", {
     schedule: "rate(90 days)",
     job: rotateFn,
-    enabled: !app.local,
   });
 }
