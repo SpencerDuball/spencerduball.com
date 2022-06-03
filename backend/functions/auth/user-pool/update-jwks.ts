@@ -4,8 +4,8 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export const handler: DynamoDBStreamHandler = async (event) => {
   // check for environment variables
-  if (!process.env.WELL_KNOWN_BUCKET)
-    throw new Error("process.env.WELL_KNOWN_BUCKET is not defined.");
+  if (!process.env.PUBLIC_BUCKET)
+    throw new Error("process.env.PUBLIC_BUCKET is not defined.");
   if (!process.env.KEY_TABLE)
     throw new Error("process.env.KEY_TABLE is not defined.");
 
@@ -42,7 +42,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
       // send to s3
       const s3 = new S3Client({ region: process.env.AWS_REGION });
       const putJwksJson = new PutObjectCommand({
-        Bucket: process.env.WELL_KNOWN_BUCKET,
+        Bucket: process.env.PUBLIC_BUCKET,
         Key: ".well-known/jwks.json",
         Body: jwksJson,
         ContentType: "application/json",

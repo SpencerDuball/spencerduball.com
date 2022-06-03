@@ -4,15 +4,24 @@ import {
   GetItemCommand,
   BatchWriteItemCommand,
   UpdateItemCommand,
+  AttributeValue,
 } from "@aws-sdk/client-dynamodb";
 import { generateKeyInfo } from "util/generate-key-info";
 
-function newKeyItem(PK: string, keyInfo: ReturnType<typeof generateKeyInfo>) {
+function newKeyItem(
+  PK: string,
+  keyInfo: ReturnType<typeof generateKeyInfo>,
+  refresh_token_duration: number,
+  access_token_duration: number
+) {
   const { jwk, ...rest } = keyInfo;
-  const keyMap = Object.entries({ PK, ...jwk, ...rest }).reduce(
-    (prev, [k, v]) => ({ [k]: { S: v }, ...prev }),
-    {}
-  );
+  let keyMap: Record<string, AttributeValue> = Object.entries({
+    PK,
+    ...jwk,
+    ...rest,
+  }).reduce((prev, [k, v]) => ({ [k]: { S: v }, ...prev }), {});
+  keyMap.refresh_token_duration = { N: refresh_token_duration.toString() };
+  keyMap.access_token_duration = { N: access_token_duration.toString() };
   return keyMap;
 }
 function newPutRequest(payload: ReturnType<typeof newKeyItem>) {
@@ -29,8 +38,12 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     console.error("process.env.KEY_TABLE is not defined.");
     return { statusCode: 500 };
   }
-  if (!process.env.REFRESH_TOKEN_LENGTH) {
-    console.error("process.env.REFRESH_TOKEN_LENGTH is not defined.");
+  if (!process.env.REFRESH_TOKEN_DURATION) {
+    console.error("process.env.REFRESH_TOKEN_DURATION is not defined.");
+    return { statusCode: 500 };
+  }
+  if (!process.env.ACCESS_TOKEN_DURATION) {
+    console.error("process.env.ACCESS_TOKEN_DURATION is not defined.");
     return { statusCode: 500 };
   }
 
@@ -49,7 +62,10 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     // if the key was found, update expires_at
     if (getKeyRes.Item) {
       // get the kid
-      const kid = getKeyRes.Item.kid.S;
+      const {
+        kid: { S: kid },
+        refresh_token_duration: { N: refreshInS },
+      } = getKeyRes.Item;
 
       // assign an "expires_at" to the old key, it will be auto-deleted
       const updateKey = new UpdateItemCommand({
@@ -59,8 +75,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
         ExpressionAttributeValues: {
           ":expires_at": {
             N: (
-              Math.floor(+new Date() / 1000) +
-              parseInt(process.env.REFRESH_TOKEN_LENGTH)
+              Math.floor(+new Date() / 1000) + parseInt(refreshInS || "0")
             ).toString(),
           },
         },
@@ -71,13 +86,19 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     //////////////////////////////////////////////////////////////////////////
     // (2) Create the new Keys and assign to Active key
     //////////////////////////////////////////////////////////////////////////
+    const refreshInS = parseInt(process.env.REFRESH_TOKEN_DURATION);
+    const accessInS = parseInt(process.env.ACCESS_TOKEN_DURATION);
     // create a new key and set it to be the active key
     const newKey = generateKeyInfo();
     const createKeys = new BatchWriteItemCommand({
       RequestItems: {
         [process.env.KEY_TABLE]: [
-          newPutRequest(newKeyItem(`KEY#ACTIVE`, newKey)),
-          newPutRequest(newKeyItem(`KEY#${newKey.jwk.kid}`, newKey)),
+          newPutRequest(
+            newKeyItem(`KEY#ACTIVE`, newKey, refreshInS, accessInS)
+          ),
+          newPutRequest(
+            newKeyItem(`KEY#${newKey.jwk.kid}`, newKey, refreshInS, accessInS)
+          ),
         ],
       },
     });
