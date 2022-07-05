@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { ProfileCard } from "components/profile-card/profile-card";
+import { ProfileCard, SigninButton } from "components";
 
 const Home: NextPage = () => {
   return (
@@ -11,6 +11,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ProfileCard />
+      <SigninButton />
     </>
   );
 };
