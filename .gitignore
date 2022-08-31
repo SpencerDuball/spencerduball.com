@@ -1,6 +1,12 @@
-.sst
-.build
-.env
+# dependencies
 node_modules
 
-scripts/generated
+# sst
+.sst
+.build
+
+# misc
+.DS_Store
+
+# local env files
+.env*.local
