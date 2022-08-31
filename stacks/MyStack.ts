@@ -1,12 +1,31 @@
-import { StackContext, Api } from "@serverless-stack/resources";
+import {
+  Table,
+  RemixSite,
+  StackContext,
+} from "@serverless-stack/resources";
 
 export function MyStack({ stack }: StackContext) {
-  const api = new Api(stack, "api", {
-    routes: {
-      "GET /": "functions/lambda.handler",
+
+  // Create a DynamoDB table
+  const table = new Table(stack, "Counter", {
+    fields: {
+      counter: "string",
     },
+    primaryIndex: { partitionKey: "counter" },
   });
+
+  // Create a Remix site
+  const site = new RemixSite(stack, "web", {
+    path: "web/",
+    environment: {
+      REGION: stack.region,
+      TABLE_NAME: table.tableName,
+    }
+  })
+  site.attachPermissions([table]);
+
   stack.addOutputs({
-    ApiEndpoint: api.url
+    SiteURL: site.url,
+    TableName: table.tableName,
   });
 }
