@@ -47,7 +47,7 @@ const Document = withEmotionCache(({ children }: DocumentProps, emotionCache) =>
     });
     // reset cache to reapply global styles
     clientStyleData?.reset();
-  }, [clientStyleData, emotionCache.sheet]);
+  }, []);
 
   return (
     <html lang="en">
@@ -69,7 +69,9 @@ const Document = withEmotionCache(({ children }: DocumentProps, emotionCache) =>
 });
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return request.headers.get("cookie") ?? "";
+  const cookie = request.headers.get("cookie");
+  if (cookie) return cookie.split(",").pop();
+  else return "";
 };
 
 export default function App() {
