@@ -5,8 +5,9 @@ import { ChakraProvider, cookieStorageManagerSSR, localStorageManager } from "@c
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import type { MetaFunction, LinksFunction, LoaderFunction } from "@remix-run/node"; // Depends on the runtime you choose
 import { theme } from "@dub-stack/chakra-radix-colors";
-import { Grid, Container } from "@chakra-ui/react";
+import { Grid, Container, extendTheme } from "@chakra-ui/react";
 import { Header } from "~/components";
+import "@fontsource/inter/index.css";
 
 import { ServerStyleContext, ClientStyleContext } from "./context";
 
@@ -68,6 +69,14 @@ const Document = withEmotionCache(({ children }: DocumentProps, emotionCache) =>
   );
 });
 
+const customTheme = extendTheme({
+  ...theme,
+  fonts: {
+    heading: "Inter, sans-serif",
+    body: "Inter, sans-serif",
+  },
+});
+
 export const loader: LoaderFunction = async ({ request }) => {
   const cookie = request.headers.get("cookie");
   if (cookie) return cookie.split(",").pop();
@@ -79,7 +88,7 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider
-        theme={theme}
+        theme={customTheme}
         colorModeManager={typeof cookies === "string" ? cookieStorageManagerSSR(cookies) : localStorageManager}
       >
         <Grid gap={8}>
