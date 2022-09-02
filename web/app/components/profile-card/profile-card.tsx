@@ -63,10 +63,12 @@ export const ProfileCard = (props: ProfileCardProps) => {
             Software Engineer
           </Text>
         </VStack>
+
         {/* Description */}
         <Text as="p" maxW="sm" fontSize="md">
           Creating on the web, 3D printing, building circuits, and writing about all these topics.
         </Text>
+
         {/* Links */}
         <HStack>
           <SocialLink as={RiTwitterFill} href="https://twitter.com/SpencerDuball" ariaLabel="Twitter" />
