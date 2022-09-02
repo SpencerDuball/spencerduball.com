@@ -13,7 +13,7 @@ interface SocialLinkProps extends LinkProps {
 const SocialLink = (props: SocialLinkProps) => {
   const { as, ariaLabel, ...rest } = props;
   return (
-    <Link {...rest}>
+    <Link target="_blank" rel="noopener noreferrer" {...rest}>
       <Grid placeItems="center" h="8" w="8">
         <Icon as={as} h="4" w="4" aria-label={ariaLabel} />
       </Grid>
