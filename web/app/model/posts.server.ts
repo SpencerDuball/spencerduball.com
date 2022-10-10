@@ -3,7 +3,7 @@ type Post = {
   title: string;
 };
 
-export async function getPosts(): Promise<Array<Post>> {
+export async function getPosts(): Promise<Post[]> {
   return [
     {
       slug: "my-first-post",

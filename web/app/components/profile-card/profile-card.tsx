@@ -66,7 +66,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
 
         {/* Description */}
         <Text as="p" maxW="sm" fontSize="md">
-          Building on the web, 3D printing, designing circuits, and writing about all these topics.
+          Web development, cloud computing, 3D printing, designing circuits, and writing about all of these topics.
         </Text>
 
         {/* Links */}

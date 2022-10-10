@@ -1,7 +1,7 @@
-import type { BoxProps, LinkProps, PropsOf } from "@chakra-ui/react";
+import type { BoxProps, LinkProps } from "@chakra-ui/react";
 import { Box, Container, HStack, Link, IconButton, Icon, useColorMode } from "@chakra-ui/react";
 import { RiSunFill, RiMoonFill } from "react-icons/ri";
-import { LinkProps as RemixLinkProps } from "@remix-run/react";
+import type { LinkProps as RemixLinkProps } from "@remix-run/react";
 import { Link as RemixLink, useLocation } from "@remix-run/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 
@@ -24,6 +24,7 @@ const NavLink = (props: NavLinkProps) => {
     <Link
       as={RemixLink}
       to={to}
+      // reloadDocument={true} // TODO: Remove this when request headers send updated cookies
       fontWeight="semibold"
       _hover={{ textDecoration: "none", color: c("_gray.12") }}
       color={isActive ? c("_gray.12") : c("_gray.10")}
@@ -57,6 +58,7 @@ export const Header = (props: HeaderProps) => {
           <NavLink to="/blog">Blog</NavLink>
           <NavLink to="/projects">Projects</NavLink>
         </HStack>
+
         {/* Site Controls */}
         <HStack>
           <IconButton

@@ -1,9 +1,18 @@
 // root.tsx
 import React, { useContext, useEffect } from "react";
 import { withEmotionCache } from "@emotion/react";
-import { ChakraProvider, cookieStorageManagerSSR, localStorageManager } from "@chakra-ui/react";
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
-import type { MetaFunction, LinksFunction, LoaderFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import { ChakraProvider, cookieStorageManagerSSR, localStorageManager, useColorMode } from "@chakra-ui/react";
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useFetcher,
+  useLoaderData,
+} from "@remix-run/react";
+import type { MetaFunction, LoaderFunction } from "@remix-run/node"; // Depends on the runtime you choose
 import { theme } from "@dub-stack/chakra-radix-colors";
 import { Grid, Container, extendTheme } from "@chakra-ui/react";
 import { Header } from "~/components";
@@ -13,20 +22,9 @@ import { ServerStyleContext, ClientStyleContext } from "./context";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "New Remix App",
+  title: "Spencer Duball",
   viewport: "width=device-width,initial-scale=1",
 });
-
-export let links: LinksFunction = () => {
-  return [
-    { rel: "preconnect", href: "https://fonts.googleapis.com" },
-    { rel: "preconnect", href: "https://fonts.gstatic.com" },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap",
-    },
-  ];
-};
 
 interface DocumentProps {
   children: React.ReactNode;
@@ -78,13 +76,32 @@ const customTheme = extendTheme({
 });
 
 export const loader: LoaderFunction = async ({ request }) => {
+  console.log("SERVER: ", request.headers.get("cookie"));
   const cookie = request.headers.get("cookie");
-  if (cookie) return cookie.split(",").pop();
+  if (cookie) return cookie;
   else return "";
+};
+
+const Yo = () => {
+  const { colorMode } = useColorMode();
+  const fetcher = useFetcher();
+
+  useEffect(() => {
+    console.log(document.cookie);
+  }, [colorMode]);
+
+  // print out the client info
+  console.log(`Client_Side: colorMode=${colorMode}`);
+  if (typeof window !== "undefined") console.log(`Client_Side: cookie=${document.cookie}`);
+  console.log("\n");
+
+  return null;
 };
 
 export default function App() {
   const cookies = useLoaderData();
+  console.log(`Server_Side: cookie=${cookies}`);
+
   return (
     <Document>
       <ChakraProvider
@@ -92,6 +109,7 @@ export default function App() {
         colorModeManager={typeof cookies === "string" ? cookieStorageManagerSSR(cookies) : localStorageManager}
       >
         <Grid gap={8}>
+          <Yo />
           <Header />
           <Grid as="main">
             <Container maxW="container.lg">
