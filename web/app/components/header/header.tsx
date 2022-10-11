@@ -24,7 +24,6 @@ const NavLink = (props: NavLinkProps) => {
     <Link
       as={RemixLink}
       to={to}
-      // reloadDocument={true} // TODO: Remove this when request headers send updated cookies
       fontWeight="semibold"
       _hover={{ textDecoration: "none", color: c("_gray.12") }}
       color={isActive ? c("_gray.12") : c("_gray.10")}

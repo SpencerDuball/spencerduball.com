@@ -70,9 +70,6 @@ const customTheme = extendTheme({
 });
 
 export default function App() {
-  const cookies = useLoaderData();
-  console.log(`Server_Side: cookie=${cookies}`);
-
   return (
     <Document>
       <ChakraProvider theme={customTheme} colorModeManager={localStorageManager}>

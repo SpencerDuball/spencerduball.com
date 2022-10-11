@@ -1,17 +1,17 @@
-type Post = {
+import { allPosts } from "~/../blog";
+
+type PostMetadata = {
   slug: string;
   title: string;
 };
 
-export async function getPosts(): Promise<Post[]> {
-  return [
-    {
-      slug: "my-first-post",
-      title: "My First Post",
-    },
-    {
-      slug: "90s-mixtape",
-      title: "A Mixtape I Made Just For You",
-    },
-  ];
+function postsMetadataFromModule(mod: any): PostMetadata {
+  return {
+    slug: mod.filename.replace(/\.mdx?$/, ""),
+    title: mod.attributes.title,
+  };
+}
+
+export async function getPosts(): Promise<PostMetadata[]> {
+  return allPosts.map(postsMetadataFromModule);
 }
