@@ -12,9 +12,9 @@
     "test": "sst load-config -- vitest run"
   },
   "devDependencies": {
-    "@serverless-stack/cli": "^1.10.3",
-    "@serverless-stack/core": "^1.10.4",
-    "@serverless-stack/resources": "^1.10.3",
+    "@serverless-stack/cli": "^1.15.11",
+    "@serverless-stack/core": "^1.15.11",
+    "@serverless-stack/resources": "^1.15.11",
     "@tsconfig/node16": "^1.0.3",
     "aws-cdk-lib": "2.32.0",
     "chalk": "^5.0.1",
