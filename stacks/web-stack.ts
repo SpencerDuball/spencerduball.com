@@ -1,6 +1,6 @@
 import { RemixSite, StackContext } from "@serverless-stack/resources";
 
-export function MyStack({ stack }: StackContext) {
+export function WebStack({ stack }: StackContext) {
   // Create a Remix site
   const site = new RemixSite(stack, "web", {
     path: "web/",
