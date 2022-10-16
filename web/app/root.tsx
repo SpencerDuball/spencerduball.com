@@ -3,13 +3,14 @@ import React, { useContext, useEffect } from "react";
 import { withEmotionCache } from "@emotion/react";
 import { ChakraProvider, localStorageManager } from "@chakra-ui/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
-import type { MetaFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import { json, redirect } from "@remix-run/node";
+import type { MetaFunction, LoaderFunction } from "@remix-run/node";
 import { theme } from "@dub-stack/chakra-radix-colors";
 import { Grid, Container, extendTheme } from "@chakra-ui/react";
 import { Header } from "~/components";
 import "@fontsource/inter/index.css";
-
 import { ServerStyleContext, ClientStyleContext } from "./context";
+import cookie from "cookie";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -69,12 +70,35 @@ const customTheme = extendTheme({
   },
 });
 
+interface LoaderData {
+  env: { API_URL: string };
+}
+
+export const loader: LoaderFunction = async ({ request }) => {
+  // set cookie if access token in search params
+  const search = new URL(request.url).searchParams;
+  if (search.has("token")) {
+    const sessionCookieOptions = { secure: true, sameSite: "lax", maxAge: 604_800, httpOnly: true } as const;
+    const sessionCookie = cookie.serialize("access_token", search.get("token")!, sessionCookieOptions);
+    let headers: HeadersInit = { "Set-Cookie": sessionCookie };
+    return redirect("/", { headers });
+  }
+
+  // collect the environment variables for the browser
+  if (!process.env.API_URL) throw new Error("'API_URL' is not defined.");
+  const env = { API_URL: process.env.API_URL };
+
+  return json({ env });
+};
+
 export default function App() {
+  const { env } = useLoaderData<LoaderData>();
+
   return (
     <Document>
       <ChakraProvider theme={customTheme} colorModeManager={localStorageManager}>
         <Grid gap={8}>
-          <Header />
+          <Header signInUrl={`${env.API_URL}/auth/github/authorize`} />
           <Grid as="main">
             <Container maxW="container.lg">
               <Outlet />

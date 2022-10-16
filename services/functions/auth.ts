@@ -4,6 +4,7 @@ import { Table, ZUserEntity } from "../table";
 import axios from "axios";
 import { DynamoDB } from "aws-sdk";
 import { z } from "zod";
+import { useHeaders } from "@serverless-stack/node/context";
 
 declare module "@serverless-stack/node/auth" {
   export interface SessionTypes {
@@ -41,6 +42,9 @@ export const handler = AuthHandler({
       clientSecret: (Config as any).GITHUB_CLIENT_SECRET,
       scope: "user",
       onSuccess: async (tokenset) => {
+        // ensure existence of environment variables
+        if (!process.env.redirectUrl) throw new Error("'redirectUrl' is missing from environment.");
+
         // get the userinfo from github
         const githubUserInfo = await axios
           .get<GithubUserInfoType>("https://api.github.com/user", {
@@ -75,7 +79,7 @@ export const handler = AuthHandler({
         user = ZUserEntity.parse(user);
 
         return Session.parameter({
-          redirect: "https://google.com",
+          redirect: process.env.redirectUrl,
           type: "user",
           properties: {
             id: user.id,

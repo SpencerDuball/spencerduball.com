@@ -1,6 +1,6 @@
 import type { BoxProps, LinkProps } from "@chakra-ui/react";
 import { Box, Container, HStack, Link, IconButton, Icon, useColorMode } from "@chakra-ui/react";
-import { RiSunFill, RiMoonFill } from "react-icons/ri";
+import { RiSunFill, RiMoonFill, RiGithubFill } from "react-icons/ri";
 import type { LinkProps as RemixLinkProps } from "@remix-run/react";
 import { Link as RemixLink, useLocation } from "@remix-run/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
@@ -36,13 +36,16 @@ const NavLink = (props: NavLinkProps) => {
 
 // Header
 //////////////////////////////////////////////////////////////////////////
-export interface HeaderProps extends BoxProps {}
+export interface HeaderProps extends BoxProps {
+  signInUrl: string;
+}
 
 export const Header = (props: HeaderProps) => {
   const { toggleColorMode, colorMode } = useColorMode();
+  const { signInUrl, ...rest } = props;
 
   return (
-    <Box as="header" w="full" {...props}>
+    <Box as="header" w="full" {...rest}>
       <Container
         maxW="container.lg"
         w="full"
@@ -60,6 +63,16 @@ export const Header = (props: HeaderProps) => {
 
         {/* Site Controls */}
         <HStack>
+          <IconButton
+            as="a"
+            icon={<Icon as={RiGithubFill} h="45%" w="45%" />}
+            aria-label="Sign In"
+            variant="ghost"
+            onClick={toggleColorMode}
+            href={`${signInUrl}`}
+            w="min-content"
+            cursor="pointer"
+          />
           <IconButton
             icon={<Icon as={colorMode === "light" ? RiMoonFill : RiSunFill} h="45%" w="45%" />}
             aria-label="Toggle theme"

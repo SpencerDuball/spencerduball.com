@@ -5,7 +5,10 @@ import { useSession } from "@serverless-stack/node/auth";
 export const handler: APIGatewayProxyHandlerV2 = Handler("api", async (event) => {
   const session = useSession();
 
-  if (session.type !== "user") throw new Error("Must be logged in");
+  console.log(session);
+
+  // respond 401 if user not logged in
+  if (session.type !== "user") return { statusCode: 401 };
 
   return {
     statusCode: 200,
