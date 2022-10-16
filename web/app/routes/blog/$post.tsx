@@ -4,10 +4,7 @@ import { Box, Text, Link } from "@chakra-ui/react";
 import type { Post as PostType } from "~/model/post.server";
 import { getPost } from "~/model/post.server";
 
-export const loader: LoaderFunction = async ({ request, params }) => {
-  const cookie = request.headers.get("cookie");
-  console.log(cookie);
-  let post = await getPost(params.post as string);
+export const loader: LoaderFunction = async ({ params }) => {
   if (params.post) return getPost(params.post);
   else throw new Error("No post found.");
 };

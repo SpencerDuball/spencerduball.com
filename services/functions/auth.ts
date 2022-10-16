@@ -4,7 +4,6 @@ import { Table, ZUserEntity } from "../table";
 import axios from "axios";
 import { DynamoDB } from "aws-sdk";
 import { z } from "zod";
-import { useHeaders } from "@serverless-stack/node/context";
 
 declare module "@serverless-stack/node/auth" {
   export interface SessionTypes {

@@ -1,4 +1,3 @@
-import { CloudStack } from "./cloud-stack";
 import { WebStack } from "./web-stack";
 import { App } from "@serverless-stack/resources";
 
@@ -12,6 +11,5 @@ export default function (app: App) {
   });
 
   // define stacks
-  app.stack(CloudStack);
   app.stack(WebStack);
 }

@@ -36,16 +36,13 @@ const NavLink = (props: NavLinkProps) => {
 
 // Header
 //////////////////////////////////////////////////////////////////////////
-export interface HeaderProps extends BoxProps {
-  signInUrl: string;
-}
+export interface HeaderProps extends BoxProps {}
 
 export const Header = (props: HeaderProps) => {
   const { toggleColorMode, colorMode } = useColorMode();
-  const { signInUrl, ...rest } = props;
 
   return (
-    <Box as="header" w="full" {...rest}>
+    <Box as="header" w="full" {...props}>
       <Container
         maxW="container.lg"
         w="full"
@@ -69,7 +66,7 @@ export const Header = (props: HeaderProps) => {
             aria-label="Sign In"
             variant="ghost"
             onClick={toggleColorMode}
-            href={`${signInUrl}`}
+            href="/auth/github/authorize"
             w="min-content"
             cursor="pointer"
           />
