@@ -19,7 +19,11 @@ const dynamodb_toolbox_1 = require("dynamodb-toolbox");
 const entities_1 = require("./entities");
 class Table {
     constructor(props) {
-        this.entities = { user: new dynamodb_toolbox_1.Entity(entities_1.UserSchema), oAuthStateCode: new dynamodb_toolbox_1.Entity(entities_1.OAuthStateCodeSchema) };
+        this.entities = {
+            user: new dynamodb_toolbox_1.Entity(entities_1.UserSchema),
+            oAuthStateCode: new dynamodb_toolbox_1.Entity(entities_1.OAuthStateCodeSchema),
+            session: new dynamodb_toolbox_1.Entity(entities_1.SessionSchema),
+        };
         this.table = new dynamodb_toolbox_1.Table({
             name: props.tableName,
             partitionKey: "pk",

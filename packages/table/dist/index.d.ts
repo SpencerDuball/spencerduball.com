@@ -390,6 +390,171 @@ export declare class Table {
             pk?: string | undefined;
             sk?: string | undefined;
         }>;
+        session: Entity<undefined, undefined, undefined, "Session", true, true, true, "created", "modified", "entity", {
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    user_id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly user_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly ttl: {
+                readonly type: "number";
+                readonly required: true;
+            };
+        }, import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    user_id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly user_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly ttl: {
+                readonly type: "number";
+                readonly required: true;
+            };
+        }>, import("dynamodb-toolbox/dist/classes/Entity").ParseAttributes<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    user_id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly user_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly ttl: {
+                readonly type: "number";
+                readonly required: true;
+            };
+        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    user_id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly user_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly ttl: {
+                readonly type: "number";
+                readonly required: true;
+            };
+        }>, {
+            default: any;
+        } | [any, any, {
+            default: any;
+        }], "default">, "pk", never, never, "sk", never, never, "pk" | "sk", "modified", "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    user_id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly user_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly ttl: {
+                readonly type: "number";
+                readonly required: true;
+            };
+        }>, {
+            required: true;
+        } | [any, any, {
+            required: true;
+        }], "default">, "id" | "created" | "modified" | "entity" | "pk" | "sk" | "ttl" | "user_id", never>, {
+            id?: string | undefined;
+            created: string;
+            modified: string;
+            entity: string;
+            pk: string;
+            sk: string;
+            ttl: number;
+            user_id: string;
+        }, {
+            id?: string | undefined;
+            created: string;
+            modified: string;
+            entity: string;
+            pk: string;
+            sk: string;
+            ttl: number;
+            user_id: string;
+        }, {
+            pk?: string | undefined;
+            sk?: string | undefined;
+        }>;
     };
     constructor(props: {
         tableName: string;

@@ -5,6 +5,8 @@ import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { Table, ZOAuthStateCode, ZUserEntity } from "table";
 import { z } from "zod";
 import axios from "axios";
+import { generateExpiry, sessionCookie } from "~/cookies.server";
+import { commitSession } from "~/session.server";
 
 const ZCodeSearchParam = z.object({ id: z.string(), redirect_uri: z.string().optional() });
 const ZAccessTokenRes = z.object({ access_token: z.string(), scope: z.string(), token_type: z.string() });
@@ -82,12 +84,19 @@ export const loader: LoaderFunction = async ({ request }) => {
   } else if (!user) {
     // create the user
     user = await table.entities.user
-      .update({ ...userInfo, roles: ["baseic"] }, { returnValues: "ALL_NEW" })
+      .update({ ...userInfo, roles: ["basic"] }, { returnValues: "ALL_NEW" })
       .then(({ Attributes }) => Attributes);
   }
 
   // ensure that user has correct schema
   user = ZUserEntity.parse(user);
 
-  return json({ data: "hello!" });
+  // create the user session
+  const [expires, domain] = [generateExpiry(), new URL(request.url).origin];
+  const session_id = await commitSession({ user_id: user.id } as any, { expires });
+  const cookie = await sessionCookie.serialize({ id: session_id, user_id: user.id }, { expires, domain });
+
+  return redirect(state.redirect_uri ? state.redirect_uri : new URL(request.url).origin, {
+    headers: { "Set-Cookie": cookie },
+  });
 };
