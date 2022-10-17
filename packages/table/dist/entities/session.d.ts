@@ -12,7 +12,7 @@ export declare const SessionSchema: {
             readonly partitionKey: true;
             readonly type: "string";
             readonly default: (data: {
-                user_id: string;
+                id: string;
             }) => string;
         };
         readonly sk: {
@@ -41,7 +41,7 @@ export declare const SessionEntity: Entity<undefined, undefined, undefined, "Ses
         readonly partitionKey: true;
         readonly type: "string";
         readonly default: (data: {
-            user_id: string;
+            id: string;
         }) => string;
     };
     readonly sk: {
@@ -68,7 +68,7 @@ export declare const SessionEntity: Entity<undefined, undefined, undefined, "Ses
         readonly partitionKey: true;
         readonly type: "string";
         readonly default: (data: {
-            user_id: string;
+            id: string;
         }) => string;
     };
     readonly sk: {
@@ -95,7 +95,7 @@ export declare const SessionEntity: Entity<undefined, undefined, undefined, "Ses
         readonly partitionKey: true;
         readonly type: "string";
         readonly default: (data: {
-            user_id: string;
+            id: string;
         }) => string;
     };
     readonly sk: {
@@ -122,7 +122,7 @@ export declare const SessionEntity: Entity<undefined, undefined, undefined, "Ses
         readonly partitionKey: true;
         readonly type: "string";
         readonly default: (data: {
-            user_id: string;
+            id: string;
         }) => string;
     };
     readonly sk: {
@@ -153,7 +153,7 @@ export declare const SessionEntity: Entity<undefined, undefined, undefined, "Ses
         readonly partitionKey: true;
         readonly type: "string";
         readonly default: (data: {
-            user_id: string;
+            id: string;
         }) => string;
     };
     readonly sk: {

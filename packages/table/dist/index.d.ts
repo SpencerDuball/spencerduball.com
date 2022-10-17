@@ -399,7 +399,7 @@ export declare class Table {
                 readonly partitionKey: true;
                 readonly type: "string";
                 readonly default: (data: {
-                    user_id: string;
+                    id: string;
                 }) => string;
             };
             readonly sk: {
@@ -426,7 +426,7 @@ export declare class Table {
                 readonly partitionKey: true;
                 readonly type: "string";
                 readonly default: (data: {
-                    user_id: string;
+                    id: string;
                 }) => string;
             };
             readonly sk: {
@@ -453,7 +453,7 @@ export declare class Table {
                 readonly partitionKey: true;
                 readonly type: "string";
                 readonly default: (data: {
-                    user_id: string;
+                    id: string;
                 }) => string;
             };
             readonly sk: {
@@ -480,7 +480,7 @@ export declare class Table {
                 readonly partitionKey: true;
                 readonly type: "string";
                 readonly default: (data: {
-                    user_id: string;
+                    id: string;
                 }) => string;
             };
             readonly sk: {
@@ -511,7 +511,7 @@ export declare class Table {
                 readonly partitionKey: true;
                 readonly type: "string";
                 readonly default: (data: {
-                    user_id: string;
+                    id: string;
                 }) => string;
             };
             readonly sk: {

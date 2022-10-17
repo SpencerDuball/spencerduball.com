@@ -1,5 +1,5 @@
 import { createSessionStorage } from "@remix-run/node";
-import { sessionCookie } from "./cookies.server";
+import { sessionCookie } from "~/cookies.server";
 import DynamoDB from "aws-sdk/clients/dynamodb";
 import { Table, ZSession } from "table";
 
@@ -15,8 +15,7 @@ export const createDdbSessionStorage = () =>
   createSessionStorage({
     cookie: sessionCookie,
     async createData(data, expires) {
-      console.log(data);
-      if (ZSession.pick({ user_id: true }) && expires) {
+      if (ZSession.pick({ user_id: true }).parse(data) && expires) {
         const session = await table.entities.session
           .update({ user_id: data.user_id, ttl: Math.round(expires.getDate() / 1000) }, { returnValues: "ALL_NEW" })
           .then(({ Attributes }) => ZSession.parse(Attributes));

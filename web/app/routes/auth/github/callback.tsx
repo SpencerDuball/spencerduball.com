@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect, createSession } from "@remix-run/node";
 import DynamoDB from "aws-sdk/clients/dynamodb";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { Table, ZOAuthStateCode, ZUserEntity } from "table";
@@ -92,9 +92,13 @@ export const loader: LoaderFunction = async ({ request }) => {
   user = ZUserEntity.parse(user);
 
   // create the user session
-  const [expires, domain] = [generateExpiry(), new URL(request.url).origin];
-  const session_id = await commitSession({ user_id: user.id } as any, { expires });
-  const cookie = await sessionCookie.serialize({ id: session_id, user_id: user.id }, { expires, domain });
+  const [expires, domain, secure] = [
+    generateExpiry(),
+    reqUrl.hostname === "localhost" ? undefined : reqUrl.hostname,
+    reqUrl.hostname === "localhost" ? false : true,
+  ];
+  const session = createSession({ user_id: user.id });
+  const cookie = await commitSession(session, { expires, domain, secure });
 
   return redirect(state.redirect_uri ? state.redirect_uri : new URL(request.url).origin, {
     headers: { "Set-Cookie": cookie },
