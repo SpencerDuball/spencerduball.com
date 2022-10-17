@@ -13,6 +13,7 @@ export function WebStack({ stack, app }: StackContext) {
     fields: { pk: "string", sk: "string" },
     primaryIndex: { partitionKey: "pk", sortKey: "sk" },
     cdk: { table: { billingMode: BillingMode.PAY_PER_REQUEST } },
+    timeToLiveAttribute: "ttl",
   });
 
   // create a Remix site

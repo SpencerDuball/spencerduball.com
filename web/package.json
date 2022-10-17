@@ -5,9 +5,11 @@
   "scripts": {
     "build": "remix build",
     "dev": "sst-env -- remix dev",
+    "start:dev": "pnpm -r --parallel --stream run dev",
     "start": "remix-serve build"
   },
   "dependencies": {
+    "@aws-sdk/client-ssm": "^3.188.0",
     "@chakra-ui/react": "2.3.4",
     "@dub-stack/chakra-radix-colors": "^1.0.3",
     "@emotion/cache": "^11.10.3",
@@ -19,9 +21,12 @@
     "@remix-run/node": "^1.7.2",
     "@remix-run/react": "^1.7.2",
     "@remix-run/serve": "^1.7.2",
+    "aws-sdk": "^2.1206.0",
+    "axios": "^1.1.2",
     "esbuild": "^0.15.10",
     "framer-motion": "^6.5.1",
     "mdx-bundler": "^9.0.1",
+    "ms": "3.0.0-beta.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",

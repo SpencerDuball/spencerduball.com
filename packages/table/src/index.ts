@@ -1,11 +1,11 @@
-import { DynamoDB } from "aws-sdk";
+import * as DynamoDB from "aws-sdk/clients/dynamodb";
 import { Table as DdbTable, Entity } from "dynamodb-toolbox";
-import { UserSchema } from "./entities";
+import { UserSchema, OAuthStateCodeSchema } from "./entities";
 
 export class Table {
   table: DdbTable<string, "pk", "sk">;
 
-  entities = { user: new Entity(UserSchema) };
+  entities = { user: new Entity(UserSchema), oAuthStateCode: new Entity(OAuthStateCodeSchema) };
 
   constructor(props: { tableName: string; client: DynamoDB.DocumentClient }) {
     this.table = new DdbTable({
