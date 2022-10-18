@@ -1,31 +1,57 @@
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { getPosts } from "~/model/posts.server";
+import { useLoaderData, Link } from "@remix-run/react";
+import { Flex, Grid, Text, IconButton, Icon, Container, Input, Badge } from "@chakra-ui/react";
+import { RiAddFill } from "react-icons/ri";
+import { getUser } from "~/session.server";
 
 interface LoaderData {
-  posts: Awaited<ReturnType<typeof getPosts>>;
+  isAdmin: boolean;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return json({ posts: await getPosts() });
+  const user = await getUser(request);
+
+  // check for admin role
+  let isAdmin = false;
+  if (user && user.roles && user.roles.includes("admin")) isAdmin = true;
+
+  return json({ isAdmin });
 };
 
 export default function Posts() {
-  const { posts } = useLoaderData<LoaderData>();
+  const { isAdmin } = useLoaderData<LoaderData>();
+
   return (
-    <main>
-      <h1>Posts</h1>
-      <ul>
-        {posts.map((post) => {
-          const href = `/blog/${post.slug}`;
-          return (
-            <li key={href}>
-              <a href={href}>{post.title}</a>
-            </li>
-          );
-        })}
-      </ul>
-    </main>
+    <Container maxW="container.md">
+      {/* Posts Introduction */}
+      <Grid gap={2}>
+        <Flex alignItems="center" gap={2}>
+          <Text fontSize="5xl" fontWeight="bold" flexGrow={1}>
+            Posts
+          </Text>
+          {isAdmin ? (
+            <IconButton icon={<Icon as={RiAddFill} />} aria-label="New Post" as={Link} to="/blog/new" />
+          ) : null}
+        </Flex>
+        <Text>
+          I write mostly about web development and cloud computing, and sometimes about 3D printing and circuits. I hope
+          you find something useful!
+        </Text>
+        <Input variant="filled" placeholder="Search ..." />
+        <Flex gap={2}>
+          {[
+            ["web", "green"],
+            ["aws", "blue"],
+            ["3d-print", "red"],
+            ["circuit", "yellow"],
+          ].map(([title, color]) => (
+            <Badge key={title} fontSize="sm" variant="solid" colorScheme={color}>
+              {title}
+            </Badge>
+          ))}
+        </Flex>
+      </Grid>
+    </Container>
   );
 }

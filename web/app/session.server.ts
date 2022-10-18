@@ -69,6 +69,11 @@ export async function getUser(request: Request, type?: StringEnum<"required">): 
   const user = await table.entities.user
     .get({ pk: `user#${session.data.user_id}`, sk: `user#${session.data.user_id}` })
     .then(({ Item }) => ZUser.parse(Item))
+    .then((user) => ({
+      ...user,
+      roles: user.roles ? user.roles : [],
+      permissions: user.permissions ? user.permissions : [],
+    }))
     .catch(() => null);
 
   // return the user
