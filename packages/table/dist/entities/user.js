@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZUser = exports.UserEntity = exports.UserSchema = void 0;
-const dynamodb_toolbox_1 = require("dynamodb-toolbox");
+exports.ZUser = exports.UserSchema = void 0;
 const zod_1 = require("zod");
 exports.UserSchema = {
     name: "User",
@@ -17,7 +16,6 @@ exports.UserSchema = {
         permissions: { type: "list" },
     },
 };
-exports.UserEntity = new dynamodb_toolbox_1.Entity(exports.UserSchema);
 exports.ZUser = zod_1.z.object({
     pk: zod_1.z.string(),
     sk: zod_1.z.string(),

@@ -124,7 +124,7 @@ export declare class Table {
             readonly permissions: {
                 readonly type: "list";
             };
-        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+        }>, true, "created", "modified", "entity", "modified" | "created" | "entity", "modified" | "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
             readonly pk: {
                 readonly partitionKey: true;
                 readonly type: "string";
@@ -212,16 +212,16 @@ export declare class Table {
             required: true;
         } | [any, any, {
             required: true;
-        }], "default">, "id" | "created" | "modified" | "entity" | "pk" | "sk" | "username" | "name" | "avatar_url" | "github_url" | "roles" | "permissions", never>, {
+        }], "default">, "id" | "pk" | "sk" | "modified" | "created" | "entity" | "username" | "name" | "avatar_url" | "github_url" | "roles" | "permissions", never>, {
             avatar_url?: string | undefined;
             roles?: any[] | undefined;
             permissions?: any[] | undefined;
             id: string;
-            created: string;
-            modified: string;
-            entity: string;
             pk: string;
             sk: string;
+            modified: string;
+            created: string;
+            entity: string;
             username: string;
             name: string;
             github_url: string;
@@ -230,11 +230,11 @@ export declare class Table {
             roles?: any[] | undefined;
             permissions?: any[] | undefined;
             id: string;
-            created: string;
-            modified: string;
-            entity: string;
             pk: string;
             sk: string;
+            modified: string;
+            created: string;
+            entity: string;
             username: string;
             name: string;
             github_url: string;
@@ -332,7 +332,7 @@ export declare class Table {
                 readonly type: "number";
                 readonly default: () => number;
             };
-        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+        }>, true, "created", "modified", "entity", "modified" | "created" | "entity", "modified" | "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
             readonly id: {
                 readonly type: "string";
                 readonly default: () => string;
@@ -366,26 +366,26 @@ export declare class Table {
             default: any;
         } | [any, any, {
             default: any;
-        }], "default">, "pk", never, never, "sk", never, never, "pk" | "sk", "modified", "created" | "entity", "id" | "redirect_uri" | "code" | "created" | "modified" | "entity" | "pk" | "sk" | "ttl", never>, {
+        }], "default">, "pk", never, never, "sk", never, never, "pk" | "sk", "modified", "created" | "entity", "id" | "redirect_uri" | "code" | "pk" | "sk" | "ttl" | "modified" | "created" | "entity", never>, {
             id?: string | undefined;
             redirect_uri?: string | undefined;
             code?: string | undefined;
             ttl?: number | undefined;
-            created: string;
-            modified: string;
-            entity: string;
             pk: string;
             sk: string;
+            modified: string;
+            created: string;
+            entity: string;
         }, {
             id?: string | undefined;
             redirect_uri?: string | undefined;
             code?: string | undefined;
             ttl?: number | undefined;
-            created: string;
-            modified: string;
-            entity: string;
             pk: string;
             sk: string;
+            modified: string;
+            created: string;
+            entity: string;
         }, {
             pk?: string | undefined;
             sk?: string | undefined;
@@ -471,7 +471,7 @@ export declare class Table {
                 readonly type: "number";
                 readonly required: true;
             };
-        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+        }>, true, "created", "modified", "entity", "modified" | "created" | "entity", "modified" | "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
             readonly id: {
                 readonly type: "string";
                 readonly default: () => string;
@@ -533,23 +533,23 @@ export declare class Table {
             required: true;
         } | [any, any, {
             required: true;
-        }], "default">, "id" | "created" | "modified" | "entity" | "pk" | "sk" | "ttl" | "user_id", never>, {
+        }], "default">, "id" | "pk" | "sk" | "ttl" | "modified" | "created" | "entity" | "user_id", never>, {
             id?: string | undefined;
-            created: string;
-            modified: string;
-            entity: string;
             pk: string;
             sk: string;
             ttl: number;
+            modified: string;
+            created: string;
+            entity: string;
             user_id: string;
         }, {
             id?: string | undefined;
-            created: string;
-            modified: string;
-            entity: string;
             pk: string;
             sk: string;
             ttl: number;
+            modified: string;
+            created: string;
+            entity: string;
             user_id: string;
         }, {
             pk?: string | undefined;

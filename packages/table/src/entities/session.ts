@@ -1,4 +1,3 @@
-import { Entity, EntityItem } from "dynamodb-toolbox";
 import { z } from "zod";
 import { randomBytes } from "crypto";
 
@@ -13,10 +12,6 @@ export const SessionSchema = {
   },
 } as const;
 
-export const SessionEntity = new Entity(SessionSchema);
-
-export type SessionType = EntityItem<typeof SessionEntity>;
-
 export const ZSession = z.object({
   id: z.string(),
   pk: z.string(),
@@ -27,3 +22,5 @@ export const ZSession = z.object({
   created: z.string(),
   entity: z.string(),
 });
+
+export type SessionType = ReturnType<typeof ZSession.parse>;

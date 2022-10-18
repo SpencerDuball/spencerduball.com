@@ -1,7 +1,9 @@
 import { createSessionStorage, redirect } from "@remix-run/node";
 import { sessionCookie } from "~/cookies.server";
 import DynamoDB from "aws-sdk/clients/dynamodb";
-import { Table, UserEntityType, ZSession, ZUser } from "table";
+import type { UserType } from "table";
+import { Table, ZSession, ZUser } from "table";
+import type { StringEnum } from "~/ts-utils";
 
 // check for required environment variables
 if (!process.env.REGION) throw new Error("'REGION' env-var is not defined.");
@@ -38,9 +40,20 @@ export const createDdbSessionStorage = () =>
 
 export const { getSession, commitSession, destroySession } = createDdbSessionStorage();
 
-export async function getUser(request: Request): Promise<ReturnType<typeof ZUser.parse> | null>;
-export async function getUser(request: Request, type: "required"): Promise<ReturnType<typeof ZUser.parse>>;
-export async function getUser(request: Request, type?: string): Promise<ReturnType<typeof ZUser.parse> | null> {
+/**
+ * Gets the user from the session cookie attached to the request. If user does not exist will return null.
+ *
+ * @param request The request object.
+ * @returns User or null
+ */
+export async function getUser(request: Request): Promise<UserType | null>;
+/**
+ *
+ * @param request The request object
+ * @param type
+ */
+export async function getUser(request: Request, type: "required"): Promise<UserType>;
+export async function getUser(request: Request, type?: StringEnum<"required">): Promise<UserType | null> {
   // collect info for redirect
   const redirect_uri = new URL(`${new URL(request.url).origin}/auth/github/authorize`);
   redirect_uri.searchParams.set("redirect_uri", request.url);

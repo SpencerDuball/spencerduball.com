@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZOAuthStateCode = exports.OAuthStateCodeEntity = exports.OAuthStateCodeSchema = void 0;
-const dynamodb_toolbox_1 = require("dynamodb-toolbox");
+exports.ZOAuthStateCode = exports.OAuthStateCodeSchema = void 0;
 const zod_1 = require("zod");
 const ms_1 = __importDefault(require("ms"));
 const crypto_1 = require("crypto");
@@ -20,7 +19,6 @@ exports.OAuthStateCodeSchema = {
         ttl: { type: "number", default: () => Math.round((new Date().getTime() + (0, ms_1.default)("15m")) / 1000) },
     },
 };
-exports.OAuthStateCodeEntity = new dynamodb_toolbox_1.Entity(exports.OAuthStateCodeSchema);
 exports.ZOAuthStateCode = zod_1.z.object({
     id: zod_1.z.string(),
     pk: zod_1.z.string(),

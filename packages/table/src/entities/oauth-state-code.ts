@@ -1,4 +1,3 @@
-import { Entity, EntityItem } from "dynamodb-toolbox";
 import { z } from "zod";
 import ms from "ms";
 import { randomBytes } from "crypto";
@@ -17,10 +16,6 @@ export const OAuthStateCodeSchema = {
   },
 } as const;
 
-export const OAuthStateCodeEntity = new Entity(OAuthStateCodeSchema);
-
-export type OAuthStateCodeType = EntityItem<typeof OAuthStateCodeEntity>;
-
 export const ZOAuthStateCode = z.object({
   id: z.string(),
   pk: z.string(),
@@ -32,3 +27,5 @@ export const ZOAuthStateCode = z.object({
   created: z.string(),
   entity: z.string(),
 });
+
+export type OAuthStateCode = ReturnType<typeof ZOAuthStateCode.parse>;

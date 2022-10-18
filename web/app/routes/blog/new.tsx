@@ -1,11 +1,11 @@
 import type { LoaderFunction } from "@remix-run/node";
-import type { UserEntityType } from "table";
+import type { UserType } from "table";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getUser } from "~/session.server";
 
 interface LoaderData {
-  user: UserEntityType;
+  user: UserType;
 }
 
 export const loader: LoaderFunction = async ({ request }) => {

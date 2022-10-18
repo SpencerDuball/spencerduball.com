@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ZSession = exports.SessionEntity = exports.SessionSchema = void 0;
-const dynamodb_toolbox_1 = require("dynamodb-toolbox");
+exports.ZSession = exports.SessionSchema = void 0;
 const zod_1 = require("zod");
 const crypto_1 = require("crypto");
 exports.SessionSchema = {
@@ -14,7 +13,6 @@ exports.SessionSchema = {
         ttl: { type: "number", required: true },
     },
 };
-exports.SessionEntity = new dynamodb_toolbox_1.Entity(exports.SessionSchema);
 exports.ZSession = zod_1.z.object({
     id: zod_1.z.string(),
     pk: zod_1.z.string(),

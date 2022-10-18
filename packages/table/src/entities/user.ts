@@ -1,4 +1,3 @@
-import { Entity, EntityItem } from "dynamodb-toolbox";
 import { z } from "zod";
 
 export const UserSchema = {
@@ -16,10 +15,6 @@ export const UserSchema = {
   },
 } as const;
 
-export const UserEntity = new Entity(UserSchema);
-
-export type UserEntityType = EntityItem<typeof UserEntity>;
-
 export const ZUser = z.object({
   pk: z.string(),
   sk: z.string(),
@@ -34,3 +29,5 @@ export const ZUser = z.object({
   created: z.string(),
   entity: z.string(),
 });
+
+export type UserType = ReturnType<typeof ZUser.parse>;
