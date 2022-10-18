@@ -1,7 +1,7 @@
-import { createSessionStorage } from "@remix-run/node";
+import { createSessionStorage, redirect } from "@remix-run/node";
 import { sessionCookie } from "~/cookies.server";
 import DynamoDB from "aws-sdk/clients/dynamodb";
-import { Table, ZSession } from "table";
+import { Table, UserEntityType, ZSession, ZUser } from "table";
 
 // check for required environment variables
 if (!process.env.REGION) throw new Error("'REGION' env-var is not defined.");
@@ -37,3 +37,28 @@ export const createDdbSessionStorage = () =>
   });
 
 export const { getSession, commitSession, destroySession } = createDdbSessionStorage();
+
+export async function getUser(request: Request): Promise<ReturnType<typeof ZUser.parse> | null>;
+export async function getUser(request: Request, type: "required"): Promise<ReturnType<typeof ZUser.parse>>;
+export async function getUser(request: Request, type?: string): Promise<ReturnType<typeof ZUser.parse> | null> {
+  // collect info for redirect
+  const redirect_uri = new URL(`${new URL(request.url).origin}/auth/github/authorize`);
+  redirect_uri.searchParams.set("redirect_uri", request.url);
+
+  // get the session
+  const session = await getSession(request.headers.get("cookie"));
+  if (!session.data) {
+    if (type && type === "required") return null;
+    else throw redirect(redirect_uri.toString());
+  }
+
+  // get the user
+  const user = await table.entities.user
+    .get({ pk: `user#${session.data.user_id}`, sk: `user#${session.data.user_id}` })
+    .then(({ Item }) => ZUser.parse(Item))
+    .catch(() => null);
+
+  // return the user
+  if (!user) throw redirect(redirect_uri.toString());
+  else return user;
+}

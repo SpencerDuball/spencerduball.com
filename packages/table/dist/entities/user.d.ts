@@ -284,7 +284,7 @@ export declare const UserEntity: Entity<undefined, undefined, undefined, "User",
     sk?: string | undefined;
 }>;
 export declare type UserEntityType = EntityItem<typeof UserEntity>;
-export declare const ZUserEntity: z.ZodObject<{
+export declare const ZUser: z.ZodObject<{
     pk: z.ZodString;
     sk: z.ZodString;
     id: z.ZodString;

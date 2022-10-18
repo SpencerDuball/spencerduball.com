@@ -2,10 +2,10 @@ import type { LoaderFunction } from "@remix-run/node";
 import { redirect, createSession } from "@remix-run/node";
 import DynamoDB from "aws-sdk/clients/dynamodb";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
-import { Table, ZOAuthStateCode, ZUserEntity } from "table";
+import { Table, ZOAuthStateCode, ZUser } from "table";
 import { z } from "zod";
 import axios from "axios";
-import { generateExpiry, sessionCookie } from "~/cookies.server";
+import { generateExpiry } from "~/cookies.server";
 import { commitSession } from "~/session.server";
 
 const ZCodeSearchParam = z.object({ id: z.string(), redirect_uri: z.string().optional() });
@@ -89,7 +89,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   // ensure that user has correct schema
-  user = ZUserEntity.parse(user);
+  user = ZUser.parse(user);
 
   // create the user session
   const [expires, domain, secure] = [

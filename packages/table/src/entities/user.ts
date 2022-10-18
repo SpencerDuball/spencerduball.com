@@ -20,7 +20,7 @@ export const UserEntity = new Entity(UserSchema);
 
 export type UserEntityType = EntityItem<typeof UserEntity>;
 
-export const ZUserEntity = z.object({
+export const ZUser = z.object({
   pk: z.string(),
   sk: z.string(),
   id: z.string(),
