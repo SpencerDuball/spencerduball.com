@@ -9,6 +9,7 @@ import { Grid, Container, extendTheme } from "@chakra-ui/react";
 import { Header } from "~/components";
 import { ServerStyleContext, ClientStyleContext } from "./context";
 import "@fontsource/inter/index.css";
+import { getSandpackCssText } from "@codesandbox/sandpack-react";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",

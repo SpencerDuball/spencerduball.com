@@ -41,10 +41,10 @@ export default function Posts() {
         <Input variant="filled" placeholder="Search ..." />
         <Flex gap={2}>
           {[
-            ["web", "green"],
+            ["web", "red"],
             ["aws", "blue"],
-            ["3d-print", "red"],
-            ["circuit", "yellow"],
+            ["3d-print", "orange"],
+            ["circuit", "green"],
           ].map(([title, color]) => (
             <Badge key={title} fontSize="sm" variant="solid" colorScheme={color}>
               {title}
