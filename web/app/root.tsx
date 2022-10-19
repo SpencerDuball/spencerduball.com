@@ -77,13 +77,11 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider theme={customTheme} colorModeManager={localStorageManager}>
-        <Grid gap={8}>
+        <Grid gap={8} minH="100vh" gridTemplateRows="max-content 1fr">
           <Header />
-          <Grid as="main">
-            <Container maxW="container.lg">
-              <Outlet />
-            </Container>
-          </Grid>
+          <Container as="main" maxW="container.lg">
+            <Outlet />
+          </Container>
         </Grid>
       </ChakraProvider>
     </Document>

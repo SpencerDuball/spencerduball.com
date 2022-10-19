@@ -1,8 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
 import type { UserType } from "table";
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-import { getUser } from "~/session.server";
 import { SandpackProvider, SandpackThemeProvider, SandpackCodeEditor } from "@codesandbox/sandpack-react";
 import { vim, Vim } from "@replit/codemirror-vim";
 import { cobalt2 } from "@codesandbox/sandpack-themes";
@@ -13,25 +10,25 @@ interface LoaderData {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser(request);
-  return json({ user });
+  return null;
 };
 
 export default function New() {
-  const { user } = useLoaderData<LoaderData>();
-
   Vim.defineEx("write", "w", () => {
     alert("Yoooo");
   });
 
   return (
     <>
-      <h1>New Blog Post</h1>
-      <p>Hello there {user.name}!</p>
-      <Box sx={{ "& .cm-panels": { position: "absolute", bottom: 0, left: 0 } }}>
+      <Box
+        sx={{ "& .cm-panels": { position: "absolute", bottom: 0, left: 0 } }}
+        minH="full"
+        maxH="full"
+        overflowY="scroll"
+      >
         <SandpackProvider>
-          <SandpackThemeProvider theme={cobalt2}>
-            <SandpackCodeEditor initMode="immediate" extensions={[vim()]} />
+          <SandpackThemeProvider theme={cobalt2} style={{ height: "100% !important" }}>
+            <SandpackCodeEditor initMode="immediate" extensions={[vim()]} style={{ height: "500px" }} />
           </SandpackThemeProvider>
         </SandpackProvider>
       </Box>
