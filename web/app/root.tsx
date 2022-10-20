@@ -73,6 +73,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   return null;
 };
 
+export const ChakraGapHeight = 8;
 export default function App() {
   return (
     <Document>

@@ -36,6 +36,7 @@ const NavLink = (props: NavLinkProps) => {
 
 // Header
 //////////////////////////////////////////////////////////////////////////
+export const ChakraHeaderHeight = 20;
 export interface HeaderProps extends BoxProps {}
 
 export const Header = (props: HeaderProps) => {
@@ -46,7 +47,7 @@ export const Header = (props: HeaderProps) => {
       <Container
         maxW="container.lg"
         w="full"
-        h="20"
+        h={ChakraHeaderHeight}
         display="grid"
         gridAutoFlow="column"
         justifyContent="space-between"

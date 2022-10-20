@@ -46,7 +46,7 @@ export default function Posts() {
             ["3d-print", "orange"],
             ["circuit", "green"],
           ].map(([title, color]) => (
-            <Badge key={title} fontSize="sm" variant="solid" colorScheme={color}>
+            <Badge key={title} fontSize="sm" variant="subtle" colorScheme={color}>
               {title}
             </Badge>
           ))}
