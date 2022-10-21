@@ -1,5 +1,6 @@
 import React from "react";
-import { chakra, PropsOf } from "@chakra-ui/react";
+import type { PropsOf } from "@chakra-ui/react";
+import { chakra } from "@chakra-ui/react";
 import * as RadixScroll from "@radix-ui/react-scroll-area";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 
@@ -8,7 +9,6 @@ const UnstyledScrollArea = chakra(RadixScroll.ScrollArea);
 const UnstyledScrollAreaViewport = chakra(RadixScroll.ScrollAreaViewport);
 const UnstyledScrollAreaScrollbar = chakra(RadixScroll.ScrollAreaScrollbar);
 const UnstyledScrollAreaThumb = chakra(RadixScroll.ScrollAreaThumb);
-const UnstyledScrollAreaCorner = chakra(RadixScroll.ScrollAreaCorner);
 
 // style all components
 const ScrollArea = (props: PropsOf<typeof UnstyledScrollArea>) => (
@@ -16,7 +16,7 @@ const ScrollArea = (props: PropsOf<typeof UnstyledScrollArea>) => (
 );
 
 const ScrollAreaViewport = (props: PropsOf<typeof UnstyledScrollAreaViewport>) => (
-  <UnstyledScrollAreaViewport width="full" height="full" {...props} />
+  <UnstyledScrollAreaViewport asChild width="full" height="full" style={{ height: "100%" }} {...props} />
 );
 
 const ScrollAreaScrollbar = (props: PropsOf<typeof UnstyledScrollAreaScrollbar>) => {
