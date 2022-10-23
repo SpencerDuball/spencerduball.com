@@ -51,7 +51,20 @@ const Toolbar = (props: ToolbarProps) => {
 
   return (
     <Box display="flex" flexDir={flexDir} gap={2} {...rest}>
-      <ButtonGroup isAttached flexDir={flexDir}>
+      <ButtonGroup
+        isAttached
+        flexDir={flexDir}
+        sx={{
+          "& > button:first-of-type": {
+            borderBottomRadius: flexDir === "column" ? 0 : undefined,
+            borderTopRadius: flexDir === "column" ? "md !important" : undefined,
+          },
+          "& > button:last-of-type": {
+            borderBottomRadius: flexDir === "column" ? "md !important" : undefined,
+            borderTopRadius: flexDir === "column" ? 0 : undefined,
+          },
+        }}
+      >
         <ToolbarButton
           aria-label="Toggle Dark Mode"
           icon={<Icon as={RiMoonFill} />}
@@ -106,12 +119,27 @@ const useEditorSettings = () => {
   return { settings, setSettings, isDark, isLight };
 };
 
-const useFileStorage = () => {};
+const useFileStorage = () => {
+  const onDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    [...e.dataTransfer.items].forEach(async (item, i) => {
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        console.log(`file = ${file!.name}`);
+        console.log(e);
+      }
+    });
+  };
+  const onDragOver = async (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
+
+  return { handlers: { onDrop, onDragOver } };
+};
 
 interface MdxEditorProps extends BoxProps {}
 
 export const MdxEditor = (props: MdxEditorProps) => {
   const { isDark, settings, setSettings } = useEditorSettings();
+  const { handlers } = useFileStorage();
 
   // define special commands
   Vim.defineEx("write", "w", () => {
@@ -122,20 +150,8 @@ export const MdxEditor = (props: MdxEditorProps) => {
     <ScrollBox
       sx={{ "& .cm-panels": CmPanelStyles }}
       bg={isDark ? githubDarkBg : githubLightBg}
-      maxW="100vw"
       borderRadius="xl"
-      onDrop={async (e: React.DragEvent<HTMLDivElement>) => {
-        [...e.dataTransfer.items].forEach(async (item, i) => {
-          if (item.kind === "file") {
-            const file = item.getAsFile();
-            console.log(`... file[${i}].name = ${file!.name}`);
-            console.log(await file!.text());
-          }
-        });
-        e.preventDefault();
-        console.log(e);
-      }}
-      onDragOver={(e: React.DragEvent<HTMLDivElement>) => e.preventDefault()}
+      {...handlers}
       {...props}
     >
       <CodeMirror
@@ -145,7 +161,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
           markdown({ base: markdownLanguage, codeLanguages: languages }),
         ]}
         height="100%"
-        style={{ height: "100%", paddingBottom: "50%" }}
+        style={{ height: "100%", paddingBottom: "50%", fontSize: "16px" }}
       />
       <Toolbar position="absolute" top={4} right={4} settings={settings} setSettings={setSettings} />
     </ScrollBox>
