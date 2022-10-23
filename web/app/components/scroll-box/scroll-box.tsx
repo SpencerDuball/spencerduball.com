@@ -16,7 +16,7 @@ const ScrollArea = (props: PropsOf<typeof UnstyledScrollArea>) => (
 );
 
 const ScrollAreaViewport = (props: PropsOf<typeof UnstyledScrollAreaViewport>) => (
-  <UnstyledScrollAreaViewport asChild width="full" height="full" style={{ height: "100%" }} {...props} />
+  <UnstyledScrollAreaViewport width="full" height="full" {...props} />
 );
 
 const ScrollAreaScrollbar = (props: PropsOf<typeof UnstyledScrollAreaScrollbar>) => {
