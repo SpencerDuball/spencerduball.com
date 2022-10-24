@@ -1,18 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { vim, Vim } from "@replit/codemirror-vim";
 import type { BoxProps } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
 import type { IconButtonProps } from "@chakra-ui/react";
-import { IconButton, ButtonGroup, Icon, Box, useBreakpointValue } from "@chakra-ui/react";
-import { ScrollBox } from "~/components";
-import { RiMoonFill, RiSunFill } from "react-icons/ri";
+import {
+  IconButton,
+  ButtonGroup,
+  Icon,
+  Box,
+  css,
+  Flex,
+  useTheme,
+  forwardRef,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import { RiMoonFill, RiSunFill, RiSaveFill, RiCodeSSlashFill, RiAttachment2 } from "react-icons/ri";
+import { VscPreview } from "react-icons/vsc";
 import { DiVim } from "react-icons/di";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
-import { githubLight, githubDark, githubLightBg, githubDarkBg } from ".";
+import { githubLight, githubDark } from ".";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { z } from "zod";
+import { useWindowSize } from "react-use";
 
 // settings
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -28,14 +39,15 @@ const CmPanelStyles: BoxProps["sx"] = { position: "absolute", bottom: 0, left: 0
 // Toolbar Button
 ////////////////////////////////////////////////////////////////////////////////
 interface ToolbarButtonProps extends IconButtonProps {
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 const ToolbarButton = (props: ToolbarButtonProps) => {
   const { isActive, ...rest } = props;
   const c = useThemedColor();
+  const size = useBreakpointValue({ base: "md", sm: "lg" });
   return (
-    <IconButton colorScheme="_gray" shadow="sm" size="lg" color={isActive ? c("gray.11") : c("grayA.5")} {...rest} />
+    <IconButton colorScheme="_gray" shadow="sm" size={size} color={isActive ? c("gray.11") : c("grayA.5")} {...rest} />
   );
 };
 
@@ -45,48 +57,49 @@ interface ToolbarProps extends BoxProps {
   settings: MdxEditorSettingsType;
   setSettings: (settings: MdxEditorSettingsType) => void;
 }
-const Toolbar = (props: ToolbarProps) => {
+const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   const { settings, setSettings, ...rest } = props;
-  const flexDir = useBreakpointValue({ base: "column", sm: "row" } as const);
 
   return (
-    <Box display="flex" flexDir={flexDir} gap={2} {...rest}>
-      <ButtonGroup
-        isAttached
-        flexDir={flexDir}
-        sx={{
-          "& > button:first-of-type": {
-            borderBottomRadius: flexDir === "column" ? 0 : undefined,
-            borderTopRadius: flexDir === "column" ? "md !important" : undefined,
-          },
-          "& > button:last-of-type": {
-            borderBottomRadius: flexDir === "column" ? "md !important" : undefined,
-            borderTopRadius: flexDir === "column" ? 0 : undefined,
-          },
-        }}
-      >
+    <Box ref={ref} display="flex" justifyContent="center" gap={2} {...rest}>
+      {/* Left Aligned */}
+      <Flex gap={2}>
+        <ToolbarButton aria-label="Save Post" icon={<Icon as={RiSaveFill} />} />
+      </Flex>
+      {/* Center Aligned */}
+      <Flex gap={2}>
+        <ButtonGroup isAttached>
+          <ToolbarButton aria-label="Code View" icon={<Icon as={RiCodeSSlashFill} />} />
+          <ToolbarButton aria-label="View Preview" icon={<Icon as={VscPreview} />} />
+          <ToolbarButton aria-label="View Attachments" icon={<Icon as={RiAttachment2} />} />
+        </ButtonGroup>
+      </Flex>
+      {/* Right Aligned */}
+      <Flex gap={2}>
+        <ButtonGroup isAttached>
+          <ToolbarButton
+            aria-label="Toggle Dark Mode"
+            icon={<Icon as={RiMoonFill} />}
+            isActive={settings.theme === "dark"}
+            onClick={() => setSettings({ ...settings, theme: settings.theme === "dark" ? "system" : "dark" })}
+          />
+          <ToolbarButton
+            aria-label="Toggle Light Mode"
+            icon={<Icon as={RiSunFill} />}
+            isActive={settings.theme === "light"}
+            onClick={() => setSettings({ ...settings, theme: settings.theme === "light" ? "system" : "light" })}
+          />
+        </ButtonGroup>
         <ToolbarButton
-          aria-label="Toggle Dark Mode"
-          icon={<Icon as={RiMoonFill} />}
-          isActive={settings.theme === "dark"}
-          onClick={() => setSettings({ ...settings, theme: settings.theme === "dark" ? "system" : "dark" })}
+          aria-label="Toggle Vim Mode"
+          icon={<Icon as={DiVim} />}
+          isActive={settings.isVim}
+          onClick={() => setSettings({ ...settings, isVim: !settings.isVim })}
         />
-        <ToolbarButton
-          aria-label="Toggle Light Mode"
-          icon={<Icon as={RiSunFill} />}
-          isActive={settings.theme === "light"}
-          onClick={() => setSettings({ ...settings, theme: settings.theme === "light" ? "system" : "light" })}
-        />
-      </ButtonGroup>
-      <ToolbarButton
-        aria-label="Toggle Vim Mode"
-        icon={<Icon as={DiVim} />}
-        isActive={settings.isVim}
-        onClick={() => setSettings({ ...settings, isVim: !settings.isVim })}
-      />
+      </Flex>
     </Box>
   );
-};
+});
 
 // MdxEditor
 ////////////////////////////////////////////////////////////////////////////////
@@ -141,29 +154,47 @@ export const MdxEditor = (props: MdxEditorProps) => {
   const { isDark, settings, setSettings } = useEditorSettings();
   const { handlers } = useFileStorage();
 
+  // need to compute the height as CodeMirror must be supplied with a non-dynamic height value
+  useWindowSize(); // will trigger a re-render on window resize
+  const containerRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const containerHeight = containerRef && containerRef.current ? containerRef.current.clientHeight : 0;
+  const toolbarHeight = toolbarRef && toolbarRef.current ? toolbarRef.current.clientHeight : 0;
+  const cmHeight = containerHeight && toolbarHeight ? `${containerHeight - toolbarHeight}px` : "100%";
+
   // define special commands
   Vim.defineEx("write", "w", () => {
     alert("Have writtin to the db!");
   });
 
+  // define codemirror styles
+  const theme = useTheme();
+  const codeMirrorStyle = css({
+    height: cmHeight,
+    fontSize: "16px",
+    borderRadius: "lg",
+    overflow: "hidden",
+  })(theme);
+
   return (
-    <ScrollBox
+    <Box
+      ref={containerRef}
       sx={{ "& .cm-panels": CmPanelStyles }}
-      bg={isDark ? githubDarkBg : githubLightBg}
-      borderRadius="xl"
+      display="grid"
+      gridTemplateRows="min-content 1fr"
       {...handlers}
       {...props}
     >
+      <Toolbar ref={toolbarRef} pb={2} settings={settings} setSettings={setSettings} />
       <CodeMirror
         theme={isDark ? githubDark : githubLight}
         extensions={[
           ...(settings.isVim ? [vim()] : []),
           markdown({ base: markdownLanguage, codeLanguages: languages }),
         ]}
-        height="100%"
-        style={{ height: "100%", paddingBottom: "50%", fontSize: "16px" }}
+        height={cmHeight}
+        style={codeMirrorStyle}
       />
-      <Toolbar position="absolute" top={4} right={4} settings={settings} setSettings={setSettings} />
-    </ScrollBox>
+    </Box>
   );
 };

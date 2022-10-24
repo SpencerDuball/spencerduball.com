@@ -1,6 +1,6 @@
 import React from "react";
 import type { PropsOf } from "@chakra-ui/react";
-import { chakra } from "@chakra-ui/react";
+import { chakra, forwardRef } from "@chakra-ui/react";
 import * as RadixScroll from "@radix-ui/react-scroll-area";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 
@@ -15,9 +15,9 @@ const ScrollArea = (props: PropsOf<typeof UnstyledScrollArea>) => (
   <UnstyledScrollArea overflow="hidden" type="scroll" {...props} />
 );
 
-const ScrollAreaViewport = (props: PropsOf<typeof UnstyledScrollAreaViewport>) => (
-  <UnstyledScrollAreaViewport width="full" height="full" {...props} />
-);
+const ScrollAreaViewport = forwardRef((props: PropsOf<typeof UnstyledScrollAreaViewport>, ref) => (
+  <UnstyledScrollAreaViewport width="full" height="full" ref={ref} {...props} />
+));
 
 const ScrollAreaScrollbar = (props: PropsOf<typeof UnstyledScrollAreaScrollbar>) => {
   const c = useThemedColor();
@@ -64,11 +64,11 @@ const ScrollAreaThumb = (props: PropsOf<typeof UnstyledScrollAreaThumb>) => {
 // ScrollBox
 export interface ScrollBoxProps extends PropsOf<typeof ScrollArea> {}
 
-export const ScrollBox = (props: ScrollBoxProps) => {
+export const ScrollBox = forwardRef<PropsOf<typeof ScrollAreaViewport>, "div">((props, ref) => {
   const { children, ...rest } = props;
   return (
     <ScrollArea {...rest}>
-      <ScrollAreaViewport>{children}</ScrollAreaViewport>
+      <ScrollAreaViewport ref={ref}>{children}</ScrollAreaViewport>
       <ScrollAreaScrollbar orientation="vertical">
         <ScrollAreaThumb />
       </ScrollAreaScrollbar>
@@ -77,4 +77,4 @@ export const ScrollBox = (props: ScrollBoxProps) => {
       </ScrollAreaScrollbar>
     </ScrollArea>
   );
-};
+});

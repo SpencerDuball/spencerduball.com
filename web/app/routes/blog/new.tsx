@@ -15,7 +15,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function New() {
   return (
-    <Box h={`calc(100vh - ${(ChakraHeaderHeight + ChakraGapHeight) * 4}px)`} maxW={`calc(100vw - ${8 * 4}px)`} py={8}>
+    <Box h={`calc(100vh - ${(ChakraHeaderHeight + ChakraGapHeight) * 4}px)`} maxW={`calc(100vw - ${8 * 4}px)`} pb={8}>
       <MdxEditor h="full" />
     </Box>
   );
