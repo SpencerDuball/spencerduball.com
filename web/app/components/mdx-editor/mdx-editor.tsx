@@ -30,6 +30,7 @@ const MdxEditorSettingsKey = "mdx-editor-settings";
 const ZMdxEditorSettings = z.object({
   isVim: z.boolean(),
   theme: z.literal("light").or(z.literal("dark")).or(z.literal("system")),
+  view: z.literal("code").or(z.literal("preview")).or(z.literal("attachments")),
 });
 type MdxEditorSettingsType = z.infer<typeof ZMdxEditorSettings>;
 
@@ -47,7 +48,14 @@ const ToolbarButton = (props: ToolbarButtonProps) => {
   const c = useThemedColor();
   const size = useBreakpointValue({ base: "md", sm: "lg" });
   return (
-    <IconButton colorScheme="_gray" shadow="sm" size={size} color={isActive ? c("gray.11") : c("grayA.5")} {...rest} />
+    <IconButton
+      isActive={isActive}
+      colorScheme="_gray"
+      shadow="sm"
+      size={size}
+      color={isActive ? c("gray.11") : c("grayA.5")}
+      {...rest}
+    />
   );
 };
 
@@ -59,19 +67,35 @@ interface ToolbarProps extends BoxProps {
 }
 const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   const { settings, setSettings, ...rest } = props;
+  const c = useThemedColor();
 
   return (
     <Box ref={ref} display="flex" justifyContent="center" gap={2} {...rest}>
       {/* Left Aligned */}
       <Flex gap={2}>
-        <ToolbarButton aria-label="Save Post" icon={<Icon as={RiSaveFill} />} />
+        <ToolbarButton isDisabled color={c("gray.9")} aria-label="Save Post" icon={<Icon as={RiSaveFill} />} />
       </Flex>
       {/* Center Aligned */}
       <Flex gap={2}>
         <ButtonGroup isAttached>
-          <ToolbarButton aria-label="Code View" icon={<Icon as={RiCodeSSlashFill} />} />
-          <ToolbarButton aria-label="View Preview" icon={<Icon as={VscPreview} />} />
-          <ToolbarButton aria-label="View Attachments" icon={<Icon as={RiAttachment2} />} />
+          <ToolbarButton
+            aria-label="Code View"
+            icon={<Icon as={RiCodeSSlashFill} />}
+            isActive={settings.view === "code"}
+            onClick={() => setSettings({ ...settings, view: "code" })}
+          />
+          <ToolbarButton
+            aria-label="View Preview"
+            icon={<Icon as={VscPreview} />}
+            isActive={settings.view === "preview"}
+            onClick={() => setSettings({ ...settings, view: "preview" })}
+          />
+          <ToolbarButton
+            aria-label="View Attachments"
+            icon={<Icon as={RiAttachment2} />}
+            isActive={settings.view === "attachments"}
+            onClick={() => setSettings({ ...settings, view: "attachments" })}
+          />
         </ButtonGroup>
       </Flex>
       {/* Right Aligned */}
@@ -108,6 +132,7 @@ const useEditorSettings = () => {
   const [settings, setSettings] = useState<MdxEditorSettingsType>({
     isVim: false,
     theme: "system",
+    view: "code",
   });
 
   // determine computed editor theme
@@ -156,8 +181,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
 
   // need to compute the height as CodeMirror must be supplied with a non-dynamic height value
   useWindowSize(); // will trigger a re-render on window resize
-  const containerRef = useRef<HTMLDivElement>(null);
-  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [containerRef, toolbarRef] = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
   const containerHeight = containerRef && containerRef.current ? containerRef.current.clientHeight : 0;
   const toolbarHeight = toolbarRef && toolbarRef.current ? toolbarRef.current.clientHeight : 0;
   const cmHeight = containerHeight && toolbarHeight ? `${containerHeight - toolbarHeight}px` : "100%";
