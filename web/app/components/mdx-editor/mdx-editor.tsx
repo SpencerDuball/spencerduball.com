@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { vim, Vim } from "@replit/codemirror-vim";
-import type { BoxProps } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
-import type { IconButtonProps } from "@chakra-ui/react";
+import type { IconButtonProps, BoxProps } from "@chakra-ui/react";
 import {
   IconButton,
   ButtonGroup,
@@ -10,6 +9,7 @@ import {
   Box,
   css,
   Flex,
+  Text,
   useTheme,
   forwardRef,
   useBreakpointValue,
@@ -17,13 +17,15 @@ import {
 import { RiMoonFill, RiSunFill, RiSaveFill, RiCodeSSlashFill, RiAttachment2 } from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
 import { DiVim } from "react-icons/di";
+import type { ReactCodeMirrorProps, ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { githubLight, githubDark } from ".";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
-import { z } from "zod";
 import { useWindowSize } from "react-use";
+import { ScrollBox } from "~/components";
+import { z } from "zod";
 
 // settings
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -125,8 +127,35 @@ const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   );
 });
 
+// Image Attachment
+////////////////////////////////////////////////////////////////////////////////
+type MdxRemoteImageType = { type: "remote"; name: string; url: string };
+type MdxLocalImageType = { type: "local"; name: string; file: File };
+type MdxImageType = MdxRemoteImageType | MdxLocalImageType;
+
+interface ImageAttachmentProps extends BoxProps {
+  image: MdxImageType;
+}
+
+const ImageAttachment = (props: ImageAttachmentProps) => {
+  const { image, ...rest } = props;
+  const c = useThemedColor();
+
+  if (image.type === "local") {
+    return <Box display="grid" borderRadius="lg" h="xs" w="2xs" boxShadow="md" bg={c("_gray.3")} {...rest}></Box>;
+  }
+  throw new Error("yo");
+};
+
 // MdxEditor
 ////////////////////////////////////////////////////////////////////////////////
+type EditorState = {
+  value: string;
+  editor: ReactCodeMirrorRef["state"];
+  scrollPos: { x: number; y: number };
+  images: MdxImageType[];
+};
+
 const useEditorSettings = () => {
   const { colorMode } = useColorMode();
   const [settings, setSettings] = useState<MdxEditorSettingsType>({
@@ -157,27 +186,58 @@ const useEditorSettings = () => {
   return { settings, setSettings, isDark, isLight };
 };
 
-const useFileStorage = () => {
+const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
+  const [editorState, setEditorState] = useState<EditorState>({
+    value: "",
+    editor: undefined,
+    scrollPos: { y: 0, x: 0 },
+    images: [],
+  });
+
+  const onChange: NonNullable<ReactCodeMirrorProps["onChange"]> = (value, viewUpdate) => {
+    const scrollDOM = editorRef.current?.view?.scrollDOM;
+    const scrollPos = scrollDOM ? { y: scrollDOM.scrollTop, x: scrollDOM.scrollLeft } : { x: 0, y: 0 };
+    setEditorState({ ...editorState, value, editor: viewUpdate.state, scrollPos });
+  };
+
   const onDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    [...e.dataTransfer.items].forEach(async (item, i) => {
-      if (item.kind === "file") {
-        const file = item.getAsFile();
-        console.log(`file = ${file!.name}`);
-        console.log(e);
+
+    // capture the file details
+    const dtItem = e.dataTransfer.items[0];
+    if (dtItem.kind === "file") {
+      const file = dtItem.getAsFile();
+      if (file) {
+        let newImage = { type: "local", name: file.name, file } as const;
+        setEditorState({ ...editorState, images: [...editorState.images, newImage] });
       }
-    });
+    }
   };
+
   const onDragOver = async (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
 
-  return { handlers: { onDrop, onDragOver } };
+  // restore scroll position
+  useEffect(() => {
+    setTimeout(() => {
+      const scrollDOM = editorRef.current?.view?.scrollDOM;
+      if (scrollDOM) {
+        scrollDOM.scrollTo({ top: editorState.scrollPos.y, left: editorState.scrollPos.x });
+      }
+    }, 1);
+  }, [editorRef.current]);
+
+  return { editorState, setEditorState, handlers: { onChange, onDrop, onDragOver } };
 };
 
 interface MdxEditorProps extends BoxProps {}
 
 export const MdxEditor = (props: MdxEditorProps) => {
+  // setup editor settings
   const { isDark, settings, setSettings } = useEditorSettings();
-  const { handlers } = useFileStorage();
+
+  // setup editor state
+  const editorRef = useRef<ReactCodeMirrorRef>(null);
+  const { editorState, handlers } = useEditorState(editorRef);
 
   // need to compute the height as CodeMirror must be supplied with a non-dynamic height value
   useWindowSize(); // will trigger a re-render on window resize
@@ -206,19 +266,31 @@ export const MdxEditor = (props: MdxEditorProps) => {
       sx={{ "& .cm-panels": CmPanelStyles }}
       display="grid"
       gridTemplateRows="min-content 1fr"
-      {...handlers}
       {...props}
     >
       <Toolbar ref={toolbarRef} pb={2} settings={settings} setSettings={setSettings} />
-      <CodeMirror
-        theme={isDark ? githubDark : githubLight}
-        extensions={[
-          ...(settings.isVim ? [vim()] : []),
-          markdown({ base: markdownLanguage, codeLanguages: languages }),
-        ]}
-        height={cmHeight}
-        style={codeMirrorStyle}
-      />
+      {settings.view === "code" ? (
+        <CodeMirror
+          ref={editorRef}
+          initialState={editorState.editor ? { json: editorState.editor.toJSON() } : undefined}
+          value={editorState.value}
+          theme={isDark ? githubDark : githubLight}
+          extensions={[
+            ...(settings.isVim ? [vim()] : []),
+            markdown({ base: markdownLanguage, codeLanguages: languages }),
+          ]}
+          height={cmHeight}
+          style={codeMirrorStyle}
+          {...handlers}
+        />
+      ) : null}
+      {settings.view === "attachments" ? (
+        <ScrollBox height="full">
+          {editorState.images.length > 0
+            ? editorState.images.map((img) => <ImageAttachment key={img.name} image={img} />)
+            : "No images"}
+        </ScrollBox>
+      ) : null}
     </Box>
   );
 };
