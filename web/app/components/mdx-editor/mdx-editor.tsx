@@ -70,6 +70,7 @@ interface ToolbarProps extends BoxProps {
 const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   const { settings, setSettings, ...rest } = props;
   const c = useThemedColor();
+  console.log("render toolbar ...");
 
   return (
     <Box ref={ref} display="flex" justifyContent="center" gap={2} {...rest}>
