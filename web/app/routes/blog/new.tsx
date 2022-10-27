@@ -1,15 +1,36 @@
-import type { LoaderFunction } from "@remix-run/node";
-import type { UserType } from "table";
+import type { ActionFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Box } from "@chakra-ui/react";
 import { ChakraHeaderHeight } from "~/components";
 import { ChakraGapHeight } from "~/root";
 import { MdxEditor } from "~/components";
+import { bundle } from "~/components/mdx-editor";
+import { z, ZodError } from "zod";
 
-interface LoaderData {
-  user: UserType;
-}
+const ZBlogPostBundle = z.object({
+  code: z.string(),
+  frontmatter: z.object({
+    title: z.string().min(3),
+    author: z.string().min(3),
+    tags: z.string().array(),
+  }),
+});
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+
+  // handle actions
+  switch (formData.get("_action")) {
+    case "mdx-editor-preview": {
+      return await z
+        .string()
+        .parseAsync(formData.get("mdx-editor-value"))
+        .then(async (source) => ZBlogPostBundle.parseAsync(await bundle(source)))
+        .then((source) => json(source))
+        .catch((e: ZodError) => json({ errorMessage: e.message }, 400));
+    }
+  }
+
   return null;
 };
 

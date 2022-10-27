@@ -9,7 +9,6 @@ import {
   Box,
   css,
   Flex,
-  Text,
   useTheme,
   forwardRef,
   useBreakpointValue,
@@ -26,6 +25,8 @@ import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { useWindowSize } from "react-use";
 import { ScrollBox } from "~/components";
 import { z } from "zod";
+import { useActionData, Form } from "@remix-run/react";
+import { getMDXComponent } from "mdx-bundler/client";
 
 // settings
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -70,13 +71,12 @@ interface ToolbarProps extends BoxProps {
 const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   const { settings, setSettings, ...rest } = props;
   const c = useThemedColor();
-  console.log("render toolbar ...");
 
   return (
     <Box ref={ref} display="flex" justifyContent="center" gap={2} {...rest}>
       {/* Left Aligned */}
       <Flex gap={2}>
-        <ToolbarButton isDisabled color={c("gray.9")} aria-label="Save Post" icon={<Icon as={RiSaveFill} />} />
+        <ToolbarButton color={c("gray.9")} aria-label="Save Post" icon={<Icon as={RiSaveFill} />} />
       </Flex>
       {/* Center Aligned */}
       <Flex gap={2}>
@@ -92,6 +92,9 @@ const Toolbar = forwardRef((props: ToolbarProps, ref) => {
             icon={<Icon as={VscPreview} />}
             isActive={settings.view === "preview"}
             onClick={() => setSettings({ ...settings, view: "preview" })}
+            type="submit"
+            name="_action"
+            value="mdx-editor-preview"
           />
           <ToolbarButton
             aria-label="View Attachments"
@@ -230,6 +233,20 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
   return { editorState, setEditorState, handlers: { onChange, onDrop, onDragOver } };
 };
 
+const useCodeMirrorHeight = () => {
+  const [containerRef, toolbarRef] = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+
+  // will trigger a re-render on window resize, needed to trigger height recomputation
+  useWindowSize();
+
+  // compute the heights
+  const containerHeight = containerRef && containerRef.current ? containerRef.current.clientHeight : 0;
+  const toolbarHeight = toolbarRef && toolbarRef.current ? toolbarRef.current.clientHeight : 0;
+  const height = containerHeight && toolbarHeight ? `${containerHeight - toolbarHeight}px` : "100%";
+
+  return { height, containerRef, toolbarRef };
+};
+
 interface MdxEditorProps extends BoxProps {}
 
 export const MdxEditor = (props: MdxEditorProps) => {
@@ -240,26 +257,19 @@ export const MdxEditor = (props: MdxEditorProps) => {
   const editorRef = useRef<ReactCodeMirrorRef>(null);
   const { editorState, handlers } = useEditorState(editorRef);
 
-  // need to compute the height as CodeMirror must be supplied with a non-dynamic height value
-  useWindowSize(); // will trigger a re-render on window resize
-  const [containerRef, toolbarRef] = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
-  const containerHeight = containerRef && containerRef.current ? containerRef.current.clientHeight : 0;
-  const toolbarHeight = toolbarRef && toolbarRef.current ? toolbarRef.current.clientHeight : 0;
-  const cmHeight = containerHeight && toolbarHeight ? `${containerHeight - toolbarHeight}px` : "100%";
+  // get the non-dynamic height of codemirror
+  const { height, containerRef, toolbarRef } = useCodeMirrorHeight();
+
+  // define codemirror styles
+  const codeMirrorStyle = css({ height, fontSize: "16px", borderRadius: "lg", overflow: "hidden" })(useTheme());
 
   // define special commands
   Vim.defineEx("write", "w", () => {
     alert("Have writtin to the db!");
   });
 
-  // define codemirror styles
-  const theme = useTheme();
-  const codeMirrorStyle = css({
-    height: cmHeight,
-    fontSize: "16px",
-    borderRadius: "lg",
-    overflow: "hidden",
-  })(theme);
+  const data = useActionData();
+  console.log(data);
 
   return (
     <Box
@@ -269,29 +279,33 @@ export const MdxEditor = (props: MdxEditorProps) => {
       gridTemplateRows="min-content 1fr"
       {...props}
     >
-      <Toolbar ref={toolbarRef} pb={2} settings={settings} setSettings={setSettings} />
-      {settings.view === "code" ? (
-        <CodeMirror
-          ref={editorRef}
-          initialState={editorState.editor ? { json: editorState.editor.toJSON() } : undefined}
-          value={editorState.value}
-          theme={isDark ? githubDark : githubLight}
-          extensions={[
-            ...(settings.isVim ? [vim()] : []),
-            markdown({ base: markdownLanguage, codeLanguages: languages }),
-          ]}
-          height={cmHeight}
-          style={codeMirrorStyle}
-          {...handlers}
-        />
-      ) : null}
-      {settings.view === "attachments" ? (
-        <ScrollBox height="full">
-          {editorState.images.length > 0
-            ? editorState.images.map((img) => <ImageAttachment key={img.name} image={img} />)
-            : "No images"}
-        </ScrollBox>
-      ) : null}
+      <Form method="post">
+        <input name="mdx-editor-value" value={editorState.value} type="hidden" />
+        <Toolbar ref={toolbarRef} pb={2} settings={settings} setSettings={setSettings} />
+        {settings.view === "code" ? (
+          <CodeMirror
+            ref={editorRef}
+            initialState={editorState.editor ? { json: editorState.editor.toJSON() } : undefined}
+            value={editorState.value}
+            theme={isDark ? githubDark : githubLight}
+            extensions={[
+              ...(settings.isVim ? [vim()] : []),
+              markdown({ base: markdownLanguage, codeLanguages: languages }),
+            ]}
+            height={height}
+            style={codeMirrorStyle}
+            {...handlers}
+          />
+        ) : null}
+        {settings.view === "preview" && data && data.code ? getMDXComponent(data.code)({ props: {} }) : null}
+        {settings.view === "attachments" ? (
+          <ScrollBox height="full">
+            {editorState.images.length > 0
+              ? editorState.images.map((img) => <ImageAttachment key={img.name} image={img} />)
+              : "No images"}
+          </ScrollBox>
+        ) : null}
+      </Form>
     </Box>
   );
 };
