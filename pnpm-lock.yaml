@@ -93,6 +93,8 @@ importers:
       framer-motion: ^6.5.1
       mdx-bundler: ^9.0.1
       ms: 3.0.0-beta.2
+      prettier: ^2.7.1
+      prism-react-renderer: ^1.3.5
       react: ^18.2.0
       react-dom: ^18.2.0
       react-icons: ^4.4.0
@@ -128,6 +130,8 @@ importers:
       framer-motion: 6.5.1_biqbaboplfbrettd7655fr4n2y
       mdx-bundler: 9.0.1_esbuild@0.15.10
       ms: 3.0.0-beta.2
+      prettier: 2.7.1
+      prism-react-renderer: 1.3.5_react@18.2.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-icons: 4.4.0_react@18.2.0
@@ -11821,7 +11825,6 @@ packages:
     resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
     hasBin: true
-    dev: true
 
   /pretty-format/27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
@@ -11838,6 +11841,14 @@ packages:
     dependencies:
       parse-ms: 2.1.0
     dev: true
+
+  /prism-react-renderer/1.3.5_react@18.2.0:
+    resolution: {integrity: sha512-IJ+MSwBWKG+SM3b2SUfdrhC+gu01QkV2KmRQgREThBfSQRoufqRfxfHUxpG1WcaFjP+kojcFyO9Qqtpgt3qLCg==}
+    peerDependencies:
+      react: '>=0.14.9'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}

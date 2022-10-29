@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { vim, Vim } from "@replit/codemirror-vim";
-import { useColorMode } from "@chakra-ui/react";
-import type { IconButtonProps, BoxProps } from "@chakra-ui/react";
 import {
+  Alert,
+  AlertIcon,
+  Grid,
+  Image,
+  useColorMode,
   IconButton,
   ButtonGroup,
   Icon,
@@ -10,10 +13,25 @@ import {
   css,
   Flex,
   useTheme,
+  AspectRatio,
   forwardRef,
   useBreakpointValue,
+  useClipboard,
+  Text,
+  Link,
 } from "@chakra-ui/react";
-import { RiMoonFill, RiSunFill, RiSaveFill, RiCodeSSlashFill, RiAttachment2 } from "react-icons/ri";
+import type { IconButtonProps, BoxProps, AspectRatioProps } from "@chakra-ui/react";
+import {
+  RiMoonFill,
+  RiSunFill,
+  RiSaveFill,
+  RiCodeSSlashFill,
+  RiAttachment2,
+  RiLink,
+  RiExternalLinkFill,
+  RiCheckFill,
+  RiImageAddFill,
+} from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
 import { DiVim } from "react-icons/di";
 import type { ReactCodeMirrorProps, ReactCodeMirrorRef } from "@uiw/react-codemirror";
@@ -25,8 +43,26 @@ import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { useWindowSize } from "react-use";
 import { ScrollBox } from "~/components";
 import { z } from "zod";
-import { useActionData, Form } from "@remix-run/react";
+import { useActionData, Form, useSubmit } from "@remix-run/react";
 import { getMDXComponent } from "mdx-bundler/client";
+import { components } from "./mdx-components";
+
+// constants
+const InitialMdxContent = `---
+title: New Blog Post
+tags: []
+---
+
+## New Blog Post
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+labore et dolore magna aliqua. Velit egestas dui id ornare arcu odio ut. Vulputate odio ut enim
+blandit volutpat maecenas volutpat blandit. Nulla pharetra diam sit amet nisl suscipit.
+Suspendisse in est ante in nibh. Nunc lobortis mattis aliquam faucibus purus. Aliquam ut porttitor
+leo a diam sollicitudin tempor id eu. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Justo
+eget magna fermentum iaculis eu non diam phasellus. Laoreet suspendisse interdum consectetur
+libero id faucibus nisl. Sagittis orci a scelerisque purus semper eget duis at.
+`;
 
 // settings
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -37,8 +73,19 @@ const ZMdxEditorSettings = z.object({
 });
 type MdxEditorSettingsType = z.infer<typeof ZMdxEditorSettings>;
 
+// editor state
+type EditorState = {
+  value: string;
+  editor: ReactCodeMirrorRef["state"];
+  scrollPos: { x: number; y: number };
+  images: MdxImageType[];
+};
+
 // Vim Command - this is the vim command component styles, ex: "--insert-- :w"
 const CmPanelStyles: BoxProps["sx"] = { position: "absolute", bottom: 0, left: 0 };
+////////////////////////////////////////////////////////////////////////////////
+// Toolbar
+////////////////////////////////////////////////////////////////////////////////
 
 // Toolbar Button
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,10 +114,21 @@ const ToolbarButton = (props: ToolbarButtonProps) => {
 interface ToolbarProps extends BoxProps {
   settings: MdxEditorSettingsType;
   setSettings: (settings: MdxEditorSettingsType) => void;
+  editorState: EditorState;
 }
 const Toolbar = forwardRef((props: ToolbarProps, ref) => {
-  const { settings, setSettings, ...rest } = props;
+  const { settings, setSettings, editorState, ...rest } = props;
   const c = useThemedColor();
+  const submit = useSubmit();
+
+  // switch to preview mode
+  const toPreview = () => {
+    setSettings({ ...settings, view: "preview" });
+    let data = new FormData();
+    data.append("mdx-editor-value", editorState.value);
+    data.append("_action", "mdx-editor-preview");
+    submit(data, { method: "post" });
+  };
 
   return (
     <Box ref={ref} display="flex" justifyContent="center" gap={2} {...rest}>
@@ -91,10 +149,7 @@ const Toolbar = forwardRef((props: ToolbarProps, ref) => {
             aria-label="View Preview"
             icon={<Icon as={VscPreview} />}
             isActive={settings.view === "preview"}
-            onClick={() => setSettings({ ...settings, view: "preview" })}
-            type="submit"
-            name="_action"
-            value="mdx-editor-preview"
+            onClick={toPreview}
           />
           <ToolbarButton
             aria-label="View Attachments"
@@ -131,35 +186,95 @@ const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   );
 });
 
-// Image Attachment
+////////////////////////////////////////////////////////////////////////////////
+// Attachments
 ////////////////////////////////////////////////////////////////////////////////
 type MdxRemoteImageType = { type: "remote"; name: string; url: string };
-type MdxLocalImageType = { type: "local"; name: string; file: File };
+type MdxLocalImageType = { type: "local"; name: string; url: string; file: File };
 type MdxImageType = MdxRemoteImageType | MdxLocalImageType;
 
+// Image Attachment
+////////////////////////////////////////////////////////////////////////////////
 interface ImageAttachmentProps extends BoxProps {
   image: MdxImageType;
 }
 
 const ImageAttachment = (props: ImageAttachmentProps) => {
   const { image, ...rest } = props;
+  const { hasCopied, onCopy } = useClipboard(image.url);
+
+  return (
+    <AspectRatio
+      borderRadius="lg"
+      overflow="hidden"
+      boxShadow="md"
+      ratio={1}
+      position="relative"
+      sx={{ "&:hover > [data-image-overlay]": { visibility: "visible" } }}
+      {...rest}
+    >
+      <>
+        <Image src={image.url} h="full" w="full" objectFit="cover" />
+        <Grid
+          data-image-overlay
+          visibility="hidden"
+          position="absolute"
+          top={0}
+          left={0}
+          h="full"
+          w="full"
+          _hover={{ bg: "blackA.9" }}
+        >
+          <Flex flexDir="column" position="absolute" top={2} right={2} gap={2}>
+            <IconButton
+              icon={<Icon as={hasCopied ? RiCheckFill : RiLink} />}
+              onClick={onCopy}
+              aria-label="copy url to clipboard"
+            />
+            <IconButton
+              as={Link}
+              href={image.url}
+              icon={<Icon as={RiExternalLinkFill} />}
+              aria-label="open image in new tab"
+              isExternal
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </Flex>
+        </Grid>
+      </>
+    </AspectRatio>
+  );
+};
+
+// ImageUpload
+////////////////////////////////////////////////////////////////////////////////
+interface ImageUploadProps extends AspectRatioProps {}
+
+const ImageUpload = (props: ImageUploadProps) => {
   const c = useThemedColor();
 
-  if (image.type === "local") {
-    return <Box display="grid" borderRadius="lg" h="xs" w="2xs" boxShadow="md" bg={c("_gray.3")} {...rest}></Box>;
-  }
-  throw new Error("yo");
+  return (
+    <AspectRatio
+      borderRadius="lg"
+      overflow="hidden"
+      borderStyle="dashed"
+      borderWidth={4}
+      borderColor={c("_grayA.6")}
+      color={c("_grayA.6")}
+      ratio={1}
+      {...props}
+    >
+      <Grid placeItems="center">
+        <Icon h="25%" w="25%" as={RiImageAddFill} />
+      </Grid>
+    </AspectRatio>
+  );
 };
 
-// MdxEditor
 ////////////////////////////////////////////////////////////////////////////////
-type EditorState = {
-  value: string;
-  editor: ReactCodeMirrorRef["state"];
-  scrollPos: { x: number; y: number };
-  images: MdxImageType[];
-};
-
+// Code
+////////////////////////////////////////////////////////////////////////////////
 const useEditorSettings = () => {
   const { colorMode } = useColorMode();
   const [settings, setSettings] = useState<MdxEditorSettingsType>({
@@ -192,7 +307,7 @@ const useEditorSettings = () => {
 
 const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
   const [editorState, setEditorState] = useState<EditorState>({
-    value: "",
+    value: InitialMdxContent,
     editor: undefined,
     scrollPos: { y: 0, x: 0 },
     images: [],
@@ -212,8 +327,25 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
     if (dtItem.kind === "file") {
       const file = dtItem.getAsFile();
       if (file) {
-        let newImage = { type: "local", name: file.name, file } as const;
-        setEditorState({ ...editorState, images: [...editorState.images, newImage] });
+        console.log(file.type);
+        let newImage = { type: "local", name: file.name, url: URL.createObjectURL(file), file } as const;
+        const target = e.target as HTMLElement;
+
+        if (target.className.includes("cm-line")) {
+          // if input on specific line, append to that line
+          const lineIndex = Array.from(target.parentNode!.children).indexOf(target);
+          const lines = editorState.value.split("\n");
+          lines[lineIndex] += `![${newImage.name}](${newImage.url})`;
+          if (file.type.includes("image/"))
+            setEditorState({ ...editorState, images: [...editorState.images, newImage], value: lines.join("\n") });
+          // TODO: Add support for video files.
+        } else {
+          // if input to editor as a whole, add a new line
+          const lines = [...editorState.value.split("\n"), `![${newImage.name}](${newImage.url})`];
+          if (file.type.includes("images/"))
+            setEditorState({ ...editorState, images: [...editorState.images, newImage], value: lines.join("\n") });
+          // TODO: Add support for video files.
+        }
       }
     }
   };
@@ -233,7 +365,7 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
   return { editorState, setEditorState, handlers: { onChange, onDrop, onDragOver } };
 };
 
-const useCodeMirrorHeight = () => {
+const useCodeMirrorDimensions = () => {
   const [containerRef, toolbarRef] = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
 
   // will trigger a re-render on window resize, needed to trigger height recomputation
@@ -244,9 +376,14 @@ const useCodeMirrorHeight = () => {
   const toolbarHeight = toolbarRef && toolbarRef.current ? toolbarRef.current.clientHeight : 0;
   const height = containerHeight && toolbarHeight ? `${containerHeight - toolbarHeight}px` : "100%";
 
-  return { height, containerRef, toolbarRef };
+  // compute the width
+  const width = containerRef && containerRef.current ? `${containerRef.current.clientWidth}px` : `100%`;
+
+  return { height, width, containerRef, toolbarRef };
 };
 
+// MdxEditor
+////////////////////////////////////////////////////////////////////////////////
 interface MdxEditorProps extends BoxProps {}
 
 export const MdxEditor = (props: MdxEditorProps) => {
@@ -257,19 +394,18 @@ export const MdxEditor = (props: MdxEditorProps) => {
   const editorRef = useRef<ReactCodeMirrorRef>(null);
   const { editorState, handlers } = useEditorState(editorRef);
 
-  // get the non-dynamic height of codemirror
-  const { height, containerRef, toolbarRef } = useCodeMirrorHeight();
+  // get the non-dynamic height and width of codemirror
+  const { height, width, containerRef, toolbarRef } = useCodeMirrorDimensions();
 
   // define codemirror styles
-  const codeMirrorStyle = css({ height, fontSize: "16px", borderRadius: "lg", overflow: "hidden" })(useTheme());
+  const codeMirrorStyle = css({ height, width, fontSize: "16px", borderRadius: "lg", overflow: "hidden" })(useTheme());
 
   // define special commands
-  Vim.defineEx("write", "w", () => {
-    alert("Have writtin to the db!");
-  });
+  Vim.defineEx("write", "w", () => alert("Have writtin to the db!"));
 
   const data = useActionData();
-  console.log(data);
+  let Component = null;
+  if (data && data.code) Component = getMDXComponent(data.code);
 
   return (
     <Box
@@ -279,10 +415,9 @@ export const MdxEditor = (props: MdxEditorProps) => {
       gridTemplateRows="min-content 1fr"
       {...props}
     >
-      <Form method="post">
-        <input name="mdx-editor-value" value={editorState.value} type="hidden" />
-        <Toolbar ref={toolbarRef} pb={2} settings={settings} setSettings={setSettings} />
-        {settings.view === "code" ? (
+      <Toolbar ref={toolbarRef} pb={2} settings={settings} setSettings={setSettings} editorState={editorState} />
+      {settings.view === "code" ? (
+        <Form method="post">
           <CodeMirror
             ref={editorRef}
             initialState={editorState.editor ? { json: editorState.editor.toJSON() } : undefined}
@@ -296,16 +431,29 @@ export const MdxEditor = (props: MdxEditorProps) => {
             style={codeMirrorStyle}
             {...handlers}
           />
-        ) : null}
-        {settings.view === "preview" && data && data.code ? getMDXComponent(data.code)({ props: {} }) : null}
-        {settings.view === "attachments" ? (
-          <ScrollBox height="full">
-            {editorState.images.length > 0
-              ? editorState.images.map((img) => <ImageAttachment key={img.name} image={img} />)
-              : "No images"}
-          </ScrollBox>
-        ) : null}
-      </Form>
+        </Form>
+      ) : null}
+      {settings.view === "preview" && Component ? (
+        <Box>
+          <Component components={{ ...(components as any), Alert: Alert, AlertIcon: AlertIcon }} />
+        </Box>
+      ) : null}
+      {settings.view === "attachments" ? (
+        <ScrollBox height="full">
+          {editorState.images.length > 0 ? (
+            <Grid templateColumns="1fr 1fr 1fr" gap={2}>
+              {editorState.images.map((img) => (
+                <ImageAttachment key={img.name} image={img} />
+              ))}
+              <ImageUpload />
+            </Grid>
+          ) : (
+            <Grid placeItems="center" w="full">
+              <ImageUpload w="full" maxW="container.sm" />
+            </Grid>
+          )}
+        </ScrollBox>
+      ) : null}
     </Box>
   );
 };
