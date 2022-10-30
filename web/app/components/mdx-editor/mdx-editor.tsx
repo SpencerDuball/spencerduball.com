@@ -17,7 +17,6 @@ import {
   forwardRef,
   useBreakpointValue,
   useClipboard,
-  Text,
   Link,
 } from "@chakra-ui/react";
 import type { IconButtonProps, BoxProps, AspectRatioProps } from "@chakra-ui/react";
@@ -63,6 +62,11 @@ leo a diam sollicitudin tempor id eu. Sollicitudin tempor id eu nisl nunc mi ips
 eget magna fermentum iaculis eu non diam phasellus. Laoreet suspendisse interdum consectetur
 libero id faucibus nisl. Sagittis orci a scelerisque purus semper eget duis at.
 `;
+
+// attachments
+type MdxRemoteImageType = { type: "remote"; id: string; url: string };
+type MdxLocalImageType = { type: "local"; id: string; url: string; file: File };
+type MdxImageType = MdxRemoteImageType | MdxLocalImageType;
 
 // settings
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -189,9 +193,6 @@ const Toolbar = forwardRef((props: ToolbarProps, ref) => {
 ////////////////////////////////////////////////////////////////////////////////
 // Attachments
 ////////////////////////////////////////////////////////////////////////////////
-type MdxRemoteImageType = { type: "remote"; name: string; url: string };
-type MdxLocalImageType = { type: "local"; name: string; url: string; file: File };
-type MdxImageType = MdxRemoteImageType | MdxLocalImageType;
 
 // Image Attachment
 ////////////////////////////////////////////////////////////////////////////////
@@ -249,9 +250,67 @@ const ImageAttachment = (props: ImageAttachmentProps) => {
 
 // ImageUpload
 ////////////////////////////////////////////////////////////////////////////////
-interface ImageUploadProps extends AspectRatioProps {}
+const useFileUpload = (
+  editorState: EditorState,
+  setEditorState: (value: React.SetStateAction<EditorState>) => void
+) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const onDragOver = async (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
+
+  const onDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    // capture the file details
+    const dtItem = e.dataTransfer.items[0];
+    if (dtItem.kind === "file") {
+      const file = dtItem.getAsFile();
+      if (file) {
+        let newImage = {
+          type: "local",
+          id: globalThis.crypto.randomUUID(),
+          url: URL.createObjectURL(file),
+          file,
+        } as const;
+        if (file.type.includes("image/")) setEditorState({ ...editorState, images: [...editorState.images, newImage] });
+        // TODO: Add support for video files.
+      }
+    }
+  };
+
+  const onClick = async (e: React.MouseEvent<HTMLDivElement>) =>
+    inputRef && inputRef.current && inputRef.current.click();
+
+  const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(globalThis.crypto.randomUUID());
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const newImage = {
+        type: "local",
+        id: globalThis.crypto.randomUUID(),
+        url: URL.createObjectURL(file),
+        file,
+      } as const;
+
+      // save the attachment
+      if (file.type.includes("image/")) setEditorState({ ...editorState, images: [...editorState.images, newImage] });
+      // TODO: Add support for video files.
+
+      // reset the input
+      e.target.value = "";
+    }
+  };
+
+  return { buttonHandlers: { onDragOver, onDrop, onClick }, inputHandlers: { onChange }, inputRef };
+};
+
+interface ImageUploadProps extends AspectRatioProps {
+  editorState: EditorState;
+  setEditorState: (value: React.SetStateAction<EditorState>) => void;
+}
 
 const ImageUpload = (props: ImageUploadProps) => {
+  const { editorState, setEditorState, ...rest } = props;
+  const { buttonHandlers, inputHandlers, inputRef } = useFileUpload(editorState, setEditorState);
   const c = useThemedColor();
 
   return (
@@ -263,9 +322,12 @@ const ImageUpload = (props: ImageUploadProps) => {
       borderColor={c("_grayA.6")}
       color={c("_grayA.6")}
       ratio={1}
-      {...props}
+      cursor="pointer"
+      {...buttonHandlers}
+      {...rest}
     >
       <Grid placeItems="center">
+        <input style={{ display: "none" }} type="file" {...inputHandlers} ref={inputRef} />
         <Icon h="25%" w="25%" as={RiImageAddFill} />
       </Grid>
     </AspectRatio>
@@ -327,22 +389,26 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
     if (dtItem.kind === "file") {
       const file = dtItem.getAsFile();
       if (file) {
-        console.log(file.type);
-        let newImage = { type: "local", name: file.name, url: URL.createObjectURL(file), file } as const;
+        let newImage = {
+          type: "local",
+          id: globalThis.crypto.randomUUID(),
+          url: URL.createObjectURL(file),
+          file,
+        } as const;
         const target = e.target as HTMLElement;
 
         if (target.className.includes("cm-line")) {
           // if input on specific line, append to that line
           const lineIndex = Array.from(target.parentNode!.children).indexOf(target);
           const lines = editorState.value.split("\n");
-          lines[lineIndex] += `![${newImage.name}](${newImage.url})`;
+          lines[lineIndex] += `![Add description ...](${newImage.url})`;
           if (file.type.includes("image/"))
             setEditorState({ ...editorState, images: [...editorState.images, newImage], value: lines.join("\n") });
           // TODO: Add support for video files.
         } else {
           // if input to editor as a whole, add a new line
-          const lines = [...editorState.value.split("\n"), `![${newImage.name}](${newImage.url})`];
-          if (file.type.includes("images/"))
+          const lines = [...editorState.value.split("\n"), `![Add description ...](${newImage.url})`];
+          if (file.type.includes("image/"))
             setEditorState({ ...editorState, images: [...editorState.images, newImage], value: lines.join("\n") });
           // TODO: Add support for video files.
         }
@@ -392,7 +458,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
 
   // setup editor state
   const editorRef = useRef<ReactCodeMirrorRef>(null);
-  const { editorState, handlers } = useEditorState(editorRef);
+  const { editorState, setEditorState, handlers } = useEditorState(editorRef);
 
   // get the non-dynamic height and width of codemirror
   const { height, width, containerRef, toolbarRef } = useCodeMirrorDimensions();
@@ -443,13 +509,13 @@ export const MdxEditor = (props: MdxEditorProps) => {
           {editorState.images.length > 0 ? (
             <Grid templateColumns="1fr 1fr 1fr" gap={2}>
               {editorState.images.map((img) => (
-                <ImageAttachment key={img.name} image={img} />
+                <ImageAttachment key={img.id} image={img} />
               ))}
-              <ImageUpload />
+              <ImageUpload editorState={editorState} setEditorState={setEditorState} />
             </Grid>
           ) : (
             <Grid placeItems="center" w="full">
-              <ImageUpload w="full" maxW="container.sm" />
+              <ImageUpload w="full" maxW="container.sm" editorState={editorState} setEditorState={setEditorState} />
             </Grid>
           )}
         </ScrollBox>
