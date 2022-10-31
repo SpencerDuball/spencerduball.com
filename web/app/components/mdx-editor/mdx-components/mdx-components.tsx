@@ -22,17 +22,17 @@ import {
   ListItem,
   Code,
 } from "@chakra-ui/react";
-import CodeBlock from "./codeblock";
+import { CodeBlock } from "./codeblock";
 
 const H1 = (props: TextProps) => {
   return (
-    <Text as="h1" mt={8} mb={1} lineHeight="1.2" fontWeight="bold" fontSize="3xl" letterSpacing="tight" {...props} />
+    <Text as="h2" mt={8} mb={1} lineHeight="1.2" fontWeight="bold" fontSize="3xl" letterSpacing="tight" {...props} />
   );
 };
 
 const H2 = (props: TextProps) => (
   <Text
-    as="h2"
+    as="h3"
     mt={16}
     mb={2}
     lineHeight="1.3"
@@ -45,10 +45,10 @@ const H2 = (props: TextProps) => (
 );
 
 const H3 = (props: TextProps) => (
-  <Text as="h3" lineHeight="1.25" fontWeight="semibold" fontSize="xl" letterSpacing="tight" {...props} />
+  <Text as="h4" lineHeight="1.25" fontWeight="semibold" fontSize="xl" letterSpacing="tight" {...props} />
 );
 
-const H4 = (props: TextProps) => <Text as="h4" lineHeight="1.375" fontWeight="semibold" fontSize="lg" {...props} />;
+const H4 = (props: TextProps) => <Text as="h5" lineHeight="1.375" fontWeight="semibold" fontSize="lg" {...props} />;
 
 const A = (props: ButtonProps) => <Button as="a" variant="link" {...props} />;
 
@@ -57,7 +57,7 @@ const P = (props: TextProps) => <Text as="p" mt={5} lineHeight="1.7" sx={{ "bloc
 const Hr = (props: DividerProps) => <Divider {...props} />;
 
 const Blockquote = (props: AlertProps) => (
-  <Alert as="blockquote" status="warning" variant="left-accent" rounded="lg" mt={4} px={5} py={4} my={6} {...props} />
+  <Alert as="blockquote" variant="left-accent" colorScheme="blackA" mt={4} px={5} py={4} my={6} {...props} />
 );
 
 const Ul = (props: ListProps) => (

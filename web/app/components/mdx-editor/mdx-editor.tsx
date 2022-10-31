@@ -61,12 +61,55 @@ Suspendisse in est ante in nibh. Nunc lobortis mattis aliquam faucibus purus. Al
 leo a diam sollicitudin tempor id eu. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Justo
 eget magna fermentum iaculis eu non diam phasellus. Laoreet suspendisse interdum consectetur
 libero id faucibus nisl. Sagittis orci a scelerisque purus semper eget duis at.
+
+\`\`\`js name="yooo" height="250px"
+import CodeMirror from '@uiw/react-codemirror';
+import { javascript } from '@codemirror/lang-javascript';
+import { okaidia } from '@uiw/codemirror-theme-okaidia';
+
+const extensions = [javascript({ jsx: true })];
+
+export default function App() {
+  return (
+    <CodeMirror
+      value="console.log('hello world!');"
+      height="200px"
+      theme={okaidia}
+      extensions={[javascript({ jsx: true })]}
+    />
+  );
+}
+\`\`\`
+
+Hello there \`let a = randomBytes()\` pumpkin!
+
+\`var b = 123;\`
 `;
 
 // attachments
-type MdxRemoteImageType = { type: "remote"; id: string; url: string };
-type MdxLocalImageType = { type: "local"; id: string; url: string; file: File };
-type MdxImageType = MdxRemoteImageType | MdxLocalImageType;
+const ZAttachment = z.object({
+  type: z.literal("local").or(z.literal("remote")),
+  id: z.string(),
+  mime: z.string(),
+  url: z.string(),
+});
+type IAttachment = z.infer<typeof ZAttachment>;
+const ZRemoteAttachment = ZAttachment.extend({
+  type: z.literal("remote"),
+});
+type IRemoteAttachment = z.infer<typeof ZRemoteAttachment>;
+const ZLocalAttachment = ZAttachment.extend({
+  type: z.literal("local"),
+});
+type ILocalAttachment = z.infer<typeof ZLocalAttachment>;
+const ZImageAttachment = ZAttachment.extend({
+  mime: z.custom<`image/${string}`>((val) => (val as string).startsWith("image/")),
+});
+type IImageAttachment = z.infer<typeof ZImageAttachment>;
+const ZVideoAttachment = ZAttachment.extend({
+  mime: z.custom<`video/${string}`>((val) => (val as string).startsWith("video/")),
+});
+type IVideoAttachment = z.infer<typeof ZVideoAttachment>;
 
 // settings
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -82,7 +125,7 @@ type EditorState = {
   value: string;
   editor: ReactCodeMirrorRef["state"];
   scrollPos: { x: number; y: number };
-  images: MdxImageType[];
+  attachments: IAttachment[];
 };
 
 // Vim Command - this is the vim command component styles, ex: "--insert-- :w"
@@ -197,7 +240,7 @@ const Toolbar = forwardRef((props: ToolbarProps, ref) => {
 // Image Attachment
 ////////////////////////////////////////////////////////////////////////////////
 interface ImageAttachmentProps extends BoxProps {
-  image: MdxImageType;
+  image: IImageAttachment;
 }
 
 const ImageAttachment = (props: ImageAttachmentProps) => {
@@ -265,14 +308,14 @@ const useFileUpload = (
     if (dtItem.kind === "file") {
       const file = dtItem.getAsFile();
       if (file) {
-        let newImage = {
+        let attachment = {
           type: "local",
           id: globalThis.crypto.randomUUID(),
+          mime: file.type,
           url: URL.createObjectURL(file),
           file,
         } as const;
-        if (file.type.includes("image/")) setEditorState({ ...editorState, images: [...editorState.images, newImage] });
-        // TODO: Add support for video files.
+        setEditorState({ ...editorState, attachments: [...editorState.attachments, attachment] });
       }
     }
   };
@@ -284,16 +327,16 @@ const useFileUpload = (
     console.log(globalThis.crypto.randomUUID());
     const file = e.target.files && e.target.files[0];
     if (file) {
-      const newImage = {
+      const attachment = {
         type: "local",
         id: globalThis.crypto.randomUUID(),
+        mime: file.type,
         url: URL.createObjectURL(file),
         file,
       } as const;
 
       // save the attachment
-      if (file.type.includes("image/")) setEditorState({ ...editorState, images: [...editorState.images, newImage] });
-      // TODO: Add support for video files.
+      setEditorState({ ...editorState, attachments: [...editorState.attachments, attachment] });
 
       // reset the input
       e.target.value = "";
@@ -372,7 +415,7 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
     value: InitialMdxContent,
     editor: undefined,
     scrollPos: { y: 0, x: 0 },
-    images: [],
+    attachments: [],
   });
 
   const onChange: NonNullable<ReactCodeMirrorProps["onChange"]> = (value, viewUpdate) => {
@@ -389,9 +432,10 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
     if (dtItem.kind === "file") {
       const file = dtItem.getAsFile();
       if (file) {
-        let newImage = {
+        let attachment = {
           type: "local",
           id: globalThis.crypto.randomUUID(),
+          mime: file.type,
           url: URL.createObjectURL(file),
           file,
         } as const;
@@ -401,16 +445,20 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
           // if input on specific line, append to that line
           const lineIndex = Array.from(target.parentNode!.children).indexOf(target);
           const lines = editorState.value.split("\n");
-          lines[lineIndex] += `![Add description ...](${newImage.url})`;
-          if (file.type.includes("image/"))
-            setEditorState({ ...editorState, images: [...editorState.images, newImage], value: lines.join("\n") });
-          // TODO: Add support for video files.
+          lines[lineIndex] += `![Add description ...](${attachment.url})`;
+          setEditorState({
+            ...editorState,
+            attachments: [...editorState.attachments, attachment],
+            value: lines.join("\n"),
+          });
         } else {
           // if input to editor as a whole, add a new line
-          const lines = [...editorState.value.split("\n"), `![Add description ...](${newImage.url})`];
-          if (file.type.includes("image/"))
-            setEditorState({ ...editorState, images: [...editorState.images, newImage], value: lines.join("\n") });
-          // TODO: Add support for video files.
+          const lines = [...editorState.value.split("\n"), `![Add description ...](${attachment.url})`];
+          setEditorState({
+            ...editorState,
+            attachments: [...editorState.attachments, attachment],
+            value: lines.join("\n"),
+          });
         }
       }
     }
@@ -506,11 +554,19 @@ export const MdxEditor = (props: MdxEditorProps) => {
       ) : null}
       {settings.view === "attachments" ? (
         <ScrollBox height="full">
-          {editorState.images.length > 0 ? (
+          {editorState.attachments.length > 0 ? (
             <Grid templateColumns="1fr 1fr 1fr" gap={2}>
-              {editorState.images.map((img) => (
-                <ImageAttachment key={img.id} image={img} />
-              ))}
+              {editorState.attachments.map((att) => {
+                // display image attachment
+                const safeImg = ZImageAttachment.safeParse(att);
+                if (safeImg.success) return <ImageAttachment key={safeImg.data.id} image={safeImg.data} />;
+
+                // display video attachment
+                const safeVid = ZVideoAttachment.safeParse(att);
+                if (safeVid.success) return JSON.stringify(safeVid.data);
+
+                return null;
+              })}
               <ImageUpload editorState={editorState} setEditorState={setEditorState} />
             </Grid>
           ) : (

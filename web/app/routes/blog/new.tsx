@@ -1,5 +1,4 @@
 import type { ActionFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { Box } from "@chakra-ui/react";
 import { ChakraHeaderHeight } from "~/components";
 import { ChakraGapHeight } from "~/root";
