@@ -52,7 +52,7 @@ title: New Blog Post
 tags: []
 ---
 
-## New Blog Post
+# New Blog Post
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
 labore et dolore magna aliqua. Velit egestas dui id ornare arcu odio ut. Vulputate odio ut enim
@@ -61,6 +61,18 @@ Suspendisse in est ante in nibh. Nunc lobortis mattis aliquam faucibus purus. Al
 leo a diam sollicitudin tempor id eu. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Justo
 eget magna fermentum iaculis eu non diam phasellus. Laoreet suspendisse interdum consectetur
 libero id faucibus nisl. Sagittis orci a scelerisque purus semper eget duis at.
+
+## New Header have Arrived!
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+labore et dolore magna aliqua. Velit egestas dui id ornare arcu odio ut. Vulputate odio ut enim
+blandit volutpat maecenas volutpat blandit. Nulla pharetra diam sit amet nisl suscipit.
+Suspendisse in est ante in nibh. Nunc lobortis mattis aliquam faucibus purus. Aliquam ut porttitor
+leo a diam sollicitudin tempor id eu. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Justo
+eget magna fermentum iaculis eu non diam phasellus. Laoreet suspendisse interdum consectetur
+libero id faucibus nisl. Sagittis orci a scelerisque purus semper eget duis at.
+
+> Here is a blockquote, you never know when one of these babies might come in handy! - [Shakespeare](https://www.wikipedia.com)
 
 \`\`\`js name="yooo" height="250px"
 import CodeMirror from '@uiw/react-codemirror';
@@ -81,9 +93,23 @@ export default function App() {
 }
 \`\`\`
 
+### Make sure to have some inline code: \`var b = 123;\`.
+
 Hello there \`let a = randomBytes()\` pumpkin!
 
-\`var b = 123;\`
+# How About Them Apples?
+
+Here is a list of number:
+
+- one
+- two
+- three
+
+Now we can do the list in order!
+
+1. one
+2. two
+3. three
 `;
 
 // attachments
@@ -512,7 +538,9 @@ export const MdxEditor = (props: MdxEditorProps) => {
   const { height, width, containerRef, toolbarRef } = useCodeMirrorDimensions();
 
   // define codemirror styles
-  const codeMirrorStyle = css({ height, width, fontSize: "16px", borderRadius: "lg", overflow: "hidden" })(useTheme());
+  const [fontSize, lineHeight] = ["16px", 1.4];
+  const codeMirrorStyle = css({ height, width, fontSize, borderRadius: "lg", overflow: "hidden" })(useTheme());
+  const CmContentStyles: BoxProps["sx"] = { pb: `calc(${height} - 2 * ${fontSize} * ${lineHeight})` };
 
   // define special commands
   Vim.defineEx("write", "w", () => alert("Have writtin to the db!"));
@@ -524,7 +552,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
   return (
     <Box
       ref={containerRef}
-      sx={{ "& .cm-panels": CmPanelStyles }}
+      sx={{ "& .cm-panels": CmPanelStyles, "& .cm-content": CmContentStyles }}
       display="grid"
       gridTemplateRows="min-content 1fr"
       {...props}

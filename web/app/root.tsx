@@ -8,7 +8,9 @@ import { theme } from "@dub-stack/chakra-radix-colors";
 import { Grid, Container, extendTheme } from "@chakra-ui/react";
 import { Header } from "~/components";
 import { ServerStyleContext, ClientStyleContext } from "./context";
-import "@fontsource/inter/index.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/800.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
