@@ -18,6 +18,7 @@ import {
   useBreakpointValue,
   useClipboard,
   Link,
+  LightMode,
 } from "@chakra-ui/react";
 import type { IconButtonProps, BoxProps, AspectRatioProps } from "@chakra-ui/react";
 import {
@@ -30,6 +31,8 @@ import {
   RiExternalLinkFill,
   RiCheckFill,
   RiImageAddFill,
+  RiPlayFill,
+  RiPauseFill,
 } from "react-icons/ri";
 import { VscPreview } from "react-icons/vsc";
 import { DiVim } from "react-icons/di";
@@ -45,6 +48,7 @@ import { z } from "zod";
 import { useActionData, Form, useSubmit } from "@remix-run/react";
 import { getMDXComponent } from "mdx-bundler/client";
 import { components } from "./mdx-components";
+import ReactPlayer from "react-player";
 
 // constants
 const InitialMdxContent = `---
@@ -311,6 +315,77 @@ const ImageAttachment = (props: ImageAttachmentProps) => {
               rel="noopener noreferrer"
             />
           </Flex>
+        </Grid>
+      </>
+    </AspectRatio>
+  );
+};
+
+// Video Attachment
+////////////////////////////////////////////////////////////////////////////////
+interface VideoAttachmentProps extends BoxProps {
+  video: IVideoAttachment;
+}
+
+const VideoAttachment = (props: VideoAttachmentProps) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { video, ...rest } = props;
+  const { hasCopied, onCopy } = useClipboard(video.url);
+
+  return (
+    <AspectRatio
+      borderRadius="lg"
+      overflow="hidden"
+      boxShadow="md"
+      ratio={1}
+      position="relative"
+      sx={{ "&:hover > [data-image-overlay]": { visibility: "visible" }, "& video": { objectFit: "cover" } }}
+      {...rest}
+    >
+      <>
+        <ReactPlayer
+          playing={isPlaying}
+          onEnded={() => setIsPlaying(false)}
+          url={video.url}
+          height="100%"
+          width="100%"
+          style={{ objectFit: "cover" }}
+        />
+        <Grid
+          data-image-overlay
+          visibility="hidden"
+          position="absolute"
+          top={0}
+          left={0}
+          h="full"
+          w="full"
+          _hover={{ bg: "blackA.9" }}
+        >
+          <Flex flexDir="column" position="absolute" top={2} right={2} gap={2}>
+            <IconButton
+              icon={<Icon as={hasCopied ? RiCheckFill : RiLink} />}
+              onClick={onCopy}
+              aria-label="copy url to clipboard"
+            />
+            <IconButton
+              as={Link}
+              href={video.url}
+              icon={<Icon as={RiExternalLinkFill} />}
+              aria-label="open image in new tab"
+              isExternal
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </Flex>
+          <LightMode>
+            <IconButton
+              aria-label="Play"
+              icon={<Icon as={isPlaying ? RiPauseFill : RiPlayFill} />}
+              isRound
+              colorScheme="blackA"
+              onClick={() => setIsPlaying(!isPlaying)}
+            />
+          </LightMode>
         </Grid>
       </>
     </AspectRatio>
@@ -591,7 +666,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
 
                 // display video attachment
                 const safeVid = ZVideoAttachment.safeParse(att);
-                if (safeVid.success) return JSON.stringify(safeVid.data);
+                if (safeVid.success) return <VideoAttachment key={safeVid.data.id} video={safeVid.data} />;
 
                 return null;
               })}

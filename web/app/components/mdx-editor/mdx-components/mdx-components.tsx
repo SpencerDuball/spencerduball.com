@@ -7,6 +7,7 @@ import type {
   ListItemProps,
   CodeProps,
   ListProps,
+  ImageProps,
 } from "@chakra-ui/react";
 import {
   Box,
@@ -21,9 +22,12 @@ import {
   Td,
   ListItem,
   Code,
+  Image,
 } from "@chakra-ui/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { CodeBlock } from "./codeblock";
+import type { ReactPlayerProps } from "react-player";
+import ReactPlayer from "react-player";
 
 const H1 = (props: TextProps) => {
   return (
@@ -93,6 +97,10 @@ const Br = (props: BoxProps) => <Box as="br" height={6} {...props} />;
 
 const Table = (props: any) => <Table {...props} />;
 
+const Img = (props: ImageProps) => <Image {...props} />;
+
+const Video = (props: ReactPlayerProps) => <ReactPlayer {...props} />;
+
 export const components = {
   h1: H1,
   h2: H2,
@@ -112,4 +120,6 @@ export const components = {
   table: Table,
   th: Thead,
   td: Td,
+  img: Img,
+  Video,
 };
