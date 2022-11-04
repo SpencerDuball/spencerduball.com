@@ -19,6 +19,10 @@ import {
   useClipboard,
   Link,
   LightMode,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
 } from "@chakra-ui/react";
 import type { IconButtonProps, BoxProps, AspectRatioProps } from "@chakra-ui/react";
 import {
@@ -33,8 +37,8 @@ import {
   RiImageAddFill,
   RiPlayFill,
   RiPauseFill,
+  RiArticleLine,
 } from "react-icons/ri";
-import { VscPreview } from "react-icons/vsc";
 import { DiVim } from "react-icons/di";
 import type { ReactCodeMirrorProps, ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import CodeMirror from "@uiw/react-codemirror";
@@ -49,6 +53,7 @@ import { useActionData, Form, useSubmit } from "@remix-run/react";
 import { getMDXComponent } from "mdx-bundler/client";
 import { components } from "./mdx-components";
 import ReactPlayer from "react-player";
+import { OnProgressProps } from "react-player/base";
 
 // constants
 const InitialMdxContent = `---
@@ -224,7 +229,7 @@ const Toolbar = forwardRef((props: ToolbarProps, ref) => {
           />
           <ToolbarButton
             aria-label="View Preview"
-            icon={<Icon as={VscPreview} />}
+            icon={<Icon as={RiArticleLine} />}
             isActive={settings.view === "preview"}
             onClick={toPreview}
           />
@@ -323,14 +328,44 @@ const ImageAttachment = (props: ImageAttachmentProps) => {
 
 // Video Attachment
 ////////////////////////////////////////////////////////////////////////////////
+interface IVideoState {
+  playing: boolean;
+  muted: boolean;
+  played: number;
+  loaded: number;
+  duration: number;
+  seeking: boolean;
+}
+
 interface VideoAttachmentProps extends BoxProps {
   video: IVideoAttachment;
 }
 
 const VideoAttachment = (props: VideoAttachmentProps) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const ref = useRef<ReactPlayer>(null);
+  const [vidState, setVidState] = useState<IVideoState>({
+    playing: false,
+    muted: true,
+    played: 0,
+    loaded: 0,
+    duration: 0,
+    seeking: false,
+  });
   const { video, ...rest } = props;
   const { hasCopied, onCopy } = useClipboard(video.url);
+
+  // define video callbacks
+  const handleEnded = () => setVidState({ ...vidState, playing: false });
+  const handlePlayPause = () => setVidState({ ...vidState, playing: !vidState.playing });
+  const handleProgress = (e: OnProgressProps) => {
+    if (!vidState.seeking) setVidState({ ...vidState, played: e.played, loaded: e.loaded });
+  };
+  const handleSeekMouseDown = (e: React.MouseEvent<HTMLDivElement>) => setVidState({ ...vidState, seeking: true });
+  const handleSeekMouseUp = (e: React.MouseEvent<HTMLDivElement>) => setVidState({ ...vidState, seeking: false });
+  const handleSeekChange = (value: number) => {
+    setVidState({ ...vidState, played: value / 100 });
+    if (ref && ref.current) ref.current.seekTo(value / 100);
+  };
 
   return (
     <AspectRatio
@@ -344,9 +379,12 @@ const VideoAttachment = (props: VideoAttachmentProps) => {
     >
       <>
         <ReactPlayer
-          playing={isPlaying}
-          onEnded={() => setIsPlaying(false)}
+          ref={ref}
+          playing={vidState.playing}
           url={video.url}
+          controls={false}
+          onProgress={handleProgress}
+          onEnded={handleEnded}
           height="100%"
           width="100%"
           style={{ objectFit: "cover" }}
@@ -380,12 +418,28 @@ const VideoAttachment = (props: VideoAttachmentProps) => {
           <LightMode>
             <IconButton
               aria-label="Play"
-              icon={<Icon as={isPlaying ? RiPauseFill : RiPlayFill} />}
+              size="lg"
+              icon={<Icon as={vidState.playing ? RiPauseFill : RiPlayFill} />}
               isRound
               colorScheme="blackA"
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={handlePlayPause}
             />
           </LightMode>
+          <Grid templateColumns="1fr max-content" w="full" position="absolute" bottom={2} px={4}>
+            <Slider
+              aria-label="video seek"
+              colorScheme="gray"
+              value={Math.round(100 * vidState.played)}
+              onMouseDown={handleSeekMouseDown}
+              onMouseUp={handleSeekMouseUp}
+              onChange={handleSeekChange}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
+          </Grid>
         </Grid>
       </>
     </AspectRatio>
@@ -425,7 +479,6 @@ const useFileUpload = (
     inputRef && inputRef.current && inputRef.current.click();
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(globalThis.crypto.randomUUID());
     const file = e.target.files && e.target.files[0];
     if (file) {
       const attachment = {
@@ -546,7 +599,8 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
           // if input on specific line, append to that line
           const lineIndex = Array.from(target.parentNode!.children).indexOf(target);
           const lines = editorState.value.split("\n");
-          lines[lineIndex] += `![Add description ...](${attachment.url})`;
+          if (attachment.mime.includes("image/")) lines[lineIndex] += `![Add description ...](${attachment.url})`;
+          if (attachment.mime.includes("video/")) lines[lineIndex] += `<Video controls url="${attachment.url}" />`;
           setEditorState({
             ...editorState,
             attachments: [...editorState.attachments, attachment],
@@ -554,7 +608,9 @@ const useEditorState = (editorRef: React.RefObject<ReactCodeMirrorRef>) => {
           });
         } else {
           // if input to editor as a whole, add a new line
-          const lines = [...editorState.value.split("\n"), `![Add description ...](${attachment.url})`];
+          const lines = editorState.value.split("\n");
+          if (attachment.mime.includes("image/")) lines.push(`![Add description ...](${attachment.url})`);
+          if (attachment.mime.includes("video/")) lines.push(`<Video controls url="${attachment.url}" />`);
           setEditorState({
             ...editorState,
             attachments: [...editorState.attachments, attachment],
