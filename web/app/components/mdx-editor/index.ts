@@ -1,2 +1,2 @@
 export * from "./mdx-editor";
-export * from "./editorThemes";
+export * from "./context";

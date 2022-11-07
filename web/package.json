@@ -46,6 +46,7 @@
     "remark-gfm": "^3.0.1",
     "remark-mdx-code-meta": "^2.0.0",
     "table": "workspace:^1.0.0",
+    "valtio": "^1.7.5",
     "zod": "^3.19.1"
   },
   "devDependencies": {

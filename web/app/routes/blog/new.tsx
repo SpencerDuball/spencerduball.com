@@ -2,7 +2,7 @@ import type { ActionFunction } from "@remix-run/node";
 import { Box } from "@chakra-ui/react";
 import { ChakraHeaderHeight } from "~/components";
 import { ChakraGapHeight } from "~/root";
-import { MdxEditor } from "~/components";
+import { MdxEditor, MdxEditorProvider } from "~/components";
 import { preview } from "~/model/blog.server";
 
 export const action: ActionFunction = async ({ request }) => {
@@ -20,7 +20,9 @@ export const action: ActionFunction = async ({ request }) => {
 export default function New() {
   return (
     <Box h={`calc(100vh - ${(ChakraHeaderHeight + ChakraGapHeight) * 4}px)`} maxW={`calc(100vw - ${8 * 4}px)`} pb={8}>
-      <MdxEditor h="full" />
+      <MdxEditorProvider>
+        <MdxEditor h="full" />
+      </MdxEditorProvider>
     </Box>
   );
 }

@@ -1,15 +1,13 @@
 import { tags as t } from "@lezer/highlight";
 import { createTheme } from "@uiw/codemirror-themes";
 
-export const githubLightBg = "#e7e9db";
 export const githubLight = createTheme({
   theme: "light",
   settings: {
-    background: githubLightBg,
+    background: "#e7e9db",
     foreground: "#24292e",
     selection: "#BBDFFF",
     selectionMatch: "#BBDFFF",
-    // gutterBackground: "#fff",
     gutterBackground: "transparent",
     gutterForeground: "#6e7781",
     gutterBorder: "transparent",
@@ -27,11 +25,10 @@ export const githubLight = createTheme({
   ],
 });
 
-export const githubDarkBg = "#0d1117";
 export const githubDark = createTheme({
   theme: "dark",
   settings: {
-    background: githubDarkBg,
+    background: "#0d1117",
     foreground: "#c9d1d9",
     caret: "#c9d1d9",
     selection: "#003d73",
