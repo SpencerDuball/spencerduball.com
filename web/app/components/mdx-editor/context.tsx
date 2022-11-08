@@ -4,6 +4,7 @@ import type { StringEnum } from "~/ts-utils";
 import { createContext, useContext, useRef } from "react";
 import type { ReactNode, FC } from "react";
 import { proxy, useSnapshot } from "valtio";
+import { useSubmit } from "@remix-run/react";
 
 // attachments
 export const ZAttachment = z.object({
@@ -66,5 +67,19 @@ export const MdxEditorProvider: FC<{ children: ReactNode }> = ({ children }) => 
   return <MdxEditorContext.Provider value={state}>{children}</MdxEditorContext.Provider>;
 };
 
+// state hooks
 export const useMdxEditorState = () => useContext(MdxEditorContext);
 export const useMdxEditorStore = () => useSnapshot(useContext(MdxEditorContext));
+
+// shared hooks
+export const usePreview = () => {
+  const state = useMdxEditorState();
+  const submit = useSubmit();
+
+  return () => {
+    let data = new FormData();
+    data.append("mdx-editor-value", state.editor.value);
+    data.append("_action", "mdx-editor-preview");
+    submit(data, { method: "post" });
+  };
+};

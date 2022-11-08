@@ -8,6 +8,7 @@ import type {
   CodeProps,
   ListProps,
   ImageProps,
+  LinkProps,
 } from "@chakra-ui/react";
 import {
   Box,

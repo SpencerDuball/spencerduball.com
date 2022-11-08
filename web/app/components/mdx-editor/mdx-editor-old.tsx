@@ -51,7 +51,7 @@ import { ScrollBox } from "~/components";
 import { z } from "zod";
 import { useActionData, Form, useSubmit } from "@remix-run/react";
 import { getMDXComponent } from "mdx-bundler/client";
-import { components } from "./mdx-components";
+import { components } from "./preview-view/mdx-components";
 import ReactPlayer from "react-player";
 import type { OnProgressProps } from "react-player/base";
 

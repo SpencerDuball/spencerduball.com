@@ -3,7 +3,7 @@ import type { IconButtonProps, BoxProps } from "@chakra-ui/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { RiSaveFill, RiCodeSSlashFill, RiArticleLine, RiAttachment2, RiMoonFill, RiSunFill } from "react-icons/ri";
 import { DiVim } from "react-icons/di";
-import { useMdxEditorStore, useMdxEditorState } from "./context";
+import { useMdxEditorStore, useMdxEditorState, usePreview } from "./context";
 
 // ToolbarButton
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   const c = useThemedColor();
   const state = useMdxEditorState();
   const store = useMdxEditorStore();
+  const submit = usePreview();
 
   return (
     <Box ref={ref} pb={2} display="flex" justifyContent="center" gap={2} {...props}>
@@ -45,7 +46,10 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref) => {
             aria-label="toggle preview panel"
             icon={<Icon as={RiArticleLine} />}
             isActive={store.settings.view === "preview"}
-            onClick={() => (state.settings.view = "preview")}
+            onClick={() => {
+              state.settings.view = "preview";
+              submit();
+            }}
           />
           <ToolbarButton
             aria-label="toggle attachments panel"

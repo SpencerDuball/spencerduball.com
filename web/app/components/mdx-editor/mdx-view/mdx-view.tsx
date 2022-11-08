@@ -11,6 +11,7 @@ import { vim, Vim } from "@replit/codemirror-vim";
 import { useMdxEditorState, useMdxEditorStore } from "../context";
 import { useTimeout } from "react-use";
 
+/** Restore/store the scroll position of the editor. */
 const useRestoreScroll = (ref: RefObject<ReactCodeMirrorRef>) => {
   const { scrollPos } = useMdxEditorStore().editor;
   let state = useMdxEditorState();
@@ -39,6 +40,7 @@ const useRestoreScroll = (ref: RefObject<ReactCodeMirrorRef>) => {
   }, [ref, isReady, scrollPos]);
 };
 
+/** Define the editor event handlers. */
 const useEditorHandlers = (ref: RefObject<ReactCodeMirrorRef>) => {
   const state = useMdxEditorState();
 
@@ -113,7 +115,7 @@ export const MdxView = (props: MdxViewProps) => {
   const handlers = useEditorHandlers(ref);
 
   // define codemirror styles
-  const [fontSize, lineHeight] = [useToken("fontSizes", "md"), useToken("lineHeights", "short")];
+  const [fontSize, lineHeight] = ["16px", useToken("lineHeights", "short")];
   const styles = css({ height, width, fontSize, borderRadius: "lg", overflow: "hidden" })(useTheme());
   const wrapperStyles: BoxProps["sx"] = {
     // will place vim command mode at bottom of editor (without extending height)

@@ -5,6 +5,7 @@ import { Toolbar } from "./toolbar";
 import { useMdxEditorState, useMdxEditorStore } from "./context";
 import { useWindowSize } from "react-use";
 import { MdxView } from "./mdx-view";
+import { PreviewView } from "./preview-view";
 import { z } from "zod";
 
 // EditorSettings - constants and type safety
@@ -74,6 +75,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
     <Box ref={containerRef} display="grid" gridTemplateRows="max-content 1fr" {...props}>
       <Toolbar ref={toolbarRef} />
       {store.settings.view === "code" ? <MdxView height={height} width={width} /> : null}
+      {store.settings.view === "preview" ? <PreviewView /> : null}
     </Box>
   );
 };
