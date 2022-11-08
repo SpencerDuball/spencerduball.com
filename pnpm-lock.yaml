@@ -83,6 +83,7 @@ importers:
       '@serverless-stack/static-site-env': ^1.15.13
       '@types/react': ^18.0.15
       '@types/react-dom': ^18.0.6
+      '@types/uuid': ^8.3.4
       '@uiw/codemirror-theme-github': ^4.12.4
       '@uiw/codemirror-themes': ^4.12.4
       '@uiw/react-codemirror': ^4.12.4
@@ -104,6 +105,7 @@ importers:
       remark-mdx-code-meta: ^2.0.0
       table: workspace:^1.0.0
       typescript: ^4.7.4
+      uuid: ^9.0.0
       valtio: ^1.7.5
       zod: ^3.19.1
     dependencies:
@@ -144,6 +146,7 @@ importers:
       remark-gfm: 3.0.1
       remark-mdx-code-meta: 2.0.0
       table: link:../packages/table
+      uuid: 9.0.0
       valtio: 1.7.5_react@18.2.0
       zod: 3.19.1
     devDependencies:
@@ -152,6 +155,7 @@ importers:
       '@serverless-stack/static-site-env': 1.15.13
       '@types/react': 18.0.18
       '@types/react-dom': 18.0.6
+      '@types/uuid': 8.3.4
       eslint: 8.23.0
       typescript: 4.8.2
 
@@ -6050,6 +6054,10 @@ packages:
 
   /@types/unist/2.0.6:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
+
+  /@types/uuid/8.3.4:
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
+    dev: true
 
   /@typescript-eslint/eslint-plugin/5.40.0_7smdfmjuskdm4xnuncajska6u4:
     resolution: {integrity: sha512-FIBZgS3DVJgqPwJzvZTuH4HNsZhHMa9SjxTKAZTlMsPw/UzpEjcf9f4dfgDJEHjK+HboUJo123Eshl6niwEm/Q==}
@@ -13676,6 +13684,11 @@ packages:
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
+
+  /uuid/9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
 
   /uvu/0.5.6:
     resolution: {integrity: sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==}

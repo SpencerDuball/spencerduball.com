@@ -137,7 +137,15 @@ export const MdxView = (props: MdxViewProps) => {
   const isDark = store.settings.theme === "dark" || (store.settings.theme === "system" && colorMode === "dark");
 
   return (
-    <Box height={height} width={width} sx={wrapperStyles} {...rest}>
+    <Box
+      height={height}
+      width={width}
+      sx={wrapperStyles}
+      borderRadius="lg"
+      overflow="hidden"
+      isolation="isolate"
+      {...rest}
+    >
       <CodeMirror
         ref={ref}
         initialState={store.editor.editor ? { json: store.editor.editor.toJSON() } : undefined}

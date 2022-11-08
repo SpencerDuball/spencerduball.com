@@ -7,6 +7,7 @@ import { useWindowSize } from "react-use";
 import { MdxView } from "./mdx-view";
 import { PreviewView } from "./preview-view";
 import { z } from "zod";
+import { AttachmentsView } from "./attachments-view";
 
 // EditorSettings - constants and type safety
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -76,6 +77,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
       <Toolbar ref={toolbarRef} />
       {store.settings.view === "code" ? <MdxView height={height} width={width} /> : null}
       {store.settings.view === "preview" ? <PreviewView /> : null}
+      {store.settings.view === "attachments" ? <AttachmentsView height="full" /> : null}
     </Box>
   );
 };
