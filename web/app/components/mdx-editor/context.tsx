@@ -78,7 +78,7 @@ export const usePreview = () => {
 
   return () => {
     let data = new FormData();
-    data.append("mdx-editor-value", state.editor.value);
+    data.append("mdx", state.editor.value);
     data.append("_action", "mdx-editor-preview");
     submit(data, { method: "post" });
   };

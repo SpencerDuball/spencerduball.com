@@ -3,6 +3,8 @@ import React, { useContext, useEffect } from "react";
 import { withEmotionCache } from "@emotion/react";
 import { ChakraProvider, localStorageManager } from "@chakra-ui/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import type { MetaFunction, LoaderFunction } from "@remix-run/node";
 import { theme } from "@dub-stack/chakra-radix-colors";
 import { Grid, Container, extendTheme } from "@chakra-ui/react";
@@ -71,11 +73,13 @@ const customTheme = extendTheme({
 });
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return null;
+  const cookie = request.headers.get("cookie");
+  return json({ cookie });
 };
 
 export const ChakraGapHeight = 8;
 export default function App() {
+  const { cookie } = useLoaderData<typeof loader>();
   return (
     <Document>
       <ChakraProvider theme={customTheme} colorModeManager={localStorageManager}>

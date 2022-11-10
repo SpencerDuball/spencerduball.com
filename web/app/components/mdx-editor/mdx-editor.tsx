@@ -59,12 +59,25 @@ const useCodeMirrorDimensions = () => {
   return { height, width, containerRef, toolbarRef };
 };
 
+/** Sets the initial value for the editor. */
+const useSetInitialValue = (initialValue?: string) => {
+  let state = useMdxEditorState();
+  useEffect(() => {
+    if (initialValue) state.editor.value = initialValue;
+  }, []);
+};
+
 // MdxEditor
 ////////////////////////////////////////////////////////////////////////////////
-export interface MdxEditorProps extends BoxProps {}
+export interface MdxEditorProps extends BoxProps {
+  initialValue?: string;
+}
 
 export const MdxEditor = (props: MdxEditorProps) => {
   const store = useMdxEditorStore();
+
+  // setup initial value
+  useSetInitialValue(props.initialValue);
 
   // persist the editor settings
   useRestoreSettings();
