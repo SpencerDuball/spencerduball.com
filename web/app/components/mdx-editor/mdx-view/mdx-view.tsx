@@ -128,7 +128,7 @@ export const MdxView = (props: MdxViewProps) => {
 
   // define extensions
   const extensions = [
-    markdown({ base: markdownLanguage, codeLanguages: languages }),
+    markdown({ base: markdownLanguage, codeLanguages: languages as any }),
     ...(store.settings.isVimMode ? [vim()] : []),
   ];
 
