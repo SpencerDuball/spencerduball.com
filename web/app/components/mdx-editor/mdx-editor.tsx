@@ -74,6 +74,7 @@ export interface MdxEditorProps extends BoxProps {
 }
 
 export const MdxEditor = (props: MdxEditorProps) => {
+  const { initialValue, ...rest } = props;
   const store = useMdxEditorStore();
 
   // setup initial value
@@ -86,7 +87,7 @@ export const MdxEditor = (props: MdxEditorProps) => {
   const { height, width, containerRef, toolbarRef } = useCodeMirrorDimensions();
 
   return (
-    <Box ref={containerRef} display="grid" gridTemplateRows="max-content 1fr" {...props}>
+    <Box ref={containerRef} display="grid" gridTemplateRows="max-content 1fr" {...rest}>
       <Toolbar ref={toolbarRef} />
       {store.settings.view === "code" ? <MdxView height={height} width={width} /> : null}
       {store.settings.view === "preview" ? <PreviewView /> : null}

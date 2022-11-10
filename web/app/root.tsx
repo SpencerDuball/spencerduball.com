@@ -73,13 +73,11 @@ const customTheme = extendTheme({
 });
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const cookie = request.headers.get("cookie");
-  return json({ cookie });
+  return null;
 };
 
 export const ChakraGapHeight = 8;
 export default function App() {
-  const { cookie } = useLoaderData<typeof loader>();
   return (
     <Document>
       <ChakraProvider theme={customTheme} colorModeManager={localStorageManager}>
