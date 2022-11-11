@@ -1,19 +1,16 @@
 // root.tsx
 import React, { useContext, useEffect } from "react";
 import { withEmotionCache } from "@emotion/react";
-import { ChakraProvider, cookieStorageManagerSSR, localStorageManager } from "@chakra-ui/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import type { MetaFunction, LoaderArgs } from "@remix-run/node";
 import { theme } from "@dub-stack/chakra-radix-colors";
-import { Grid, Container, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, Grid, Container, extendTheme, useConst, cookieStorageManagerSSR } from "@chakra-ui/react";
 import { Header } from "~/components";
 import { ServerStyleContext, ClientStyleContext } from "./context";
 import cookie from "cookie";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/800.css";
+import "@fontsource/inter/variable-full.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -73,21 +70,26 @@ const customTheme = extendTheme({
   },
 });
 
+const ColorModeCookieKey = "chakra-ui-color-mode";
+
 export async function loader({ request }: LoaderArgs) {
   const cookies = cookie.parse(request.headers.get("cookie") || "");
   const colorModeCookie =
-    "chakra-ui-color-mode" in cookies ? cookie.serialize("chakra-ui-color-mode", cookies["chakra-ui-color-mode"]) : "";
-  return json({ colorModeCookie: colorModeCookie });
+    ColorModeCookieKey in cookies ? cookie.serialize(ColorModeCookieKey, cookies[ColorModeCookieKey]) : "";
+  console.log(`server - colorModeCookie: ${colorModeCookie}`);
+  console.log(Date.now());
+  return json({ colorModeCookie: colorModeCookie, headers: { "Cache-Control": "no-cache" } });
 }
 
 export const ChakraGapHeight = 8;
 export default function App() {
   const { colorModeCookie } = useLoaderData<typeof loader>();
-  console.log(colorModeCookie);
+  const cookieManager = useConst(cookieStorageManagerSSR(colorModeCookie));
+  console.log(`client - colorModeCookie: ${colorModeCookie}`);
 
   return (
     <Document>
-      <ChakraProvider theme={customTheme} colorModeManager={cookieStorageManagerSSR(colorModeCookie)}>
+      <ChakraProvider theme={customTheme} colorModeManager={cookieManager}>
         <Grid gap={8} minH="100vh" gridTemplateRows="max-content 1fr">
           <Header />
           <Container as="main" maxW="container.lg">

@@ -21,7 +21,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Posts() {
   const { isAdmin } = useLoaderData<LoaderData>();
-  console.log(isAdmin);
 
   return (
     <Container maxW="container.md">
