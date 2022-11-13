@@ -1,22 +1,17 @@
-import { Box } from "@chakra-ui/react";
 import type { BoxProps } from "@chakra-ui/react";
 import { useActionData } from "@remix-run/react";
-import { getMDXComponent } from "mdx-bundler/client";
-import { components } from "./mdx-components";
+import { BlogPost } from "~/components/blog-post";
+import { ZPreviewResponse } from "~/model/blog.shared";
 
 // PreviewView
 ////////////////////////////////////////////////////////////////////////////////
 export interface PreviewViewProps extends BoxProps {}
 
 export const PreviewView = (props: PreviewViewProps) => {
-  const data = useActionData();
+  const actionData = useActionData();
 
-  if (!(data && data.code)) return null;
+  const blogRes = ZPreviewResponse.safeParse(actionData);
+  if (!blogRes.success) return null;
 
-  const Component = getMDXComponent(data.code);
-  return (
-    <Box {...props}>
-      <Component components={components as any} />
-    </Box>
-  );
+  return <BlogPost marginX="auto" maxW="container.md" blog={blogRes.data} {...props} />;
 };

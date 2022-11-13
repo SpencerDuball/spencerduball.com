@@ -76,16 +76,13 @@ export async function loader({ request }: LoaderArgs) {
   const cookies = cookie.parse(request.headers.get("cookie") || "");
   const colorModeCookie =
     ColorModeCookieKey in cookies ? cookie.serialize(ColorModeCookieKey, cookies[ColorModeCookieKey]) : "";
-  console.log(`server - colorModeCookie: ${colorModeCookie}`);
-  console.log(Date.now());
-  return json({ colorModeCookie: colorModeCookie, headers: { "Cache-Control": "no-cache" } });
+  return json({ colorModeCookie: colorModeCookie });
 }
 
 export const ChakraGapHeight = 8;
 export default function App() {
   const { colorModeCookie } = useLoaderData<typeof loader>();
   const cookieManager = useConst(cookieStorageManagerSSR(colorModeCookie));
-  console.log(`client - colorModeCookie: ${colorModeCookie}`);
 
   return (
     <Document>

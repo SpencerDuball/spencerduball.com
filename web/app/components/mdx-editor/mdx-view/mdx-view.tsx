@@ -7,7 +7,7 @@ import type { RefObject } from "react";
 import { githubLight, githubDark } from "./editorThemes";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
-import { vim, Vim } from "@replit/codemirror-vim";
+import { vim } from "@replit/codemirror-vim";
 import { useMdxEditorState, useMdxEditorStore } from "../context";
 import { useTimeout } from "react-use";
 
@@ -123,7 +123,7 @@ export const MdxView = (props: MdxViewProps) => {
     // will allow to scroll past content ensuring at least the last line is always shown
     "& .cm-content": { pb: `calc(${height} - 2 * ${fontSize} * ${lineHeight})` },
     // ensures the line height is in sync with '.cm-content' computation
-    "& .cm-scroller": { lineHeight },
+    "& .cm-scroller": { lineHeight, overscrollBehavior: "none" },
   };
 
   // define extensions

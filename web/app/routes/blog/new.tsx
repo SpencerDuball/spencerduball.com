@@ -7,7 +7,12 @@ import { preview } from "~/model/blog.server";
 
 const initialValue = `---
 title: New Blog Post
-tags: []
+image: /images/default-splash-bg.png
+tags: 
+  - water
+  - fire
+  - earth
+  - wind
 ---
 
 # New Blog Post
@@ -32,7 +37,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function New() {
   return (
-    <Box h={`calc(100vh - ${(ChakraHeaderHeight + ChakraGapHeight) * 4}px)`} maxW={`calc(100vw - ${8 * 4}px)`} pb={8}>
+    <Box maxW="full" h={`calc(100vh - ${(ChakraHeaderHeight + ChakraGapHeight) * 4}px)`} pb={8}>
       <MdxEditorProvider>
         <MdxEditor h="full" initialValue={initialValue} />
       </MdxEditorProvider>

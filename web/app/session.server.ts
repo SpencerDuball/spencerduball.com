@@ -48,8 +48,11 @@ export const { getSession, commitSession, destroySession } = createDdbSessionSto
  */
 export async function getUser(request: Request): Promise<UserType | null>;
 /**
+ * Gets the user from the session cookie attached to the request. If the user does not exist it will redirect the
+ * user to Github to authenticate. After signing in the user will be redirected back to this url.
  *
  * @param request The request object
+ * @param type "required"
  * @param type
  */
 export async function getUser(request: Request, type: "required"): Promise<UserType>;
@@ -60,9 +63,9 @@ export async function getUser(request: Request, type?: StringEnum<"required">): 
 
   // get the session
   const session = await getSession(request.headers.get("cookie"));
-  if (!session.data) {
-    if (type && type === "required") return null;
-    else throw redirect(redirect_uri.toString());
+  if (!session.data.id) {
+    if (type && type === "required") throw redirect(redirect_uri.toString());
+    else return null;
   }
 
   // get the user
