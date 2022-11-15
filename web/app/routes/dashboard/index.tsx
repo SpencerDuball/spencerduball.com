@@ -1,9 +1,10 @@
-import { Box, Link, Grid, Flex, Text, Button } from "@chakra-ui/react";
+import { Box, Link, Grid, Flex, Text, Button, Icon } from "@chakra-ui/react";
 import type { GridProps } from "@chakra-ui/react";
 import { getUser } from "~/session.server";
 import { json, LoaderArgs, redirect } from "@remix-run/node";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { Stat } from "~/components";
+import { RiArrowRightLine } from "react-icons/ri";
 
 export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUser(request, "required");
@@ -23,8 +24,11 @@ const WelcomeCard = (props: WelcomeCardProps) => {
 
   return (
     <Grid
-      templateColumns="1fr max-content"
-      p={8}
+      gap={4}
+      sx={{
+        "@media screen and (max-width: 650px)": { "&": { gridTemplateColumns: "1fr", p: 4 } },
+        "@media screen and (min-width: 650px)": { "&": { gridTemplateColumns: "1fr max-content", p: 6 } },
+      }}
       borderRadius="lg"
       boxShadow="md"
       border="1px solid"
@@ -32,16 +36,26 @@ const WelcomeCard = (props: WelcomeCardProps) => {
       bg={c("_gray.2")}
       {...props}
     >
-      <Flex flexDir="column" gap={2}>
+      <Flex
+        flexDir="column"
+        sx={{ "@media screen and (max-width: 650px)": { "&": { gridRow: "1 / span 1" } } }}
+        gap={2}
+      >
         <Text fontSize="4xl">Welcome back, Spencer!</Text>
-        <Flex gap={4} alignItems="center">
-          <Button w="32" colorScheme="red">
-            Logout
+        <Flex gap={4} alignItems="center" wrap="wrap">
+          <Button>See Activity</Button>
+          <Button variant="link" rightIcon={<Icon as={RiArrowRightLine} />}>
+            View Analytics
           </Button>
-          <Link>View Analytics</Link>
         </Flex>
       </Flex>
-      <Stat w="xs" bg={c("_gray.4")} label="Monthly Views" value="75" />
+      <Stat
+        sx={{ "@media screen and (max-width: 650px)": { "&": { w: "full", gridRow: "2 / span 1" } } }}
+        w={{ base: "3xs", md: "xs" }}
+        bg={c("_gray.4")}
+        label="Monthly Views"
+        value="75"
+      />
     </Grid>
   );
 };
