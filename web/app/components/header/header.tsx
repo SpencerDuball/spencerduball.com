@@ -2,8 +2,9 @@ import type { BoxProps, LinkProps } from "@chakra-ui/react";
 import { Box, Container, HStack, Link, IconButton, Icon, useColorMode } from "@chakra-ui/react";
 import { RiSunFill, RiMoonFill, RiGithubFill } from "react-icons/ri";
 import type { LinkProps as RemixLinkProps } from "@remix-run/react";
-import { Link as RemixLink, useLocation } from "@remix-run/react";
+import { Link as RemixLink, useLocation, useLoaderData } from "@remix-run/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
+import { loader } from "~/root";
 
 // NavLink
 //////////////////////////////////////////////////////////////////////////
@@ -41,6 +42,7 @@ export interface HeaderProps extends BoxProps {}
 
 export const Header = (props: HeaderProps) => {
   const { toggleColorMode, colorMode } = useColorMode();
+  const { isAdmin } = useLoaderData<typeof loader>();
 
   return (
     <Box as="header" w="full" {...props}>
@@ -52,11 +54,12 @@ export const Header = (props: HeaderProps) => {
         gridAutoFlow="column"
         justifyContent="space-between"
       >
-        {/* Navigation */}
+        {/* Desktop Navigation */}
         <HStack as="nav" spacing={{ base: "4", sm: "8" }}>
           <NavLink to="/">Home</NavLink>
           <NavLink to="/blog">Blog</NavLink>
           <NavLink to="/projects">Projects</NavLink>
+          {isAdmin ? <NavLink to="/dashboard">Dashboard</NavLink> : null}
         </HStack>
 
         {/* Site Controls */}

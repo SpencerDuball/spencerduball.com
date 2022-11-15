@@ -11,6 +11,7 @@ import { Header } from "~/components";
 import { ServerStyleContext, ClientStyleContext } from "./context";
 import cookie from "cookie";
 import "@fontsource/inter/variable-full.css";
+import { getUser } from "./session.server";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -73,10 +74,16 @@ const customTheme = extendTheme({
 const ColorModeCookieKey = "chakra-ui-color-mode";
 
 export async function loader({ request }: LoaderArgs) {
+  // get the colorModeCookie
   const cookies = cookie.parse(request.headers.get("cookie") || "");
   const colorModeCookie =
     ColorModeCookieKey in cookies ? cookie.serialize(ColorModeCookieKey, cookies[ColorModeCookieKey]) : "";
-  return json({ colorModeCookie: colorModeCookie });
+
+  // determine if user is admin
+  const user = await getUser(request);
+  const isAdmin = user?.roles?.includes("admin");
+
+  return json({ isAdmin, colorModeCookie: colorModeCookie });
 }
 
 export const ChakraGapHeight = 8;
