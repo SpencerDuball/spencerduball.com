@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from "react";
 import { withEmotionCache } from "@emotion/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
-import { json } from "@remix-run/node";
+import { json, LinksFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import type { MetaFunction, LoaderArgs } from "@remix-run/node";
 import { theme } from "@dub-stack/chakra-radix-colors";
@@ -10,8 +10,16 @@ import { ChakraProvider, Grid, Container, extendTheme, useConst, cookieStorageMa
 import { Header } from "~/components";
 import { ServerStyleContext, ClientStyleContext } from "./context";
 import cookie from "cookie";
-import "@fontsource/inter/variable-full.css";
+import Inter400Font from "@fontsource/inter/400.css";
+import Inter700Font from "@fontsource/inter/700.css";
+import Inter900Font from "@fontsource/inter/900.css";
 import { getUser } from "./session.server";
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: Inter400Font },
+  { rel: "stylesheet", href: Inter700Font },
+  { rel: "stylesheet", href: Inter900Font },
+];
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
