@@ -1,11 +1,39 @@
-import { BoxProps, LinkProps, Grid, Button, ButtonProps } from "@chakra-ui/react";
+import { BoxProps, LinkProps, Grid, Button, ButtonProps, keyframes, useToken, forwardRef } from "@chakra-ui/react";
 import { Box, Container, Text, HStack, Link, IconButton, Icon, useColorMode, VStack } from "@chakra-ui/react";
-import { RiSunFill, RiMoonFill, RiMenu2Fill } from "react-icons/ri";
+import { RiSunFill, RiMoonFill, RiMenu2Fill, RiArrowDownSLine } from "react-icons/ri";
 import type { LinkProps as RemixLinkProps } from "@remix-run/react";
 import { Link as RemixLink, useLocation, useLoaderData } from "@remix-run/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { loader } from "~/root";
-import { MenuRoot, MenuList, MenuItem, MenuTrigger, MenuContent, MenuViewport, MenuIndicator } from "~/components";
+import {
+  MenuRoot,
+  MenuList,
+  MenuLink,
+  MenuItem,
+  MenuTrigger,
+  MenuContent,
+  MenuViewport,
+  MenuIndicator,
+  ScrollBox,
+} from "~/components";
+
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+const fadeOut = keyframes`
+  from { opacity: 1; }
+  to { opacity: 0; }
+`;
+
+const scaleIn = keyframes`
+  from { opacity: 0; transform: rotateX(-30deg) scale(0.9); }
+  to { opacity: 1; transform: rotateX(0deg) scale(1); }
+`;
+const scaleOut = keyframes`
+  from { opacity: 1; transform: rotateX(0deg) scale(1); }
+  to { opacity: 0; transform: rotateX(-30deg) scale(0.9); }
+`;
 
 // NavLink
 //////////////////////////////////////////////////////////////////////////
@@ -13,7 +41,7 @@ interface NavLinkProps extends LinkProps, Omit<RemixLinkProps, "color"> {
   to: string;
 }
 
-const NavLink = (props: NavLinkProps) => {
+const NavLink = forwardRef((props: NavLinkProps, ref) => {
   const c = useThemedColor();
   const { to, children, ...rest } = props;
   const { pathname } = useLocation();
@@ -24,6 +52,7 @@ const NavLink = (props: NavLinkProps) => {
 
   return (
     <Link
+      ref={ref}
       as={RemixLink}
       to={to}
       fontWeight="semibold"
@@ -34,7 +63,7 @@ const NavLink = (props: NavLinkProps) => {
       {children}
     </Link>
   );
-};
+});
 
 // NavCardLink
 //////////////////////////////////////////////////////////////////////////
@@ -54,17 +83,27 @@ const NavCardLink = (props: NavCardLinkProps) => {
   else isActive = pathname.startsWith(to);
 
   return (
-    <Box display="grid" borderRadius="lg" gap={2} p={4} bg={isActive ? c("_gray.5") : c("_gray.4")} {...rest}>
-      <Link
-        as={RemixLink}
-        to={to}
-        display="block"
-        _hover={{ textDecoration: "none" }}
-        color={isActive ? c("_gray.12") : c("_gray.10")}
-      >
-        <Text fontWeight="semibold">{title}</Text>
-        <Text>{description}</Text>
-      </Link>
+    <Box
+      display="grid"
+      borderRadius="lg"
+      minW="400px"
+      gap={2}
+      p={4}
+      bg={isActive ? c("_gray.5") : c("_gray.4")}
+      {...rest}
+    >
+      <MenuLink asChild>
+        <Link
+          as={RemixLink}
+          to={to}
+          display="block"
+          _hover={{ textDecoration: "none" }}
+          color={isActive ? c("_gray.12") : c("_gray.10")}
+        >
+          <Text fontWeight="semibold">{title}</Text>
+          <Text>{description}</Text>
+        </Link>
+      </MenuLink>
       {children ? (
         <Grid gap={2} templateColumns="1fr 1fr">
           {children}
@@ -89,18 +128,20 @@ const SubLink = (props: SubLinkProps) => {
   else isActive = pathname.startsWith(to);
 
   return (
-    <Link
-      as={RemixLink}
-      to={to}
-      p={2}
-      textAlign="center"
-      borderRadius="lg"
-      _hover={{ textDecoration: "none", color: c("_gray.12") }}
-      bg={isActive ? c("_gray.7") : c("_gray.6")}
-      fontWeight={isActive ? "semibold" : "normal"}
-      color={isActive ? c("_gray.12") : c("_gray.10")}
-      {...rest}
-    />
+    <MenuLink asChild>
+      <Link
+        as={RemixLink}
+        to={to}
+        p={2}
+        textAlign="center"
+        borderRadius="md"
+        _hover={{ textDecoration: "none", color: c("_gray.12") }}
+        bg={isActive ? c("_gray.7") : c("_gray.6")}
+        fontWeight={isActive ? "semibold" : "normal"}
+        color={isActive ? c("_gray.12") : c("_gray.10")}
+        {...rest}
+      />
+    </MenuLink>
   );
 };
 
@@ -124,28 +165,44 @@ export const Header = (props: HeaderProps) => {
           justifyContent="space-between"
           alignItems="center"
           position="relative"
+          delayDuration={100}
         >
           {/* Desktop Navigation */}
-          <HStack as="nav" display={{ base: "none", sm: "initial" }} spacing={{ base: "4", sm: "8" }}>
+          {/* <HStack as="nav" display={{ base: "none", sm: "initial" }} spacing={{ base: "4", sm: "8" }}>
             <NavLink to="/">Home</NavLink>
             <NavLink to="/blog">Blog</NavLink>
             <NavLink to="/projects">Projects</NavLink>
             {isAdmin ? <NavLink to="/dashboard">Dashboard</NavLink> : null}
-          </HStack>
+          </HStack> */}
 
-          {/* Mobile Navigaion */}
-          <Box display={{ base: "block", sm: "none" }}>
-            <MenuList>
+          {/* Desktop Navigation */}
+          <Box display={{ base: "none", sm: "block" }}>
+            <MenuList display="flex" gap={{ base: "4", sm: "8" }}>
+              <MenuItem>
+                <MenuLink asChild>
+                  <NavLink to="/">Home</NavLink>
+                </MenuLink>
+              </MenuItem>
+              <MenuItem>
+                <MenuLink asChild>
+                  <NavLink to="/blog">Blog</NavLink>
+                </MenuLink>
+              </MenuItem>
               <MenuItem>
                 <MenuTrigger asChild>
-                  <IconButton
-                    w="min-content"
-                    aria-label="open navigation"
-                    icon={<Icon as={RiMenu2Fill} h="45%" w="45%" />}
-                  />
+                  <Button variant="link" borderRadius="none" _hover={{ textDecor: "none" }}>
+                    Projects
+                  </Button>
                 </MenuTrigger>
-                <MenuContent width="full" bg={c("_gray.3")} borderRadius="lg" boxShadow="lg" maxH="500px">
-                  <VStack as="nav" alignItems="normal" spacing={2} p={3}>
+                <MenuContent
+                  height="full"
+                  bg={c("_gray.3")}
+                  borderRadius="lg"
+                  boxShadow="lg"
+                  border="1px solid"
+                  borderColor={c("_gray.6")}
+                >
+                  <VStack alignItems="normal" spacing={2} p={4}>
                     <NavCardLink to="/" title="Home" description="About me, site summary, and recent activity." />
                     <NavCardLink to="/blog" title="Blog" description="See all of my blog posts." />
                     <NavCardLink
@@ -163,7 +220,41 @@ export const Header = (props: HeaderProps) => {
                   </VStack>
                 </MenuContent>
               </MenuItem>
-              <MenuIndicator>
+              {isAdmin ? (
+                <MenuItem>
+                  <MenuTrigger asChild>
+                    <Button variant="link" borderRadius="none" _hover={{ textDecor: "none" }}>
+                      Dashboard
+                    </Button>
+                  </MenuTrigger>
+                  <MenuContent
+                    height="full"
+                    bg={c("_gray.3")}
+                    borderRadius="lg"
+                    boxShadow="lg"
+                    border="1px solid"
+                    borderColor={c("_gray.6")}
+                  >
+                    <ScrollBox p={3} height="100%" maxHeight="500px">
+                      <VStack alignItems="normal" spacing={2}>
+                        <NavCardLink to="/dashboard" title="Dashboard" description="View the site dashboard.">
+                          <SubLink to="/dashboard">Home</SubLink>
+                          <SubLink to="/dashboard/analytics">Analytics</SubLink>
+                          <SubLink to="/dashboard/cms">CMS</SubLink>
+                        </NavCardLink>
+                      </VStack>
+                    </ScrollBox>
+                  </MenuContent>
+                </MenuItem>
+              ) : null}
+
+              <MenuIndicator
+                zIndex={useToken("zIndices", "dropdown") + 1}
+                sx={{
+                  "&[data-state='visible']": { animation: `${fadeIn} 100ms ease` },
+                  "&[data-state='hidden']": { animation: `${fadeOut} 100ms ease` },
+                }}
+              >
                 <Box
                   position="relative"
                   left="50%"
@@ -173,8 +264,87 @@ export const Header = (props: HeaderProps) => {
                   mt={`calc(0.71 * ${PointerSize}px + ${PointerSize / 4}px)`}
                   transformOrigin="center"
                   transform="rotate(45deg) translateX(-50%)"
+                  borderTop="1px solid"
+                  borderLeft="1px solid"
+                  borderColor={c("_gray.6")}
                   borderBottomLeftRadius="2px"
+                />
+              </MenuIndicator>
+            </MenuList>
+
+            <MenuViewport
+              position="absolute"
+              top="100%"
+              mt={`calc(${PointerSize / 2}px)`}
+              // w="var(--radix-navigation-menu-viewport-width)"
+              // h="var(--radix-navigation-menu-viewport-height)"
+              zIndex="dropdown"
+              sx={{
+                "&[data-state='open']": { animation: `${scaleIn} 100ms ease` },
+                "&[data-state='closed']": { animation: `${scaleOut} 100ms ease` },
+              }}
+            />
+          </Box>
+
+          {/* Mobile Navigaion */}
+          {/* <Box display={{ base: "block", sm: "none" }}>
+            <MenuList>
+              <MenuItem>
+                <MenuTrigger asChild>
+                  <IconButton
+                    w="min-content"
+                    aria-label="open navigation"
+                    icon={<Icon as={RiMenu2Fill} h="45%" w="45%" />}
+                  />
+                </MenuTrigger>
+                <MenuContent
+                  height="full"
+                  bg={c("_gray.3")}
+                  borderRadius="lg"
                   boxShadow="lg"
+                  border="1px solid"
+                  borderColor={c("_gray.6")}
+                >
+                  <ScrollBox p={3} height="100%" maxHeight={`calc(100vh - ${useToken("sizes", ChakraHeaderHeight)})`}>
+                    <VStack as="nav" alignItems="normal" spacing={2}>
+                      <NavCardLink to="/" title="Home" description="About me, site summary, and recent activity." />
+                      <NavCardLink to="/blog" title="Blog" description="See all of my blog posts." />
+                      <NavCardLink
+                        to="/projects"
+                        title="Projects"
+                        description="Check out some of the projects I have worked on."
+                      />
+                      {isAdmin ? (
+                        <NavCardLink to="/dashboard" title="Dashboard" description="View the site dashboard.">
+                          <SubLink to="/dashboard">Home</SubLink>
+                          <SubLink to="/dashboard/analytics">Analytics</SubLink>
+                          <SubLink to="/dashboard/cms">CMS</SubLink>
+                        </NavCardLink>
+                      ) : null}
+                    </VStack>
+                  </ScrollBox>
+                </MenuContent>
+              </MenuItem>
+              <MenuIndicator
+                zIndex={useToken("zIndices", "dropdown") + 1}
+                sx={{
+                  "&[data-state='visible']": { animation: `${fadeIn} 100ms ease` },
+                  "&[data-state='hidden']": { animation: `${fadeOut} 100ms ease` },
+                }}
+              >
+                <Box
+                  position="relative"
+                  left="50%"
+                  bg={c("_gray.3")}
+                  w={`${PointerSize}px`}
+                  h={`${PointerSize}px`}
+                  mt={`calc(0.71 * ${PointerSize}px + ${PointerSize / 4}px)`}
+                  transformOrigin="center"
+                  transform="rotate(45deg) translateX(-50%)"
+                  borderTop="1px solid"
+                  borderLeft="1px solid"
+                  borderColor={c("_gray.6")}
+                  borderBottomLeftRadius="2px"
                 />
               </MenuIndicator>
             </MenuList>
@@ -186,15 +356,19 @@ export const Header = (props: HeaderProps) => {
               w="100%"
               h="var(--radix-navigation-menu-viewport-height)"
               zIndex="dropdown"
+              sx={{
+                "&[data-state='open']": { animation: `${scaleIn} 100ms ease` },
+                "&[data-state='closed']": { animation: `${scaleOut} 100ms ease` },
+              }}
             />
-          </Box>
+          </Box> */}
 
           {/* Site Controls */}
           <HStack>
             <IconButton
               icon={<Icon as={colorMode === "light" ? RiMoonFill : RiSunFill} h="45%" w="45%" />}
               aria-label="Toggle theme"
-              variant="ghost"
+              variant={{ base: "solid", sm: "ghost" }}
               onClick={toggleColorMode}
               w="min-content"
             />
