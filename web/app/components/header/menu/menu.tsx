@@ -1,10 +1,19 @@
-import React, { Children, useMemo, isValidElement, cloneElement } from "react";
-import { Button, chakra, Link, Box, Text, Grid, useToken, keyframes } from "@chakra-ui/react";
-import type { PropsOf, LinkProps, ButtonProps, BoxProps, TextProps, GridProps } from "@chakra-ui/react";
+import { Children, useMemo, isValidElement, cloneElement } from "react";
+import { Button, chakra, Link, Box, Text, Grid, useToken, keyframes, IconButton, Icon } from "@chakra-ui/react";
+import type {
+  PropsOf,
+  LinkProps,
+  ButtonProps,
+  BoxProps,
+  TextProps,
+  GridProps,
+  IconButtonProps,
+} from "@chakra-ui/react";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import { Link as RemixLink, useLocation } from "@remix-run/react";
 import type { LinkProps as RemixLinkProps } from "@remix-run/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
+import { RiMenu2Fill } from "react-icons/ri";
 
 /**
  * Determines if the given path is part of the active path.
@@ -36,6 +45,7 @@ const fadeOut = keyframes`
 
 // constants
 const ChakraPointerSize = 3;
+const ChakraPointerOffset = 2;
 
 // Menu Components
 //////////////////////////////////////////////////////////////////////////
@@ -118,7 +128,7 @@ export const MenuIndicator = (props: MenuIndicatorProps) => {
         borderLeft="1px solid"
         borderColor={c("_gray.6")}
         borderTopLeftRadius="2px"
-        top={ChakraPointerSize / 2}
+        top={ChakraPointerSize / 2 + ChakraPointerOffset}
       />
     </_MenuIndicator>
   );
@@ -129,7 +139,7 @@ export const MenuViewport = (props: MenuViewportProps) => (
   <_MenuViewport
     position="absolute"
     zIndex="dropdown"
-    mt={`calc(${useToken("sizes", ChakraPointerSize)} / 2)`}
+    mt={`calc(${useToken("sizes", ChakraPointerSize)} / 2 + ${useToken("sizes", ChakraPointerOffset)})`}
     sx={{
       "&[data-state='open']": { animation: `${scaleIn} 200ms ease` },
       "&[data-state='closed']": { animation: `${scaleOut} 200ms ease` },
@@ -189,6 +199,25 @@ export const DesktopMenuTrigger = (props: DesktopMenuTriggerProps) => {
     </MenuTrigger>
   );
 };
+
+//////////////////////////////////////////////////////////////////////////
+// Mobile Components
+//////////////////////////////////////////////////////////////////////////
+
+// MobileMenuTrigger
+//////////////////////////////////////////////////////////////////////////
+export interface MobileMenuTriggerProps extends Omit<IconButtonProps, "aria-label">, MenuTriggerProps {}
+
+export const MobileMenuTrigger = (props: MobileMenuTriggerProps) => (
+  <MenuTrigger asChild>
+    <IconButton
+      w="min-content"
+      aria-label="open navigation menu"
+      icon={<Icon as={RiMenu2Fill} h="45%" w="45%" />}
+      {...props}
+    />
+  </MenuTrigger>
+);
 
 //////////////////////////////////////////////////////////////////////////
 // LinkCard Compound Components
