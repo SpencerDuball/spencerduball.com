@@ -1,149 +1,23 @@
-import { BoxProps, LinkProps, Grid, Button, ButtonProps, keyframes, useToken, forwardRef } from "@chakra-ui/react";
-import { Box, Container, Text, HStack, Link, IconButton, Icon, useColorMode, VStack } from "@chakra-ui/react";
-import { RiSunFill, RiMoonFill, RiMenu2Fill, RiArrowDownSLine } from "react-icons/ri";
-import type { LinkProps as RemixLinkProps } from "@remix-run/react";
-import { Link as RemixLink, useLocation, useLoaderData } from "@remix-run/react";
-import { useThemedColor } from "@dub-stack/chakra-radix-colors";
+import { BoxProps, calc, useBreakpointValue, useToken } from "@chakra-ui/react";
+import { Box, Container, HStack, IconButton, Icon, useColorMode, VStack } from "@chakra-ui/react";
+import { RiSunFill, RiMoonFill } from "react-icons/ri";
+import { useLoaderData } from "@remix-run/react";
 import { loader } from "~/root";
 import {
   MenuRoot,
   MenuList,
-  MenuLink,
   MenuItem,
-  MenuTrigger,
   MenuContent,
   MenuViewport,
   MenuIndicator,
-  ScrollBox,
-} from "~/components";
-
-const fadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`;
-const fadeOut = keyframes`
-  from { opacity: 1; }
-  to { opacity: 0; }
-`;
-
-const scaleIn = keyframes`
-  from { opacity: 0; transform: rotateX(-30deg) scale(0.9); }
-  to { opacity: 1; transform: rotateX(0deg) scale(1); }
-`;
-const scaleOut = keyframes`
-  from { opacity: 1; transform: rotateX(0deg) scale(1); }
-  to { opacity: 0; transform: rotateX(-30deg) scale(0.9); }
-`;
-
-// NavLink
-//////////////////////////////////////////////////////////////////////////
-interface NavLinkProps extends LinkProps, Omit<RemixLinkProps, "color"> {
-  to: string;
-}
-
-const NavLink = forwardRef((props: NavLinkProps, ref) => {
-  const c = useThemedColor();
-  const { to, children, ...rest } = props;
-  const { pathname } = useLocation();
-
-  let isActive = false;
-  if (to === "/") isActive = pathname === to;
-  else isActive = pathname.startsWith(to);
-
-  return (
-    <Link
-      ref={ref}
-      as={RemixLink}
-      to={to}
-      fontWeight="semibold"
-      _hover={{ textDecoration: "none", color: c("_gray.12") }}
-      color={isActive ? c("_gray.12") : c("_gray.10")}
-      {...rest}
-    >
-      {children}
-    </Link>
-  );
-});
-
-// NavCardLink
-//////////////////////////////////////////////////////////////////////////
-interface NavCardLinkProps extends BoxProps {
-  to: string;
-  title: string;
-  description: string;
-}
-
-const NavCardLink = (props: NavCardLinkProps) => {
-  const { to, title, description, children, ...rest } = props;
-  const { pathname } = useLocation();
-  const c = useThemedColor();
-
-  let isActive = false;
-  if (to === "/") isActive = pathname === to;
-  else isActive = pathname.startsWith(to);
-
-  return (
-    <Box
-      display="grid"
-      borderRadius="lg"
-      minW="400px"
-      gap={2}
-      p={4}
-      bg={isActive ? c("_gray.5") : c("_gray.4")}
-      {...rest}
-    >
-      <MenuLink asChild>
-        <Link
-          as={RemixLink}
-          to={to}
-          display="block"
-          _hover={{ textDecoration: "none" }}
-          color={isActive ? c("_gray.12") : c("_gray.10")}
-        >
-          <Text fontWeight="semibold">{title}</Text>
-          <Text>{description}</Text>
-        </Link>
-      </MenuLink>
-      {children ? (
-        <Grid gap={2} templateColumns="1fr 1fr">
-          {children}
-        </Grid>
-      ) : null}
-    </Box>
-  );
-};
-
-// SubLink
-//////////////////////////////////////////////////////////////////////////
-interface SubLinkProps extends LinkProps, Omit<RemixLinkProps, "color"> {
-  to: string;
-}
-const SubLink = (props: SubLinkProps) => {
-  const { to, ...rest } = props;
-  const { pathname } = useLocation();
-  const c = useThemedColor();
-
-  let isActive = false;
-  if (to === "/") isActive = pathname === to;
-  else isActive = pathname.startsWith(to);
-
-  return (
-    <MenuLink asChild>
-      <Link
-        as={RemixLink}
-        to={to}
-        p={2}
-        textAlign="center"
-        borderRadius="md"
-        _hover={{ textDecoration: "none", color: c("_gray.12") }}
-        bg={isActive ? c("_gray.7") : c("_gray.6")}
-        fontWeight={isActive ? "semibold" : "normal"}
-        color={isActive ? c("_gray.12") : c("_gray.10")}
-        {...rest}
-      />
-    </MenuLink>
-  );
-};
+  DesktopMenuLink,
+  DesktopMenuTrigger,
+  LinkCard,
+  LinkCardLabel,
+  LinkCardDescription,
+  LinkCardSubLinks,
+  LinkCardSubLink,
+} from "./menu";
 
 // Header
 //////////////////////////////////////////////////////////////////////////
@@ -152,14 +26,77 @@ export const ChakraHeaderHeight = 20;
 export interface HeaderProps extends BoxProps {}
 
 export const Header = (props: HeaderProps) => {
-  const { toggleColorMode, colorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode();
   const { isAdmin } = useLoaderData<typeof loader>();
-  const c = useThemedColor();
 
   return (
     <Box as="header" w="full" {...props}>
-      <Container maxW="container.lg" w="full" h={ChakraHeaderHeight} display="grid" alignItems="center">
-        <MenuRoot
+      <Container
+        maxW="container.lg"
+        w="full"
+        h={ChakraHeaderHeight}
+        display="grid"
+        alignItems="center"
+        gridAutoFlow="column"
+        justifyContent="space-between"
+      >
+        {/* Desktop Nav Menu */}
+        <MenuRoot display={useBreakpointValue({ base: "none", sm: undefined })} position="relative">
+          <MenuList display="flex" gap={{ base: 4, sm: 8 }}>
+            <MenuItem>
+              <DesktopMenuLink to="/">Home</DesktopMenuLink>
+            </MenuItem>
+            <MenuItem>
+              <DesktopMenuLink to="/blog">Blog</DesktopMenuLink>
+            </MenuItem>
+            <MenuItem>
+              <DesktopMenuTrigger to="/projects">Projects</DesktopMenuTrigger>
+              <MenuContent>
+                <VStack alignItems="normal" spacing={2} p={4}>
+                  <LinkCard to="/projects">
+                    <LinkCardLabel>Projects</LinkCardLabel>
+                    <LinkCardDescription>Check out some of the projects I work on.</LinkCardDescription>
+                    <LinkCardSubLinks>
+                      <LinkCardSubLink to="/projects/software">Software</LinkCardSubLink>
+                      <LinkCardSubLink to="/projects/3d-print">3D Print</LinkCardSubLink>
+                      <LinkCardSubLink to="/projects/electronics">Electronics</LinkCardSubLink>
+                    </LinkCardSubLinks>
+                  </LinkCard>
+                </VStack>
+              </MenuContent>
+            </MenuItem>
+            {isAdmin ? (
+              <MenuItem>
+                <DesktopMenuTrigger to="/dashboard">Dashboard</DesktopMenuTrigger>
+                <MenuContent>
+                  <VStack alignItems="normal" spacing={2} p={4}>
+                    <LinkCard to="/dashboard">
+                      <LinkCardLabel>Dashboard</LinkCardLabel>
+                      <LinkCardDescription>Manage and view your site content.</LinkCardDescription>
+                      <LinkCardSubLinks>
+                        <LinkCardSubLink to="/dashboard/cms">CMS</LinkCardSubLink>
+                        <LinkCardSubLink to="/projects/analytics">Analytics</LinkCardSubLink>
+                      </LinkCardSubLinks>
+                    </LinkCard>
+                  </VStack>
+                </MenuContent>
+              </MenuItem>
+            ) : null}
+          </MenuList>
+          <MenuIndicator />
+          <MenuViewport w="container.sm" maxW={`calc(100vw - 2 * ${useToken("sizes", 4)})`} />
+        </MenuRoot>
+        <HStack>
+          <IconButton
+            icon={<Icon as={colorMode === "light" ? RiMoonFill : RiSunFill} h="45%" w="45%" />}
+            aria-label="Toggle theme"
+            variant={{ base: "solid", sm: "ghost" }}
+            onClick={toggleColorMode}
+            w="min-content"
+          />
+        </HStack>
+
+        {/* <MenuRoot
           display="grid"
           gridAutoFlow="column"
           justifyContent="space-between"
@@ -167,15 +104,6 @@ export const Header = (props: HeaderProps) => {
           position="relative"
           delayDuration={100}
         >
-          {/* Desktop Navigation */}
-          {/* <HStack as="nav" display={{ base: "none", sm: "initial" }} spacing={{ base: "4", sm: "8" }}>
-            <NavLink to="/">Home</NavLink>
-            <NavLink to="/blog">Blog</NavLink>
-            <NavLink to="/projects">Projects</NavLink>
-            {isAdmin ? <NavLink to="/dashboard">Dashboard</NavLink> : null}
-          </HStack> */}
-
-          {/* Desktop Navigation */}
           <Box display={{ base: "none", sm: "block" }}>
             <MenuList display="flex" gap={{ base: "4", sm: "8" }}>
               <MenuItem>
@@ -286,8 +214,7 @@ export const Header = (props: HeaderProps) => {
             />
           </Box>
 
-          {/* Mobile Navigaion */}
-          {/* <Box display={{ base: "block", sm: "none" }}>
+          <Box display={{ base: "block", sm: "none" }}>
             <MenuList>
               <MenuItem>
                 <MenuTrigger asChild>
@@ -361,9 +288,8 @@ export const Header = (props: HeaderProps) => {
                 "&[data-state='closed']": { animation: `${scaleOut} 100ms ease` },
               }}
             />
-          </Box> */}
+          </Box>
 
-          {/* Site Controls */}
           <HStack>
             <IconButton
               icon={<Icon as={colorMode === "light" ? RiMoonFill : RiSunFill} h="45%" w="45%" />}
@@ -373,7 +299,7 @@ export const Header = (props: HeaderProps) => {
               w="min-content"
             />
           </HStack>
-        </MenuRoot>
+            </MenuRoot> */}
       </Container>
     </Box>
   );
