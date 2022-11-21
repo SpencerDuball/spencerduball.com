@@ -43,7 +43,7 @@ const WelcomeCard = (props: WelcomeCardProps) => {
       >
         <Text fontSize="4xl">Welcome back, Spencer!</Text>
         <Flex gap={4} alignItems="center" wrap="wrap">
-          <Button>See Activity</Button>
+          <Button>Manage Content</Button>
           <Button variant="link" rightIcon={<Icon as={RiArrowRightLine} />}>
             View Analytics
           </Button>

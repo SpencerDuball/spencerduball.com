@@ -110,7 +110,7 @@ export const MenuIndicator = (props: MenuIndicatorProps) => {
     <_MenuIndicator
       zIndex={useToken("zIndices", "dropdown") + 1}
       sx={{
-        "&[data-state='visible']": { animation: `${fadeIn} 100ms ease` },
+        "&[data-state='visible']": { animation: `${fadeIn} 400ms ease` },
         "&[data-state='hidden']": { animation: `${fadeOut} 100ms ease` },
       }}
       transition="transform 250ms ease"
