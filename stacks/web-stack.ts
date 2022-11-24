@@ -10,8 +10,12 @@ export function WebStack({ stack, app }: StackContext) {
 
   // create the table
   const table = new Table(stack, "table", {
-    fields: { pk: "string", sk: "string" },
+    fields: { pk: "string", sk: "string", gsi1pk: "string", gsi1sk: "string", gsi2pk: "string", gsi2sk: "string" },
     primaryIndex: { partitionKey: "pk", sortKey: "sk" },
+    globalIndexes: {
+      gsi1: { partitionKey: "gsi1pk", sortKey: "gsi1sk" },
+      gsi2: { partitionKey: "gsi2pk", sortKey: "gsi2sk" },
+    },
     cdk: { table: { billingMode: BillingMode.PAY_PER_REQUEST } },
     timeToLiveAttribute: "ttl",
   });

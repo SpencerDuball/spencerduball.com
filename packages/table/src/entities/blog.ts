@@ -3,8 +3,6 @@ import { z } from "zod";
 export const BlogSchema = {
   name: "Blog",
   attributes: {
-    pk: { partitionKey: true, type: "string", default: (data: { id: string }) => `blog#${data.id}` },
-    sk: { sortKey: true, type: "string", default: (data: { id: string }) => `blog#${data.id}` },
     id: { type: "string", required: true },
     title: { type: "string", required: true },
     image_url: { type: "string", required: true },
@@ -14,6 +12,14 @@ export const BlogSchema = {
     views: { type: "number", required: true },
     content_modified: { type: "string", required: true },
     published: { type: "boolean", default: false },
+    pk: { partitionKey: true, type: "string", default: (data: { id: string }) => `blog#${data.id}` },
+    sk: { sortKey: true, type: "string", default: (data: { id: string }) => `blog#${data.id}` },
+    gsi1pk: { type: "string", default: "blog" },
+    gsi1sk: {
+      type: "string",
+      default: (data: { id: string; published: boolean; created: string }) =>
+        `published#${data.published}#created#${data.created}#blog#${data.id}`,
+    },
   },
 };
 
@@ -29,6 +35,9 @@ export const ZBlog = z.object({
   views: z.number(),
   content_modified: z.string(),
   published: z.boolean(),
+  modified: z.string(),
+  created: z.string(),
+  entity: z.string(),
 });
 
 export type BlogType = ReturnType<typeof ZBlog.parse>;

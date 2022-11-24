@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import { theme } from "@dub-stack/chakra-radix-colors";
+import { useLocation } from "@remix-run/react";
 
 const uniqueColorPalettes = Object.keys(theme.colors).filter((item) => !(item.endsWith("Dark") || item.endsWith("A")));
 
@@ -15,3 +17,13 @@ export function randomColorScheme(name: string) {
   const colorPaletteIdx = nameId % uniqueColorPalettes.length;
   return uniqueColorPalettes[colorPaletteIdx];
 }
+
+/**
+ * Determines if the given path is part of the active path.
+ *
+ * @param to The href.
+ */
+export const useIsActivePath = (to: string | undefined) => {
+  const { pathname } = useLocation();
+  return useMemo(() => (to && to === "/" ? pathname === to : pathname.startsWith(to!)), [pathname]);
+};

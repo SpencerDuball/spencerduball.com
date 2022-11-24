@@ -265,7 +265,10 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string";
+                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
+                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
+                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
+                 */
                 readonly default: (data: any) => string;
             };
             readonly ttl: {
@@ -295,7 +298,10 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string";
+                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
+                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
+                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
+                 */
                 readonly default: (data: any) => string;
             };
             readonly ttl: {
@@ -325,7 +331,10 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string";
+                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
+                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
+                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
+                 */
                 readonly default: (data: any) => string;
             };
             readonly ttl: {
@@ -355,7 +364,10 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string";
+                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
+                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
+                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
+                 */
                 readonly default: (data: any) => string;
             };
             readonly ttl: {

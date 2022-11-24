@@ -5,6 +5,8 @@ import { z } from "zod";
 import { importRemarkGfm, importRemarkMdxCodeMeta } from "~/es-modules";
 import { ZPreviewResponse } from "./blog.shared";
 
+// Preview
+//////////////////////////////////////////////////////////////////////////
 const mdxOptionsFn = async () => {
   const { default: remarkGfm } = await importRemarkGfm();
   const { default: remarkMdxCodeMeta } = await importRemarkMdxCodeMeta();
@@ -38,3 +40,6 @@ export async function preview(mdx: FormDataEntryValue | null) {
     .then(async (bundle) => json(await ZPreviewResponse.parseAsync({ code: bundle.code, ...bundle.frontmatter })))
     .catch((e: ZodError) => json({ errorMessage: e.message }, 400));
 }
+
+// Create
+//////////////////////////////////////////////////////////////////////////

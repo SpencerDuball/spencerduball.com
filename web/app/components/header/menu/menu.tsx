@@ -1,4 +1,4 @@
-import { Children, useMemo, isValidElement, cloneElement } from "react";
+import { Children, isValidElement, cloneElement } from "react";
 import { Button, chakra, Link, Box, Text, Grid, useToken, keyframes, IconButton, Icon } from "@chakra-ui/react";
 import type {
   PropsOf,
@@ -10,20 +10,11 @@ import type {
   IconButtonProps,
 } from "@chakra-ui/react";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
-import { Link as RemixLink, useLocation } from "@remix-run/react";
+import { Link as RemixLink } from "@remix-run/react";
 import type { LinkProps as RemixLinkProps } from "@remix-run/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { RiMenu2Fill } from "react-icons/ri";
-
-/**
- * Determines if the given path is part of the active path.
- *
- * @param to The href.
- */
-const useIsActivePath = (to: string | undefined) => {
-  const { pathname } = useLocation();
-  return useMemo(() => (to && to === "/" ? pathname === to : pathname.startsWith(to!)), [pathname]);
-};
+import { useIsActivePath } from "~/util";
 
 // animation keyframes
 const scaleIn = keyframes`

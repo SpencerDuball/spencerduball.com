@@ -73,11 +73,21 @@ export const Header = (props: HeaderProps) => {
                 <MenuContent>
                   <VStack alignItems="normal" spacing={2} p={3}>
                     <LinkCard to="/dashboard">
-                      <LinkCardLabel>Dashboard</LinkCardLabel>
+                      <LinkCardLabel>Home</LinkCardLabel>
+                      <LinkCardDescription>See the site overview and recent activity.</LinkCardDescription>
+                    </LinkCard>
+                    <LinkCard to="/dashboard/analytics">
+                      <LinkCardLabel>Analytics</LinkCardLabel>
+                      <LinkCardDescription>View site analytics and metrics.</LinkCardDescription>
+                    </LinkCard>
+                    <LinkCard to="/dashboard/blog">
+                      <LinkCardLabel>CMS</LinkCardLabel>
                       <LinkCardDescription>Manage and view your site content.</LinkCardDescription>
                       <LinkCardSubLinks>
-                        <LinkCardSubLink to="/dashboard/cms">CMS</LinkCardSubLink>
-                        <LinkCardSubLink to="/projects/analytics">Analytics</LinkCardSubLink>
+                        <LinkCardSubLink to="/dashboard/blog">Blog</LinkCardSubLink>
+                        <LinkCardSubLink to="/dashboard/software">Software</LinkCardSubLink>
+                        <LinkCardSubLink to="/dashboard/3d-print">3D Print</LinkCardSubLink>
+                        <LinkCardSubLink to="/dashboard/electronics">Electronics</LinkCardSubLink>
                       </LinkCardSubLinks>
                     </LinkCard>
                   </VStack>
@@ -119,8 +129,8 @@ export const Header = (props: HeaderProps) => {
                         <LinkCardLabel>Dashboard</LinkCardLabel>
                         <LinkCardDescription>Manage and view your site content.</LinkCardDescription>
                         <LinkCardSubLinks>
-                          <LinkCardSubLink to="/dashboard/cms">CMS</LinkCardSubLink>
                           <LinkCardSubLink to="/projects/analytics">Analytics</LinkCardSubLink>
+                          <LinkCardSubLink to="/dashboard/blog">CMS</LinkCardSubLink>
                         </LinkCardSubLinks>
                       </LinkCard>
                     ) : null}

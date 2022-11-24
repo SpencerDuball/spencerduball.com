@@ -2,20 +2,6 @@ import { z } from "zod";
 export declare const BlogSchema: {
     name: string;
     attributes: {
-        pk: {
-            partitionKey: boolean;
-            type: string;
-            default: (data: {
-                id: string;
-            }) => string;
-        };
-        sk: {
-            sortKey: boolean;
-            type: string;
-            default: (data: {
-                id: string;
-            }) => string;
-        };
         id: {
             type: string;
             required: boolean;
@@ -51,6 +37,32 @@ export declare const BlogSchema: {
             type: string;
             default: boolean;
         };
+        pk: {
+            partitionKey: boolean;
+            type: string;
+            default: (data: {
+                id: string;
+            }) => string;
+        };
+        sk: {
+            sortKey: boolean;
+            type: string;
+            default: (data: {
+                id: string;
+            }) => string;
+        };
+        gsi1pk: {
+            type: string;
+            default: string;
+        };
+        gsi1sk: {
+            type: string;
+            default: (data: {
+                id: string;
+                published: boolean;
+                created: string;
+            }) => string;
+        };
     };
 };
 export declare const ZBlog: z.ZodObject<{
@@ -65,11 +77,17 @@ export declare const ZBlog: z.ZodObject<{
     views: z.ZodNumber;
     content_modified: z.ZodString;
     published: z.ZodBoolean;
+    modified: z.ZodString;
+    created: z.ZodString;
+    entity: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     tags?: string[] | undefined;
+    id: string;
     pk: string;
     sk: string;
-    id: string;
+    modified: string;
+    created: string;
+    entity: string;
     title: string;
     image_url: string;
     s3_url: string;
@@ -79,9 +97,12 @@ export declare const ZBlog: z.ZodObject<{
     published: boolean;
 }, {
     tags?: string[] | undefined;
+    id: string;
     pk: string;
     sk: string;
-    id: string;
+    modified: string;
+    created: string;
+    entity: string;
     title: string;
     image_url: string;
     s3_url: string;

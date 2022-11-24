@@ -16,6 +16,17 @@ export class Table {
       name: props.tableName,
       partitionKey: "pk",
       sortKey: "sk",
+      indexes: {
+        /** Index to search for items in a collection, sorted by published status + creation time.
+         * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
+         * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
+         */
+        gsi1: { partitionKey: "gsi1pk", sortKey: "gsi1sk" },
+        /** Index to search for items in a collection, sorted by published status + number of views.
+         * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
+         */
+        gsi2: { partitionKey: "gsi2pk", sortKey: "gsi2sk" }, // type#blog, views#<created>#published#<true|false>#blog#<blog_id>
+      },
       DocumentClient: props.client,
     });
 
