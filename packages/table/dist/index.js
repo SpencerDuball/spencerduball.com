@@ -23,6 +23,7 @@ class Table {
             user: new dynamodb_toolbox_1.Entity(entities_1.UserSchema),
             oAuthStateCode: new dynamodb_toolbox_1.Entity(entities_1.OAuthStateCodeSchema),
             session: new dynamodb_toolbox_1.Entity(entities_1.SessionSchema),
+            blog: new dynamodb_toolbox_1.Entity(entities_1.BlogSchema),
         };
         this.table = new dynamodb_toolbox_1.Table({
             name: props.tableName,
@@ -37,7 +38,7 @@ class Table {
                 /** Index to search for items in a collection, sorted by published status + number of views.
                  * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
                  */
-                gsi2: { partitionKey: "gsi2pk", sortKey: "gsi2sk" }, // type#blog, views#<created>#published#<true|false>#blog#<blog_id>
+                gsi2: { partitionKey: "gsi2pk", sortKey: "gsi2sk" }, // type#blog, published#<true|false>#views#<created>#blog#<blog_id>
             },
             DocumentClient: props.client,
         });

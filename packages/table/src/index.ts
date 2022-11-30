@@ -1,6 +1,6 @@
 import * as DynamoDB from "aws-sdk/clients/dynamodb";
 import { Table as DdbTable, Entity } from "dynamodb-toolbox";
-import { UserSchema, OAuthStateCodeSchema, SessionSchema } from "./entities";
+import { UserSchema, OAuthStateCodeSchema, SessionSchema, BlogSchema } from "./entities";
 
 export class Table {
   table: DdbTable<string, "pk", "sk">;
@@ -9,6 +9,7 @@ export class Table {
     user: new Entity(UserSchema),
     oAuthStateCode: new Entity(OAuthStateCodeSchema),
     session: new Entity(SessionSchema),
+    blog: new Entity(BlogSchema),
   };
 
   constructor(props: { tableName: string; client: DynamoDB.DocumentClient }) {
@@ -25,7 +26,7 @@ export class Table {
         /** Index to search for items in a collection, sorted by published status + number of views.
          * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
          */
-        gsi2: { partitionKey: "gsi2pk", sortKey: "gsi2sk" }, // type#blog, views#<created>#published#<true|false>#blog#<blog_id>
+        gsi2: { partitionKey: "gsi2pk", sortKey: "gsi2sk" }, // type#blog, published#<true|false>#views#<created>#blog#<blog_id>
       },
       DocumentClient: props.client,
     });

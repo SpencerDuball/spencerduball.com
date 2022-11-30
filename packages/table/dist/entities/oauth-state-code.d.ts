@@ -64,5 +64,5 @@ export declare const ZOAuthStateCode: z.ZodObject<{
     created: string;
     entity: string;
 }>;
-export declare type OAuthStateCode = ReturnType<typeof ZOAuthStateCode.parse>;
+export type OAuthStateCode = ReturnType<typeof ZOAuthStateCode.parse>;
 //# sourceMappingURL=oauth-state-code.d.ts.map

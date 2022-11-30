@@ -57,7 +57,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const post = { client_id, client_secret, code: search.get("code")! };
   const { access_token, token_type } = await axios
     .post("https://github.com/login/oauth/access_token", post, { headers: { Accept: "application/json" } })
-    .then(({ data }) => ZAccessTokenRes.parse(data));
+    .then((res) => ZAccessTokenRes.parse(res.data));
 
   // get the userinfo from github
   const userInfo = await axios

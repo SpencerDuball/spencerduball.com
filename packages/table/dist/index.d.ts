@@ -124,7 +124,7 @@ export declare class Table {
             readonly permissions: {
                 readonly type: "list";
             };
-        }>, true, "created", "modified", "entity", "modified" | "created" | "entity", "modified" | "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
             readonly pk: {
                 readonly partitionKey: true;
                 readonly type: "string";
@@ -212,15 +212,15 @@ export declare class Table {
             required: true;
         } | [any, any, {
             required: true;
-        }], "default">, "id" | "pk" | "sk" | "modified" | "created" | "entity" | "username" | "name" | "avatar_url" | "github_url" | "roles" | "permissions", never>, {
+        }], "default">, "created" | "pk" | "sk" | "id" | "modified" | "entity" | "username" | "name" | "avatar_url" | "github_url" | "roles" | "permissions", never>, {
             avatar_url?: string | undefined;
             roles?: any[] | undefined;
             permissions?: any[] | undefined;
-            id: string;
+            created: string;
             pk: string;
             sk: string;
+            id: string;
             modified: string;
-            created: string;
             entity: string;
             username: string;
             name: string;
@@ -229,11 +229,11 @@ export declare class Table {
             avatar_url?: string | undefined;
             roles?: any[] | undefined;
             permissions?: any[] | undefined;
-            id: string;
+            created: string;
             pk: string;
             sk: string;
+            id: string;
             modified: string;
-            created: string;
             entity: string;
             username: string;
             name: string;
@@ -265,10 +265,7 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
-                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
-                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
-                 */
+                readonly type: "string";
                 readonly default: (data: any) => string;
             };
             readonly ttl: {
@@ -298,10 +295,7 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
-                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
-                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
-                 */
+                readonly type: "string";
                 readonly default: (data: any) => string;
             };
             readonly ttl: {
@@ -331,17 +325,14 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
-                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
-                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
-                 */
+                readonly type: "string";
                 readonly default: (data: any) => string;
             };
             readonly ttl: {
                 readonly type: "number";
                 readonly default: () => number;
             };
-        }>, true, "created", "modified", "entity", "modified" | "created" | "entity", "modified" | "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
             readonly id: {
                 readonly type: "string";
                 readonly default: () => string;
@@ -364,10 +355,7 @@ export declare class Table {
                 readonly type: "string";
             };
             readonly code: {
-                readonly type: "string"; /** Index to search for items in a collection, sorted by published status + creation time.
-                 * @example { pk: "blog", sk: "published#<true|false>#created#<created>#blog#<blog_id>" }
-                 * @example { pk: "blog#<blog_id>", sk: "created#<created>#comment#<comment_id>"}
-                 */
+                readonly type: "string";
                 readonly default: (data: any) => string;
             };
             readonly ttl: {
@@ -378,25 +366,25 @@ export declare class Table {
             default: any;
         } | [any, any, {
             default: any;
-        }], "default">, "pk", never, never, "sk", never, never, "pk" | "sk", "modified", "created" | "entity", "id" | "redirect_uri" | "code" | "pk" | "sk" | "ttl" | "modified" | "created" | "entity", never>, {
+        }], "default">, "pk", never, never, "sk", never, never, "pk" | "sk", "modified", "created" | "entity", "created" | "pk" | "sk" | "id" | "code" | "modified" | "entity" | "redirect_uri" | "ttl", never>, {
             id?: string | undefined;
-            redirect_uri?: string | undefined;
             code?: string | undefined;
+            redirect_uri?: string | undefined;
             ttl?: number | undefined;
+            created: string;
             pk: string;
             sk: string;
             modified: string;
-            created: string;
             entity: string;
         }, {
             id?: string | undefined;
-            redirect_uri?: string | undefined;
             code?: string | undefined;
+            redirect_uri?: string | undefined;
             ttl?: number | undefined;
+            created: string;
             pk: string;
             sk: string;
             modified: string;
-            created: string;
             entity: string;
         }, {
             pk?: string | undefined;
@@ -483,7 +471,7 @@ export declare class Table {
                 readonly type: "number";
                 readonly required: true;
             };
-        }>, true, "created", "modified", "entity", "modified" | "created" | "entity", "modified" | "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
             readonly id: {
                 readonly type: "string";
                 readonly default: () => string;
@@ -545,24 +533,479 @@ export declare class Table {
             required: true;
         } | [any, any, {
             required: true;
-        }], "default">, "id" | "pk" | "sk" | "ttl" | "modified" | "created" | "entity" | "user_id", never>, {
+        }], "default">, "created" | "pk" | "sk" | "id" | "modified" | "entity" | "ttl" | "user_id", never>, {
             id?: string | undefined;
+            created: string;
             pk: string;
             sk: string;
-            ttl: number;
             modified: string;
-            created: string;
             entity: string;
+            ttl: number;
             user_id: string;
         }, {
             id?: string | undefined;
+            created: string;
             pk: string;
             sk: string;
-            ttl: number;
             modified: string;
-            created: string;
             entity: string;
+            ttl: number;
             user_id: string;
+        }, {
+            pk?: string | undefined;
+            sk?: string | undefined;
+        }>;
+        blog: Entity<undefined, undefined, undefined, "Blog", true, true, true, "created", "modified", "entity", {
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly title: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly image_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly tags: {
+                readonly type: "list";
+            };
+            readonly s3_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly author_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly views: {
+                readonly type: "number";
+                readonly default: 0;
+            };
+            readonly content_modified: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    created: string;
+                }) => string;
+            };
+            readonly published: {
+                readonly type: "boolean";
+                readonly default: false;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly gsi1pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi1sk: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    created: string; /** Index to search for items in a collection, sorted by published status + number of views.
+                     * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
+                     */
+                }) => string;
+            };
+            readonly gsi2pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi2sk: {
+                readonly type: "string";
+                readonly dependsOn: "views";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    views: number;
+                }) => string;
+            };
+        }, import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly title: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly image_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly tags: {
+                readonly type: "list";
+            };
+            readonly s3_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly author_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly views: {
+                readonly type: "number";
+                readonly default: 0;
+            };
+            readonly content_modified: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    created: string;
+                }) => string;
+            };
+            readonly published: {
+                readonly type: "boolean";
+                readonly default: false;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly gsi1pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi1sk: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    created: string; /** Index to search for items in a collection, sorted by published status + number of views.
+                     * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
+                     */
+                }) => string;
+            };
+            readonly gsi2pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi2sk: {
+                readonly type: "string";
+                readonly dependsOn: "views";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    views: number;
+                }) => string;
+            };
+        }>, import("dynamodb-toolbox/dist/classes/Entity").ParseAttributes<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly title: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly image_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly tags: {
+                readonly type: "list";
+            };
+            readonly s3_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly author_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly views: {
+                readonly type: "number";
+                readonly default: 0;
+            };
+            readonly content_modified: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    created: string;
+                }) => string;
+            };
+            readonly published: {
+                readonly type: "boolean";
+                readonly default: false;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly gsi1pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi1sk: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    created: string; /** Index to search for items in a collection, sorted by published status + number of views.
+                     * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
+                     */
+                }) => string;
+            };
+            readonly gsi2pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi2sk: {
+                readonly type: "string";
+                readonly dependsOn: "views";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    views: number;
+                }) => string;
+            };
+        }>, true, "created", "modified", "entity", "created" | "modified" | "entity", "created" | "modified" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly title: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly image_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly tags: {
+                readonly type: "list";
+            };
+            readonly s3_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly author_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly views: {
+                readonly type: "number";
+                readonly default: 0;
+            };
+            readonly content_modified: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    created: string;
+                }) => string;
+            };
+            readonly published: {
+                readonly type: "boolean";
+                readonly default: false;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly gsi1pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi1sk: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    created: string; /** Index to search for items in a collection, sorted by published status + number of views.
+                     * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
+                     */
+                }) => string;
+            };
+            readonly gsi2pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi2sk: {
+                readonly type: "string";
+                readonly dependsOn: "views";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    views: number;
+                }) => string;
+            };
+        }>, {
+            default: any;
+        } | [any, any, {
+            default: any;
+        }], "default">, "pk", never, never, "sk", never, never, "pk" | "sk", "modified", "created" | "entity" | import("Object/SelectKeys")._SelectKeys<import("dynamodb-toolbox/dist/classes/Entity").Writable<{
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly title: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly image_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly tags: {
+                readonly type: "list";
+            };
+            readonly s3_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly author_id: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly views: {
+                readonly type: "number";
+                readonly default: 0;
+            };
+            readonly content_modified: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    created: string;
+                }) => string;
+            };
+            readonly published: {
+                readonly type: "boolean";
+                readonly default: false;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly gsi1pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi1sk: {
+                readonly type: "string";
+                readonly dependsOn: "created";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    created: string; /** Index to search for items in a collection, sorted by published status + number of views.
+                     * @example { pk: "blog", sk: "published#<true|false>#views#<views>#blog#<blog_id>" }
+                     */
+                }) => string;
+            };
+            readonly gsi2pk: {
+                readonly type: "string";
+                readonly default: "blog";
+            };
+            readonly gsi2sk: {
+                readonly type: "string";
+                readonly dependsOn: "views";
+                readonly default: (data: {
+                    id: string;
+                    published: boolean;
+                    views: number;
+                }) => string;
+            };
+        }>, {
+            required: true;
+        } | [any, any, {
+            required: true;
+        }], "default">, "created" | "views" | "pk" | "sk" | "gsi1pk" | "gsi1sk" | "gsi2pk" | "gsi2sk" | "id" | "title" | "image_url" | "tags" | "s3_url" | "author_id" | "content_modified" | "published" | "modified" | "entity", never>, {
+            views?: number | undefined;
+            gsi1pk?: string | undefined;
+            gsi1sk?: string | undefined;
+            gsi2pk?: string | undefined;
+            gsi2sk?: string | undefined;
+            id?: string | undefined;
+            tags?: any[] | undefined;
+            content_modified?: string | undefined;
+            published?: boolean | undefined;
+            created: string;
+            pk: string;
+            sk: string;
+            title: string;
+            image_url: string;
+            s3_url: string;
+            author_id: string;
+            modified: string;
+            entity: string;
+        }, {
+            views?: number | undefined;
+            gsi1pk?: string | undefined;
+            gsi1sk?: string | undefined;
+            gsi2pk?: string | undefined;
+            gsi2sk?: string | undefined;
+            id?: string | undefined;
+            tags?: any[] | undefined;
+            content_modified?: string | undefined;
+            published?: boolean | undefined;
+            created: string;
+            pk: string;
+            sk: string;
+            title: string;
+            image_url: string;
+            s3_url: string;
+            author_id: string;
+            modified: string;
+            entity: string;
         }, {
             pk?: string | undefined;
             sk?: string | undefined;

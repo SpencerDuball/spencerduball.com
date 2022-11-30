@@ -1,66 +1,83 @@
 import { z } from "zod";
 export declare const BlogSchema: {
-    name: string;
-    attributes: {
-        id: {
-            type: string;
-            required: boolean;
+    readonly name: "Blog";
+    readonly attributes: {
+        readonly id: {
+            readonly type: "string";
+            readonly default: () => string;
         };
-        title: {
-            type: string;
-            required: boolean;
+        readonly title: {
+            readonly type: "string";
+            readonly required: true;
         };
-        image_url: {
-            type: string;
-            required: boolean;
+        readonly image_url: {
+            readonly type: "string";
+            readonly required: true;
         };
-        tags: {
-            type: string;
+        readonly tags: {
+            readonly type: "list";
         };
-        s3_url: {
-            type: string;
-            required: boolean;
+        readonly s3_url: {
+            readonly type: "string";
+            readonly required: true;
         };
-        author_id: {
-            type: string;
-            required: boolean;
+        readonly author_id: {
+            readonly type: "string";
+            readonly required: true;
         };
-        views: {
-            type: string;
-            required: boolean;
+        readonly views: {
+            readonly type: "number";
+            readonly default: 0;
         };
-        content_modified: {
-            type: string;
-            required: boolean;
+        readonly content_modified: {
+            readonly type: "string";
+            readonly dependsOn: "created";
+            readonly default: (data: {
+                created: string;
+            }) => string;
         };
-        published: {
-            type: string;
-            default: boolean;
+        readonly published: {
+            readonly type: "boolean";
+            readonly default: false;
         };
-        pk: {
-            partitionKey: boolean;
-            type: string;
-            default: (data: {
+        readonly pk: {
+            readonly partitionKey: true;
+            readonly type: "string";
+            readonly default: (data: {
                 id: string;
             }) => string;
         };
-        sk: {
-            sortKey: boolean;
-            type: string;
-            default: (data: {
+        readonly sk: {
+            readonly sortKey: true;
+            readonly type: "string";
+            readonly default: (data: {
                 id: string;
             }) => string;
         };
-        gsi1pk: {
-            type: string;
-            default: string;
+        readonly gsi1pk: {
+            readonly type: "string";
+            readonly default: "blog";
         };
-        gsi1sk: {
-            type: string;
-            default: (data: {
+        readonly gsi1sk: {
+            readonly type: "string";
+            readonly dependsOn: "created";
+            readonly default: (data: {
                 id: string;
                 published: boolean;
                 created: string;
+            }) => string;
+        };
+        readonly gsi2pk: {
+            readonly type: "string";
+            readonly default: "blog";
+        };
+        readonly gsi2sk: {
+            readonly type: "string";
+            readonly dependsOn: "views";
+            readonly default: (data: {
+                id: string;
+                published: boolean;
+                views: number;
             }) => string;
         };
     };
@@ -68,6 +85,10 @@ export declare const BlogSchema: {
 export declare const ZBlog: z.ZodObject<{
     pk: z.ZodString;
     sk: z.ZodString;
+    gsi1pk: z.ZodString;
+    gsi1sk: z.ZodString;
+    gsi2pk: z.ZodString;
+    gsi2sk: z.ZodString;
     id: z.ZodString;
     title: z.ZodString;
     image_url: z.ZodString;
@@ -82,34 +103,42 @@ export declare const ZBlog: z.ZodObject<{
     entity: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     tags?: string[] | undefined;
-    id: string;
+    created: string;
+    views: number;
     pk: string;
     sk: string;
-    modified: string;
-    created: string;
-    entity: string;
+    gsi1pk: string;
+    gsi1sk: string;
+    gsi2pk: string;
+    gsi2sk: string;
+    id: string;
     title: string;
     image_url: string;
     s3_url: string;
     author_id: string;
-    views: number;
     content_modified: string;
     published: boolean;
+    modified: string;
+    entity: string;
 }, {
     tags?: string[] | undefined;
-    id: string;
+    created: string;
+    views: number;
     pk: string;
     sk: string;
-    modified: string;
-    created: string;
-    entity: string;
+    gsi1pk: string;
+    gsi1sk: string;
+    gsi2pk: string;
+    gsi2sk: string;
+    id: string;
     title: string;
     image_url: string;
     s3_url: string;
     author_id: string;
-    views: number;
     content_modified: string;
     published: boolean;
+    modified: string;
+    entity: string;
 }>;
-export declare type BlogType = ReturnType<typeof ZBlog.parse>;
+export type BlogType = ReturnType<typeof ZBlog.parse>;
 //# sourceMappingURL=blog.d.ts.map

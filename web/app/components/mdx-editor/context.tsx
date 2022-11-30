@@ -72,14 +72,26 @@ export const useMdxEditorState = () => useContext(MdxEditorContext);
 export const useMdxEditorStore = () => useSnapshot(useContext(MdxEditorContext));
 
 // shared hooks
-export const usePreview = () => {
+export const usePreviewMdx = () => {
   const state = useMdxEditorState();
   const submit = useSubmit();
 
   return () => {
     let data = new FormData();
     data.append("mdx", state.editor.value);
-    data.append("_action", "mdx-editor-preview");
+    data.append("_action", "preview");
     submit(data, { method: "post" });
+  };
+};
+
+export const useSaveMdx = () => {
+  const state = useMdxEditorState();
+  const submit = useSubmit();
+
+  return () => {
+    let data = new FormData();
+    data.append("mdx", state.editor.value);
+    data.append("_action", "save");
+    submit(data, { method: "put" });
   };
 };

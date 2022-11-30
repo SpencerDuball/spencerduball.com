@@ -9,6 +9,7 @@
     "start": "remix-serve build"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.216.0",
     "@aws-sdk/client-ssm": "^3.188.0",
     "@chakra-ui/react": "2.3.4",
     "@codemirror/lang-markdown": "^6.0.5",
@@ -32,10 +33,11 @@
     "@uiw/codemirror-themes": "4.12.4",
     "@uiw/react-codemirror": "4.12.4",
     "aws-sdk": "^2.1206.0",
-    "axios": "^1.1.2",
+    "axios": "1.2.0-alpha.1",
     "cookie": "^0.5.0",
     "esbuild": "^0.15.10",
     "framer-motion": "^6.5.1",
+    "js-yaml": "^4.1.0",
     "mdx-bundler": "^9.0.1",
     "ms": "3.0.0-beta.2",
     "prettier": "^2.7.1",
@@ -57,6 +59,7 @@
     "@remix-run/eslint-config": "^1.7.5",
     "@serverless-stack/static-site-env": "^1.15.13",
     "@types/cookie": "^0.5.1",
+    "@types/js-yaml": "^4.0.5",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "@types/uuid": "^8.3.4",

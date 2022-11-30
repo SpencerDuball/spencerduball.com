@@ -83,5 +83,5 @@ export declare const ZUser: z.ZodObject<{
     name: string;
     github_url: string;
 }>;
-export declare type UserType = ReturnType<typeof ZUser.parse>;
+export type UserType = ReturnType<typeof ZUser.parse>;
 //# sourceMappingURL=user.d.ts.map

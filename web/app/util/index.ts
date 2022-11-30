@@ -27,3 +27,14 @@ export const useIsActivePath = (to: string | undefined) => {
   const { pathname } = useLocation();
   return useMemo(() => (to && to === "/" ? pathname === to : pathname.startsWith(to!)), [pathname]);
 };
+
+/**
+ * Custom error to throw that allows to specify a status code and message to respond to the user with.
+ */
+export class HttpError extends Error {
+  public statusCode: number;
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}

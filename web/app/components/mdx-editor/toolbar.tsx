@@ -3,7 +3,7 @@ import type { IconButtonProps, BoxProps } from "@chakra-ui/react";
 import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { RiSaveFill, RiCodeSSlashFill, RiArticleLine, RiAttachment2, RiMoonFill, RiSunFill } from "react-icons/ri";
 import { DiVim } from "react-icons/di";
-import { useMdxEditorStore, useMdxEditorState, usePreview } from "./context";
+import { useMdxEditorStore, useMdxEditorState, usePreviewMdx, useSaveMdx } from "./context";
 
 // ToolbarButton
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,13 +25,19 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref) => {
   const c = useThemedColor();
   const state = useMdxEditorState();
   const store = useMdxEditorStore();
-  const submit = usePreview();
+  const submitPreviewMdx = usePreviewMdx();
+  const submitSaveMdx = useSaveMdx();
 
   return (
     <Box ref={ref} pb={2} display="flex" justifyContent="center" gap={2} {...props}>
       {/* Left Aligned */}
       <Flex gap={2}>
-        <ToolbarButton color={c("gray.9")} aria-label="Save Post" icon={<Icon as={RiSaveFill} />} />
+        <ToolbarButton
+          color={c("gray.9")}
+          aria-label="Save Post"
+          icon={<Icon as={RiSaveFill} />}
+          onClick={() => submitSaveMdx()}
+        />
       </Flex>
       {/* Center Aligned */}
       <Flex gap={2}>
@@ -48,7 +54,7 @@ export const Toolbar = forwardRef((props: ToolbarProps, ref) => {
             isActive={store.settings.view === "preview"}
             onClick={() => {
               state.settings.view = "preview";
-              submit();
+              submitPreviewMdx();
             }}
           />
           <ToolbarButton

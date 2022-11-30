@@ -58,5 +58,5 @@ export declare const ZSession: z.ZodObject<{
     entity: string;
     user_id: string;
 }>;
-export declare type SessionType = ReturnType<typeof ZSession.parse>;
+export type SessionType = ReturnType<typeof ZSession.parse>;
 //# sourceMappingURL=session.d.ts.map
