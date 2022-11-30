@@ -19,7 +19,7 @@ import { useThemedColor } from "@dub-stack/chakra-radix-colors";
 import { Stat } from "~/components";
 import { Form, useLoaderData } from "@remix-run/react";
 import { RiEqualizerFill, RiSearchLine, RiAddFill } from "react-icons/ri";
-import { createBlog, deleteBlog, getBlogs } from "~/model/blog.server";
+import { createBlog, deleteBlog, getBlogs, GetBlogsSortOptions } from "~/model/blog.server";
 import { z } from "zod";
 import { Link as RemixLink } from "@remix-run/react";
 import { HttpError } from "~/util";
@@ -75,11 +75,33 @@ export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUser(request, "required");
   if (!user.roles?.includes("admin")) throw redirect("/");
 
-  // get the blog posts
+  // ensure required params are present
   const search = new URL(request.url).searchParams;
-  const [page, limit] = [search.get("page"), search.get("limit")];
+  if (!search.get("page")) throw redirect(`${request.url}?page=1`);
 
-  return json({ totalBlogPosts: 13, blogs: await getBlogs({ page: page ? parseInt(page) : 1 }) });
+  // get the search params
+  const page = await z
+    .number()
+    .parseAsync(parseInt(search.get("page") || ""))
+    .catch(() => 1);
+  const limit = await z
+    .number()
+    .parseAsync(parseInt(search.get("limit") || ""))
+    .catch(() => 50);
+  const published = await z
+    .string()
+    .transform((str) => str === "true")
+    .parseAsync(search.get("published"))
+    .catch(() => false);
+  const sort = await z
+    .enum(GetBlogsSortOptions)
+    .parseAsync(search.get("sort"))
+    .catch(() => "created-desc" as const);
+
+  // fetch the blogs
+  const blogs = await getBlogs({ page, published, limit, sort });
+
+  return json({ totalBlogPosts: 13, blogs });
 };
 
 // WelcomeCard

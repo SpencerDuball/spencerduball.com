@@ -128,23 +128,48 @@ export async function createBlog(props: CreateBlogProps) {
 
 // Read
 //////////////////////////////////////////////////////////////////////////
+export const GetBlogsSortOptions = ["created-asc", "created-desc", "views-asc", "views-desc"] as const;
 export interface GetBlogsProps {
+  published: boolean;
+  sort?: typeof GetBlogsSortOptions[number];
   page: number;
   limit?: number;
 }
-export async function getBlogs(props: GetBlogsProps) {
-  const blogsQuery = await table.table.query("blog", {
+export async function getBlogs(props: GetBlogsProps): Promise<BlogType[]>;
+export async function getBlogs(props: GetBlogsProps, type: "withMdx"): Promise<(BlogType & { mdx: string })[]>;
+export async function getBlogs(props: GetBlogsProps, type?: "withMdx") {
+  const sort = !props.sort || props.sort.startsWith("created") ? "created" : "views";
+  // collect configuration
+  const config = {
     limit: props.limit || 50,
-    beginsWith: `published#false#created`,
-    index: "gsi1",
-  });
+    reverse: props.sort && props.sort.endsWith("asc") ? true : false,
+    index: sort === "created" ? "gsi1" : "gsi2",
+  };
 
-  const blogs = blogsQuery.Items?.map((item) => {
-    const { entity, gsi1pk, gsi1sk, gsi2pk, gsi2sk, modified, pk, sk, ...rest } = ZBlog.parse(item);
-    return rest;
-  });
+  // caputure blogs
+  let blogsQuery = null;
+  if (sort === "created")
+    blogsQuery = table.table.query("blog", { ...config, beginsWith: `published#${props.published}#created` });
+  else blogsQuery = table.table.query("blog", { ...config, beginsWith: `published#${props.published}#views` });
 
-  return blogs || null;
+  // validate the blogs shape
+  const blogs = await blogsQuery
+    .then(({ Items }) => z.array(ZBlog).parse(Items))
+    .catch(() => {
+      throw new HttpError(500, "There was an issue retrieving the blogs, please try again.");
+    });
+
+  // get the mdx if specified
+  if (type === "withMdx") {
+    const blogsWithMdx = await Promise.all(
+      blogs.map(async (blog) => {
+        const { mdx } = await axios.get(`${blog.s3_url}/blog.mdx`).then(({ data }) => parseMdx(data));
+        return { ...blog, mdx };
+      })
+    );
+
+    return blogsWithMdx;
+  } else return blogs;
 }
 
 export async function getBlog(id: string): Promise<BlogType | null>;
@@ -156,10 +181,7 @@ export async function getBlog(id: string, type?: "withMdx") {
     .catch(() => null);
 
   if (blog && type && type === "withMdx") {
-    const { mdx } = await axios
-      .get(`${blog.s3_url}/blog.mdx`)
-      .then(({ data }) => parseMdx(data))
-      .catch();
+    const { mdx } = await axios.get(`${blog.s3_url}/blog.mdx`).then(({ data }) => parseMdx(data));
     return { ...blog, mdx };
   } else return blog;
 }
