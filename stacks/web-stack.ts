@@ -22,7 +22,7 @@ export function WebStack({ stack, app }: StackContext) {
   });
 
   // create the bucket
-  const bucket = new Bucket(stack, "bucket");
+  const bucket = new Bucket(stack, "bucket", { cors: [{ allowedMethods: ["POST", "GET"], allowedOrigins: ["*"] }] });
   bucket.cdk.bucket.addToResourcePolicy(
     new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,

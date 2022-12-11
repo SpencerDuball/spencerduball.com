@@ -1,13 +1,13 @@
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Box } from "@chakra-ui/react";
 import { ChakraGapHeight } from "~/root";
-import { ChakraHeaderHeight, MdxEditor, MdxEditorProvider } from "~/components";
-import { getBlog, preview, updateBlog } from "~/model/blog.server";
+import { ChakraHeaderHeight, MdxEditor, MdxEditorProvider, ZAttachment } from "~/components";
+import { getBlog, preview, updateBlog, getPresignedPost } from "~/model/blog.server";
 import { z } from "zod";
-import axios from "axios";
 import { ZBlog } from "table";
+import { HttpError } from "~/util";
 
 export const action = async ({ request, params }: ActionArgs) => {
   const formData = await request.formData();
@@ -20,6 +20,12 @@ export const action = async ({ request, params }: ActionArgs) => {
       const mdx = z.string().parse(formData.get("mdx"));
       if (params.blogId) await updateBlog(params.blogId!, { mdx });
     }
+    case "upload-attachment": {
+      const attachment = ZAttachment.parse(JSON.parse(formData.get("attachment")?.toString() || ""));
+      if (!params.blogId) throw new HttpError(400, "Things be wrong yarg");
+      const postInfo = await getPresignedPost(params.blogId, attachment);
+      return json(postInfo, 200);
+    }
   }
 
   return null;
@@ -30,7 +36,7 @@ export const loader = async ({ params }: LoaderArgs) => {
   const { mdx } = await z
     .string()
     .parseAsync(params.blogId)
-    .then((blogId) => ZBlog.extend({ mdx: z.string() }).parse(getBlog(blogId, "withMdx")))
+    .then(async (blogId) => ZBlog.extend({ mdx: z.string() }).parse(await getBlog(blogId, "withMdx")))
     .catch(() => {
       throw redirect("/dashboard/blog");
     });

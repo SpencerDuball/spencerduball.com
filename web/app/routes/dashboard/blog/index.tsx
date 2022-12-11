@@ -75,15 +75,14 @@ export const loader = async ({ request }: LoaderArgs) => {
   const user = await getUser(request, "required");
   if (!user.roles?.includes("admin")) throw redirect("/");
 
-  // ensure required params are present
+  // collect the serach params
   const search = new URL(request.url).searchParams;
-  if (!search.get("page")) throw redirect(`${request.url}?page=1`);
 
   // get the search params
-  const page = await z
-    .number()
-    .parseAsync(parseInt(search.get("page") || ""))
-    .catch(() => 1);
+  const startAt = await z
+    .string()
+    .parseAsync(search.get("startAt"))
+    .catch(() => undefined);
   const limit = await z
     .number()
     .parseAsync(parseInt(search.get("limit") || ""))
@@ -99,7 +98,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     .catch(() => "created-desc" as const);
 
   // fetch the blogs
-  const blogs = await getBlogs({ page, published, limit, sort });
+  const blogs = await getBlogs({ startAt, published, limit, sort });
 
   return json({ totalBlogPosts: 13, blogs });
 };

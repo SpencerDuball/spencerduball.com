@@ -28,7 +28,7 @@ const useFileUploadHandlers = (ref: React.RefObject<HTMLInputElement>) => {
         url: URL.createObjectURL(file),
         file,
       } as const;
-      state.editor.attachments = [...state.editor.attachments, attachment];
+      state.editor.attachments.push(attachment);
     }
   };
 
@@ -46,7 +46,7 @@ const useFileUploadHandlers = (ref: React.RefObject<HTMLInputElement>) => {
         url: URL.createObjectURL(file),
         file,
       } as const;
-      state.editor.attachments = [...state.editor.attachments, attachment];
+      state.editor.attachments.push(attachment);
 
       // reset the input
       e.target.value = "";

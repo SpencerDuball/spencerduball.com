@@ -47,7 +47,11 @@ const useEditorHandlers = (ref: RefObject<ReactCodeMirrorRef>) => {
   const onChange: NonNullable<ReactCodeMirrorProps["onChange"]> = (value, viewUpdate) => {
     const scrollDOM = ref.current?.view?.scrollDOM;
     const scrollPos = scrollDOM ? { y: scrollDOM.scrollTop, x: scrollDOM.scrollLeft } : { x: 0, y: 0 };
-    state.editor = { ...state.editor, value, editor: viewUpdate.state, scrollPos };
+
+    // update the editor, note that we need to MODIFY the editor object and not replace it for valtio
+    state.editor.value = value;
+    state.editor.editor = viewUpdate.state;
+    state.editor.scrollPos = scrollPos;
   };
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
@@ -79,15 +83,19 @@ const useEditorHandlers = (ref: RefObject<ReactCodeMirrorRef>) => {
       const lines = state.editor.value.split("\n");
       if (attachment.mime.includes("image/")) lines[lineIndex] += `![Add description ...](${attachment.url})`;
       if (attachment.mime.includes("video/")) lines[lineIndex] += `<Video controls url="${attachment.url}" />`;
-      const attachments = [...state.editor.attachments, attachment];
-      state.editor = { ...state.editor, value: lines.join("\n"), attachments };
+
+      // update the editor, note that we need to MODIFY the editor object and not replace it for valtio
+      state.editor.value = lines.join("\n");
+      state.editor.attachments.push(attachment);
     } else {
       // if input to editor as a whole, add a new line
       const lines = state.editor.value.split("\n");
       if (attachment.mime.includes("image/")) lines.push(`![Add description ...](${attachment.url})`);
       if (attachment.mime.includes("video/")) lines.push(`<Video controls url="${attachment.url}" />`);
-      const attachments = [...state.editor.attachments, attachment];
-      state.editor = { ...state.editor, value: lines.join("\n"), attachments };
+
+      // update the editor, note that we need to MODIFY the editor object and not replace it for valtio
+      state.editor.value = lines.join("\n");
+      state.editor.attachments.push(attachment);
     }
   };
 

@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Box } from "@chakra-ui/react";
 import type { BoxProps } from "@chakra-ui/react";
 import { Toolbar } from "./toolbar";
-import { useMdxEditorState, useMdxEditorStore } from "./context";
+import { useMdxEditorState, useMdxEditorStore, useUploadAttachment, ZAttachment } from "./context";
 import { useWindowSize } from "react-use";
 import { MdxView } from "./mdx-view";
 import { PreviewView } from "./preview-view";
 import { z } from "zod";
 import { AttachmentsView } from "./attachments-view";
+import { subscribe } from "valtio";
 
 // EditorSettings - constants and type safety
 const MdxEditorSettingsKey = "mdx-editor-settings";
@@ -67,6 +68,23 @@ const useSetInitialValue = (initialValue?: string) => {
   }, []);
 };
 
+/** Listens and submits when attachments added. */
+const useAttachmentUploader = () => {
+  const state = useMdxEditorState();
+  const uploadAttachment = useUploadAttachment();
+
+  useEffect(() => {
+    const unsubscribe = subscribe(state.editor.attachments, async (op) => {
+      const [operation, path, value, prevValue] = op[0];
+      const attachment = ZAttachment.parse(value);
+      if (operation === "set" && prevValue === undefined) {
+        const res = await uploadAttachment(attachment.id);
+      }
+    });
+    return unsubscribe;
+  });
+};
+
 // MdxEditor
 ////////////////////////////////////////////////////////////////////////////////
 export interface MdxEditorProps extends BoxProps {
@@ -82,6 +100,9 @@ export const MdxEditor = (props: MdxEditorProps) => {
 
   // persist the editor settings
   useRestoreSettings();
+
+  // listen when attachments added
+  useAttachmentUploader();
 
   // compute the codemirror dimensions
   const { height, width, containerRef, toolbarRef } = useCodeMirrorDimensions();

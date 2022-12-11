@@ -5,6 +5,7 @@ import { createContext, useContext, useRef } from "react";
 import type { ReactNode, FC } from "react";
 import { proxy, useSnapshot } from "valtio";
 import { useSubmit } from "@remix-run/react";
+import axios, { formToJSON } from "axios";
 
 // attachments
 export const ZAttachment = z.object({
@@ -93,5 +94,44 @@ export const useSaveMdx = () => {
     data.append("mdx", state.editor.value);
     data.append("_action", "save");
     submit(data, { method: "put" });
+  };
+};
+
+export interface IPresignedPost {
+  url: string;
+  fields: {
+    key: string;
+    bucket: string;
+    Policy: string;
+    "X-Amz-Algorithm": string;
+    "X-Amz-Credential": string;
+    "X-Amz-Date": string;
+    "X-Amz-Signature": string;
+  };
+}
+export const useUploadAttachment = () => {
+  const state = useMdxEditorState();
+
+  return async (id: string) => {
+    // get the attachment
+    const attachment = state.editor.attachments.find((att) => att.id === id);
+    if (!attachment) throw new Error("Attachment does not exist.");
+
+    // request the pre-signed s3 url
+    let presignedPostForm = new FormData();
+    presignedPostForm.append("attachment", JSON.stringify(attachment));
+    presignedPostForm.append("_action", "upload-attachment");
+    const { url, fields } = await axios
+      .postForm<IPresignedPost>(`${location.pathname}?_data`, presignedPostForm)
+      .then(({ data }) => data);
+
+    // upload to s3
+    const fileBlob = await axios.get(attachment.url, { responseType: "arraybuffer" }).then(({ data }) => data);
+    const uploadRes = await axios.postForm(url, { ...fields, file: fileBlob });
+
+    // TODO: update the attachment
+
+    // TODO: update the mdx links
+    console.log(uploadRes);
   };
 };

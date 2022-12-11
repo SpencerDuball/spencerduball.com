@@ -5,22 +5,26 @@ import { z } from "zod";
 import { importRemarkGfm, importRemarkMdxCodeMeta } from "~/es-modules";
 import { ZPreviewResponse } from "./blog.shared";
 import DynamoDB from "aws-sdk/clients/dynamodb";
-import { BlogType, Table, ZBlog } from "table";
+import { Table, ZBlog } from "table";
+import type { BlogType } from "table";
 import { S3Client, PutObjectCommand, ListObjectsV2Command, DeleteObjectsCommand } from "@aws-sdk/client-s3";
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { randomBytes } from "crypto";
 import yaml from "js-yaml";
 import { HttpError } from "~/util";
 import axios from "axios";
+import { IAttachment } from "~/components";
 
 // check for required environment variables
 if (!process.env.REGION) throw new Error("'REGION' env-var is not defined.");
 if (!process.env.TABLE_NAME) throw new Error("'TABLE_NAME' env-var is not defined.");
 if (!process.env.BUCKET_NAME) throw new Error("'BUCKET_NAME' env-var is not defined.");
+const { BUCKET_NAME, TABLE_NAME, REGION } = process.env;
 
 // create the aws-sdk clients
-const ddbClient = new DynamoDB.DocumentClient({ region: process.env.REGION });
-const table = new Table({ tableName: process.env.TABLE_NAME, client: ddbClient });
-const s3Client = new S3Client({ region: process.env.REGION });
+const ddbClient = new DynamoDB.DocumentClient({ region: REGION });
+const table = new Table({ tableName: TABLE_NAME, client: ddbClient });
+const s3Client = new S3Client({ region: REGION });
 
 // Util
 //////////////////////////////////////////////////////////////////////////
@@ -97,7 +101,7 @@ export async function createBlog(props: CreateBlogProps) {
 
   // create the payload
   const { title, image, tags, mdx } = await parseMdx(props.mdx);
-  const s3_url = `https://${process.env.BUCKETNAME}.s3.amazonaws.com/public/blog/${blogId}`;
+  const s3_url = `https://${BUCKET_NAME}.s3.amazonaws.com/public/blog/${blogId}`;
   let payload = {
     id: blogId,
     title,
@@ -120,7 +124,7 @@ export async function createBlog(props: CreateBlogProps) {
 
   // upload blog template to s3
   s3Client
-    .send(new PutObjectCommand({ Bucket: process.env.BUCKET_NAME, Key: `public/blog/${blogId}/blog.mdx`, Body: mdx }))
+    .send(new PutObjectCommand({ Bucket: BUCKET_NAME, Key: `public/blog/${blogId}/blog.mdx`, Body: mdx }))
     .catch(() => {
       throw new HttpError(500, "Error creating new blog record, please try again.");
     });
@@ -132,7 +136,7 @@ export const GetBlogsSortOptions = ["created-asc", "created-desc", "views-asc", 
 export interface GetBlogsProps {
   published: boolean;
   sort?: typeof GetBlogsSortOptions[number];
-  page: number;
+  startAt?: string;
   limit?: number;
 }
 export async function getBlogs(props: GetBlogsProps): Promise<BlogType[]>;
@@ -202,19 +206,16 @@ export async function updateBlog(id: string, props: UpdateBlogProps) {
 
   // extract frontmatter
   if (mdx) {
-    const { title, image, tags } = ZBlogPostBundle.shape.frontmatter.parse(
-      yaml.load(z.string().parse(mdx.split("---")[1]))
-    );
+    const { title, image, tags } = await parseMdx(mdx);
     fieldsToUpdate = { title, image_url: image, tags, content_modified: new Date().toISOString(), ...fieldsToUpdate };
   }
 
   // update dynamodb record
-  await table.entities.blog.update({ pk: `blog#${id}`, sk: `blog#${id}`, ...fieldsToUpdate });
-
-  // update s3 blog.mdx
-  await s3Client.send(
-    new PutObjectCommand({ Bucket: process.env.BUCKET_NAME, Key: `public/blog/${id}/blog.mdx`, Body: mdx })
+  const updateRecord = table.entities.blog.update({ pk: `blog#${id}`, sk: `blog#${id}`, ...fieldsToUpdate });
+  const updateS3 = s3Client.send(
+    new PutObjectCommand({ Bucket: BUCKET_NAME, Key: `public/blog/${id}/blog.mdx`, Body: mdx })
   );
+  await Promise.all([updateRecord, updateS3]);
 }
 
 // Delete
@@ -226,7 +227,7 @@ export async function deleteBlog(id: string) {
   });
 
   // delete the s3 items
-  const s3Config = { Bucket: process.env.BUCKET_NAME };
+  const s3Config = { Bucket: BUCKET_NAME };
   s3Client
     .send(new ListObjectsV2Command({ ...s3Config, Prefix: `public/blog/${id}` }))
     .then((items) => {
@@ -236,4 +237,14 @@ export async function deleteBlog(id: string) {
     .catch(() => {
       throw new HttpError(500, "Error deleting blog record, please try again.");
     });
+}
+
+// S3 Uploads
+//////////////////////////////////////////////////////////////////////////
+export async function getPresignedPost(blogId: string, attachment: IAttachment) {
+  const ext = attachment.mime.split("/").pop();
+  return createPresignedPost(s3Client, {
+    Bucket: BUCKET_NAME,
+    Key: `public/blog/${blogId}/attachments/${attachment.id}.${ext}`,
+  });
 }
