@@ -128,10 +128,19 @@ export const useUploadAttachment = () => {
     // upload to s3
     const fileBlob = await axios.get(attachment.url, { responseType: "arraybuffer" }).then(({ data }) => data);
     const uploadRes = await axios.postForm(url, { ...fields, file: fileBlob });
+    const remoteUrl = url + fields.key;
 
-    // TODO: update the attachment
+    // update the mdx links
+    const regex = new RegExp(attachment.url, "g");
+    console.log(regex);
+    console.log(state.editor.value.match(regex));
+    state.editor.value = state.editor.value.replace(regex, remoteUrl);
 
-    // TODO: update the mdx links
-    console.log(uploadRes);
+    // update the attachment
+    const attIdx = state.editor.attachments.findIndex((att) => att.id === id);
+    state.editor.attachments[attIdx].type = "remote";
+    state.editor.attachments[attIdx].url = remoteUrl;
+
+    console.log(state.editor.value);
   };
 };

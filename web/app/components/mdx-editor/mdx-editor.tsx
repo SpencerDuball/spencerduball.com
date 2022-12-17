@@ -76,9 +76,9 @@ const useAttachmentUploader = () => {
   useEffect(() => {
     const unsubscribe = subscribe(state.editor.attachments, async (op) => {
       const [operation, path, value, prevValue] = op[0];
-      const attachment = ZAttachment.parse(value);
-      if (operation === "set" && prevValue === undefined) {
-        const res = await uploadAttachment(attachment.id);
+      const attachment = ZAttachment.safeParse(value);
+      if (operation === "set" && attachment.success) {
+        const res = await uploadAttachment(attachment.data.id);
       }
     });
     return unsubscribe;
