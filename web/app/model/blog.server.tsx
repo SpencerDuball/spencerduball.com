@@ -212,6 +212,8 @@ export async function updateBlog(id: string, props: UpdateBlogProps) {
 
   // update dynamodb record
   const updateRecord = table.entities.blog.update({ pk: `blog#${id}`, sk: `blog#${id}`, ...fieldsToUpdate });
+
+  // update s3 post content
   const updateS3 = s3Client.send(
     new PutObjectCommand({ Bucket: BUCKET_NAME, Key: `public/blog/${id}/blog.mdx`, Body: mdx })
   );

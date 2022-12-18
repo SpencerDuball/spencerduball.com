@@ -5,7 +5,7 @@ import { createContext, useContext, useRef } from "react";
 import type { ReactNode, FC } from "react";
 import { proxy, useSnapshot } from "valtio";
 import { useSubmit } from "@remix-run/react";
-import axios, { formToJSON } from "axios";
+import axios from "axios";
 
 // attachments
 export const ZAttachment = z.object({
@@ -92,6 +92,7 @@ export const useSaveMdx = () => {
   return () => {
     let data = new FormData();
     data.append("mdx", state.editor.value);
+    data.append("attachments", JSON.stringify(state.editor.attachments));
     data.append("_action", "save");
     submit(data, { method: "put" });
   };
@@ -111,6 +112,7 @@ export interface IPresignedPost {
 }
 export const useUploadAttachment = () => {
   const state = useMdxEditorState();
+  const saveMdx = useSaveMdx();
 
   return async (id: string) => {
     // get the attachment
@@ -141,6 +143,7 @@ export const useUploadAttachment = () => {
     state.editor.attachments[attIdx].type = "remote";
     state.editor.attachments[attIdx].url = remoteUrl;
 
-    console.log(state.editor.value);
+    // save the blog post
+    saveMdx();
   };
 };

@@ -18,7 +18,14 @@ export const action = async ({ request, params }: ActionArgs) => {
     }
     case "save": {
       const mdx = z.string().parse(formData.get("mdx"));
-      if (params.blogId) await updateBlog(params.blogId!, { mdx });
+      const attachments = ZAttachment.array()
+        .parse(JSON.parse(formData.get("attachments")?.toString() || ""))
+        .filter(({ type }) => type === "remote");
+      console.log(attachments);
+      if (params.blogId)
+        return await updateBlog(params.blogId!, { mdx })
+          .then(() => json({ status: "successful save" }, 200))
+          .catch(() => json({ status: "unsuccessful save" }, 400));
     }
     case "upload-attachment": {
       const attachment = ZAttachment.parse(JSON.parse(formData.get("attachment")?.toString() || ""));
