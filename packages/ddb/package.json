@@ -1,0 +1,27 @@
+{
+  "name": "@spencerduballcom/ddb",
+  "type": "module",
+  "source": "src/index.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.modern.js"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.module.js",
+  "unpkg": "./dist/index.umd.js",
+  "scripts": {
+    "build": "microbundle",
+    "dev": "microbundle watch"
+  },
+  "version": "0.1.0",
+  "description": "",
+  "keywords": [],
+  "author": "Spencer Duball",
+  "license": "ISC",
+  "devDependencies": {
+    "microbundle": "^0.15.1",
+    "typescript": "^5.0.4"
+  }
+}

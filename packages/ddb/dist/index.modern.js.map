@@ -1,0 +1,1 @@
+{"version":3,"file":"index.modern.js","sources":["../src/index.ts"],"sourcesContent":["export function sum(a: number, b: number) {\n  return a + b;\n}\n"],"names":["sum","a","b"],"mappings":"AAAgB,SAAAA,EAAIC,EAAWC,GAC7B,OAAOD,EAAIC,CACb"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"index.cjs","sources":["../src/index.ts"],"sourcesContent":["export function sum(a: number, b: number) {\n  return a + b;\n}\n"],"names":["a","b"],"mappings":"YAAgB,SAAIA,EAAWC,GAC7B,OAAOD,EAAIC,CACb"}
