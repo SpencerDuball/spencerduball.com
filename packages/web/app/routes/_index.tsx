@@ -3,7 +3,6 @@ import { json } from "@remix-run/node";
 import type { V2_MetaFunction, LoaderArgs } from "@remix-run/node";
 import Markdoc from "@markdoc/markdoc";
 import { useLoaderData } from "@remix-run/react";
-import { sum } from "@spencerduballcom/ddb";
 
 function Callout({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -53,7 +52,6 @@ export default function Index() {
         <li>
           <a target="_blank" href="https://remix.run/tutorials/blog" rel="noreferrer">
             15m Quickstart Blog Tutorial
-            {sum(1, 4)}
           </a>
         </li>
         <li>

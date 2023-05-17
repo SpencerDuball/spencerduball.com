@@ -95,13 +95,13 @@ export function AppStack({ app, stack }: StackContext) {
     // table
     TABLE_NAME: table.tableName,
     // database
-    DATABASE_URL_SECRET: SecretSsmPath("DATABASE_URL"),
+    DATABASE_URL_SECRET_PATH: SecretSsmPath("DATABASE_URL"),
     // github
-    GITHUB_CLIENT_ID: SecretSsmPath("GITHUB_CLIENT_ID"),
-    GITHUB_CLIENT_ID_SECRET: SecretSsmPath("GITHUB_CLIENT_ID_SECRET"),
+    GITHUB_CLIENT_ID_PATH: SecretSsmPath("GITHUB_CLIENT_ID"),
+    GITHUB_CLIENT_ID_SECRET_PATH: SecretSsmPath("GITHUB_CLIENT_ID_SECRET"),
     // site url - This is needed because the "request.url" in remix will be the
     //            proxied lambda url, not the cloudfront url (or domain name).
-    SITE_URL: ParameterSsmPath("SITE_URL"),
+    SITE_URL_PATH: ParameterSsmPath("SITE_URL"),
   } as const;
   const site = new RemixSite(stack, "web", {
     path: "packages/web/",
