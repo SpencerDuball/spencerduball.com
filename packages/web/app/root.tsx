@@ -1,7 +1,10 @@
-import type { LinksFunction, V2_MetaFunction } from "@remix-run/node";
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import type { LinksFunction, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import styles from "./tailwind.css";
 import Inter from "@fontsource/inter/variable-full.css";
+import { z } from "zod";
+import { userPrefs, newUserPrefs } from "~/lib/cookie.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -19,21 +22,43 @@ export const meta: V2_MetaFunction = () => [
   { name: "theme-color", content: "#ffffff" },
 ];
 
-export default function App() {
+export async function loader({ request }: LoaderArgs) {
+  // get the theme preferences
+  const preferences = await z
+    .enum(["light", "dark"])
+    .parseAsync(await userPrefs.parse(request.headers.get("cookie")))
+    .catch(() => "dark" as const);
+
+  return json(
+    { theme: preferences, isAdmin: true },
+    { headers: { "Set-Cookie": await newUserPrefs(preferences, request) } }
+  );
+}
+
+function AppContent() {
+  // load theme
+  const { theme, isAdmin } = useLoaderData<typeof loader>();
+
   return (
     <html lang="en">
       <head>
+        <Meta />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <Meta />
         <Links />
       </head>
-      <body>
-        <Outlet />
+      <body className="bg-slate-1">
+        <div className="grid justify-items-center">
+          <Outlet />
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
   );
+}
+
+export default function App() {
+  return <AppContent />;
 }

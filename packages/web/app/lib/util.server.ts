@@ -31,7 +31,7 @@ export const ZEnv = z.object({
 export type IEnv = z.infer<typeof ZEnv>;
 
 // get secrets
-async function getSsmValue(name: string, isSecret?: boolean) {
+export async function getSsmValue(name: string, isSecret?: boolean) {
   if (!global.__env) global.__env = {};
   if (!global.__env[name]) {
     global.__env[name] = await new SSMClient({ region: ZEnv.parse(process.env).REGION })
@@ -74,14 +74,14 @@ export async function getS3Client() {
 }
 
 //----------------------------------------------------------------------------
-// Define Logger Functions
+// Define Common Logger Functions
 //----------------------------------------------------------------------------
 /**
  * Returns the pino logger function with common configuration.
  *
  * @returns Pino
  */
-function getLogger() {
+export function getLogger() {
   return pino();
 }
 
@@ -90,7 +90,7 @@ function getLogger() {
  *
  * @param request The request object.
  */
-async function logRequest(request: ActionArgs["request"] | LoaderArgs["request"]) {
+export async function logRequest(request: ActionArgs["request"] | LoaderArgs["request"]) {
   const logger = getLogger();
   const req = request.clone();
 

@@ -3,6 +3,8 @@ import { json } from "@remix-run/node";
 import type { V2_MetaFunction, LoaderArgs } from "@remix-run/node";
 import Markdoc from "@markdoc/markdoc";
 import { useLoaderData } from "@remix-run/react";
+import { Button, IconButton } from "~/components/ui/button";
+import { RiStore3Fill, RiLoader2Fill } from "react-icons/ri";
 
 function Callout({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -65,6 +67,64 @@ export default function Index() {
           </a>
         </li>
       </ul>
+      <div className="grid">
+        <div className="grid grid-flow-col gap-2">
+          <IconButton size="xs" colorScheme="brown" icon={<RiStore3Fill />} variant="solid">
+            Click Me!
+          </IconButton>
+          <IconButton size="sm" colorScheme="brown" icon={<RiStore3Fill />} variant="solid">
+            Click Me!
+          </IconButton>
+          <IconButton size="md" colorScheme="brown" icon={<RiStore3Fill />} variant="solid">
+            Click Me!
+          </IconButton>
+          <IconButton size="lg" colorScheme="brown" icon={<RiStore3Fill />} variant="solid">
+            Click Me!
+          </IconButton>
+        </div>
+        <div className="grid grid-flow-col gap-2">
+          <IconButton size="xs" colorScheme="brown" icon={<RiStore3Fill />} variant="subtle">
+            Click Me!
+          </IconButton>
+          <IconButton size="sm" colorScheme="brown" icon={<RiStore3Fill />} variant="subtle">
+            Click Me!
+          </IconButton>
+          <IconButton size="md" colorScheme="brown" icon={<RiStore3Fill />} variant="subtle">
+            Click Me!
+          </IconButton>
+          <IconButton size="lg" colorScheme="brown" icon={<RiStore3Fill />} variant="subtle">
+            Click Me!
+          </IconButton>
+        </div>
+        <div className="grid grid-flow-col gap-2">
+          <IconButton size="xs" colorScheme="brown" icon={<RiStore3Fill />} variant="ghost">
+            Click Me!
+          </IconButton>
+          <IconButton size="sm" colorScheme="brown" icon={<RiStore3Fill />} variant="ghost">
+            Click Me!
+          </IconButton>
+          <IconButton size="md" colorScheme="brown" icon={<RiStore3Fill />} variant="ghost">
+            Click Me!
+          </IconButton>
+          <IconButton size="lg" colorScheme="brown" icon={<RiStore3Fill />} variant="ghost">
+            Click Me!
+          </IconButton>
+        </div>
+        <div className="grid grid-flow-col gap-2">
+          <IconButton size="xs" colorScheme="brown" icon={<RiStore3Fill />} variant="outline">
+            Click Me!
+          </IconButton>
+          <IconButton size="sm" colorScheme="brown" icon={<RiStore3Fill />} variant="outline">
+            Click Me!
+          </IconButton>
+          <IconButton size="md" colorScheme="brown" icon={<RiStore3Fill />} variant="outline">
+            Click Me!
+          </IconButton>
+          <IconButton size="lg" colorScheme="brown" icon={<RiStore3Fill />} variant="outline">
+            Click Me!
+          </IconButton>
+        </div>
+      </div>
     </div>
   );
 }
