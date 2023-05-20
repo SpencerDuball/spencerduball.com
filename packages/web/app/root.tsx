@@ -1,10 +1,22 @@
+import React from "react";
 import { json } from "@remix-run/node";
 import type { LinksFunction, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  ShouldRevalidateFunction,
+  useLoaderData,
+} from "@remix-run/react";
 import styles from "./tailwind.css";
 import Inter from "@fontsource/inter/variable-full.css";
 import { z } from "zod";
 import { userPrefs, newUserPrefs } from "~/lib/cookie.server";
+import { Header } from "~/components/app/header";
+import { GlobalContext, GlobalContextProvider } from "~/components/app/global-ctx";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -29,18 +41,26 @@ export async function loader({ request }: LoaderArgs) {
     .parseAsync(await userPrefs.parse(request.headers.get("cookie")))
     .catch(() => "dark" as const);
 
+  // TODO: check if user is admin
+
   return json(
     { theme: preferences, isAdmin: true },
     { headers: { "Set-Cookie": await newUserPrefs(preferences, request) } }
   );
 }
 
+export const shouldRevalidate: ShouldRevalidateFunction = ({ formAction, defaultShouldRevalidate }) => {
+  if (formAction?.match(/\/dashboard\/cms\/blog\/\d+\/preview/)) return false;
+  return defaultShouldRevalidate;
+};
+
 function AppContent() {
   // load theme
   const { theme, isAdmin } = useLoaderData<typeof loader>();
+  const [{ _theme, clientLoaded }] = React.useContext(GlobalContext);
 
   return (
-    <html lang="en">
+    <html lang="en" className={clientLoaded ? _theme : theme}>
       <head>
         <Meta />
         <meta charSet="utf-8" />
@@ -49,6 +69,7 @@ function AppContent() {
       </head>
       <body className="bg-slate-1">
         <div className="grid justify-items-center">
+          <Header isAdmin={isAdmin} />
           <Outlet />
         </div>
         <ScrollRestoration />
@@ -60,5 +81,9 @@ function AppContent() {
 }
 
 export default function App() {
-  return <AppContent />;
+  return (
+    <GlobalContextProvider>
+      <AppContent />
+    </GlobalContextProvider>
+  );
 }
