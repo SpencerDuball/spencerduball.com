@@ -17,7 +17,6 @@ const createDdbSessionStorage = () =>
   createSessionStorage({
     cookie: __session,
     async createData(data, expires) {
-      console.log(data, expires);
       // get utilities
       const logger = getLogger();
       const ddb = await getDdbClient();

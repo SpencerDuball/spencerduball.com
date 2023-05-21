@@ -17,6 +17,7 @@ import { z } from "zod";
 import { userPrefs, newUserPrefs } from "~/lib/cookie.server";
 import { Header } from "~/components/app/header";
 import { GlobalContext, GlobalContextProvider } from "~/components/app/global-ctx";
+import { ToasterProvider } from "~/components/app/toaster";
 import { getSessionInfo } from "./lib/session.server";
 
 export const links: LinksFunction = () => [
@@ -32,7 +33,6 @@ export const links: LinksFunction = () => [
 export const meta: V2_MetaFunction = () => [
   { title: "Spencer Duball" },
   { name: "msapplication-TileColor", content: "#2b5797" },
-  { name: "theme-color", content: "#ffffff" },
 ];
 
 export async function loader({ request }: LoaderArgs) {
@@ -68,13 +68,15 @@ function AppContent() {
         <Links />
       </head>
       <body className="bg-slate-1">
-        <div className="grid justify-items-center">
-          <Header isAdmin={isAdmin} />
-          <Outlet />
-        </div>
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+        <ToasterProvider>
+          <div className="grid justify-items-center">
+            <Header isAdmin={isAdmin} />
+            <Outlet />
+          </div>
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
+        </ToasterProvider>
       </body>
     </html>
   );

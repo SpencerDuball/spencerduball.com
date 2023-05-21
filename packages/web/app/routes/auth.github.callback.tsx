@@ -169,7 +169,6 @@ export const loader = async ({ request }: LoaderArgs) => {
   // create the user session
   logger.info("Creating the user session in the database ...");
   const [expires, secure] = [new Date(Date.now() + ms("90d")), reqUrl.hostname === "localhost" ? false : true];
-  console.log("EXPIRES_TIEM: ", expires);
   const session = createSession({
     userId: user.id,
     username: user.username,
