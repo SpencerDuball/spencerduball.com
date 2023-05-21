@@ -25,8 +25,10 @@ export function AppStack({ app, stack }: StackContext) {
   // Define Secrets
   //---------------------------------------------------------------------------
   new Config.Secret(stack, "DATABASE_URL");
-  new Config.Secret(stack, "GITHUB_CLIENT_ID");
-  new Config.Secret(stack, "GITHUB_CLIENT_SECRET");
+  if (app.stage === "prod") {
+    new Config.Secret(stack, "GITHUB_CLIENT_ID");
+    new Config.Secret(stack, "GITHUB_CLIENT_SECRET");
+  }
 
   //---------------------------------------------------------------------------
   // Create "files" Bucket
@@ -98,7 +100,7 @@ export function AppStack({ app, stack }: StackContext) {
     DATABASE_URL_SECRET_PATH: SecretSsmPath("DATABASE_URL"),
     // github
     GITHUB_CLIENT_ID_PATH: SecretSsmPath("GITHUB_CLIENT_ID"),
-    GITHUB_CLIENT_ID_SECRET_PATH: SecretSsmPath("GITHUB_CLIENT_ID_SECRET"),
+    GITHUB_CLIENT_SECRET_PATH: SecretSsmPath("GITHUB_CLIENT_SECRET"),
     // site url - This is needed because the "request.url" in remix will be the
     //            proxied lambda url, not the cloudfront url (or domain name).
     SITE_URL_PATH: ParameterSsmPath("SITE_URL"),

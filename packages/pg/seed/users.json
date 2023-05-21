@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "username": "AdminUser1",
+    "name": "First Admin",
+    "avatar_url": "",
+    "github_url": "https://www.github.com",
+    "created_at": "2016-06-17T20:22:04.513Z",
+    "modified_at": "2016-06-17T20:22:04.513Z"
+  },
+  {
+    "id": 2,
+    "username": "AdminUser2",
+    "name": "Second Admin",
+    "avatar_url": "",
+    "github_url": "https://www.github.com",
+    "created_at": "2016-06-17T20:22:04.513Z",
+    "modified_at": "2016-06-17T20:22:04.513Z"
+  },
+  {
+    "id": 3,
+    "username": "PublicUser1",
+    "name": "First User",
+    "avatar_url": "",
+    "github_url": "https://www.github.com",
+    "created_at": "2022-03-20T05:00:00.000Z",
+    "modified_at": "2022-03-20T05:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "username": "PublicUser2",
+    "name": "Second User",
+    "avatar_url": "",
+    "github_url": "https://www.github.com",
+    "created_at": "2022-04-11T05:00:00.000Z",
+    "modified_at": "2022-04-11T05:00:00.000Z"
+  }
+]

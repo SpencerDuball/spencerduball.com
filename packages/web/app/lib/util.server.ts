@@ -5,9 +5,13 @@ import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { S3Client } from "@aws-sdk/client-s3";
 import pino from "pino";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { Kysely } from "kysely";
+import { getClient } from "@spencerduballcom/pg";
+import type { IDatabase } from "@spencerduballcom/pg";
 
 // define globals
 declare global {
+  var __pgClient: Kysely<IDatabase>;
   var __ddbClient: Ddb;
   var __s3Client: S3Client;
   var __env: Record<string, string>;
@@ -25,7 +29,7 @@ export const ZEnv = z.object({
   TABLE_NAME: z.string(),
   DATABASE_URL_SECRET_PATH: z.string(),
   GITHUB_CLIENT_ID_PATH: z.string(),
-  GITHUB_CLIENT_ID_SECRET_PATH: z.string(),
+  GITHUB_CLIENT_SECRET_PATH: z.string(),
   SITE_URL_PATH: z.string(),
 });
 export type IEnv = z.infer<typeof ZEnv>;
@@ -71,6 +75,21 @@ export async function getS3Client() {
     global.__s3Client = s3Client;
   }
   return global.__s3Client;
+}
+
+/**
+ * Retrieves the pre-configured postgres client if it exists, or create a new
+ * connection.
+ *
+ * @returns Pg
+ */
+export async function getPgClient() {
+  if (!global.__pgClient) {
+    const env = ZEnv.parse(process.env);
+    const databaseUrl = await getSsmValue(env.DATABASE_URL_SECRET_PATH, true);
+    global.__pgClient = getClient(databaseUrl);
+  }
+  return global.__pgClient;
 }
 
 //----------------------------------------------------------------------------

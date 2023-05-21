@@ -17,6 +17,7 @@ import { z } from "zod";
 import { userPrefs, newUserPrefs } from "~/lib/cookie.server";
 import { Header } from "~/components/app/header";
 import { GlobalContext, GlobalContextProvider } from "~/components/app/global-ctx";
+import { getSessionInfo } from "./lib/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
@@ -41,12 +42,11 @@ export async function loader({ request }: LoaderArgs) {
     .parseAsync(await userPrefs.parse(request.headers.get("cookie")))
     .catch(() => "dark" as const);
 
-  // TODO: check if user is admin
+  // check if user is admin
+  const session = await getSessionInfo(request);
+  const isAdmin = !!session?.roles.includes("admin");
 
-  return json(
-    { theme: preferences, isAdmin: true },
-    { headers: { "Set-Cookie": await newUserPrefs(preferences, request) } }
-  );
+  return json({ theme: preferences, isAdmin }, { headers: { "Set-Cookie": await newUserPrefs(preferences, request) } });
 }
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({ formAction, defaultShouldRevalidate }) => {

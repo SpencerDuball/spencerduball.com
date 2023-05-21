@@ -1,0 +1,2 @@
+!function(e,n){"object"==typeof exports&&"undefined"!=typeof module?n(exports,require("kysely"),require("pg")):"function"==typeof define&&define.amd?define(["exports","kysely","pg"],n):n((e||self).pg={},e.kysely,e.pg)}(this,function(e,n,t){function o(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var i=/*#__PURE__*/o(t);e.getClient=function(e){return new n.Kysely({dialect:new n.PostgresDialect({pool:new i.default.Pool({connectionString:e})})})}});
+//# sourceMappingURL=index.umd.js.map
