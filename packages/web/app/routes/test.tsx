@@ -2,14 +2,19 @@ import React from "react";
 import { json } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import Markdoc from "@markdoc/markdoc";
+import Markdoc, { Schema } from "@markdoc/markdoc";
 import { config, components } from "~/components/app/markdoc";
+import { validateFrontmatter } from "~/model/blogpost.server";
+import { ZodError } from "zod";
 
 const sample = `---
-title: Sup
-hello: [one, two, three]
+title: New Blog Post
+description: A new blog post.
+image: /images/default-splash-bg.png
+tags: [one, two, three]
 ---
-# This is Heading 1 {% font-size='300px' %}
+
+# This is Heading 1
 
 **Here is some text for that heading.**
 
@@ -71,6 +76,9 @@ Hello there how \`const a = 1;\` you?
 
 export async function loader({ params, request }: LoaderArgs) {
   const ast = Markdoc.parse(sample);
+  const isValid = Markdoc.validate(ast, config);
+  console.log(isValid);
+  console.log(validateFrontmatter(ast.attributes.frontmatter));
   const content = Markdoc.transform(ast, config);
 
   return json({ content });

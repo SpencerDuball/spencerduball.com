@@ -49,7 +49,7 @@ export function BlogPostLi({ hasControls, data, className, ...props }: BlogPostL
     >
       {/* Image Section */}
       <div className="grid md:max-w-[14rem] md:p-3 md:pr-0">
-        <img className="aspect-[2/1] w-full md:rounded md:overflow-hidden" src={data.image_url} />
+        <img className="w-full aspect-[2/1] md:rounded md:overflow-hidden object-cover" src={data.image_url} />
       </div>
       {/* Info Section */}
       <div className="grid p-3 pt-0 gap-2 md:p-3 md:pl-0 md:content-start">
