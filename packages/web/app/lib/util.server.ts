@@ -1,13 +1,12 @@
 import { z } from "zod";
-import { Ddb } from "@spencerduballcom/ddb";
+import { Ddb } from "@spencerduballcom/db/ddb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { S3Client } from "@aws-sdk/client-s3";
 import pino from "pino";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import type { Kysely } from "kysely";
-import { getClient } from "@spencerduballcom/pg";
-import type { IDatabase } from "@spencerduballcom/pg";
+import { getClient, type IDatabase } from "@spencerduballcom/db/pg";
 
 // define globals
 declare global {

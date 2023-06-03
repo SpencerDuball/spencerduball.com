@@ -1,5 +1,5 @@
 import { createSessionStorage, redirect, createCookie } from "@remix-run/node";
-import { ZSession, SessionType } from "@spencerduballcom/ddb";
+import { ZSession, SessionType } from "@spencerduballcom/db/ddb";
 import { getDdbClient, getLogger } from "~/lib/util.server";
 import { AutoCompleteString } from "~/lib/util";
 import ms from "ms";

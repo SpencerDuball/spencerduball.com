@@ -26,7 +26,7 @@ export interface BlogPostLiProps extends React.ComponentProps<"li"> {
     image_url: string;
     author_id: number;
     views: number;
-    first_published_at: Date | null;
+    published_at: Date | null;
     tags: string[];
     published: boolean;
   };
@@ -79,7 +79,7 @@ export function BlogPostLi({ hasControls, data, className, ...props }: BlogPostL
         </Link>
         <div className="text-md text-slate-9 flex gap-2">
           <p>
-            {data.first_published_at?.toLocaleDateString() || "Unpublished"} &#11825; {data.views} Views
+            {data.published_at?.toLocaleDateString() || "Unpublished"} &#11825; {data.views} Views
           </p>
         </div>
       </div>

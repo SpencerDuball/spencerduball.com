@@ -1,7 +1,7 @@
 import { json, redirect } from "@remix-run/node";
 import type { LoaderArgs, ActionArgs } from "@remix-run/node";
 import { getDdbClient, getLogger, getPgClient, ZEnv, logRequest } from "~/lib/util.server";
-import { ZOAuthMock } from "~/lib/pkg/ddb.server";
+import { ZOAuthMock } from "@spencerduballcom/db/ddb";
 import { z } from "zod";
 import { Form, useLoaderData } from "@remix-run/react";
 

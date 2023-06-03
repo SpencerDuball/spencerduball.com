@@ -2,7 +2,7 @@ import { setupServer } from "msw/node";
 import { rest } from "msw";
 import { z } from "zod";
 import { getDdbClient, getLogger, getPgClient } from "~/lib/util.server";
-import { ZOAuthMock } from "@spencerduballcom/ddb";
+import { ZOAuthMock } from "@spencerduballcom/db/ddb";
 
 const handlers = [
   rest.post("https://github.com/login/oauth/access_token", async (req, res, ctx) => {

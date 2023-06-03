@@ -1,1 +1,1 @@
-export * from "@spencerduballcom/ddb";
+export * from "@spencerduballcom/db/ddb";

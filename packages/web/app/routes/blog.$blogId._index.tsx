@@ -28,30 +28,30 @@ export async function loader({ params, request }: LoaderArgs) {
 
   // get the blog
   logger.info("Retrieving the blog ...");
-  const [blogpost, views] = await Promise.all([
+  const [blog, views] = await Promise.all([
     db
-      .selectFrom("blogposts")
-      .leftJoin("blogpost_tags", "blogpost_tags.blogpost_id", "blogposts.id")
-      .where("blogposts.id", "=", blogId)
-      .where("blogposts.published", "=", true)
-      .groupBy("blogposts.id")
+      .selectFrom("blogs")
+      .leftJoin("blog_tags", "blog_tags.blog_id", "blogs.id")
+      .where("blogs.id", "=", blogId)
+      .where("blogs.published", "=", true)
+      .groupBy("blogs.id")
       .select([
-        "blogposts.author_id",
-        "blogposts.body",
-        "blogposts.first_published_at",
-        "blogposts.id",
-        "blogposts.image_url",
-        "blogposts.modified_at",
-        "blogposts.published",
-        "blogposts.title",
-        "blogposts.description",
-        sql<(string | null)[]>`array_agg(blogpost_tags.tag_id)`.as("tags"),
+        "blogs.author_id",
+        "blogs.body",
+        "blogs.published_at",
+        "blogs.id",
+        "blogs.image_url",
+        "blogs.modified_at",
+        "blogs.published",
+        "blogs.title",
+        "blogs.description",
+        sql<(string | null)[]>`array_agg(blog_tags.tag_id)`.as("tags"),
       ])
       .executeTakeFirstOrThrow()
       .then((values) => ({ ...values, tags: values.tags.filter((t) => t !== null) as string[] })),
     db
-      .updateTable("blogposts")
-      .where("blogposts.id", "=", blogId)
+      .updateTable("blogs")
+      .where("blogs.id", "=", blogId)
       .set({ views: ({ bxp }) => bxp("views", "+", 1) })
       .returning("views")
       .executeTakeFirstOrThrow()
@@ -67,7 +67,7 @@ export async function loader({ params, request }: LoaderArgs) {
   // --------------------
   logger.info("Building the blog ...");
   // (1) parse
-  const ast = Markdoc.parse(blogpost.body);
+  const ast = Markdoc.parse(blog.body);
   // (2) validate
   validateFrontmatter(ast.attributes.frontmatter);
   const errors = Markdoc.validate(ast, config);
@@ -76,7 +76,7 @@ export async function loader({ params, request }: LoaderArgs) {
   const content = Markdoc.transform(ast, config);
   logger.info("Success: Build the blog.");
 
-  return json({ blog: { ...blogpost, views }, content, request_url: request.url });
+  return json({ blog: { ...blog, views }, content, request_url: request.url });
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
@@ -109,8 +109,8 @@ export default function Blog() {
         <div className="grid text-slate-11 leading-relaxed text-sm md:text-md">
           <p className="text-xs font-semibold">POSTED</p>
           <p>
-            {blog.first_published_at
-              ? new Date(blog.first_published_at).toLocaleDateString("en-US", {
+            {blog.published_at
+              ? new Date(blog.published_at).toLocaleDateString("en-US", {
                   month: "long",
                   day: "numeric",
                   year: "numeric",

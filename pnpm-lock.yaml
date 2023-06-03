@@ -16,6 +16,49 @@ importers:
       sst: 2.8.23_typescript@5.0.4
       typescript: 5.0.4
 
+  packages/db:
+    specifiers:
+      '@aws-sdk/client-dynamodb': ^3.332.0
+      '@aws-sdk/lib-dynamodb': ^3.332.0
+      '@faker-js/faker': ^8.0.1
+      '@types/fs-extra': ^11.0.1
+      '@types/pg': ^8.6.6
+      '@types/prettier': ^2.7.2
+      '@types/prompts': ^2.4.4
+      arg: ^5.0.2
+      dynamodb-toolbox: ^0.8.5
+      fs-extra: ^11.1.1
+      kysely: ^0.24.2
+      ms: 3.0.0-canary.1
+      pg: ^8.11.0
+      prettier: ^2.8.8
+      prompts: ^2.4.2
+      tsx: ^3.12.7
+      typescript: ^5.0.4
+      vitest: ^0.31.1
+      zod: ^3.21.4
+    dependencies:
+      '@aws-sdk/client-dynamodb': 3.332.0
+      '@aws-sdk/lib-dynamodb': 3.332.0_6qbx4fqovr77yauqmee3m3u5vi
+      dynamodb-toolbox: 0.8.5_k3wgq5pxbwck6bubdntulhr4ry
+      kysely: 0.24.2
+      ms: 3.0.0-canary.1
+      pg: 8.11.0
+      zod: 3.21.4
+    devDependencies:
+      '@faker-js/faker': 8.0.1
+      '@types/fs-extra': 11.0.1
+      '@types/pg': 8.6.6
+      '@types/prettier': 2.7.2
+      '@types/prompts': 2.4.4
+      arg: 5.0.2
+      fs-extra: 11.1.1
+      prettier: 2.8.8
+      prompts: 2.4.2
+      tsx: 3.12.7
+      typescript: 5.0.4
+      vitest: 0.31.1
+
   packages/ddb:
     specifiers:
       '@aws-sdk/client-dynamodb': ^3.332.0
@@ -92,8 +135,7 @@ importers:
       '@remix-run/node': ^1.16.0
       '@remix-run/react': ^1.16.0
       '@remix-run/serve': ^1.16.0
-      '@spencerduballcom/ddb': workspace:^0.1.0
-      '@spencerduballcom/pg': workspace:^0.1.0
+      '@spencerduballcom/db': workspace:^0.1.0
       '@types/js-cookie': ^3.0.3
       '@types/js-yaml': ^4.0.5
       '@types/react': ^18.0.35
@@ -139,8 +181,7 @@ importers:
       '@remix-run/node': 1.16.0
       '@remix-run/react': 1.16.0_biqbaboplfbrettd7655fr4n2y
       '@remix-run/serve': 1.16.0
-      '@spencerduballcom/ddb': link:../ddb
-      '@spencerduballcom/pg': link:../pg
+      '@spencerduballcom/db': link:../db
       axios: 1.4.0
       class-variance-authority: 0.6.0_typescript@5.0.4
       clsx: 1.2.1
@@ -4680,6 +4721,13 @@ packages:
   /@types/estree/1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
 
+  /@types/fs-extra/11.0.1:
+    resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
+    dependencies:
+      '@types/jsonfile': 6.1.1
+      '@types/node': 20.2.1
+    dev: true
+
   /@types/glob/7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
@@ -4716,6 +4764,12 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: true
+
+  /@types/jsonfile/6.1.1:
+    resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
+    dependencies:
+      '@types/node': 20.2.1
     dev: true
 
   /@types/keyv/3.1.4:
@@ -8401,6 +8455,15 @@ packages:
       graceful-fs: 4.2.11
       jsonfile: 6.1.0
       universalify: 2.0.0
+
+  /fs-extra/11.1.1:
+    resolution: {integrity: sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==}
+    engines: {node: '>=14.14'}
+    dependencies:
+      graceful-fs: 4.2.11
+      jsonfile: 6.1.0
+      universalify: 2.0.0
+    dev: true
 
   /fs-extra/5.0.0:
     resolution: {integrity: sha512-66Pm4RYbjzdyeuqudYqhFiNBbCIuI9kgRqLPSHIlXHidW8NIQtVdkM1yeZ4lXwuhbTETv3EUGMNHAAw6hiundQ==}

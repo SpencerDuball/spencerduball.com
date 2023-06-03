@@ -53,17 +53,17 @@ export async function loader({ request }: LoaderArgs) {
   // --------------------------------------------------------------------------------------------
   // create base query
   let blogpostsQuery = db
-    .selectFrom("blogposts")
-    .leftJoin("blogpost_tags", "blogposts.id", "blogpost_tags.blogpost_id")
+    .selectFrom("blogs")
+    .leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id")
     .select([
       "id",
       "title",
       "image_url",
       "author_id",
       "views",
-      "first_published_at",
+      "published_at",
       "published",
-      sql<(string | null)[]>`array_agg(blogpost_tags.tag_id)`.as("tags"),
+      sql<(string | null)[]>`array_agg(blog_tags.tag_id)`.as("tags"),
     ]);
 
   // apply the "published" filter
@@ -72,23 +72,23 @@ export async function loader({ request }: LoaderArgs) {
   // apply the "tags" filter if exists
   if (tags) {
     blogpostsQuery = blogpostsQuery
-      .where("blogposts.id", "in", (sub) =>
+      .where("blogs.id", "in", (sub) =>
         sub
-          .selectFrom("blogpost_tags")
-          .select("blogpost_id")
+          .selectFrom("blog_tags")
+          .select("blog_id")
           .where("tag_id", "in", tags)
-          .groupBy("blogpost_id")
+          .groupBy("blog_id")
           .having(sub.fn.count("tag_id"), "=", tags!.length)
       )
-      .groupBy("blogposts.id");
-  } else blogpostsQuery = blogpostsQuery.groupBy("blogposts.id");
+      .groupBy("blogs.id");
+  } else blogpostsQuery = blogpostsQuery.groupBy("blogs.id");
 
   // apply the title filter if exists
   if (title) blogpostsQuery = blogpostsQuery.where("title", "ilike", `%${title}%`);
 
   // apply the sort order
   blogpostsQuery = blogpostsQuery.orderBy(
-    sort.startsWith("created") ? "blogposts.created_at" : "blogposts.views",
+    sort.startsWith("created") ? "blogs.created_at" : "blogs.views",
     sort.endsWith("asc") ? "asc" : "desc"
   );
 
@@ -99,10 +99,7 @@ export async function loader({ request }: LoaderArgs) {
   // Count Matching Blogposts
   const countBlogPosts = db
     .with("matching_posts", (q) => {
-      let query = q
-        .selectFrom("blogposts")
-        .leftJoin("blogpost_tags", "blogposts.id", "blogpost_tags.blogpost_id")
-        .select("id");
+      let query = q.selectFrom("blogs").leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id").select("id");
 
       // apply the "published" filter
       query = query.where("published", "=", true);
@@ -110,10 +107,10 @@ export async function loader({ request }: LoaderArgs) {
       // apply the "tags" filter if exists
       if (tags) {
         query = query
-          .where("blogpost_tags.tag_id", "in", tags)
-          .groupBy("blogposts.id")
-          .having(db.fn.count("blogpost_tags.tag_id"), "=", tags.length);
-      } else query = query.groupBy("blogposts.id");
+          .where("blog_tags.tag_id", "in", tags)
+          .groupBy("blogs.id")
+          .having(db.fn.count("blog_tags.tag_id"), "=", tags.length);
+      } else query = query.groupBy("blogs.id");
 
       // apply the title filter if exists
       if (title) query = query.where("title", "ilike", `%${title}%`);
@@ -192,10 +189,7 @@ export default function Blog() {
         {/* Blog Items */}
         <ul className="grid gap-3 row-start-2">
           {blogposts
-            .map((post) => ({
-              ...post,
-              first_published_at: (post.first_published_at && new Date(post.first_published_at)) || null,
-            }))
+            .map((post) => ({ ...post, published_at: (post.published_at && new Date(post.published_at)) || null }))
             .map((post) => (
               <BlogPostLi key={post.id} data={post} />
             ))}

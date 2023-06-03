@@ -1,7 +1,7 @@
 import { redirect, createSession } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { getDdbClient, getLogger, getSsmValue, ZEnv, getPgClient, logRequest } from "~/lib/util.server";
-import { ZOAuthStateCode } from "~/lib/pkg/ddb.server";
+import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 import axios from "axios";
 import { z } from "zod";
 import ms from "ms";

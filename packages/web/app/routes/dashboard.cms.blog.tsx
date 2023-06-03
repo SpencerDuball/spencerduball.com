@@ -64,12 +64,12 @@ export async function loader({ request }: LoaderArgs) {
   let title = params.title || null;
   let status = params.status || "both";
 
-  // Create blogposts Query
+  // Create blogs Query
   /* ----------------------------------------------------------------------------------- */
   // create base query
-  let blogpostsQuery = db
-    .selectFrom("blogposts")
-    .leftJoin("blogpost_tags", "blogposts.id", "blogpost_tags.blogpost_id")
+  let blogsQuery = db
+    .selectFrom("blogs")
+    .leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id")
     .select([
       "id",
       "title",
@@ -77,42 +77,39 @@ export async function loader({ request }: LoaderArgs) {
       "image_url",
       "author_id",
       "views",
-      "first_published_at",
-      sql<(string | null)[]>`array_agg(blogpost_tags.tag_id)`.as("tags"),
+      "published_at",
+      sql<(string | null)[]>`array_agg(blog_tags.tag_id)`.as("tags"),
     ]);
 
   // apply the "published" filter
-  if (status === "published") blogpostsQuery = blogpostsQuery.where("published", "=", true);
-  else if (status === "unpublished") blogpostsQuery = blogpostsQuery.where("published", "=", false);
+  if (status === "published") blogsQuery = blogsQuery.where("published", "=", true);
+  else if (status === "unpublished") blogsQuery = blogsQuery.where("published", "=", false);
 
   // apply the "tags" filter if exists
   if (tags) {
-    blogpostsQuery = blogpostsQuery
-      .where("blogpost_tags.tag_id", "in", tags)
-      .groupBy("blogposts.id")
-      .having(db.fn.count("blogpost_tags.tag_id"), "=", tags.length);
-  } else blogpostsQuery = blogpostsQuery.groupBy("blogposts.id");
+    blogsQuery = blogsQuery
+      .where("blog_tags.tag_id", "in", tags)
+      .groupBy("blogs.id")
+      .having(db.fn.count("blog_tags.tag_id"), "=", tags.length);
+  } else blogsQuery = blogsQuery.groupBy("blogs.id");
 
   // apply the title filter if exists
-  if (title) blogpostsQuery = blogpostsQuery.where("title", "ilike", `%${title}%`);
+  if (title) blogsQuery = blogsQuery.where("title", "ilike", `%${title}%`);
 
   // apply the sort order
-  blogpostsQuery = blogpostsQuery.orderBy(
-    sort.startsWith("created") ? "blogposts.created_at" : "blogposts.views",
+  blogsQuery = blogsQuery.orderBy(
+    sort.startsWith("created") ? "blogs.created_at" : "blogs.views",
     sort.endsWith("asc") ? "asc" : "desc"
   );
 
   // apply the "maxResults" and page
-  blogpostsQuery = blogpostsQuery.limit(maxResults).offset((page - 1) * maxResults);
+  blogsQuery = blogsQuery.limit(maxResults).offset((page - 1) * maxResults);
   /* ----------------------------------------------------------------------------------- */
 
   // Count Matching Blogposts
-  const countBlogPosts = db
+  const countBlogs = db
     .with("matching_posts", (q) => {
-      let query = q
-        .selectFrom("blogposts")
-        .leftJoin("blogpost_tags", "blogposts.id", "blogpost_tags.blogpost_id")
-        .select("id");
+      let query = q.selectFrom("blogs").leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id").select("id");
 
       // apply the "published" filter
       if (status === "published") query = query.where("published", "=", true);
@@ -121,10 +118,10 @@ export async function loader({ request }: LoaderArgs) {
       // apply the "tags" filter if exists
       if (tags) {
         query = query
-          .where("blogpost_tags.tag_id", "in", tags)
-          .groupBy("blogposts.id")
-          .having(db.fn.count("blogpost_tags.tag_id"), "=", tags.length);
-      } else query = query.groupBy("blogposts.id");
+          .where("blog_tags.tag_id", "in", tags)
+          .groupBy("blogs.id")
+          .having(db.fn.count("blog_tags.tag_id"), "=", tags.length);
+      } else query = query.groupBy("blogs.id");
 
       // apply the title filter if exists
       if (title) query = query.where("title", "ilike", `%${title}%`);
@@ -138,21 +135,21 @@ export async function loader({ request }: LoaderArgs) {
   const allTagsQuery = db.selectFrom("tags").select("id");
 
   // run the queries in parallel
-  const [blogposts, allTags, numMatchingPosts] = await Promise.all([
-    blogpostsQuery
+  const [blogs, allTags, numMatchingPosts] = await Promise.all([
+    blogsQuery
       .execute()
       .then((res) => res.map((item) => ({ ...item, tags: item.tags.filter((value) => value !== null) as string[] }))),
     allTagsQuery.execute(),
-    countBlogPosts.executeTakeFirstOrThrow().then((res) => res.num_matching_posts),
+    countBlogs.executeTakeFirstOrThrow().then((res) => res.num_matching_posts),
   ]);
 
-  return json({ allTags, blogposts, numMatchingPosts, params, userId: session.userId });
+  return json({ allTags, blogs, numMatchingPosts, params, userId: session.userId });
 }
 
 export const meta: V2_MetaFunction = () => [{ title: "Blog | Spencer Duball" }];
 
 export default function Blog() {
-  const { allTags, blogposts, numMatchingPosts, params, userId } = useLoaderData<typeof loader>();
+  const { allTags, blogs, numMatchingPosts, params, userId } = useLoaderData<typeof loader>();
 
   // ---------------------------------------------------------------------------------
   // Settings & Filters
@@ -193,7 +190,7 @@ export default function Blog() {
     let [startIdx, endIdx] = [maxResults * (page - 1), numMatchingPosts];
     pagingMessage = `Showing posts ${startIdx} - ${endIdx} of ${numMatchingPosts}.`;
   } else {
-    let [startIdx, endIdx] = [maxResults * (page - 1), maxResults * (page - 1) + blogposts.length];
+    let [startIdx, endIdx] = [maxResults * (page - 1), maxResults * (page - 1) + blogs.length];
     pagingMessage = `Showing posts ${startIdx} - ${endIdx} of ${numMatchingPosts}.`;
   }
 
@@ -235,18 +232,15 @@ export default function Blog() {
       </div>
       {/* Main Content */}
       <div className="grid gap-6">
-        {/* NOTE: Place the blogpost items before the 'Search Controls' in order for the 'Search Controls' settings select
+        {/* NOTE: Place the blog items before the 'Search Controls' in order for the 'Search Controls' settings select
             popover to stack correctly. We are using the 'row-start-x' to organize the order after DOM stacking.
             Typically the modals are attached to the end of the DOM, but in the 'Search Controls' we want these items to be
             part of the submission form, so we specified the container as a child of the Form element.
           */}
         {/* Blog Items */}
         <ul className="grid gap-3 row-start-2">
-          {blogposts
-            .map((post) => ({
-              ...post,
-              first_published_at: post.first_published_at ? new Date(post.first_published_at) : null,
-            }))
+          {blogs
+            .map((blog) => ({ ...blog, published_at: blog.published_at ? new Date(blog.published_at) : null }))
             .map((post) => (
               <BlogPostLi key={post.id} data={post} hasControls={true} />
             ))}
