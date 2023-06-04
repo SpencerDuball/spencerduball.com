@@ -22,7 +22,24 @@ import { z } from "zod";
 import { getSessionInfo } from "~/lib/session.server";
 import { sql } from "kysely";
 import { Select, SelectPositioner, SelectContent, SelectOption } from "~/components/ui/select";
-import { defaultBlogTemplate } from "~/model/blogpost.server";
+
+// define the default blog template
+export const defaultBlogTemplate = `---
+title: New Blog Post
+description: A new blog post.
+image_url: /images/default-splash-bg.png
+tags: []
+---
+
+# New Blog Post
+
+This is a new blog post, edit the content and click the "save" button when ready. You may also:
+- drag and drop images/videos onto the editor
+- upload images/videos directly in the "attachments" tab
+- use all standard commonmark MD features
+
+> Note: When finished with the blogpost, you can publish the post from the dashboard.
+`;
 
 // page search parameters config
 const SortOption = ["views-asc", "views-desc", "created-asc", "created-desc"] as const;
@@ -368,9 +385,8 @@ export default function Blog() {
               </Popover.Root>
             </Form>
             <create.Form method="POST" action="/blog?index">
-              <input type="hidden" name="mdx" value={defaultBlogTemplate} />
+              <input type="hidden" name="body" value={defaultBlogTemplate} />
               <input type="hidden" name="author_id" value={userId} />
-              <input type="hidden" name="published" value="false" />
               <IconButton
                 type="submit"
                 aria-label="new post"

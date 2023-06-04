@@ -339,46 +339,48 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           </Nav.Link>
                         </div>
                       </div>
-                      <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
-                        <Nav.Link asChild>
-                          <Link
-                            to="/dashboard"
-                            className={cn(
-                              "focus-outline text-slate-10 hover:text-slate-12 hover:no-underline",
-                              !!pathname.match(/^\/projects\/?.*$/)
-                            )}
-                          >
-                            <p className="font-semibold">Dashboard</p>
-                            <p>Create/delete/update the site content.</p>
-                          </Link>
-                        </Nav.Link>
-                        <div className="grid grid-cols-2 gap-2">
+                      {isAdmin && (
+                        <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
                           <Nav.Link asChild>
                             <Link
-                              to="/dashboard/analytics"
+                              to="/dashboard"
                               className={cn(
-                                "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
-                                !!pathname.match(
-                                  /^\/dashboard\/analytics\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                                )
+                                "focus-outline text-slate-10 hover:text-slate-12 hover:no-underline",
+                                !!pathname.match(/^\/projects\/?.*$/)
                               )}
                             >
-                              Analytics
+                              <p className="font-semibold">Dashboard</p>
+                              <p>Create/delete/update the site content.</p>
                             </Link>
                           </Nav.Link>
-                          <Nav.Link asChild>
-                            <Link
-                              to="/dashboard/cms"
-                              className={cn(
-                                "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
-                                !!pathname.match(/^\/dashboard\/cms\/?.*/ && "bg-slate-7 font-semibold text-slate-12")
-                              )}
-                            >
-                              Content
-                            </Link>
-                          </Nav.Link>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Nav.Link asChild>
+                              <Link
+                                to="/dashboard/analytics"
+                                className={cn(
+                                  "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                                  !!pathname.match(
+                                    /^\/dashboard\/analytics\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
+                                  )
+                                )}
+                              >
+                                Analytics
+                              </Link>
+                            </Nav.Link>
+                            <Nav.Link asChild>
+                              <Link
+                                to="/dashboard/cms"
+                                className={cn(
+                                  "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                                  !!pathname.match(/^\/dashboard\/cms\/?.*/ && "bg-slate-7 font-semibold text-slate-12")
+                                )}
+                              >
+                                Content
+                              </Link>
+                            </Nav.Link>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </nav>
                   </ScrollViewport>
                 </ScrollArea>

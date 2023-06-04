@@ -4,7 +4,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Markdoc, { Schema } from "@markdoc/markdoc";
 import { config, components } from "~/components/app/markdoc";
-import { validateFrontmatter } from "~/model/blogpost.server";
+import { validateFrontmatter } from "~/model/blog.server";
 import { ZodError } from "zod";
 
 const sample = `---

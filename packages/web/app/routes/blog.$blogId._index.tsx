@@ -1,11 +1,10 @@
 import React from "react";
-import { json } from "@remix-run/node";
-import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
+import { json, type LoaderArgs, type V2_MetaFunction, type ActionArgs } from "@remix-run/node";
 import { sql } from "kysely";
 import { z } from "zod";
 import { getLogger, getPgClient, logRequest } from "~/lib/util.server";
 import Markdoc from "@markdoc/markdoc";
-import { validateFrontmatter } from "~/model/blogpost.server";
+import { deleteBlog, patchBlog, validateFrontmatter } from "~/model/blog.server";
 import { components, config } from "~/components/app/markdoc";
 import { useLoaderData } from "@remix-run/react";
 import { IconButton } from "~/components/ui/button";
@@ -13,14 +12,83 @@ import * as Popover from "@radix-ui/react-popover";
 import { RiLinkM, RiTwitterLine } from "react-icons/ri";
 import { Tag, colorFromName, ColorList } from "~/components/ui/tag";
 import { ScrollArea, ScrollViewport } from "~/components/ui/scroll-box";
+import { getSessionInfo } from "~/lib/session.server";
 
 const ZParams = z.object({ blogId: z.coerce.number() });
+
+// define the payload structure
+const ZPatchPayload = z.object({
+  body: z.string().optional(),
+  published: z
+    .boolean()
+    .or(z.enum(["true", "false"]).transform((value) => value === "true"))
+    .optional(),
+});
+type IPatchPayload = z.infer<typeof ZPatchPayload>;
+
+export async function action({ request, params }: ActionArgs) {
+  await logRequest(request);
+
+  // ensure user is admin
+  const session = await getSessionInfo(request);
+  if (!session) return new Response(undefined, { status: 401 });
+  else if (!session.roles.includes("admin")) return new Response(undefined, { status: 403 });
+
+  // get request info
+  const { blogId } = await ZParams.parseAsync(params).catch((e) => {
+    throw new Response(undefined, { status: 404 });
+  });
+
+  // get utilities
+  const logger = getLogger();
+
+  switch (request.method) {
+    case "DELETE": {
+      // delete the blog
+      logger.info("Deleting the blog ...");
+      try {
+        const blog = await deleteBlog({ id: blogId });
+        logger.info("Success: Deleted the blog.");
+        return json(blog);
+      } catch (e) {
+        logger.info("Failure: Failed to delete blog.");
+        logger.info(e);
+        return json({ message: "Failure deleting blog." }, { status: 500 });
+      }
+    }
+    case "PATCH": {
+      // get request info
+      let data: IPatchPayload;
+      try {
+        data = ZPatchPayload.parse(Object.fromEntries((await request.formData()).entries()));
+      } catch (e) {
+        data = await ZPatchPayload.parseAsync(await request.json()).catch((e) => {
+          throw new Response(undefined, { status: 400, statusText: "Bad Reqeust" });
+        });
+      }
+
+      // update the blog
+      logger.info("Updating the blog ...");
+      const blog = await patchBlog({ id: blogId, ...data }).catch((e) => {
+        logger.info("Failure: Failed to update the blog.");
+        throw new Response(undefined, { status: 500, statusText: "Failure updating blog." });
+      });
+      logger.info("Success: Updated the blog.");
+
+      return json(blog);
+    }
+  }
+
+  return null;
+}
 
 export async function loader({ params, request }: LoaderArgs) {
   await logRequest(request);
 
   // get request info
-  const { blogId } = ZParams.parse(params);
+  const { blogId } = await ZParams.parseAsync(params).catch((e) => {
+    throw new Response(undefined, { status: 404, statusText: "Not Found" });
+  });
 
   // instantiate utilities
   const logger = getLogger();
@@ -192,3 +260,5 @@ export default function Blog() {
     </div>
   );
 }
+
+export { ErrorBoundary } from "~/components/app/error-boundary";

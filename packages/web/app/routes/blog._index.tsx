@@ -1,8 +1,9 @@
 import React from "react";
-import { json } from "@remix-run/node";
-import type { ActionArgs, LoaderArgs, Response, V2_MetaFunction } from "@remix-run/node";
+import { json, Response } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { useLoaderData, useLocation, Form } from "@remix-run/react";
-import { getPgClient, logRequest } from "~/lib/util.server";
+import { getLogger, getPgClient, logRequest } from "~/lib/util.server";
+import { getSessionInfo } from "~/lib/session.server";
 import { z } from "zod";
 import { sql } from "kysely";
 import * as Popover from "@radix-ui/react-popover";
@@ -13,8 +14,59 @@ import { TimeAscIcon, TimeDescIcon, ViewsAscIcon, ViewsDescIcon } from "~/compon
 import { Tag, colorFromName, ColorList } from "~/components/ui/tag";
 import { Pagination } from "~/components/ui/pagination";
 import { BlogPostLi } from "~/components/app/blog-post-li";
+import { createBlog } from "~/model/blog.server";
 
-export const meta: V2_MetaFunction = () => [{ title: "Blog | Spencer Duball " }];
+export const meta: V2_MetaFunction = () => [{ title: "Blog | Spencer Duball" }];
+
+// define the payload structure
+const ZPostPayload = z.object({
+  body: z.string(),
+  author_id: z.coerce.number(),
+});
+type IPostPayload = z.infer<typeof ZPostPayload>;
+
+export async function action({ request }: ActionArgs) {
+  await logRequest(request);
+
+  // ensure user is admin
+  const session = await getSessionInfo(request);
+  if (!session) return new Response(undefined, { status: 401 });
+  else if (!session.roles.includes("admin")) return new Response(undefined, { status: 403 });
+
+  // get utilities
+  const logger = getLogger();
+
+  switch (request.method) {
+    case "POST": {
+      // get request info
+      logger.info("Validating the payload ...");
+      let data: IPostPayload;
+      try {
+        const formData = await request.formData();
+        console.log("FORM_DATA: ", Object.fromEntries(formData.entries()));
+        data = ZPostPayload.parse(Object.fromEntries(formData.entries()));
+      } catch (e) {
+        const json = await request.json();
+        console.log("JSON_DATA: ", json);
+        data = await ZPostPayload.parseAsync(json).catch((e) => {
+          logger.info("Failure: The payload is not valid.");
+          throw new Response(undefined, { status: 400, statusText: "Bad Request" });
+        });
+      }
+      console.log("DATA: ", data);
+      logger.info("Success: The payload is valid.");
+
+      // create the blog
+      logger.info("Creating the blog ...");
+      const blog = await createBlog(data);
+      logger.info("Success: Created the blog.");
+
+      return json(blog);
+    }
+  }
+
+  return null;
+}
 
 // page search parameters config
 const SortOption = ["views-asc", "views-desc", "created-asc", "created-desc"] as const;

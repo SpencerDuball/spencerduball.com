@@ -23,7 +23,7 @@ async function clearBucket() {
     (items.Contents &&
       Array.from({ length: Math.ceil(items.Contents.length / MaxBatchSize) }, (_, index) =>
         items.Contents!.slice(index * MaxBatchSize, (index + 1) * MaxBatchSize)
-      ).map((batch) => batch.map((item) => ({ Key: item.Key })))) ||
+      ).map((batch) => batch.map(({ Key }) => ({ Key })))) ||
     [];
 
   // delete each batch of items
@@ -116,6 +116,11 @@ async function purge() {
 
   // truncate the tables
   for await (let tablename of tablenames) await sql`TRUNCATE TABLE ${sql(tablename)} CASCADE`.execute(db);
+  if ("blogs" in tablenames) {
+    await sql`SELECT setval(pg_get_serial_sequence('blogs', 'id'), COALESCE(MAX(id) + 1, 1), false) FROM blogs`.execute(
+      db
+    );
+  }
 
   // remove all items from the S3 bucket
   await clearBucket();
@@ -199,7 +204,12 @@ async function seed() {
       .then((file) => JSON.parse(file.toString().replace(/\{\{S3_BUCKET_URL\}\}/g, Config.BUCKET_URL)))
       .catch(() => [])
       .then((blogs) => ZBlog.array().parse(blogs));
-    if (blogsData.length > 0) await db.insertInto("blogs").values(blogsData).execute();
+    if (blogsData.length > 0) {
+      await db.insertInto("blogs").values(blogsData).execute();
+      await sql`SELECT setval(pg_get_serial_sequence('blogs', 'id'), COALESCE(MAX(id) + 1, 1), false) FROM blogs`.execute(
+        db
+      );
+    }
 
     // seed the 'blog_tags' table
     const blogTagsFile = path.join(transactionPath, "blogTags.json");
