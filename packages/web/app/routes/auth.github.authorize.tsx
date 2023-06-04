@@ -1,7 +1,7 @@
 import { redirect } from "@remix-run/node";
 import type { LoaderArgs } from "@remix-run/node";
 import { getDdbClient, getLogger, getSsmValue, ZEnv, logRequest } from "~/lib/util.server";
-import { ZOAuthStateCode } from "~/lib/pkg/ddb.server";
+import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 
 export const loader = async ({ request }: LoaderArgs) => {
   await logRequest(request);

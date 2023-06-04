@@ -1,11 +1,55 @@
 import arg from "arg";
 import prompts from "prompts";
 import pg from "pg";
+import { getClient } from "../src/pg";
 import { Config } from "sst/node/config";
 import { z } from "zod";
 import { Kysely, FileMigrationProvider, Migrator, PostgresDialect, sql } from "kysely";
-import fs from "fs/promises";
+import fs from "fs-extra";
 import path from "path";
+import { IAttachment, ZAttachment, ZBlog, ZBlogTag, ZRole, ZTag, ZUser, ZUserRole } from "./seed/seed-types";
+import { S3Client, ListObjectsV2Command, DeleteObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+
+/**
+ * Clears all items from the bucket.
+ */
+async function clearBucket() {
+  const s3 = new S3Client({});
+  const items = await s3.send(new ListObjectsV2Command({ Bucket: Config.BUCKET_NAME }));
+
+  // batch items to delete
+  const MaxBatchSize = 1000;
+  const batchesToDelete =
+    (items.Contents &&
+      Array.from({ length: Math.ceil(items.Contents.length / MaxBatchSize) }, (_, index) =>
+        items.Contents!.slice(index * MaxBatchSize, (index + 1) * MaxBatchSize)
+      ).map((batch) => batch.map((item) => ({ Key: item.Key })))) ||
+    [];
+
+  // delete each batch of items
+  await Promise.all(
+    batchesToDelete.map((batch) =>
+      s3.send(new DeleteObjectsCommand({ Bucket: Config.BUCKET_NAME, Delete: { Objects: batch } }))
+    )
+  );
+}
+
+/**
+ * Uploads attachments to the S3 bucket.
+ *
+ * @param attachments The attachments to upload.
+ * @returns The request promise.
+ */
+async function uploadAttachments(attachments: IAttachment[]) {
+  const s3 = new S3Client({});
+  const requests = attachments.map(async (attachment) => {
+    const Key = new URL(attachment.url).pathname.replace(/^\//, "");
+    const file = await fs.readFile(attachment._.fileUri);
+    const options = { Bucket: Config.BUCKET_NAME, Key, Body: file, ContentType: attachment.type };
+    return s3.send(new PutObjectCommand(options));
+  });
+  return Promise.all(requests);
+}
 
 // --------------------------------------------------------------------------------------------------------------------
 // Define All Actions
@@ -71,9 +115,10 @@ async function purge() {
       .then(({ rows }) => rows.map(({ tablename }) => tablename));
 
   // truncate the tables
-  for await (let tablename of tablenames) await sql`TRUNCATE TABLE ${tablename} CASCADE`.execute(db);
+  for await (let tablename of tablenames) await sql`TRUNCATE TABLE ${sql(tablename)} CASCADE`.execute(db);
 
-  // TODO: Remove all items from the S3 bucket
+  // remove all items from the S3 bucket
+  await clearBucket();
 
   // close the db connection
   await db.destroy();
@@ -91,7 +136,11 @@ async function clear() {
     .execute(db)
     .then(({ rows }) => rows.map(({ tablename }) => tablename));
 
-  // TODO: Remove all items from the S3 bucket
+  // remove the tables
+  for await (let tablename of tablenames) await sql`DROP TABLE IF EXISTS ${sql(tablename)} CASCADE`.execute(db);
+
+  // remove all items from the S3 bucket
+  await clearBucket();
 
   // close the db connection
   await db.destroy();
@@ -99,7 +148,84 @@ async function clear() {
 
 /** Loads the seed data into the db. */
 async function seed() {
-  // TODO: Need to implement the seeding.
+  // purge the database
+  await purge();
+
+  // connect to the client
+  const db = getClient(Config.DATABASE_URL);
+
+  // seed all transactions
+  const transactions = await fs.readdir(path.join("scripts", "seed", "transactions"));
+  for (let transaction of transactions) {
+    const transactionPath = path.join("scripts", "seed", "transactions", transaction);
+
+    // seed the 'users' table
+    const usersFile = path.join(transactionPath, "users.json");
+    const usersData = await fs
+      .readJson(usersFile)
+      .catch(() => [])
+      .then((users) => ZUser.array().parse(users));
+    if (usersData.length > 0) await db.insertInto("users").values(usersData).execute();
+
+    // seed the 'roles' table
+    const rolesFile = path.join(transactionPath, "roles.json");
+    const rolesData = await fs
+      .readJson(rolesFile)
+      .catch(() => [])
+      .then((roles) => ZRole.array().parse(roles));
+    if (rolesData.length > 0) await db.insertInto("roles").values(rolesData).execute();
+
+    // seed the 'user_roles' table
+    const userRolesFile = path.join(transactionPath, "userRoles.json");
+    const userRolesData = await fs
+      .readJson(userRolesFile)
+      .catch(() => [])
+      .then((userRoles) => ZUserRole.array().parse(userRoles));
+    if (userRolesData.length > 0) await db.insertInto("user_roles").values(userRolesData).execute();
+
+    // seed the 'tags' table
+    const tagsFile = path.join(transactionPath, "tags.json");
+    const tagsData = await fs
+      .readJson(tagsFile)
+      .catch(() => [])
+      .then((tags) => ZTag.array().parse(tags));
+    if (tagsData.length > 0) await db.insertInto("tags").values(tagsData).execute();
+
+    // seed the 'blogs' table
+    const blogsFile = path.join(transactionPath, "blogs.json");
+    const blogsData = await fs
+      .readFile(blogsFile)
+      .catch(() => Buffer.from("[]", "utf8"))
+      .then((file) => JSON.parse(file.toString().replace(/\{\{S3_BUCKET_URL\}\}/g, Config.BUCKET_URL)))
+      .catch(() => [])
+      .then((blogs) => ZBlog.array().parse(blogs));
+    if (blogsData.length > 0) await db.insertInto("blogs").values(blogsData).execute();
+
+    // seed the 'blog_tags' table
+    const blogTagsFile = path.join(transactionPath, "blogTags.json");
+    const blogTagsData = await fs
+      .readJson(blogTagsFile)
+      .catch(() => [])
+      .then((blogTags) => ZBlogTag.array().parse(blogTags));
+    if (blogTagsData.length > 0) await db.insertInto("blog_tags").values(blogTagsData).execute();
+
+    // seed the 'attachments' table
+    const attachmentsFile = path.join(transactionPath, "attachments.json");
+    const attachmentsData = await fs
+      .readFile(attachmentsFile)
+      .catch(() => Buffer.from("[]", "utf8"))
+      .then((file) => JSON.parse(file.toString().replace(/\{\{S3_BUCKET_URL\}\}/g, Config.BUCKET_URL)))
+      .catch(() => [])
+      .then((data) => ZAttachment.array().parse(data));
+    if (attachmentsData.length > 0) {
+      const attachments = ZAttachment.omit({ _: true }).array().parse(attachmentsData);
+      await db.insertInto("attachments").values(attachments).execute();
+      await uploadAttachments(attachmentsData);
+    }
+  }
+
+  // close the connection
+  await db.destroy();
 }
 
 /** Runs migrate and seed into the db. */

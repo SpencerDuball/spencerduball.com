@@ -1,13 +1,13 @@
 {
   "name": "@spencerduballcom/db",
-  "type": "commonjs",
+  "type": "module",
   "exports": {
     "./ddb": {
-      "default": "./dist/ddb/index.js",
+      "default": "./dist/ddb/index.cjs",
       "types": "./dist/ddb/index.d.ts"
     },
     "./pg": {
-      "default": "./dist/pg/index.js",
+      "default": "./dist/pg/index.cjs",
       "types": "./dist/pg/index.d.ts"
     }
   },
@@ -22,17 +22,17 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist/ && tsc --build src",
+    "build": "rm -rf dist/ && tsc --build src && tsx scripts/rename-to-cjs.ts",
     "watch": "rm -rf dist/ && tsc -w",
-    "db:migrate": "sst bind \"tsx scripts/db.mts migrate\"",
-    "db:migrate:up": "sst bind \"tsx scripts/db.mts migrate:up\"",
-    "db:migrate:down": "sst bind \"tsx scripts/db.mts migrate:down\"",
-    "db:purge": "sst bind \"tsx scripts/db.mts purge\"",
-    "db:clear": "sst bind \"tsx scripts/db.mts clear\"",
-    "db:seed": "sst bind \"tsx scripts/db.mts seed\"",
-    "db:setup": "sst bind \"tsx scripts/db.mts setup\"",
-    "db:reset": "sst bind \"tsx scripts/db.mts reset\"",
-    "new-migration": "tsx scripts/new-migration.mts"
+    "db:migrate": "sst bind \"tsx scripts/db.ts migrate\"",
+    "db:migrate:up": "sst bind \"tsx scripts/db.ts migrate:up\"",
+    "db:migrate:down": "sst bind \"tsx scripts/db.ts migrate:down\"",
+    "db:purge": "sst bind \"tsx scripts/db.ts purge\"",
+    "db:clear": "sst bind \"tsx scripts/db.ts clear\"",
+    "db:seed": "sst bind \"tsx scripts/db.ts seed\"",
+    "db:setup": "sst bind \"tsx scripts/db.ts setup\"",
+    "db:reset": "sst bind \"tsx scripts/db.ts reset\"",
+    "new-migration": "tsx scripts/new-migration.ts"
   },
   "version": "0.1.0",
   "description": "",
@@ -40,6 +40,7 @@
   "author": "Spencer Duball",
   "license": "ISC",
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.332.0",
     "@faker-js/faker": "^8.0.1",
     "@types/fs-extra": "^11.0.1",
     "@types/pg": "^8.6.6",

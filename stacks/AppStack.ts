@@ -116,6 +116,8 @@ export function AppStack({ app, stack }: StackContext) {
   const SITE_URL = new Config.Parameter(stack, "SITE_URL", {
     value: app.stage === "prod" ? `https://${domainName}` : site.url || "http://localhost:3000",
   });
+  const BUCKET_URL = new Config.Parameter(stack, "BUCKET_URL", { value: bucketUrl });
+  const BUCKET_NAME = new Config.Parameter(stack, "BUCKET_NAME", { value: bucket.bucketName });
 
   // add permissions to the site
   const ssmSecretArns = ["DATABASE_URL", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"].map(

@@ -162,7 +162,10 @@ export default function Blog() {
         </div>
       </div>
       {/* Image */}
-      <img className="aspect-[2/1] max-w-5xl w-full rounded overflow-hidden object-cover" src={blog.image_url} />
+      <img
+        className="aspect-[2/1] max-w-5xl w-full rounded overflow-hidden object-cover bg-slate-2"
+        src={blog.image_url}
+      />
       {/* Tags */}
       {blog.tags.length > 0 ? (
         <div className="grid max-w-3xl w-full px-4 sm:px-6 md:px-0">

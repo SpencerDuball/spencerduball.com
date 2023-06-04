@@ -5,17 +5,12 @@ import {
   ZTag,
   ZUser,
   ZUserRole,
-  ZBlogTag,
   ZBlog,
-  ZAttachment,
-  type ITag,
   type IUser,
-  type IUserRole,
   type IBlogTag,
   type IBlog,
   type IAttachment,
-} from "../seed-types";
-import { z } from "zod";
+} from "../seed-types.js";
 import { randomUUID } from "crypto";
 import { format } from "prettier";
 
@@ -70,13 +65,13 @@ async function generateAttachment({
   const splashImage = splashImages[faker.number.int(splashImages.length - 1)];
   const size = await fs.stat(path.join(splashImagesPath, splashImage)).then(({ size }) => size);
   const ext = path.extname(splashImage);
-  const type = `image/${ext}`;
+  const type = `image/${ext.replace(/^\./, "")}`;
 
   return {
     id,
     size,
     type,
-    url: `{{S3_BUCKET_URL}}/public/blog/${blog_id}/${id}.${ext}`,
+    url: `{{S3_BUCKET_URL}}/public/blog/${blog_id}/${id}${ext}`,
     blog_id,
     is_unused: false,
     expires_at: null,

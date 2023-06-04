@@ -42,7 +42,7 @@ export interface IBlogTag {
     tag_id: ColumnType<string, string, never>;
 }
 export interface IAttachment {
-    id: ColumnType<number, number | undefined, never>;
+    id: ColumnType<string, never, never>;
     size: number;
     type: string;
     url: string;

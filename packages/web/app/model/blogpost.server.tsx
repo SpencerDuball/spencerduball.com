@@ -24,6 +24,6 @@ This is a new blog post, edit the content and click the "save" button when ready
 // ----------------------------------------------------------------------
 export function validateFrontmatter(frontmatter: string) {
   return z
-    .object({ title: z.string(), description: z.string(), image: z.string(), tags: z.string().array() })
+    .object({ title: z.string(), description: z.string(), image_url: z.string(), tags: z.string().array() })
     .parse(yaml.load(frontmatter));
 }
