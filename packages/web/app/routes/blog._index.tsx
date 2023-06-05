@@ -43,17 +43,14 @@ export async function action({ request }: ActionArgs) {
       let data: IPostPayload;
       try {
         const formData = await request.formData();
-        console.log("FORM_DATA: ", Object.fromEntries(formData.entries()));
         data = ZPostPayload.parse(Object.fromEntries(formData.entries()));
       } catch (e) {
         const json = await request.json();
-        console.log("JSON_DATA: ", json);
         data = await ZPostPayload.parseAsync(json).catch((e) => {
           logger.info("Failure: The payload is not valid.");
           throw new Response(undefined, { status: 400, statusText: "Bad Request" });
         });
       }
-      console.log("DATA: ", data);
       logger.info("Success: The payload is valid.");
 
       // create the blog

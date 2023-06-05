@@ -1,5 +1,5 @@
 import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
-import Markdoc, { validate } from "@markdoc/markdoc";
+import Markdoc from "@markdoc/markdoc";
 import { config } from "~/components/app/markdoc";
 import yaml from "js-yaml";
 import { z } from "zod";
