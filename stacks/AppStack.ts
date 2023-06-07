@@ -5,6 +5,9 @@ import type { BucketCorsRule } from "sst/constructs";
 import { HostedZone, CnameRecord } from "aws-cdk-lib/aws-route53";
 import { BillingMode } from "aws-cdk-lib/aws-dynamodb";
 import { Architecture } from "aws-cdk-lib/aws-lambda";
+import { Distribution } from "aws-cdk-lib/aws-cloudfront";
+import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 
 export function AppStack({ app, stack }: StackContext) {
   function SecretSsmPath(name: string) {
@@ -40,7 +43,7 @@ export function AppStack({ app, stack }: StackContext) {
   const bucketCors = {
     allowedMethods: ["POST", "GET", "DELETE"],
     allowedHeaders: ["*"],
-    allowedOrigins: [app.stage === "prod" ? "yo" : "*"],
+    allowedOrigins: [app.stage === "prod" ? `https://${domainName}` : "*"],
   } as BucketCorsRule;
 
   // create bucket
@@ -63,7 +66,21 @@ export function AppStack({ app, stack }: StackContext) {
   let bucketUrl = `https://${bucket.bucketName}.s3.${stack.region}.amazonaws.com`;
   if (app.stage === "prod") {
     const zone = HostedZone.fromLookup(stack, "Zone", { domainName });
-    new CnameRecord(stack, "FilesBucketCname", { zone, recordName: "files", domainName });
+    const filesDomainName = `files.${domainName}`;
+    const filesCertificate = new Certificate(stack, "DomainCertificate", {
+      domainName: filesDomainName,
+      validation: CertificateValidation.fromDnsMultiZone({ [filesDomainName]: zone }),
+    });
+    const distribution = new Distribution(stack, "FilesBucketDistribution", {
+      defaultBehavior: { origin: new S3Origin(bucket.cdk.bucket) },
+      domainNames: [filesDomainName],
+      certificate: filesCertificate,
+    });
+    new CnameRecord(stack, "FilesBucketCname", {
+      zone,
+      recordName: "files",
+      domainName: distribution.distributionDomainName,
+    });
     bucketUrl = `https://files.${domainName}`;
   }
 
