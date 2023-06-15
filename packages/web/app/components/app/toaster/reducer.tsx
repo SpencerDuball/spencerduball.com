@@ -1,10 +1,5 @@
 import React from "react";
 import type { AutoCompleteString } from "~/lib/util";
-import type { IToasterState } from "./context";
-
-type ActionMap<M extends { [index: string]: any }> = {
-  [Key in keyof M]: M[Key] extends undefined ? { type: Key } : { type: Key; payload: M[Key] };
-};
 
 /* ------------------------------------------------------------------------------------------------------------
  * Define Context Types
@@ -22,14 +17,23 @@ export interface IToast {
   title?: string;
   description?: string;
   duration: number;
-  timeoutId: number[];
-  element?: React.ReactNode;
+  timeoutIds: number[];
   createdAt: Date;
 }
 
+// define the full context state
+export interface IToasterState {
+  toasts: IToast[];
+  addToQueue: (action: Actions) => void;
+}
+
 /* ------------------------------------------------------------------------------------------------------------
- * Create Reducer
+ * Create ActionMap
  * ------------------------------------------------------------------------------------------------------------ */
+type ActionMap<M extends { [index: string]: any }> = {
+  [Key in keyof M]: M[Key] extends undefined ? { type: Key } : { type: Key; payload: M[Key] };
+};
+
 export enum Types {
   AddToast = "ADD_TOAST",
   UpsertToast = "UPSERT_TOAST",
@@ -37,25 +41,22 @@ export enum Types {
   RemoveToast = "REMOVE_TOAST",
   RemoveTimer = "REMOVE_TIMER",
   RestartTimer = "RESTART_TIMER",
-  SetState = "SET_STATE",
 }
 
 export type Payload = {
   [Types.AddToast]: Partial<IToast>;
   [Types.UpsertToast]: Partial<IToast> & Pick<IToast, "id">;
   [Types.UpdateToast]: Partial<IToast> & Pick<IToast, "id">;
-  [Types.RemoveToast]: Pick<IToast, "id">;
-  [Types.RemoveTimer]: Pick<IToast, "id">;
-  [Types.RestartTimer]: Pick<IToast, "id">;
-  [Types.SetState]: IToasterState;
+  [Types.RemoveToast]: IToast["id"];
+  [Types.RemoveTimer]: IToast["id"];
+  [Types.RestartTimer]: IToast["id"];
 };
 
 export type Actions = ActionMap<Payload>[keyof ActionMap<Payload>];
 
-function sortToasts(prev: IToast, next: IToast) {
-  return prev.createdAt.getTime() - next.createdAt.getTime();
-}
-
+/* ------------------------------------------------------------------------------------------------------------
+ * Create Reducer
+ * ------------------------------------------------------------------------------------------------------------ */
 export const reducer = (state: IToasterState, action: Actions) => {
   switch (action.type) {
     case Types.AddToast: {
@@ -70,11 +71,11 @@ export const reducer = (state: IToasterState, action: Actions) => {
         type,
         placement,
         duration,
-        timeoutId: [],
+        timeoutIds: [],
         createdAt: new Date(),
         ...action.payload,
       };
-      setTimeout(() => state.dispatch?.({ type: Types.RestartTimer, payload: { id } }), 0);
+      state.addToQueue({ type: Types.RestartTimer, payload: id });
       return { ...state, toasts: [...state.toasts, toast].sort(sortToasts) };
     }
     case Types.UpsertToast: {
@@ -83,19 +84,18 @@ export const reducer = (state: IToasterState, action: Actions) => {
 
       if (toast) {
         newToast = { ...toast, ...action.payload };
-        if (action.payload.duration)
-          setTimeout(() => state.dispatch?.({ type: Types.RestartTimer, payload: { id: toast.id } }), 0);
+        if (action.payload.duration) state.addToQueue({ type: Types.RestartTimer, payload: newToast.id });
       } else {
         const [type, placement, duration] = ["info", "bottom-end", 3000];
         newToast = {
           type,
           placement,
           duration,
-          timeoutId: [],
+          timeoutIds: [],
           createdAt: new Date(),
           ...action.payload,
         };
-        setTimeout(() => state.dispatch?.({ type: Types.RestartTimer, payload: { id: action.payload.id } }), 0);
+        state.addToQueue({ type: Types.RestartTimer, payload: newToast.id });
       }
 
       const toasts = [...state.toasts.filter(({ id }) => id !== newToast.id), newToast].sort(sortToasts);
@@ -106,49 +106,49 @@ export const reducer = (state: IToasterState, action: Actions) => {
       if (!toast) return state;
 
       const newToast = { ...toast, ...action.payload };
-      if (action.payload.duration)
-        setTimeout(() => state.dispatch?.({ type: Types.RestartTimer, payload: { id: toast.id } }), 0);
+      if (action.payload.duration) state.addToQueue({ type: Types.RestartTimer, payload: newToast.id });
 
       const toasts = [...state.toasts.filter(({ id }) => id !== newToast.id), newToast].sort(sortToasts);
       return { ...state, toasts };
     }
     case Types.RemoveToast: {
-      const toast = state.toasts.find(({ id }) => id === action.payload.id);
-      while (toast && toast.timeoutId.length > 0) clearTimeout(toast.timeoutId.pop());
-      return { ...state, toasts: state.toasts.filter(({ id }) => id !== action.payload.id) };
+      const toast = state.toasts.find(({ id }) => id === action.payload);
+      while (toast && toast.timeoutIds.length > 0) clearTimeout(toast.timeoutIds.pop());
+      return { ...state, toasts: state.toasts.filter(({ id }) => id !== action.payload) };
     }
     case Types.RemoveTimer: {
-      const toast = state.toasts.find(({ id }) => id === action.payload.id);
+      const toast = state.toasts.find(({ id }) => id === action.payload);
       if (!toast) return state;
 
       let newToast: IToast = { ...toast };
-      while (newToast.timeoutId.length > 0) clearTimeout(newToast.timeoutId.pop());
+      while (newToast.timeoutIds.length > 0) clearTimeout(newToast.timeoutIds.pop());
 
       const toasts = [...state.toasts.filter(({ id }) => id !== newToast.id), newToast].sort(sortToasts);
       return { ...state, toasts };
     }
     case Types.RestartTimer: {
-      const toast = state.toasts.find(({ id }) => id === action.payload.id);
+      const toast = state.toasts.find(({ id }) => id === action.payload);
       if (!toast) return state;
 
       let newToast: IToast = { ...toast };
-      while (newToast.timeoutId.length > 0) clearTimeout(newToast.timeoutId.pop());
-      if (toast.duration !== Infinity)
-        newToast.timeoutId.push(
-          window.setTimeout(
-            () => state.dispatch?.({ type: Types.RemoveToast, payload: { id: toast.id } }),
-            newToast.duration
-          )
+      while (newToast.timeoutIds.length > 0) clearTimeout(newToast.timeoutIds.pop());
+      if (toast.duration !== Infinity) {
+        const timeoutId = window.setTimeout(
+          () => state.addToQueue({ type: Types.RemoveToast, payload: newToast.id }),
+          newToast.duration
         );
+        newToast.timeoutIds.push(timeoutId);
+      }
 
       const toasts = [...state.toasts.filter(({ id }) => id !== newToast.id), newToast].sort(sortToasts);
       return { ...state, toasts };
-    }
-    case Types.SetState: {
-      return action.payload;
     }
     default: {
       return state;
     }
   }
 };
+
+function sortToasts(prev: IToast, next: IToast) {
+  return prev.createdAt.getTime() - next.createdAt.getTime();
+}

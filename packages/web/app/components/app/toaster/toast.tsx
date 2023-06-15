@@ -27,13 +27,11 @@ const toastVariants = cva(toastDefaultClasses.split(" "), toastConfig);
 /* ------------------------------------------------------------------------------------------------------------
  * Components
  * ------------------------------------------------------------------------------------------------------------ */
-export interface ToastProps
-  extends React.ComponentPropsWithRef<"div">,
-    Pick<IToast, "type" | "title" | "description" | "element"> {
+export interface ToastProps extends React.ComponentPropsWithRef<"div">, Pick<IToast, "type" | "title" | "description"> {
   toastId: IToast["id"];
 }
 export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
-  ({ toastId, type, title, description, element, className, ...rest }, ref) => {
+  ({ toastId, type, title, description, className, ...rest }, ref) => {
     const [, dispatch] = React.useContext(ToasterCtx);
 
     const t = type as (typeof ToastTypes)[number];
@@ -46,8 +44,8 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       <div
         ref={ref}
         className={cn(toastVariants({ type: t }), className)}
-        onMouseEnter={() => dispatch({ type: Types.RemoveTimer, payload: { id: toastId } })}
-        onMouseLeave={() => dispatch({ type: Types.RestartTimer, payload: { id: toastId } })}
+        onMouseEnter={() => dispatch({ type: Types.RemoveTimer, payload: toastId })}
+        onMouseLeave={() => dispatch({ type: Types.RestartTimer, payload: toastId })}
         {...rest}
       >
         {title && <p className={cn("col-start-1 col-span-1 font-semibold", colors.title[t || "info"])}>{title}</p>}
@@ -57,7 +55,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
           variant="ghost"
           aria-label="dismiss toast"
           icon={<RiCloseLine />}
-          onClick={() => dispatch({ type: Types.RemoveToast, payload: { id: toastId } })}
+          onClick={() => dispatch({ type: Types.RemoveToast, payload: toastId })}
         />
         {description && <p className={cn(colors.description[t || "info"])}>{description}</p>}
       </div>

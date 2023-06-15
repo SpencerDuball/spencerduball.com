@@ -17,8 +17,6 @@ import { SiPrettier } from "react-icons/si";
 import { RxHalf2 } from "react-icons/rx";
 import { DiVim } from "react-icons/di";
 import * as React from "react";
-import { format } from "prettier";
-import parserMarkdown from "prettier/parser-markdown";
 import {
   CmsEditorCtx,
   CmsEditorProvider,
