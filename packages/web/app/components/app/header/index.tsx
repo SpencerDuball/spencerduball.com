@@ -7,6 +7,7 @@ import { ScrollArea, ScrollViewport } from "~/components/ui/scroll-box";
 import * as Nav from "@radix-ui/react-navigation-menu";
 import { Link, useLocation } from "@remix-run/react";
 import { GlobalContext, toggleTheme } from "~/components/app/global-ctx";
+import { useMeasure } from "react-use";
 
 export interface HeaderProps extends React.HTMLProps<HTMLDivElement> {
   isAdmin: boolean;
@@ -252,8 +253,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                   className="text-slate-12"
                 />
               </Nav.Trigger>
-              <Nav.Content className="h-full rounded-lg border border-slate-6 bg-slate-3 shadow-lg">
-                <ScrollArea className="h-full max-h-[calc(100vh-5rem*2)] p-3">
+              <Nav.Content className="rounded-lg border border-slate-6 bg-slate-3 shadow-lg">
+                {/* TODO: Fix the scrolly issue. */}
+                {/* <ScrollArea className="h-full max-h-[calc(100vh-5rem*2)] p-3"> */}
+                <ScrollArea className="p-3">
                   <ScrollViewport>
                     <nav className="grid gap-2">
                       <div className="grid gap-2 rounded-lg bg-slate-4 p-4">

@@ -96,39 +96,38 @@ export async function loader({ params, request }: LoaderArgs) {
 
   // get the blog
   logger.info("Retrieving the blog ...");
-  const [blog, views] = await Promise.all([
-    db
-      .selectFrom("blogs")
-      .leftJoin("blog_tags", "blog_tags.blog_id", "blogs.id")
-      .where("blogs.id", "=", blogId)
-      .where("blogs.published", "=", true)
-      .groupBy("blogs.id")
-      .select([
-        "blogs.author_id",
-        "blogs.body",
-        "blogs.published_at",
-        "blogs.id",
-        "blogs.image_url",
-        "blogs.modified_at",
-        "blogs.published",
-        "blogs.title",
-        "blogs.description",
-        sql<(string | null)[]>`array_agg(blog_tags.tag_id)`.as("tags"),
-      ])
-      .executeTakeFirstOrThrow()
-      .then((values) => ({ ...values, tags: values.tags.filter((t) => t !== null) as string[] })),
-    db
-      .updateTable("blogs")
-      .where("blogs.id", "=", blogId)
-      .set({ views: ({ bxp }) => bxp("views", "+", 1) })
-      .returning("views")
-      .executeTakeFirstOrThrow()
-      .then(({ views }) => views),
-  ]).catch((e) => {
-    logger.info(`Failure: Blogpost with id ${blogId} does not exist.`);
-    logger.info(e);
-    throw new Response(undefined, { status: 404, statusText: "Not Found" });
-  });
+  const blog = await db
+    .selectFrom("blogs")
+    .leftJoin("blog_tags", "blog_tags.blog_id", "blogs.id")
+    .where("blogs.id", "=", blogId)
+    .where("blogs.published", "=", true)
+    .groupBy("blogs.id")
+    .select([
+      "blogs.author_id",
+      "blogs.body",
+      "blogs.published_at",
+      "blogs.id",
+      "blogs.image_url",
+      "blogs.modified_at",
+      "blogs.published",
+      "blogs.title",
+      "blogs.description",
+      sql<(string | null)[]>`array_agg(blog_tags.tag_id)`.as("tags"),
+    ])
+    .executeTakeFirstOrThrow()
+    .then((values) => ({ ...values, tags: values.tags.filter((t) => t !== null) as string[] }))
+    .catch((e) => {
+      logger.info(`Failure: Blogpost with id ${blogId} does not exist.`);
+      logger.info(e);
+      throw json({}, { status: 404, statusText: "Not Found" });
+    });
+  const views = await db
+    .updateTable("blogs")
+    .where("blogs.id", "=", blogId)
+    .set({ views: ({ bxp }) => bxp("views", "+", 1) })
+    .returning("views")
+    .executeTakeFirstOrThrow()
+    .then(({ views }) => views);
   logger.info("Success: Retrieved the blog.");
 
   // generate the markdoc

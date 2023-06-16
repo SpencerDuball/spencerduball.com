@@ -116,7 +116,7 @@ async function purge() {
 
   // truncate the tables
   for await (let tablename of tablenames) await sql`TRUNCATE TABLE ${sql(tablename)} CASCADE`.execute(db);
-  if ("blogs" in tablenames) {
+  if (tablenames.includes("blogs")) {
     await sql`SELECT setval(pg_get_serial_sequence('blogs', 'id'), COALESCE(MAX(id) + 1, 1), false) FROM blogs`.execute(
       db
     );
@@ -284,8 +284,9 @@ async function main() {
       message:
         "You are attempting to run this action on the production database, please type 'I am fasho dawg' to confirm:",
     });
-    if (shouldRunOnProd === "I am fasho dawg") {
+    if (shouldRunOnProd !== "I am fasho dawg") {
       console.log("Aborted the action attempted for the production database.");
+      process.exit();
     }
   }
 

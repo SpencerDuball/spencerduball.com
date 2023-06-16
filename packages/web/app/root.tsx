@@ -12,7 +12,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import styles from "./tailwind.css";
-import Inter from "@fontsource/inter/variable-full.css";
+import Inter from "@fontsource-variable/inter/index.css";
 import { z } from "zod";
 import { userPrefs, newUserPrefs } from "~/lib/cookie.server";
 import { Header } from "~/components/app/header";

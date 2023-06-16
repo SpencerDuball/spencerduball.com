@@ -18,7 +18,8 @@ export function Link({ href, children }: LinkProps) {
     <a
       target="_blank"
       rel="noopener noreferrer"
-      className="focus-outline underline hover:no-underline text-slate-12 hover:text-slate-11 transition-colors ease-in-out"
+      style={{ maxWidth: "10px" }}
+      className="focus-outline underline hover:no-underline text-slate-12 hover:text-slate-11 transition-colors ease-in-out break-all"
       href={href}
       children={children}
     />
