@@ -60,11 +60,17 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                     "focus-outline font-semibold leading-relaxed text-slate-10 hover:text-slate-12 hover:no-underline px-2",
                     !!pathname.match(/^\/projects\/?$/)
                   )}
+                  onPointerMove={(e) => e.preventDefault()}
+                  onPointerLeave={(e) => e.preventDefault()}
                 >
                   Projects
                 </button>
               </Nav.Trigger>
-              <Nav.Content className="relative h-full max-h-[32rem]">
+              <Nav.Content
+                className="relative h-full max-h-[32rem]"
+                onPointerMove={(e) => e.preventDefault()}
+                onPointerLeave={(e) => e.preventDefault()}
+              >
                 <div className="relative rounded-lg border border-slate-6 bg-slate-3 p-3 shadow-lg">
                   <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
                     <Nav.Link asChild>
@@ -128,11 +134,17 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                       "focus-outline font-semibold leading-relaxed text-slate-10 hover:text-slate-12 hover:no-underline px-2",
                       !!pathname.match(/^\/dashhboard\/?.*$/)
                     )}
+                    onPointerMove={(e) => e.preventDefault()}
+                    onPointerLeave={(e) => e.preventDefault()}
                   >
                     Dashboard
                   </button>
                 </Nav.Trigger>
-                <Nav.Content className="relative h-full max-h-[32rem]">
+                <Nav.Content
+                  className="relative h-full max-h-[32rem]"
+                  onPointerMove={(e) => e.preventDefault()}
+                  onPointerLeave={(e) => e.preventDefault()}
+                >
                   <div className="relative rounded-lg border border-slate-6 bg-slate-3 p-3 shadow-lg grid gap-2">
                     <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
                       <Nav.Link asChild>
@@ -251,9 +263,15 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                   aria-label="open navigation menu"
                   icon={<RiMenu2Fill />}
                   className="text-slate-12"
+                  onPointerMove={(e) => e.preventDefault()}
+                  onPointerLeave={(e) => e.preventDefault()}
                 />
               </Nav.Trigger>
-              <Nav.Content className="rounded-lg border border-slate-6 bg-slate-3 shadow-lg">
+              <Nav.Content
+                className="rounded-lg border border-slate-6 bg-slate-3 shadow-lg"
+                onPointerMove={(e) => e.preventDefault()}
+                onPointerLeave={(e) => e.preventDefault()}
+              >
                 {/* TODO: Fix the scrolly issue. */}
                 {/* <ScrollArea className="h-full max-h-[calc(100vh-5rem*2)] p-3"> */}
                 <ScrollArea className="p-3">
