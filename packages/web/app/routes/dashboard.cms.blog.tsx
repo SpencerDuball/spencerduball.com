@@ -163,7 +163,10 @@ export async function loader({ request }: LoaderArgs) {
   return json({ allTags, blogs, numMatchingPosts, params, userId: session.userId });
 }
 
-export const meta: V2_MetaFunction = () => [{ title: "Blog | Spencer Duball" }];
+export const meta: V2_MetaFunction = () => [
+  { title: "Blog | Spencer Duball" },
+  { name: "description", content: "Manage all of your blog posts." },
+];
 
 export default function Blog() {
   const { allTags, blogs, numMatchingPosts, params, userId } = useLoaderData<typeof loader>();

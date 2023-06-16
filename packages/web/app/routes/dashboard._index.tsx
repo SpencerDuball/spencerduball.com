@@ -3,7 +3,10 @@ import type { LoaderArgs } from "@remix-run/node";
 import { getSessionInfo } from "~/lib/session.server";
 import { logRequest } from "~/lib/util.server";
 
-export const meta: V2_MetaFunction = () => [{ title: "Dashboard | Spencer Duball" }];
+export const meta: V2_MetaFunction = () => [
+  { title: "Dashboard | Spencer Duball" },
+  { name: "description", content: "Take a look at recent activity, errors that require attention, and admin tools." },
+];
 
 export async function loader({ request }: LoaderArgs) {
   await logRequest(request);

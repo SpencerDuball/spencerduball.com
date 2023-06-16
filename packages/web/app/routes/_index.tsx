@@ -1,6 +1,18 @@
 import * as Avatar from "@radix-ui/react-avatar";
+import { V2_MetaFunction } from "@remix-run/node";
 import { RiTwitterFill, RiGithubFill } from "react-icons/ri";
 import { PrintablesIcon } from "~/components/ui/icon";
+
+export const meta: V2_MetaFunction = () => {
+  return [
+    { title: `Home | Spencer Duball` },
+    {
+      name: "description",
+      content:
+        "The personal site for Spencer Duball. I write about web development, cloud computing, 3D printing, circuit design, and more!",
+    },
+  ];
+};
 
 export default function Index() {
   return (

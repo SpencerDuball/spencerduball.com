@@ -13,7 +13,14 @@ export async function loader({ request }: LoaderArgs) {
   return null;
 }
 
-export const meta: V2_MetaFunction = () => [{ title: "Analytics | Spencer Duball" }];
+export const meta: V2_MetaFunction = () => [
+  { title: "Analytics | Spencer Duball" },
+  {
+    name: "description",
+    content:
+      "View the analytics for spencerduball.com as a whole. Track errors, where users are visiting from, and which routes get the most attention.",
+  },
+];
 
 export default function Analytics() {
   return (

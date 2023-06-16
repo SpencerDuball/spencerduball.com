@@ -1,7 +1,10 @@
 import { BackgroundShape1Icon } from "~/components/ui/icon";
 import type { V2_MetaFunction } from "@remix-run/node";
 
-export const meta: V2_MetaFunction = () => [{ title: "3D Print | Spencer Duball" }];
+export const meta: V2_MetaFunction = () => [
+  { title: "3D Print | Spencer Duball" },
+  { name: "description", content: "Have a look at some of my 3D prints." },
+];
 
 export default function ThreeDPrint() {
   return (

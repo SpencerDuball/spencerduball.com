@@ -16,7 +16,14 @@ import { Pagination } from "~/components/ui/pagination";
 import { BlogPostLi } from "~/components/app/blog-post-li";
 import { createBlog } from "~/model/blog.server";
 
-export const meta: V2_MetaFunction = () => [{ title: "Blog | Spencer Duball" }];
+export const meta: V2_MetaFunction = () => [
+  { title: "Blog | Spencer Duball" },
+  {
+    name: "description",
+    content:
+      "Come checkout my thoughts on various topics such as web development, cloud computing, 3D printing, and circuits.",
+  },
+];
 
 // define the payload structure
 const ZPostPayload = z.object({

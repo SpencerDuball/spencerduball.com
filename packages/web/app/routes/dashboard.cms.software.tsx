@@ -14,7 +14,13 @@ export async function loader({ request }: LoaderArgs) {
   return null;
 }
 
-export const meta: V2_MetaFunction = () => [{ title: "Software | Spencer Duball" }];
+export const meta: V2_MetaFunction = () => [
+  { title: "Software | Spencer Duball" },
+  {
+    name: "description",
+    content: "Manage all of your software projects.",
+  },
+];
 
 export default function Software() {
   return (

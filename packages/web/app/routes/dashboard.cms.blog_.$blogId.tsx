@@ -1,4 +1,4 @@
-import { LoaderArgs, json, redirect } from "@remix-run/node";
+import { LoaderArgs, json, redirect, V2_MetaFunction } from "@remix-run/node";
 import { getLogger, getPgClient, logRequest } from "~/lib/util.server";
 import { z } from "zod";
 import { getSessionInfo } from "~/lib/session.server";
@@ -108,6 +108,19 @@ export async function loader({ request, params }: LoaderArgs) {
 
   return json({ blog: { ...blog, attachments } });
 }
+
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [{ title: `Not Found | Spencer Duball` }];
+  return [
+    { title: `${data.blog.title} | Spencer Duball` },
+    { name: "description", content: data.blog.description },
+    { name: "og:title", content: `${data.blog.title} | Spencer Duball` },
+    { name: "og:description", content: data.blog.description },
+    { name: "og:type", content: "website" },
+    { name: "og:image", content: data.blog.image_url },
+    { name: "robots", content: "index,follow" },
+  ];
+};
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({ formAction, defaultShouldRevalidate }) => {
   if (formAction?.match(/\/dashboard\/cms\/blog\/\d+\/preview/)) return false;
