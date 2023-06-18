@@ -35,6 +35,23 @@ pnpm -w run dev
 pnpm --filter @spencerduballcom/web run dev
 ```
 
+4. Lastly, when you are ready to deploy to production run the following code:
+```bash
+pnpm sst deploy --stage prod
+```
+
+_**Extra Note**_
+
+The secrets should already be configured for the `dev` and `prod` environments, but if they are not here is how to set them:
+
+```bash
+# set all secrets
+pnpm sst secrets set DATABASE_URL "postgres://username:password@super-flying-carrot-878250.us-east-26.aws.neon.tech/dev" --stage (dev|prod)
+pnpm sst secrets set GITHUB_CLIENT_ID "{github_client_id}" --stage prod # dev does not use github, this is mocked in dev
+pnpm sst secrets set GITHUB_CLIENT_SECRET "{github_client_secret}" --stage prod # dev does not use github, this is mocked in dev
+```
+
+
 # Project Overview
 
 This project consists of three workspaces:
@@ -74,4 +91,3 @@ Typically when generating new migrations we will want to have some seed data for
 ### 3. Working on Fixes/Features
 
 When making a fix or adding a feature the source code of our project will be modified. In order to make sure these changes reflect in our projects we will need to run `pnpm --filter @spencerduballcom/db run build` to generate the new output artifacts in the `/packages/db/dist` folder. If you have the site running when generating new artifacts, you may need to shut the site down and then run the process again so the new package can be loaded.
-
