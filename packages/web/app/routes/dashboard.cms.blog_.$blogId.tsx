@@ -235,6 +235,7 @@ function Blog() {
               aria-label="format"
               variant="ghost"
               icon={<SiPrettier className="h-3 w-3" />}
+              isDisabled={Markdoc.format(Markdoc.parse(state.data.value)) === state.data.value}
               onClick={() =>
                 dispatch({ type: CmsEditorTypes.SetValue, payload: { value: state.data.value, prettify: true } })
               }

@@ -63,7 +63,7 @@ export async function action({ request }: ActionArgs) {
       // (2) validate
       const frontmatter = validateFrontmatter(ast.attributes.frontmatter);
       const errors = Markdoc.validate(ast, config);
-      if (errors.length > 0) throw errors;
+      for (let error of errors) throw new Error(JSON.stringify(error));
       // (3) build
       const content = Markdoc.transform(ast, config);
       logger.info("Success: Bundled the blog.");
@@ -251,7 +251,7 @@ export default function Preview() {
             </div>
             {/* Image */}
             <img
-              className="aspect-[2/1] max-w-5xl w-full rounded overflow-hidden object-cover"
+              className="aspect-[2/1] max-w-5xl w-full rounded overflow-hidden object-cover bg-slate-2"
               src={frontmatter.image_url}
             />
             {/* Tags */}

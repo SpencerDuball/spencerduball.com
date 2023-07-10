@@ -6,7 +6,7 @@ import { useMeasure } from "react-use";
 import * as React from "react";
 import { cn } from "~/lib/util";
 import { GlobalContext } from "~/components/app/global-ctx";
-import { CmsEditorCtx, Types, useCmsEditor } from "~/components/app/cms-editor-ctx";
+import { CmsEditorCtx, useCmsEditor } from "~/components/app/cms-editor-ctx";
 
 // ------------------------------------------------------------------------------------------------------------
 // Define Editor Themes

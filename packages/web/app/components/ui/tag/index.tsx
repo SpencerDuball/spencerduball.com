@@ -42,6 +42,7 @@ const tagConfig = {
       sm: ["px-2", "h-5", "text-xs"],
       md: ["px-2", "h-6", "text-sm"],
       lg: ["px-3", "h-8", "text-md"],
+      xl: ["px-4", "h-12", "text-lg"],
     },
   },
   compoundVariants: [

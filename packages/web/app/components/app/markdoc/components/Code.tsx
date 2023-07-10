@@ -9,5 +9,5 @@ export interface CodeProps {
   content: string;
 }
 export function Code({ content }: CodeProps) {
-  return <code className="rounded-sm px-1 text-sm py-0.5 leading-normal text-slate-11 bg-slate-3">{content}</code>;
+  return <code className="rounded-sm px-1 text-inherit py-0.5 leading-normal text-slate-11 bg-slate-3">{content}</code>;
 }

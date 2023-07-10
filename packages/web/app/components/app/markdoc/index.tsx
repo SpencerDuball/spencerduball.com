@@ -13,10 +13,14 @@ import { td, Td } from "./components/Td";
 import { link, Link } from "./components/Link";
 import { code, Code } from "./components/Code";
 import { video, Video } from "./components/Video";
+import { callout, Callout } from "./components/Callout";
+import { tag, Tag } from "./components/Tag";
 
 export const config = {
   tags: {
     video,
+    callout,
+    tag,
   },
   nodes: {
     heading,
@@ -50,4 +54,6 @@ export const components = {
   Link,
   Code,
   Video,
+  Callout,
+  Tag,
 };
