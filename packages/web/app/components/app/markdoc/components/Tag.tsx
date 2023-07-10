@@ -12,6 +12,11 @@ export const tag: Schema = {
       default: "slate",
       matches: ColorList,
     },
+    size: {
+      type: String,
+      default: "md",
+      matches: ["sm", "md", "lg", "xl"],
+    },
   },
 };
 

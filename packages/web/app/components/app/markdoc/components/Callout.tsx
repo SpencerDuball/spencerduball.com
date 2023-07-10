@@ -25,7 +25,7 @@ export interface CalloutProps {
 export function Callout({ title, type, children }: CalloutProps) {
   if (type === "info") {
     return (
-      <div className="grid gap-2 grid-flow-col auto-cols-max rounded-lg mt-4 py-3 px-4 bg-blue-3 border border-blue-4">
+      <div className="grid gap-2 grid-flow-col grid-cols-[max-content_1fr] rounded-lg mt-4 py-3 px-4 bg-blue-3 border border-blue-4">
         <RiInformationFill className="text-lg text-blue-12" />
         <div className="grid">
           <p className="text-blue-12 text-sm font-semibold">{title.toUpperCase()}</p>
@@ -35,7 +35,7 @@ export function Callout({ title, type, children }: CalloutProps) {
     );
   } else if (type === "warning") {
     return (
-      <div className="grid gap-2 grid-flow-col auto-cols-max rounded-lg mt-4 py-3 px-4 bg-orange-3 border border-orange-4">
+      <div className="grid gap-2 grid-flow-col grid-cols-[max-content_1fr] rounded-lg mt-4 py-3 px-4 bg-orange-3 border border-orange-4">
         <RiAlertFill className="text-lg text-orange-12" />
         <div className="grid">
           <p className="text-orange-12 text-sm font-semibold">{title.toUpperCase()}</p>
@@ -45,7 +45,7 @@ export function Callout({ title, type, children }: CalloutProps) {
     );
   } else if (type === "error") {
     return (
-      <div className="grid gap-2 grid-flow-col auto-cols-max rounded-lg mt-4 py-3 px-4 bg-red-3 border border-red-4">
+      <div className="grid gap-2 grid-flow-col grid-cols-[max-content_1fr] rounded-lg mt-4 py-3 px-4 bg-red-3 border border-red-4">
         <RiErrorWarningFill className="text-lg text-red-12" />
         <div className="grid">
           <p className="text-red-12 text-sm font-semibold">{title.toUpperCase()}</p>
