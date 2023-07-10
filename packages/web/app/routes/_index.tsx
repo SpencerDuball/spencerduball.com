@@ -1,7 +1,13 @@
 import * as Avatar from "@radix-ui/react-avatar";
-import { V2_MetaFunction } from "@remix-run/node";
+import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
 import { RiTwitterFill, RiGithubFill } from "react-icons/ri";
 import { PrintablesIcon } from "~/components/ui/icon";
+import { getPgClient, logRequest, getLogger } from "~/lib/util.server";
+import { sql } from "kysely";
+import { useLoaderData } from "@remix-run/react";
+import { BlogPostLi } from "~/components/app/blog-post-li";
+import { Link } from "@remix-run/react";
+import { RiArrowRightLine } from "react-icons/ri";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -14,9 +20,43 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
+export async function loader({ params, request }: LoaderArgs) {
+  await logRequest(request);
+
+  // instantiate utilities
+  const logger = getLogger();
+  const db = await getPgClient();
+
+  // get 3 most recent blogs
+  logger.info("Retrieving most recent blogs ...");
+  const blogs = await db
+    .selectFrom("blogs")
+    .leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id")
+    .select([
+      "id",
+      "title",
+      "image_url",
+      "author_id",
+      "views",
+      "published_at",
+      "published",
+      sql<(string | null)[]>`array_agg(blog_tags.tag_id)`.as("tags"),
+    ])
+    .where("published", "=", true)
+    .groupBy("blogs.id")
+    .orderBy("blogs.published_at", "desc")
+    .limit(3)
+    .execute()
+    .then((res) => res.map((item) => ({ ...item, tags: item.tags.filter((value) => value !== null) as string[] })));
+
+  return { blogs };
+}
+
 export default function Index() {
+  const { blogs } = useLoaderData<typeof loader>();
+
   return (
-    <section className="w-full max-w-5xl py-6 px-4">
+    <section className="grid gap-10 w-full max-w-5xl py-6 px-4">
       {/* Profile Card */}
       <div className="md:align-items-center grid w-full auto-rows-max gap-3 rounded-lg bg-gradient-to-r from-yellowA-6 to-crimsonA-6 p-8 md:auto-cols-max md:grid-flow-col md:justify-between">
         <Avatar.Root className="text-md relative flex h-24 w-24 md:h-32 md:w-32 shrink-0 overflow-hidden rounded-full justify-self-center md:col-start-2 md:justify-self-end">
@@ -64,6 +104,23 @@ export default function Index() {
             </a>
           </div>
         </div>
+      </div>
+      {/* Recent Blogs */}
+      <div className="grid gap-4 px-4 md:px-8">
+        {/* <h1 className="text-2xl font-bold">Latest Posts</h1> */}
+        <div className="grid gap-3">
+          {blogs
+            .map((post) => ({ ...post, published_at: (post.published_at && new Date(post.published_at)) || null }))
+            .map((post) => (
+              <BlogPostLi key={post.id} data={post} />
+            ))}
+        </div>
+        <Link
+          className="focus-outline flex items-center text-xl font-extrabold leading-relaxed text-slate-9 hover:text-slate-11 justify-self-end"
+          to="/blog"
+        >
+          view all posts <RiArrowRightLine className="ml-2" />
+        </Link>
       </div>
     </section>
   );

@@ -71,7 +71,7 @@ export default function Edit() {
   const [state] = React.useContext(CmsEditorCtx);
   const scrollBoxRef = React.useRef<HTMLDivElement>(null!);
 
-  const { initialized, codeMirrorProps, scrollBoxProps } = useCmsEditor({ scrollBoxRef });
+  const { initialized, value, codeMirrorProps, scrollBoxProps } = useCmsEditor({ scrollBoxRef });
 
   // determine theme
   let _theme: "light" | "dark" = "dark";
@@ -94,6 +94,7 @@ export default function Edit() {
             theme={_theme === "dark" ? githubDark : githubLight}
             style={{ paddingBottom: `${height * 0.95}px` }}
             className="[&_.cm-editor]:outline-0"
+            value={value}
             {...codeMirrorProps}
           />
         </ScrollViewport>

@@ -159,64 +159,67 @@ export function useCmsEditor({ scrollBoxRef }: IUseCmsEditor) {
       console.log(e);
     },
   });
-  const codeMirrorProps: ReactCodeMirrorProps = {
-    value: state.data.value,
-    extensions: [
-      markdown({ base: markdownLanguage, codeLanguages: languages }),
-      state.settings.lineWrap ? EditorView.lineWrapping : [],
-      state.settings.mode === "vim" ? vim() : [],
-    ],
-    onChange: function (value, viewUpdate) {
-      dispatch({ type: Types.SetValue, payload: { value } });
-      if (scrollBoxRef.current) {
-        const pos = { x: scrollBoxRef.current.scrollLeft, y: scrollBoxRef.current.scrollTop };
-        dispatch({ type: Types.SetScroll, payload: pos });
-      }
-    },
-    // disable auto-zoom on iOS
-    // ------------------------
-    // On iOS we will disable the zoom on touchStart, this will prevent the auto-zoom
-    // happening on text less than 16px.
-    onTouchStart: function (e) {
-      if (typeof window !== undefined) {
-        const el = document.querySelector("meta[name=viewport]");
+  const value = state.data.value;
+  const codeMirrorProps: ReactCodeMirrorProps = React.useMemo(
+    () => ({
+      extensions: [
+        markdown({ base: markdownLanguage, codeLanguages: languages }),
+        state.settings.lineWrap ? EditorView.lineWrapping : [],
+        state.settings.mode === "vim" ? vim() : [],
+      ],
+      onChange: function (value, viewUpdate) {
+        dispatch({ type: Types.SetValue, payload: { value } });
+        if (scrollBoxRef.current) {
+          const pos = { x: scrollBoxRef.current.scrollLeft, y: scrollBoxRef.current.scrollTop };
+          dispatch({ type: Types.SetScroll, payload: pos });
+        }
+      },
+      // disable auto-zoom on iOS
+      // ------------------------
+      // On iOS we will disable the zoom on touchStart, this will prevent the auto-zoom
+      // happening on text less than 16px.
+      onTouchStart: function (e) {
+        if (typeof window !== undefined) {
+          const el = document.querySelector("meta[name=viewport]");
 
-        if (el !== null) {
-          let content = el.getAttribute("content") || "";
-          let re = /maximum\-scale=[0-9\.]+/g;
+          if (el !== null) {
+            let content = el.getAttribute("content") || "";
+            let re = /maximum\-scale=[0-9\.]+/g;
 
-          if (re.test(content)) content = content.replace(re, "maximum-scale=1.0");
-          else {
-            let items = content
-              .split(",")
-              .map((i) => i.trim())
-              .filter((i) => i !== "");
-            content = [...items, "maximum-scale=1.0"].join(",");
+            if (re.test(content)) content = content.replace(re, "maximum-scale=1.0");
+            else {
+              let items = content
+                .split(",")
+                .map((i) => i.trim())
+                .filter((i) => i !== "");
+              content = [...items, "maximum-scale=1.0"].join(",");
+            }
+
+            el.setAttribute("content", content);
           }
-
-          el.setAttribute("content", content);
         }
-      }
-    },
-    // enable auto-zoom on iOS
-    // -----------------------
-    // On iOS we will enable the zoom onBlur, this will allow normal zoom to be used
-    // after we are finished with the editor input.
-    onBlur: function (e) {
-      if (typeof window !== undefined) {
-        const el = document.querySelector("meta[name=viewport]");
-        if (el !== null) {
-          let content = el.getAttribute("content") || "";
-          let re = /,?\w?maximum\-scale=[0-9\.]+/g;
+      },
+      // enable auto-zoom on iOS
+      // -----------------------
+      // On iOS we will enable the zoom onBlur, this will allow normal zoom to be used
+      // after we are finished with the editor input.
+      onBlur: function (e) {
+        if (typeof window !== undefined) {
+          const el = document.querySelector("meta[name=viewport]");
+          if (el !== null) {
+            let content = el.getAttribute("content") || "";
+            let re = /,?\w?maximum\-scale=[0-9\.]+/g;
 
-          if (re.test(content)) content = content.replace(re, "");
+            if (re.test(content)) content = content.replace(re, "");
 
-          el.setAttribute("content", content);
+            el.setAttribute("content", content);
+          }
         }
-      }
-    },
-    ...dropAreaHandlers,
-  };
+      },
+      ...dropAreaHandlers,
+    }),
+    [state.settings]
+  );
 
   const scrollBoxProps: React.ComponentPropsWithoutRef<"div"> = {
     onScroll: function (e) {
@@ -228,5 +231,5 @@ export function useCmsEditor({ scrollBoxRef }: IUseCmsEditor) {
     },
   };
 
-  return { initialized, codeMirrorProps, scrollBoxProps };
+  return { initialized, codeMirrorProps, scrollBoxProps, value };
 }
