@@ -106,14 +106,25 @@ export default function Index() {
         </div>
       </div>
       {/* Recent Blogs */}
-      <div className="grid gap-4 px-4 md:px-8">
-        {/* <h1 className="text-2xl font-bold">Latest Posts</h1> */}
-        <div className="grid gap-3">
-          {blogs
-            .map((post) => ({ ...post, published_at: (post.published_at && new Date(post.published_at)) || null }))
-            .map((post) => (
-              <BlogPostLi key={post.id} data={post} />
-            ))}
+      <div className="grid gap-2 md:px-8">
+        <h1 className="text-md font-bold px-3 text-slate-10 uppercase">Latest Posts</h1>
+        <div className="grid gap-2">
+          {blogs.map((post) => (
+            <div className="grid gap-2 content-start bg-slate-2 border border-slate-4 rounded-lg p-3">
+              <Link
+                to={`/blog/${post.id}`}
+                className="focus-outline leading-tight text-xl font-semibold line-clamp-3 md:leading-[1.15]"
+              >
+                {post.title}
+              </Link>
+              <div className="text-md text-slate-9 flex gap-2">
+                <p>
+                  {new Date(post.published_at || (null as any)).toLocaleDateString() || "Unpublished"} &#11825;{" "}
+                  {post.views} Views
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
         <Link
           className="focus-outline flex items-center text-xl font-extrabold leading-relaxed text-slate-9 hover:text-slate-11 justify-self-end"
