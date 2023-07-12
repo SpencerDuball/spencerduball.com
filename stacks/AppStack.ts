@@ -1,5 +1,6 @@
-import { RemovalPolicy } from "aws-cdk-lib";
-import { StackContext, RemixSite, Config, Bucket, Table } from "sst/constructs";
+import { RemovalPolicy } from "aws-cdk-lib/core";
+import { StackContext, Config, Bucket, Table } from "sst/constructs";
+import { RemixSite } from "sst-warmer";
 import iam from "aws-cdk-lib/aws-iam";
 import type { BucketCorsRule } from "sst/constructs";
 import { HostedZone, CnameRecord } from "aws-cdk-lib/aws-route53";
@@ -127,6 +128,7 @@ export function AppStack({ app, stack }: StackContext) {
     customDomain: app.stage === "prod" ? domainName : undefined,
     cdk: { server: { architecture: Architecture.ARM_64 } },
     environment: SiteEnv,
+    warm: 10,
   });
 
   // set the SITE_URL parameter
