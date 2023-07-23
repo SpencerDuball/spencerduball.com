@@ -110,7 +110,7 @@ export default function Index() {
         <h1 className="text-md font-bold px-3 text-slate-10 uppercase">Latest Posts</h1>
         <div className="grid gap-2">
           {blogs.map((post) => (
-            <div className="grid gap-2 content-start bg-slate-2 border border-slate-4 rounded-lg p-3">
+            <div key={post.id} className="grid gap-2 content-start bg-slate-2 border border-slate-4 rounded-lg p-3">
               <Link
                 to={`/blog/${post.id}`}
                 className="focus-outline leading-tight text-xl font-semibold line-clamp-3 md:leading-[1.15]"

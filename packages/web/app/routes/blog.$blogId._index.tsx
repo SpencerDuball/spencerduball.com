@@ -13,6 +13,8 @@ import { RiLinkM, RiTwitterLine } from "react-icons/ri";
 import { Tag, colorFromName, ColorList } from "~/components/ui/tag";
 import { ScrollArea, ScrollViewport } from "~/components/ui/scroll-box";
 import { getSessionInfo } from "~/lib/session.server";
+import { TableOfContents } from "~/components/app/markdoc/table-of-contents";
+import { getHeadingInfo } from "~/lib/util";
 
 const ZParams = z.object({ blogId: z.coerce.number() });
 
@@ -131,7 +133,7 @@ export async function loader({ params, request }: LoaderArgs) {
   logger.info("Success: Retrieved the blog.");
 
   // generate the markdoc
-  // --------------------
+  // --------------------------------------------------
   logger.info("Building the blog ...");
   // (1) parse
   const ast = Markdoc.parse(blog.body);
@@ -143,7 +145,11 @@ export async function loader({ params, request }: LoaderArgs) {
   const content = Markdoc.transform(ast, config);
   logger.info("Success: Build the blog.");
 
-  return json({ blog: { ...blog, views }, content, request_url: request.url });
+  // extract headers
+  // --------------------------------------------------
+  const headings = getHeadingInfo(ast);
+
+  return json({ blog: { ...blog, views }, content, headings, request_url: request.url });
 }
 
 export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
@@ -160,7 +166,7 @@ export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function Blog() {
-  const { blog, content, request_url } = useLoaderData<typeof loader>();
+  const { blog, content, headings, request_url } = useLoaderData<typeof loader>();
   const Content = React.useMemo(() => Markdoc.renderers.react(content, React, { components }), [content]);
 
   // create tweet url
@@ -254,6 +260,8 @@ export default function Blog() {
           </ScrollArea>
         </div>
       ) : null}
+      {/* Table of Contents */}
+      <TableOfContents headings={headings} />
       {/* Content */}
       <div className="grid max-w-3xl px-2 sm:px-3 md:px-0 w-full">{Content}</div>
     </div>
