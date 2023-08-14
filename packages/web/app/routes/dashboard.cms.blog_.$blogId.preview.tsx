@@ -1,7 +1,7 @@
 import * as React from "react";
 import { LoaderArgs, ActionArgs, json, Response } from "@remix-run/node";
 import { useFetcher, useLoaderData, ShouldRevalidateFunction } from "@remix-run/react";
-import { cn } from "~/lib/util";
+import { IHeadingInfo, cn } from "~/lib/util";
 import { logRequest, getLogger } from "~/lib/util.server";
 import { getSessionInfo } from "~/lib/session.server";
 import { useMeasure } from "react-use";
@@ -17,6 +17,8 @@ import { BlogCtx } from "./dashboard.cms.blog_.$blogId";
 import Markdoc, { RenderableTreeNode } from "@markdoc/markdoc";
 import { config, components } from "~/components/app/markdoc";
 import { validateFrontmatter } from "~/model/blog.server";
+import { TableOfContents } from "~/components/app/markdoc/table-of-contents";
+import { getHeadingInfo } from "~/lib/util";
 
 const ColorList = Object.keys(tagConfig.variants.colorScheme) as NonNullable<TagProps["colorScheme"]>[];
 
@@ -68,7 +70,11 @@ export async function action({ request }: ActionArgs) {
       const content = Markdoc.transform(ast, config);
       logger.info("Success: Bundled the blog.");
 
-      return json({ content, frontmatter });
+      // extract headers
+      // --------------------------------------------------
+      const headings = getHeadingInfo(ast);
+
+      return json({ content, headings, frontmatter });
     }
   }
 
@@ -92,6 +98,7 @@ function useCompileBlog() {
   const [state] = React.useContext(CmsEditorCtx);
   const compileBlog = useFetcher<{
     content: RenderableTreeNode;
+    headings: IHeadingInfo[];
     frontmatter: ReturnType<typeof validateFrontmatter>;
   }>();
   React.useEffect(() => {
@@ -104,13 +111,13 @@ function useCompileBlog() {
     else return null;
   }, [compileBlog.data]);
 
-  return { compileBlog, Content, frontmatter: compileBlog.data?.frontmatter };
+  return { compileBlog, headings: compileBlog.data?.headings, Content, frontmatter: compileBlog.data?.frontmatter };
 }
 
 export default function Preview() {
   // retrieve the data
   const { request_url } = useLoaderData<typeof loader>();
-  const { compileBlog, Content, frontmatter } = useCompileBlog();
+  const { compileBlog, headings, Content, frontmatter } = useCompileBlog();
   const [blog] = React.useContext(BlogCtx);
 
   // define the refs
@@ -256,7 +263,7 @@ export default function Preview() {
             />
             {/* Tags */}
             {frontmatter.tags.length > 0 ? (
-              <div className="grid max-w-3xl w-full px-4 sm:px-6 md:px-0">
+              <div className="grid max-w-3xl w-full">
                 <ScrollArea>
                   <ScrollViewport>
                     <div className="flex gap-2">
@@ -275,6 +282,8 @@ export default function Preview() {
                 </ScrollArea>
               </div>
             ) : null}
+            {/* Table of Contents */}
+            {headings && headings.length > 0 && <TableOfContents headings={headings} />}
             {/* Content */}
             <div className="grid max-w-3xl w-full px-2 sm:px-3 md:px-0">{Content}</div>
           </div>

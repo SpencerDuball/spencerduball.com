@@ -241,7 +241,7 @@ export default function Blog() {
       />
       {/* Tags */}
       {blog.tags.length > 0 ? (
-        <div className="grid max-w-3xl w-full px-4 sm:px-6 md:px-0">
+        <div className="grid max-w-3xl w-full">
           <ScrollArea>
             <ScrollViewport>
               <div className="flex gap-2">
@@ -261,7 +261,7 @@ export default function Blog() {
         </div>
       ) : null}
       {/* Table of Contents */}
-      <TableOfContents headings={headings} />
+      {headings.length > 0 && <TableOfContents headings={headings} />}
       {/* Content */}
       <div className="grid max-w-3xl px-2 sm:px-3 md:px-0 w-full">{Content}</div>
     </div>

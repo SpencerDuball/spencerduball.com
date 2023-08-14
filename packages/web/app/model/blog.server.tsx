@@ -189,6 +189,7 @@ export async function patchBlog({ id, body, views, published }: IPatchBlogProps)
         published_at: published ? db.fn.coalesce("published_at", sql<Date>`now()`) : undefined,
         modified_at: new Date(),
       })
+      .where("id", "=", id)
       .executeTakeFirstOrThrow();
   }
 
