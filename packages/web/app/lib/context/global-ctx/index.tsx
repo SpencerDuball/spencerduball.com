@@ -8,6 +8,9 @@ import { useHydrated } from "remix-utils/use-hydrated";
 // @ts-ignore
 import ms from "ms";
 
+export const PREFERENCES_LOCALSTORAGE_KEY = "__preferences";
+export const PREFERENCES_COOKIE_KEY = "__preferences";
+
 /* ------------------------------------------------------------------------------------------------------------
  * Define Context
  * ------------------------------------------------------------------------------------------------------------ */
@@ -42,6 +45,13 @@ const GlobalContextProvider = ({ children }: GlobalContextProviderProps) => {
  * Define Hooks
  * ------------------------------------------------------------------------------------------------------------ */
 /** Allows the app to track and respect the user's preferred color scheme. */
+/**
+ * Allows the app to track and respect the user's preferred color scheme. Upon hydration the theme is restored from
+ * the '__preferences' local storage key if it exists. After the theme has been updated in the context, any futher
+ * toggles will be tracked, localStorage updated, and '__preferences' cookie updated.
+ *
+ * @param param0 The full global context and reducer array.
+ */
 function useTrackSystemColor([globalCtx, setGlobalCtx]: IGlobalContext) {
   const prefersDark = useMedia("(prefers-color-scheme: dark)", true);
   const isHydrated = useHydrated();
@@ -56,7 +66,7 @@ function useTrackSystemColor([globalCtx, setGlobalCtx]: IGlobalContext) {
   React.useEffect(() => {
     try {
       // retrieve the preferences, base64 decode it, and parse for valid JSON
-      let prefs = JSON.parse(atob(localStorage.getItem("__preferences")!));
+      let prefs = JSON.parse(atob(localStorage.getItem(PREFERENCES_LOCALSTORAGE_KEY)!));
 
       // extract the theme
       const { theme } = z.object({ theme: z.enum(["light", "dark", "system"]) }).parse(prefs);
@@ -85,9 +95,9 @@ function useTrackSystemColor([globalCtx, setGlobalCtx]: IGlobalContext) {
       if (globalCtx.theme === "light" || (globalCtx.theme === "system" && !prefersDark)) _theme = "light";
 
       // update localStorage and cookies
-      localStorage.setItem("__preferences", btoa(JSON.stringify({ theme: globalCtx.theme })));
-      Cookies.set("__preferences", btoa(JSON.stringify({ theme: _theme })), {
-        expires: new Date(Date.now() + ms("400d")),
+      localStorage.setItem(PREFERENCES_LOCALSTORAGE_KEY, btoa(JSON.stringify({ theme: globalCtx.theme })));
+      Cookies.set(PREFERENCES_COOKIE_KEY, btoa(JSON.stringify({ theme: _theme })), {
+        "Max-Age": String(ms("400d")),
         secure: false,
         path: "/",
         // TODO: Need to add support for domain when this env var is configured.

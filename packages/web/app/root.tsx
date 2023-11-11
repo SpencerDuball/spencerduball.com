@@ -9,6 +9,8 @@ import { preferences } from "~/lib/cookies";
 import { z } from "zod";
 import { GlobalContext, GlobalContextProvider } from "~/lib/context/global-ctx";
 import { useHydrated } from "remix-utils/use-hydrated";
+import { slate, slateDark } from "@radix-ui/colors";
+import { Header } from "~/lib/app/header";
 
 /**
  * SSR-ONLY
@@ -55,7 +57,6 @@ export const meta: MetaFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { theme, cookie: prefsCookie } = await handlePreferencesCookie(request);
-  console.log(prefsCookie);
 
   return json({ theme }, { headers: [["Set-Cookie", prefsCookie]] });
 }
@@ -65,17 +66,23 @@ function App() {
   // global context value.
   const { theme } = useLoaderData<typeof loader>();
   const [{ _theme }] = React.useContext(GlobalContext);
-  const isHydrated = useHydrated();
+  const calculatedTheme = useHydrated() ? _theme : theme;
+
+  // The theme color needs to be computed in SW to a static value, not a CSS variable. If a CSS variable is
+  // used, then the 'theme-color' Meta tag will not update responsively to theme changes on client side.
+  const themeColor = calculatedTheme === "dark" ? slateDark.slate1 : slate.slate1;
 
   return (
-    <html lang="en" className={isHydrated ? _theme : theme}>
+    <html lang="en" className={calculatedTheme}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content={themeColor} />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-slate-1">
+        <Header isAdmin={true} />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
