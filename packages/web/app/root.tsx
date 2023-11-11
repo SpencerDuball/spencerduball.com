@@ -7,10 +7,10 @@ import tailwind from "~/tailwind.css";
 import Inter from "@fontsource-variable/inter/index.css";
 import { preferences } from "~/lib/cookies";
 import { z } from "zod";
-import { GlobalContext, GlobalContextProvider } from "~/lib/context/global-ctx";
-import { useHydrated } from "remix-utils/use-hydrated";
+import { GlobalCtxProvider, GlobalCtx } from "~/lib/context/global-ctx";
 import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
+import { useHydrated } from "remix-utils/use-hydrated";
 
 /**
  * SSR-ONLY
@@ -63,10 +63,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 function App() {
   // Calculate the "theme" value. When SSR it will come from cookies (if exists), or else it will come from the
-  // global context value.
+  // global context value on client.
   const { theme } = useLoaderData<typeof loader>();
-  const [{ _theme }] = React.useContext(GlobalContext);
-  const calculatedTheme = useHydrated() ? _theme : theme;
+  const [{ preferences }] = React.useContext(GlobalCtx);
+  const isHydrated = useHydrated();
+  const calculatedTheme = isHydrated ? preferences._theme : theme;
 
   // The theme color needs to be computed in SW to a static value, not a CSS variable. If a CSS variable is
   // used, then the 'theme-color' Meta tag will not update responsively to theme changes on client side.
@@ -94,8 +95,8 @@ function App() {
 
 export default function AppWithContext() {
   return (
-    <GlobalContextProvider>
+    <GlobalCtxProvider>
       <App />
-    </GlobalContextProvider>
+    </GlobalCtxProvider>
   );
 }

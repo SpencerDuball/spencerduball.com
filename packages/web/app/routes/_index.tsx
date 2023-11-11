@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import * as Avatar from "@radix-ui/react-avatar";
-import { RiTwitterFill, RiGithubFill } from "react-icons/ri/index.js";
+import { RiTwitterFill, RiGithubFill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { PrintablesIcon } from "~/lib/ui/icon";
 
 export const meta: MetaFunction = () => {

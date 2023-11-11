@@ -25,6 +25,6 @@ export function AppStack({ app, stack }: StackContext) {
     path: "packages/web/",
     cdk: { server: { architecture: Architecture.ARM_64 } },
     warm: 10,
-    permissions: [table],
+    bind: [table],
   });
 }

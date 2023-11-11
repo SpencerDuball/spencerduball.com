@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "@remix-run/react";
-import { GlobalContext, toggleTheme } from "~/lib/context/global-ctx";
+import { GlobalCtx, Types } from "~/lib/context/global-ctx";
 import { cn } from "~/lib/util/client";
 import { IconButton } from "~/lib/ui/button";
 import { RiMenu2Fill, RiMoonFill, RiSunFill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
@@ -18,12 +18,12 @@ export interface HeaderProps extends React.HTMLProps<HTMLDivElement> {
 
 export function Header({ isAdmin, className, ...props }: HeaderProps) {
   const { pathname } = useLocation();
-  const [globalCtx, setGlobalCtx] = React.useContext(GlobalContext);
+  const [{ preferences }, dispatch] = React.useContext(GlobalCtx);
 
   // determine theme icon
   let ThemeIcon = <RxHalf2 />;
-  if (globalCtx.theme === "dark") ThemeIcon = <RiMoonFill />;
-  else if (globalCtx.theme === "light") ThemeIcon = <RiSunFill />;
+  if (preferences.theme === "dark") ThemeIcon = <RiMoonFill />;
+  else if (preferences.theme === "light") ThemeIcon = <RiSunFill />;
 
   return (
     <header className={cn(`grid h-20 w-full justify-items-center`, className)} {...props}>
@@ -371,7 +371,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
             icon={ThemeIcon}
             variant="subtle"
             className="text-slate-12 md:bg-transparent"
-            onClick={() => toggleTheme([globalCtx, setGlobalCtx])}
+            onClick={() => dispatch({ type: Types.ToggleTheme })}
           />
         </div>
       </div>
