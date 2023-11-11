@@ -2,6 +2,9 @@ import type { MetaFunction } from "@remix-run/node";
 import * as Avatar from "@radix-ui/react-avatar";
 import { RiTwitterFill, RiGithubFill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { PrintablesIcon } from "~/lib/ui/icon";
+import { Button } from "~/lib/ui/button";
+import React from "react";
+import { ToasterCtx, Types } from "~/lib/context/toaster-ctx";
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,6 +18,8 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
+  const [, dispatch] = React.useContext(ToasterCtx);
+
   return (
     <main className="grid w-full justify-items-center">
       <section className="grid gap-10 w-full max-w-5xl py-6 px-4">
@@ -65,6 +70,66 @@ export default function Index() {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Toaster Buttons */}
+        <div className="grid grid-flow-col gap-2">
+          <Button
+            onClick={() =>
+              dispatch({
+                type: Types.AddToast,
+                payload: {
+                  type: "success",
+                  title: "Congrats!",
+                  description: "You won a prize, click here to find out more!",
+                },
+              })
+            }
+          >
+            Success
+          </Button>
+          <Button
+            onClick={() =>
+              dispatch({
+                type: Types.AddToast,
+                payload: {
+                  type: "warning",
+                  title: "Congrats!",
+                  description: "You won a prize, click here to find out more!",
+                },
+              })
+            }
+          >
+            Warning
+          </Button>
+          <Button
+            onClick={() =>
+              dispatch({
+                type: Types.AddToast,
+                payload: {
+                  type: "error",
+                  title: "Congrats!",
+                  description: "You won a prize, click here to find out more!",
+                },
+              })
+            }
+          >
+            Error
+          </Button>
+          <Button
+            onClick={() =>
+              dispatch({
+                type: Types.AddToast,
+                payload: {
+                  type: "info",
+                  title: "Congrats!",
+                  description: "You won a prize, click here to find out more!",
+                },
+              })
+            }
+          >
+            Info
+          </Button>
         </div>
       </section>
     </main>

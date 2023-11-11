@@ -11,6 +11,8 @@ import { GlobalCtxProvider, GlobalCtx } from "~/lib/context/global-ctx";
 import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
 import { useHydrated } from "remix-utils/use-hydrated";
+import { ToasterProvider } from "~/lib/context/toaster-ctx";
+import { RemixSite } from "sst/node/site";
 
 /**
  * SSR-ONLY
@@ -83,11 +85,13 @@ function App() {
         <Links />
       </head>
       <body className="bg-slate-1">
-        <Header isAdmin={true} />
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+        <ToasterProvider>
+          <Header isAdmin={true} />
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
+        </ToasterProvider>
       </body>
     </html>
   );
