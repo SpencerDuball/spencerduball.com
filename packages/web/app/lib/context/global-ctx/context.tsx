@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore
 import ms from "ms";
+import { Config } from "sst/node/config";
 
 export const PREFERENCES_KEY = "__preferences";
 
@@ -85,7 +86,7 @@ function useRestoreTheme(dispatch: React.Dispatch<Actions>) {
  */
 function useComputeResolvedTheme([theme, dispatch]: [
   IGlobalCtxState["preferences"]["theme"],
-  React.Dispatch<Actions>
+  React.Dispatch<Actions>,
 ]) {
   const prefersDark = useMedia("(prefers-color-scheme: dark)", true);
   const isHydrated = useHydrated();

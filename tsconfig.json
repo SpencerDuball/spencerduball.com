@@ -2,7 +2,7 @@
   "extends": "@tsconfig/node18/tsconfig.json",
   "exclude": ["packages"],
   "compilerOptions": {
-    "module": "esnext",
+    "module": "ES2022",
     "moduleResolution": "node"
   }
 }

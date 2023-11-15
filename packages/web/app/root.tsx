@@ -12,7 +12,7 @@ import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
 import { useHydrated } from "remix-utils/use-hydrated";
 import { ToasterProvider } from "~/lib/context/toaster-ctx";
-import { RemixSite } from "sst/node/site";
+import { logRequest } from "~/lib/util/utilities.server";
 
 /**
  * SSR-ONLY
@@ -58,6 +58,8 @@ export const meta: MetaFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  await logRequest(request);
+
   const { theme, cookie: prefsCookie } = await handlePreferencesCookie(request);
 
   return json({ theme }, { headers: [["Set-Cookie", prefsCookie]] });

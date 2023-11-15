@@ -3,6 +3,7 @@ import { createCookieSessionStorage } from "@remix-run/node";
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore
 import ms from "ms";
+import { Config } from "sst/node/config";
 
 export const preferences = createCookieSessionStorage({
   cookie: {
@@ -33,9 +34,7 @@ export const preferences = createCookieSessionStorage({
     // The 'path' attribute should be set to '/' so that all paths of the site can access this cookie.
     // The 'sameSite' attribute should be set to 'lax' as we want the cookies to be sent when navigating to our site
     // from other sites or else we will have flash issues.
-    //
-    // TODO: Fix the next line when environment variables and such are configured for the domain name.
-    // domain: "spencerduball.com",
+    domain: new URL(Config.SITE_URL).hostname,
     path: "/",
     sameSite: "lax",
   },
