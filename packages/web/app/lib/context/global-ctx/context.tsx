@@ -9,7 +9,6 @@ import Cookies from "js-cookie";
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore
 import ms from "ms";
-import { Config } from "sst/node/config";
 
 export const PREFERENCES_KEY = "__preferences";
 
@@ -103,8 +102,6 @@ function useComputeResolvedTheme([theme, dispatch]: [
         "Max-Age": String(ms("400d")),
         secure: false,
         path: "/",
-        // TODO: Need to add support for domain when this env var is configured.
-        // domain: 'spencerduball.com',
         sameSite: "lax",
       });
 

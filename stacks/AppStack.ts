@@ -106,7 +106,7 @@ export function AppStack({ app, stack }: StackContext) {
   // determine the new url
   let siteUrl = "http://localhost:3000";
   if (app.stage === "dev") siteUrl = "http://localhost:3000";
-  else if (app.stage === "prod") siteUrl = "https://spencerduball.com";
+  else if (app.stage === "prod") siteUrl = prodUrl;
   else if (site.url) siteUrl = site.url;
 
   // update the SITE_URL parameter value
@@ -130,17 +130,6 @@ export function AppStack({ app, stack }: StackContext) {
   //
   // NOTE: PART 2/2
   //-----------------------------------------------------------------------------------------------
-
-  // TODO: We have to cast the 'publicBucket.cdk' to CdkBucket, add a PR/Issue to SST as this
-  // should be a type of CdkBucket. That way all of the methods such as '.addCorsRule()' are
-  // available via the cdk escape hatch.
-
-  // create the CORS rule
-  // bucket.cdk.addCorsRule({
-  //   allowedMethods: [HttpMethods.DELETE, HttpMethods.GET, HttpMethods.HEAD, HttpMethods.POST, HttpMethods.PUT],
-  //   allowedHeaders: ["*"],
-  //   allowedOrigins: [siteUrl],
-  // });
 
   // add the CORS rule to the S3 bucket
   //
