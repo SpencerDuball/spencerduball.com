@@ -1,4 +1,4 @@
-import { Table, Entity, EntityItem, InferEntityItem } from "dynamodb-toolbox";
+import { Table, Entity } from "dynamodb-toolbox";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { z } from "zod";

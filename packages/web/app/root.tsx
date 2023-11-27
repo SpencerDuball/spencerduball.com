@@ -6,7 +6,6 @@ import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderD
 import tailwind from "~/tailwind.css";
 import Inter from "@fontsource-variable/inter/index.css";
 import { preferences } from "~/lib/cookies";
-import { z } from "zod";
 import { GlobalCtxProvider, GlobalCtx } from "~/lib/context/global-ctx";
 import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
@@ -16,29 +15,23 @@ import { logRequest } from "~/lib/util/utilities.server";
 
 /**
  * SSR-ONLY
- * Accepts the HTTP request object, extracts the '__preferences' cookie, reads or defaults the session cookie's theme
- * attributes, and finally returns an object with the theme string and cookie to be set on HTTP response.
+ * Accepts the HTTP request object, extracts the '__preferences' cookie, reads or defaults the cookie's theme
+ * attribute, and finally returns an object with the theme string and cookie to be set on HTTP response.
  *
  * @param request The HTTP request object.
  * @returns An object with the theme and new HTTP cookie value.
  */
 async function handlePreferencesCookie(request: Request) {
-  // Get the preferences cookie session, if it doesn't exist a blank session cookie will be created
-  const prefs = await preferences.getSession(request.headers.get("cookie"));
+  // Get the preferences cookie, if it doesn't exist it will be null.
+  let prefs = await preferences.parse(request.headers.get("cookie"));
 
-  // If the 'theme' attribute of the preferences cookie exists, set the 'theme value of the cookie as the same. If it
-  // doesn't exist, default it to 'dark'. It's always better to inadvertantly go from dark -> light vs light -> dark
-  // if there has to be a theme flash.
-  const theme = await z
-    .enum(["light", "dark"])
-    .parseAsync(prefs.get("theme"))
-    .catch(() => "dark" as const);
-  prefs.set("theme", theme);
+  // If the preferences cookie with valid 'theme' doesn't exist, default it to 'dark'.
+  if (!prefs) prefs = { theme: "dark" };
 
-  // Create the new preferences cookie.
-  const cookie = await preferences.commitSession(prefs);
+  // Serialize the new preferences cookie.
+  const cookie = await preferences.serialize(prefs);
 
-  return { theme, cookie };
+  return { theme: prefs.theme, cookie };
 }
 
 export const links: LinksFunction = () => [

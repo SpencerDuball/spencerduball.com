@@ -1,14 +1,14 @@
-import { createCookieSessionStorage } from "@remix-run/node";
+import { createCookie } from "@remix-run/node";
+import { createTypedCookie } from "remix-utils/typed-cookie";
+import { z } from "zod";
 // TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore
 import ms from "ms";
 import { Config } from "sst/node/config";
 
-export const preferences = createCookieSessionStorage({
-  cookie: {
-    name: "__preferences",
-
+export const preferences = createTypedCookie({
+  cookie: createCookie("__preferences", {
     // Lifetime
     // --------
     // Ideally this would be infinite, however Chrome has a limit on the duration that a cookie can last. This limit is
@@ -34,8 +34,9 @@ export const preferences = createCookieSessionStorage({
     // The 'path' attribute should be set to '/' so that all paths of the site can access this cookie.
     // The 'sameSite' attribute should be set to 'lax' as we want the cookies to be sent when navigating to our site
     // from other sites or else we will have flash issues.
-    domain: new URL(Config.SITE_URL).hostname,
+    domain: new URL(Config.SITE_URL).hostname.replace(/\:d+$/, ""),
     path: "/",
     sameSite: "lax",
-  },
+  }),
+  schema: z.object({ theme: z.enum(["light", "dark"]) }).nullable(),
 });

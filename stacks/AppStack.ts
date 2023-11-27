@@ -1,3 +1,4 @@
+import type { SSTConstruct } from "sst/constructs/Construct";
 import { StackContext, RemixSite, Table, Config, Function, Bucket } from "sst/constructs";
 import { Architecture } from "aws-cdk-lib/aws-lambda";
 import { BillingMode } from "aws-cdk-lib/aws-dynamodb";
@@ -17,6 +18,9 @@ export function AppStack({ app, stack }: StackContext) {
   const GITHUB_CLIENT_ID = new Config.Secret(stack, "GITHUB_CLIENT_ID");
   const GITHUB_CLIENT_SECRET = new Config.Secret(stack, "GITHUB_CLIENT_SECRET");
   const DATABASE_URL = new Config.Secret(stack, "DATABASE_URL");
+  const MOCKS_ENABLED = new Config.Parameter(stack, "MOCKS_ENABLED", {
+    value: app.stage === "prod" ? "FALSE" : "TRUE",
+  });
 
   // define shared resoureces
   const updateSsmParameterFn = new Function(stack, "UpdateSsmParameterFn", {
@@ -88,7 +92,17 @@ export function AppStack({ app, stack }: StackContext) {
     path: "packages/web/",
     cdk: { server: { architecture: Architecture.ARM_64 } },
     warm: app.stage === "prod" ? 10 : undefined,
-    bind: [table, bucket, REGION, SITE_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, DATABASE_URL, BUCKET_URL],
+    bind: [
+      table,
+      bucket,
+      REGION,
+      SITE_URL,
+      GITHUB_CLIENT_ID,
+      GITHUB_CLIENT_SECRET,
+      DATABASE_URL,
+      BUCKET_URL,
+      MOCKS_ENABLED,
+    ],
   });
 
   //-----------------------------------------------------------------------------------------------

@@ -1,0 +1,57 @@
+This is the set of rails commands to emulate:
+x db:drop
+  - This will need to be done manually from Neon, or whichever database provider is chosen.
+x db:encryption:init
+  - The database credentials do not need to be hidden, the IaC takes care of the concern.
+x db:environment:set
+  - This is taken care of by the IaC.
+x db:fixtures:load
+  - This concept will not be implemented.
+- db:migrate
+- db:migrate:down
+x db:migrate:redo
+  - This concept will not be implemented.
+- db:migrate:status
+- db:migrate:up
+x db:prepare
+  - This is taken care of by the IaC.
+- db:reset
+x db:rollback
+  - This is a duplicate of db:migrate:down and will not be implemented.
+x db:schema:cache:clear
+  - This concept will not be implemented.
+x db:schema:cache:dump
+  - This concept will not be implemented.
+x db:schema:dump
+  - This concept will not be implemented. This will be implemented by the db:migrate:* commands.
+x db:schema:load
+  - This concept will not be implemented. This will be implemented by the db:migrate:* commands.
+- db:seed
+x db:seed:replant
+  - This concept will not be implemented. The db:seed command will purge then seed always.
+- db:setup
+x db:system:change
+  - This concept will not be implemented.
+x db:version
+  - This concept will not be implemented, same functionality as db:migrate:status.
+
+------------------------------------------------------------------------------------------------------------
+
+- db:migrate:create
+  - Creates a migration file, and creates a seed folder.
+- db:migrate
+  - This command is used to run any pending database migrations for your Rails application.
+- db:migrate:status
+  - This command will get the info about the applied migrations.
+- db:migrate:up
+  - This command is used to step a migration up by one level.
+- db:migrate:down
+  - This command is used to step a migration down by one level.
+- db:reset
+  - This command purges all data, clears all tables, and erases the migration tables.
+- db:seed:reset
+  - This command wipes all seeded data from the database.
+- db:seed
+  - This command seeds the data up to the latest migration applied.
+- db:setup
+  - This command migrates and seeds the database.

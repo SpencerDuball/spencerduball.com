@@ -101,6 +101,7 @@ function useComputeResolvedTheme([theme, dispatch]: [
       Cookies.set(PREFERENCES_KEY, btoa(JSON.stringify({ theme: _theme })), {
         "Max-Age": String(ms("400d")),
         secure: false,
+        domain: new URL(window.location.href).hostname.replace(/\:d+$/, ""),
         path: "/",
         sameSite: "lax",
       });
