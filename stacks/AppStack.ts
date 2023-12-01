@@ -78,7 +78,7 @@ export function AppStack({ app, stack }: StackContext) {
       effect: Effect.ALLOW,
       principals: [new AnyPrincipal()],
       actions: ["s3:GetObject"],
-      resources: [`${bucket.bucketArn}/blog/*`],
+      resources: [`${bucket.bucketArn}/blog/*`, `${bucket.bucketArn}/mocks/*`],
     })
   );
 
