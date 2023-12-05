@@ -1,10 +1,17 @@
-import type { SSTConstruct } from "sst/constructs/Construct";
 import { StackContext, RemixSite, Table, Config, Function, Bucket } from "sst/constructs";
 import { Architecture } from "aws-cdk-lib/aws-lambda";
 import { BillingMode } from "aws-cdk-lib/aws-dynamodb";
 import { Provider } from "aws-cdk-lib/custom-resources";
-import { CustomResource, RemovalPolicy } from "aws-cdk-lib/core";
-import { Distribution, ViewerProtocolPolicy, LambdaEdgeEventType } from "aws-cdk-lib/aws-cloudfront";
+import { CustomResource, Duration, RemovalPolicy } from "aws-cdk-lib/core";
+import {
+  Distribution,
+  ViewerProtocolPolicy,
+  LambdaEdgeEventType,
+  CachePolicy,
+  CacheQueryStringBehavior,
+  CacheHeaderBehavior,
+  CacheCookieBehavior,
+} from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { AnyPrincipal, Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
 
@@ -22,7 +29,11 @@ export function AppStack({ app, stack }: StackContext) {
     value: app.stage === "prod" ? "FALSE" : "TRUE",
   });
 
-  // define shared resoureces
+  //-----------------------------------------------------------------------------------------------
+  // Define Shared Resources
+  // -----------------------
+  // Shared constructs used by many other constructs are defined here.
+  //-----------------------------------------------------------------------------------------------
   const updateSsmParameterFn = new Function(stack, "UpdateSsmParameterFn", {
     architecture: "arm_64",
     handler: "packages/functions/src/custom-resource/deploy-fns.updateSsmParameter",
@@ -72,13 +83,17 @@ export function AppStack({ app, stack }: StackContext) {
     value: `https://${bucket.bucketName}.s3.${stack.region}.amazonaws.com`,
   });
 
+  // define the resources (subpaths) in the bucket that are to be made public
+  const publicBucketPaths = [`${bucket.bucketArn}/blog/*`];
+  if (app.stage !== "prod") publicBucketPaths.push(`${bucket.bucketArn}/mocks/*`);
+
   // add permissions for public files
   bucket.cdk.bucket.addToResourcePolicy(
     new PolicyStatement({
       effect: Effect.ALLOW,
       principals: [new AnyPrincipal()],
       actions: ["s3:GetObject"],
-      resources: [`${bucket.bucketArn}/blog/*`, `${bucket.bucketArn}/mocks/*`],
+      resources: publicBucketPaths,
     })
   );
 
@@ -134,13 +149,12 @@ export function AppStack({ app, stack }: StackContext) {
   });
 
   //-----------------------------------------------------------------------------------------------
-  // Create Public Bucket
-  // --------------------
-  // The final SITE_URL is necessary in order to finish creating the public bucket:
+  // Create Bucket
+  // -------------
+  // The final SITE_URL is necessary in order to finish creating the bucket:
   // 1) A CORS rule using the SITE_URL needs to be added
   // 2) The BUCKET_URL parameter needs to be updated based on the SITE_URL
-  // 3) An SSL Certificate, CNAME Record, and CloudFront distribution all need the SITE_URL in
-  //    order to have the `files.${my-domain-name}` for the bucket's url.
+  // 3) Update the RemixSite's cloudfront distribution so the bucket is accessed at "/files/**/*".
   //
   // NOTE: PART 2/2
   //-----------------------------------------------------------------------------------------------
@@ -188,14 +202,25 @@ export function AppStack({ app, stack }: StackContext) {
     const errorResponseRedirectFn = new Function(stack, "ErrorResponseRedirectFn", {
       handler: "packages/functions/src/cloudfront/errorResponseRedirect.handler",
       enableLiveDev: false,
-      permissions: [
-        new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
-          resources: ["arn:aws:logs:*:*:log-group:/aws/cloudfront/*"],
-        }),
-      ],
     });
+    // create the lambda@edge to change the 'uri' path to remove the "files/" prefix
+    const filesRequestUriFn = new Function(stack, "FilesRequestUriFn", {
+      handler: "packages/functions/src/cloudfront/filesRequestUri.handler",
+      enableLiveDev: false,
+    });
+    // create the cache policy for the files distribution
+    const cachePolicy = new CachePolicy(stack, "FilesBucketCache", {
+      queryStringBehavior: CacheQueryStringBehavior.all(),
+      headerBehavior: CacheHeaderBehavior.none(),
+      cookieBehavior: CacheCookieBehavior.none(),
+      defaultTtl: Duration.days(0),
+      maxTtl: Duration.days(365),
+      minTtl: Duration.days(0),
+      enableAcceptEncodingBrotli: true,
+      enableAcceptEncodingGzip: true,
+      comment: "The files bucket's cache policy.",
+    });
+
     // Add the "files/*" behavior to the site's distribution
     (site.cdk.distribution as any as Distribution).addBehavior("files/*", new S3Origin(bucket.cdk.bucket), {
       edgeLambdas: [
@@ -203,8 +228,13 @@ export function AppStack({ app, stack }: StackContext) {
           eventType: LambdaEdgeEventType.ORIGIN_RESPONSE,
           functionVersion: errorResponseRedirectFn.currentVersion,
         },
+        {
+          eventType: LambdaEdgeEventType.ORIGIN_REQUEST,
+          functionVersion: filesRequestUriFn.currentVersion,
+        },
       ],
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      cachePolicy,
     });
   }
 
