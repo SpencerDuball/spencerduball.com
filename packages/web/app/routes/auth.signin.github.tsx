@@ -36,6 +36,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   params.append("state", stateCode.code);
 
   // redirect to authorize with github
+  // ---------------------------------
+  // If MOCKS_ENABLED then we want to redirect instead to the mocked Github service. This is helpful for testing
+  // and allows local dev and even staging environments to assume roles.
   const authorizePath =
     Config.MOCKS_ENABLED === "TRUE" ? `/mock/github/login/oauth/authorize` : `https://github.com/login/oauth/authorize`;
   return redirect(`${authorizePath}?${params.toString()}`);

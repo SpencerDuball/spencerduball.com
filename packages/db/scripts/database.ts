@@ -48,7 +48,7 @@ async function clearBucket({ s3 }: DbScriptProps) {
   // delete each batch of items
   await Promise.all(
     batchesToDelete.map(
-      (batch) => s3?.send(new DeleteObjectsCommand({ Bucket: Config.BUCKET_URL, Delete: { Objects: batch } }))
+      (batch) => s3?.send(new DeleteObjectsCommand({ Bucket: Bucket.Bucket.bucketName, Delete: { Objects: batch } }))
     )
   );
   spinner.stop();

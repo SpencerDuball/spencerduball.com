@@ -181,7 +181,7 @@ export function AppStack({ app, stack }: StackContext) {
   });
 
   // determine the bucketUrl
-  let bucketUrl = `https://${bucket.bucketName}.s3.${stack.region}.amazonaws.com`;
+  let bucketUrl = `https://${bucket.bucketName}.s3.amazonaws.com`;
   if (app.stage !== "dev") bucketUrl = `${siteUrl}/files`;
 
   // update the BUCKET_URL parameter value
