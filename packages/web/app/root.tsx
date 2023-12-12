@@ -11,7 +11,7 @@ import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
 import { useHydrated } from "remix-utils/use-hydrated";
 import { ToasterProvider } from "~/lib/context/toaster-ctx";
-import { logRequest } from "~/lib/util/utilities.server";
+import { logger, logRequest } from "~/lib/util/utilities.server";
 
 /**
  * SSR-ONLY
@@ -51,7 +51,8 @@ export const meta: MetaFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await logRequest(request);
+  const log = logger();
+  await logRequest(log, request);
 
   const { theme, cookie: prefsCookie } = await handlePreferencesCookie(request);
 

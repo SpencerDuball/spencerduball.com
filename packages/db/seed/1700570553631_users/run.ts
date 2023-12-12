@@ -2,6 +2,7 @@ import { z } from "zod";
 import fs from "fs-extra";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import type { PgClient } from "../../src/pg";
+import { ZMockGhUser, type Ddb } from "../../src/ddb";
 import { Config } from "sst/node/config";
 import { Bucket } from "sst/node/bucket";
 import { glob } from "glob";
@@ -10,6 +11,7 @@ import mime from "mime";
 interface DbScriptProps {
   db: PgClient;
   s3: S3Client;
+  ddb: Ddb;
 }
 
 export const ZUser = z.object({
@@ -38,19 +40,27 @@ export const ZUserRole = z.object({
 export type IUserRole = z.infer<typeof ZUserRole>;
 
 /** Performs the seed operations. */
-export async function main({ db, s3 }: DbScriptProps) {
+export async function main({ db, s3, ddb }: DbScriptProps) {
   // upload all assets
   const AssetsPath = new URL("./assets", import.meta.url);
   const assets = await glob(`${AssetsPath.pathname}/**/*`, { nodir: true });
   await Promise.all([
     assets.map(async (asset) => {
-      const Key = "mocks" + asset.replace(new RegExp(`^${AssetsPath.pathname}`), "");
+      const Key = "mock" + asset.replace(new RegExp(`^${AssetsPath.pathname}`), "");
       const Body = await fs.readFile(asset);
       const ContentType = mime.getType(asset) || "text/plain";
       const options = { Bucket: Bucket.Bucket.bucketName, Key, Body, ContentType };
       return s3.send(new PutObjectCommand(options));
     }),
   ]);
+
+  // seed the 'mock-gh-users' ddb items
+  const mockGhUsersFile = new URL("./data/mock-gh-users.json", import.meta.url);
+  const mockGhUsersData = await fs
+    .readJson(mockGhUsersFile)
+    .then((users) => ZMockGhUser.omit({ pk: true, sk: true, entity: true }).array().parse(users));
+  for (let user of mockGhUsersData) user.avatar_url = user.avatar_url.replace(/\{\{S3_BUCKET\}\}/g, Config.BUCKET_URL);
+  await ddb.table.batchWrite(mockGhUsersData.map((u) => ddb.entities.mockGhUser.putBatch(u)));
 
   // seed the 'users' table
   const usersFile = new URL("./data/users.json", import.meta.url);

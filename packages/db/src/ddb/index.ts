@@ -50,7 +50,7 @@ export type SessionType = z.infer<typeof ZSession>;
 /* ------------------------------------------------------------------------------------------------------------------
  * OAuthStateCode
  * ------------------------------------------------------------------------------------------------------------------ */
-export const ZCode = z.object({ id: z.string(), redirectUri: z.string().optional() });
+export const ZCode = z.object({ id: z.string(), redirect_uri: z.string() });
 
 export const OAuthStateCodeSchema = {
   name: "OAuthStateCode",
@@ -58,11 +58,11 @@ export const OAuthStateCodeSchema = {
     id: { type: "string", default: () => randomBytes(16).toString("hex") },
     pk: { partitionKey: true, type: "string", default: (data: { id: string }) => `oauth_state_code#${data.id}` },
     sk: { sortKey: true, type: "string", default: (data: { id: string }) => `oauth_state_code#${data.id}` },
-    redirect_uri: { type: "string" },
+    redirect_uri: { type: "string", required: true },
     code: {
       type: "string",
       dependsOn: ["id", "redirect_uri"],
-      default: (data: { id: string; redirect_uri?: string }) => JSON.stringify(ZCode.parse(data)),
+      default: (data: { id: string; redirect_uri: string }) => JSON.stringify(ZCode.parse(data)),
     },
     ttl: { type: "number", default: () => Math.round((new Date().getTime() + ms("15m")) / 1000) },
   },
@@ -72,7 +72,7 @@ export const ZOAuthStateCode = z.object({
   id: z.string(),
   pk: z.string(),
   sk: z.string(),
-  redirect_uri: z.string().optional(),
+  redirect_uri: z.string(),
   code: z.string(),
   ttl: z.number(),
   modified: z.string(),
@@ -83,21 +83,28 @@ export const ZOAuthStateCode = z.object({
 export type OAuthStateCodeType = ReturnType<typeof ZOAuthStateCode.parse>;
 
 /* ------------------------------------------------------------------------------------------------------------------
- * OAuthMock
+ * OAuthOTC (Used only when MOCKS_ENABLED to simulate an OTC to be exchaned for an access token.)
  * ------------------------------------------------------------------------------------------------------------------ */
-export const OAuthMockSchema = {
-  name: "OAuthMock",
+export const OAuthOTCSchema = {
+  name: "OAuthOTC",
   attributes: {
-    id: { type: "string", required: true },
-    pk: { partitionKey: true, type: "string", default: (data: { id: string }) => `oauth_mock#${data.id}` },
-    sk: { sortKey: true, type: "string", default: (data: { id: string }) => `oauth_mock#${data.id}` },
+    id: { type: "string", default: () => randomBytes(16).toString("hex") },
+    scope: { type: "string", required: true },
+    pk: {
+      partitionKey: true,
+      type: "string",
+      dependsOn: ["id"],
+      default: (data: { id: string }) => `oauth_otc#${data.id}`,
+    },
+    sk: { sortKey: true, type: "string", dependsOn: ["id"], default: (data: { id: string }) => `oauth_otc#${data.id}` },
     user_id: { type: "number", required: true },
     ttl: { type: "number", default: () => Math.round((new Date().getTime() + ms("15m")) / 1000) },
   },
 } as const;
 
-export const ZOAuthMock = z.object({
+export const ZOAuthOTC = z.object({
   id: z.string(),
+  scope: z.string(),
   pk: z.string(),
   sk: z.string(),
   user_id: z.number(),
@@ -107,7 +114,83 @@ export const ZOAuthMock = z.object({
   entity: z.string(),
 });
 
-export type OAuthMock = ReturnType<typeof ZOAuthMock.parse>;
+export type OAuthOTC = ReturnType<typeof ZOAuthOTC.parse>;
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * OAuthAccessToken (Used only when MOCKS_ENABLED to simulate an access_token to be used for Mock Github API access.)
+ * ------------------------------------------------------------------------------------------------------------------ */
+export const OAuthAccessTokenSchema = {
+  name: "OAuthAccessToken",
+  attributes: {
+    id: { type: "string", default: () => randomBytes(16).toString("hex") },
+    scope: { type: "string", required: true },
+    pk: {
+      partitionKey: true,
+      type: "string",
+      dependsOn: ["id"],
+      default: (data: { id: string }) => `oauth_access_token#${data.id}`,
+    },
+    sk: {
+      sortKey: true,
+      type: "string",
+      dependsOn: ["id"],
+      default: (data: { id: string }) => `oauth_access_token#${data.id}`,
+    },
+    user_id: { type: "number", required: true },
+    ttl: { type: "number", default: () => Math.round((new Date().getTime() + ms("15m")) / 1000) },
+  },
+} as const;
+
+export const ZOAuthAccessToken = z.object({
+  id: z.string(),
+  scope: z.string(),
+  pk: z.string(),
+  sk: z.string(),
+  user_id: z.string(),
+  modified: z.string(),
+  created: z.string(),
+  entity: z.string(),
+});
+
+export type OAuthAccessToken = ReturnType<typeof ZOAuthAccessToken.parse>;
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * MockGhUser (Used only when MOCKS_ENABLED. This is a fake database of potential Github users.)
+ * ------------------------------------------------------------------------------------------------------------------ */
+export const MockGhUserSchema = {
+  name: "MockGhUser",
+  attributes: {
+    id: { type: "number", required: true },
+    login: { type: "string", required: true },
+    name: { type: "string", required: true },
+    avatar_url: { type: "string", required: true },
+    html_url: { type: "string", required: true },
+    pk: { partitionKey: true, type: "string", default: () => `mock_gh_user` },
+    sk: {
+      sortKey: true,
+      type: "string",
+      dependsOn: ["id"],
+      default: (data: { id: string }) => `mock_gh_user#${data.id}`,
+    },
+  },
+  modifiedAlias: "modified_at",
+  createdAlias: "created_at",
+} as const;
+
+export const ZMockGhUser = z.object({
+  id: z.number(),
+  login: z.string(),
+  name: z.string(),
+  avatar_url: z.string(),
+  html_url: z.string(),
+  pk: z.string(),
+  sk: z.string(),
+  modified_at: z.string(),
+  created_at: z.string(),
+  entity: z.string(),
+});
+
+export type MockGhUserType = ReturnType<typeof ZMockGhUser.parse>;
 
 /* ------------------------------------------------------------------------------------------------------------
  * Ddb
@@ -136,7 +219,9 @@ export class Ddb {
   entities = {
     oauthStateCode: new Entity(OAuthStateCodeSchema),
     session: new Entity(SessionSchema),
-    oauthMock: new Entity(OAuthMockSchema),
+    oauthOTC: new Entity(OAuthOTCSchema),
+    oauthAccessToken: new Entity(OAuthAccessTokenSchema),
+    mockGhUser: new Entity(MockGhUserSchema),
   };
 
   constructor(props: { tableName: string; client: DynamoDBClient }) {

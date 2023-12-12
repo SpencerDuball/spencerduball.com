@@ -6,13 +6,13 @@ import { Config } from "sst/node/config";
 import { Table } from "sst/node/table";
 import pino, { Logger } from "pino";
 import { format } from "prettier";
+import { randomUUID } from "crypto";
 
 // define globals
 declare global {
   var __ddbClient: Ddb;
   var __s3Client: S3Client;
   var __pgClient: PgClient;
-  var __logger: Logger;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -53,30 +53,29 @@ export function pg() {
 }
 
 /**
- * Retrieves the pino logger function with common configuration.
+ * Retrieves the pino logger function with common configuration. This adds a `traceId` that is useful for parsing which
+ * request a log message belongs to. In Remix, we commonly have multiple requests running in parallel and the ability
+ * to determine which messages belong to which action/loader is helpful.
  *
  * @returns Logger
  */
 export function logger() {
-  if (!global.__logger) {
-    global.__logger = pino();
-  }
-  return global.__logger;
+  return pino().child({ traceId: randomUUID() });
 }
 
 //----------------------------------------------------------------------------
 // Define Common Logger Functions
 //----------------------------------------------------------------------------
-export async function logRequest(request: Request) {
+export async function logRequest(logger: Logger, request: Request) {
   const req = request.clone();
 
-  logger().info("---- START REQUEST INFO ----");
-  logger().info(`Request: ${req.method} ${req.url}`);
-  logger().info(`Cache: ${req.cache}, Keep-Alive: ${req.keepalive}, Mode: ${req.mode}`);
-  logger().info(
+  logger.info("---- START REQUEST INFO ----");
+  logger.info(`Request: ${req.method} ${req.url}`);
+  logger.info(`Cache: ${req.cache}, Keep-Alive: ${req.keepalive}, Mode: ${req.mode}`);
+  logger.info(
     `Headers: ${await format(JSON.stringify(Object.fromEntries(req.headers.entries())), { parser: "json" })}`
   );
-  logger().info(`Body:\n${await req.text().catch((e) => "No body text.")}`);
-  logger().info(`JSON:\n${await req.json().catch((e) => "No body json.")}`);
-  logger().info("----- END REQUEST INFO -----");
+  logger.info(`Body:\n${await req.text().catch((e) => "No body text.")}`);
+  logger.info(`JSON:\n${await req.json().catch((e) => "No body json.")}`);
+  logger.info("----- END REQUEST INFO -----");
 }

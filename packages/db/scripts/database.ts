@@ -16,10 +16,15 @@ import {
 } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
 import { createClient } from "../src/pg";
+import { Ddb } from "../src/ddb";
+import { Table } from "sst/node/table";
+import { AttributeValue, DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { ScanCommandOutput, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 
 interface DbScriptProps {
   db?: Kysely<any>;
   s3?: S3Client;
+  ddb?: Ddb;
 }
 
 /** Clears all items from the bucket. */
@@ -51,6 +56,37 @@ async function clearBucket({ s3 }: DbScriptProps) {
       (batch) => s3?.send(new DeleteObjectsCommand({ Bucket: Bucket.Bucket.bucketName, Delete: { Objects: batch } }))
     )
   );
+  spinner.stop();
+}
+
+/** Clears all items from the DDB table. */
+async function clearDdb() {
+  const dynamodb = new DynamoDBClient({ region: Config.REGION });
+  const spinner = ora("Staring to delete ddb items ...").start();
+
+  // get all items
+  let ExclusiveStartKey: Record<string, AttributeValue> | undefined = undefined;
+  let count = 0;
+  do {
+    spinner.text = `Deleting batch ${count + 1} ...`;
+    // get items in a batch
+    const res = (await dynamodb.send(
+      new ScanCommand({ TableName: Table.table.tableName, ProjectionExpression: "pk, sk", ExclusiveStartKey })
+    )) as ScanCommandOutput;
+
+    // delete the items
+    if (res.Items && res.Items.length > 0) {
+      const items = z
+        .object({ pk: z.string(), sk: z.string() })
+        .array()
+        .parse(res.Items.map((item) => ({ pk: item.pk.S, sk: item.sk.S })));
+      const deleteItems = items.map((item) => ({ DeleteRequest: { Key: { pk: item.pk, sk: item.sk } } }));
+      const r = await dynamodb.send(new BatchWriteCommand({ RequestItems: { [Table.table.tableName]: deleteItems } }));
+      spinner.text = `Deleted batch ${count + 1}.`;
+    }
+    ExclusiveStartKey = res.LastEvaluatedKey;
+    count = count + 1;
+  } while (ExclusiveStartKey);
   spinner.stop();
 }
 
@@ -217,6 +253,7 @@ async function seed({}: DbScriptProps) {
   let spinner = ora("Connecting to the database ...").start();
   const db = createClient(Config.DATABASE_URL);
   const s3 = new S3Client({});
+  const ddb = new Ddb({ tableName: Table.table.tableName, client: new DynamoDBClient({ region: Config.REGION }) });
   spinner.stop();
 
   // reset the seed data
@@ -229,7 +266,7 @@ async function seed({}: DbScriptProps) {
   for (let tx of transactions) {
     spinner = ora(`Applying seed transaction '${tx.name}' ...`);
     const { main } = await import(path.resolve("seed", tx.name, "run.ts"));
-    await main({ db, s3 }).catch((e: any) => {
+    await main({ db, s3, ddb }).catch((e: any) => {
       spinner.fail(`Error applying seed transaction '${tx.name}.'`);
       console.error(e);
       process.exit(1);
@@ -268,6 +305,9 @@ async function seedReset({}: DbScriptProps) {
 
   // remove all items from the S3 bucket
   await clearBucket({});
+
+  // remove all ddb items
+  await clearDdb();
 
   // close the db connection
   await dbase.destroy();

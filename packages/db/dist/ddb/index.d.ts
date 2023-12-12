@@ -110,13 +110,13 @@ export declare const ZSession: z.ZodObject<{
 export type SessionType = z.infer<typeof ZSession>;
 export declare const ZCode: z.ZodObject<{
     id: z.ZodString;
-    redirectUri: z.ZodOptional<z.ZodString>;
+    redirect_uri: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     id: string;
-    redirectUri?: string | undefined;
+    redirect_uri: string;
 }, {
     id: string;
-    redirectUri?: string | undefined;
+    redirect_uri: string;
 }>;
 export declare const OAuthStateCodeSchema: {
     readonly name: "OAuthStateCode";
@@ -141,13 +141,14 @@ export declare const OAuthStateCodeSchema: {
         };
         readonly redirect_uri: {
             readonly type: "string";
+            readonly required: true;
         };
         readonly code: {
             readonly type: "string";
             readonly dependsOn: readonly ["id", "redirect_uri"];
             readonly default: (data: {
                 id: string;
-                redirect_uri?: string;
+                redirect_uri: string;
             }) => string;
         };
         readonly ttl: {
@@ -160,7 +161,7 @@ export declare const ZOAuthStateCode: z.ZodObject<{
     id: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
-    redirect_uri: z.ZodOptional<z.ZodString>;
+    redirect_uri: z.ZodString;
     code: z.ZodString;
     ttl: z.ZodNumber;
     modified: z.ZodString;
@@ -175,7 +176,7 @@ export declare const ZOAuthStateCode: z.ZodObject<{
     pk: string;
     sk: string;
     ttl: number;
-    redirect_uri?: string | undefined;
+    redirect_uri: string;
 }, {
     code: string;
     created: string;
@@ -185,19 +186,24 @@ export declare const ZOAuthStateCode: z.ZodObject<{
     pk: string;
     sk: string;
     ttl: number;
-    redirect_uri?: string | undefined;
+    redirect_uri: string;
 }>;
 export type OAuthStateCodeType = ReturnType<typeof ZOAuthStateCode.parse>;
-export declare const OAuthMockSchema: {
-    readonly name: "OAuthMock";
+export declare const OAuthOTCSchema: {
+    readonly name: "OAuthOTC";
     readonly attributes: {
         readonly id: {
+            readonly type: "string";
+            readonly default: () => string;
+        };
+        readonly scope: {
             readonly type: "string";
             readonly required: true;
         };
         readonly pk: {
             readonly partitionKey: true;
             readonly type: "string";
+            readonly dependsOn: readonly ["id"];
             readonly default: (data: {
                 id: string;
             }) => string;
@@ -205,6 +211,7 @@ export declare const OAuthMockSchema: {
         readonly sk: {
             readonly sortKey: true;
             readonly type: "string";
+            readonly dependsOn: readonly ["id"];
             readonly default: (data: {
                 id: string;
             }) => string;
@@ -219,8 +226,9 @@ export declare const OAuthMockSchema: {
         };
     };
 };
-export declare const ZOAuthMock: z.ZodObject<{
+export declare const ZOAuthOTC: z.ZodObject<{
     id: z.ZodString;
+    scope: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
     user_id: z.ZodNumber;
@@ -237,6 +245,7 @@ export declare const ZOAuthMock: z.ZodObject<{
     pk: string;
     sk: string;
     ttl: number;
+    scope: string;
 }, {
     created: string;
     modified: string;
@@ -246,8 +255,150 @@ export declare const ZOAuthMock: z.ZodObject<{
     pk: string;
     sk: string;
     ttl: number;
+    scope: string;
 }>;
-export type OAuthMock = ReturnType<typeof ZOAuthMock.parse>;
+export type OAuthOTC = ReturnType<typeof ZOAuthOTC.parse>;
+export declare const OAuthAccessTokenSchema: {
+    readonly name: "OAuthAccessToken";
+    readonly attributes: {
+        readonly id: {
+            readonly type: "string";
+            readonly default: () => string;
+        };
+        readonly scope: {
+            readonly type: "string";
+            readonly required: true;
+        };
+        readonly pk: {
+            readonly partitionKey: true;
+            readonly type: "string";
+            readonly dependsOn: readonly ["id"];
+            readonly default: (data: {
+                id: string;
+            }) => string;
+        };
+        readonly sk: {
+            readonly sortKey: true;
+            readonly type: "string";
+            readonly dependsOn: readonly ["id"];
+            readonly default: (data: {
+                id: string;
+            }) => string;
+        };
+        readonly user_id: {
+            readonly type: "number";
+            readonly required: true;
+        };
+        readonly ttl: {
+            readonly type: "number";
+            readonly default: () => number;
+        };
+    };
+};
+export declare const ZOAuthAccessToken: z.ZodObject<{
+    id: z.ZodString;
+    scope: z.ZodString;
+    pk: z.ZodString;
+    sk: z.ZodString;
+    user_id: z.ZodString;
+    modified: z.ZodString;
+    created: z.ZodString;
+    entity: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    created: string;
+    modified: string;
+    entity: string;
+    user_id: string;
+    id: string;
+    pk: string;
+    sk: string;
+    scope: string;
+}, {
+    created: string;
+    modified: string;
+    entity: string;
+    user_id: string;
+    id: string;
+    pk: string;
+    sk: string;
+    scope: string;
+}>;
+export type OAuthAccessToken = ReturnType<typeof ZOAuthAccessToken.parse>;
+export declare const MockGhUserSchema: {
+    readonly name: "MockGhUser";
+    readonly attributes: {
+        readonly id: {
+            readonly type: "number";
+            readonly required: true;
+        };
+        readonly login: {
+            readonly type: "string";
+            readonly required: true;
+        };
+        readonly name: {
+            readonly type: "string";
+            readonly required: true;
+        };
+        readonly avatar_url: {
+            readonly type: "string";
+            readonly required: true;
+        };
+        readonly html_url: {
+            readonly type: "string";
+            readonly required: true;
+        };
+        readonly pk: {
+            readonly partitionKey: true;
+            readonly type: "string";
+            readonly default: () => string;
+        };
+        readonly sk: {
+            readonly sortKey: true;
+            readonly type: "string";
+            readonly dependsOn: readonly ["id"];
+            readonly default: (data: {
+                id: string;
+            }) => string;
+        };
+    };
+    readonly modifiedAlias: "modified_at";
+    readonly createdAlias: "created_at";
+};
+export declare const ZMockGhUser: z.ZodObject<{
+    id: z.ZodNumber;
+    login: z.ZodString;
+    name: z.ZodString;
+    avatar_url: z.ZodString;
+    html_url: z.ZodString;
+    pk: z.ZodString;
+    sk: z.ZodString;
+    modified_at: z.ZodString;
+    created_at: z.ZodString;
+    entity: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    entity: string;
+    id: number;
+    pk: string;
+    sk: string;
+    avatar_url: string;
+    modified_at: string;
+    created_at: string;
+    login: string;
+    html_url: string;
+}, {
+    name: string;
+    entity: string;
+    id: number;
+    pk: string;
+    sk: string;
+    avatar_url: string;
+    modified_at: string;
+    created_at: string;
+    login: string;
+    html_url: string;
+}>;
+export type MockGhUserType = ReturnType<typeof ZMockGhUser.parse>;
 export declare class Ddb {
     table: Table<string, "pk", "sk">;
     entities: {
@@ -272,13 +423,14 @@ export declare class Ddb {
             };
             readonly redirect_uri: {
                 readonly type: "string";
+                readonly required: true;
             };
             readonly code: {
                 readonly type: "string";
                 readonly dependsOn: readonly ["id", "redirect_uri"];
                 readonly default: (data: {
                     id: string;
-                    redirect_uri?: string | undefined;
+                    redirect_uri: string;
                 }) => string;
             };
             readonly ttl: {
@@ -306,13 +458,14 @@ export declare class Ddb {
             };
             redirect_uri: {
                 type: "string";
+                required: true;
             };
             code: {
                 type: "string";
                 dependsOn: ["id", "redirect_uri"];
                 default: (data: {
                     id: string;
-                    redirect_uri?: string | undefined;
+                    redirect_uri: string;
                 }) => string;
             };
             ttl: {
@@ -340,13 +493,14 @@ export declare class Ddb {
             };
             redirect_uri: {
                 type: "string";
+                required: true;
             };
             code: {
                 type: "string";
                 dependsOn: ["id", "redirect_uri"];
                 default: (data: {
                     id: string;
-                    redirect_uri?: string | undefined;
+                    redirect_uri: string;
                 }) => string;
             };
             ttl: {
@@ -357,22 +511,22 @@ export declare class Ddb {
             code?: string | undefined;
             id?: string | undefined;
             ttl?: number | undefined;
-            redirect_uri?: string | undefined;
             created: string;
             modified: string;
             entity: string;
             pk: string;
             sk: string;
+            redirect_uri: string;
         }, {
             code?: string | undefined;
             id?: string | undefined;
             ttl?: number | undefined;
-            redirect_uri?: string | undefined;
             created: string;
             modified: string;
             entity: string;
             pk: string;
             sk: string;
+            redirect_uri: string;
         }, {
             pk?: string | undefined;
             sk?: string | undefined;
@@ -590,14 +744,19 @@ export declare class Ddb {
             pk?: string | undefined;
             sk?: string | undefined;
         }>;
-        oauthMock: Entity<"OAuthMock", undefined, undefined, undefined, true, true, true, "created", "modified", "entity", false, {
+        oauthOTC: Entity<"OAuthOTC", undefined, undefined, undefined, true, true, true, "created", "modified", "entity", false, {
             readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly scope: {
                 readonly type: "string";
                 readonly required: true;
             };
             readonly pk: {
                 readonly partitionKey: true;
                 readonly type: "string";
+                readonly dependsOn: readonly ["id"];
                 readonly default: (data: {
                     id: string;
                 }) => string;
@@ -605,6 +764,7 @@ export declare class Ddb {
             readonly sk: {
                 readonly sortKey: true;
                 readonly type: "string";
+                readonly dependsOn: readonly ["id"];
                 readonly default: (data: {
                     id: string;
                 }) => string;
@@ -620,11 +780,16 @@ export declare class Ddb {
         }, {
             id: {
                 type: "string";
+                default: () => string;
+            };
+            scope: {
+                type: "string";
                 required: true;
             };
             pk: {
                 partitionKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -632,6 +797,7 @@ export declare class Ddb {
             sk: {
                 sortKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -647,11 +813,16 @@ export declare class Ddb {
         }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
             id: {
                 type: "string";
+                default: () => string;
+            };
+            scope: {
+                type: "string";
                 required: true;
             };
             pk: {
                 partitionKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -659,6 +830,7 @@ export declare class Ddb {
             sk: {
                 sortKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -672,26 +844,376 @@ export declare class Ddb {
                 default: () => number;
             };
         }, true, "created", "modified", "entity", false>, {
+            id?: string | undefined;
             ttl?: number | undefined;
             created: string;
             modified: string;
             entity: string;
             user_id: number;
-            id: string;
             pk: string;
             sk: string;
+            scope: string;
         }, {
+            id?: string | undefined;
             ttl?: number | undefined;
             created: string;
             modified: string;
             entity: string;
             user_id: number;
-            id: string;
             pk: string;
             sk: string;
+            scope: string;
+        }, {
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            id?: string | undefined;
+            sk: string;
+        } | {
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        }>;
+        oauthAccessToken: Entity<"OAuthAccessToken", undefined, undefined, undefined, true, true, true, "created", "modified", "entity", false, {
+            readonly id: {
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly scope: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly dependsOn: readonly ["id"];
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly dependsOn: readonly ["id"];
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+            readonly user_id: {
+                readonly type: "number";
+                readonly required: true;
+            };
+            readonly ttl: {
+                readonly type: "number";
+                readonly default: () => number;
+            };
+        }, {
+            id: {
+                type: "string";
+                default: () => string;
+            };
+            scope: {
+                type: "string";
+                required: true;
+            };
+            pk: {
+                partitionKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
+                    id: string;
+                }) => string;
+            };
+            sk: {
+                sortKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
+                    id: string;
+                }) => string;
+            };
+            user_id: {
+                type: "number";
+                required: true;
+            };
+            ttl: {
+                type: "number";
+                default: () => number;
+            };
+        }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
+            id: {
+                type: "string";
+                default: () => string;
+            };
+            scope: {
+                type: "string";
+                required: true;
+            };
+            pk: {
+                partitionKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
+                    id: string;
+                }) => string;
+            };
+            sk: {
+                sortKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
+                    id: string;
+                }) => string;
+            };
+            user_id: {
+                type: "number";
+                required: true;
+            };
+            ttl: {
+                type: "number";
+                default: () => number;
+            };
+        }, true, "created", "modified", "entity", false>, {
+            id?: string | undefined;
+            ttl?: number | undefined;
+            created: string;
+            modified: string;
+            entity: string;
+            user_id: number;
+            pk: string;
+            sk: string;
+            scope: string;
+        }, {
+            id?: string | undefined;
+            ttl?: number | undefined;
+            created: string;
+            modified: string;
+            entity: string;
+            user_id: number;
+            pk: string;
+            sk: string;
+            scope: string;
+        }, {
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            id?: string | undefined;
+            sk: string;
+        } | {
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        }>;
+        mockGhUser: Entity<"MockGhUser", undefined, undefined, undefined, true, true, true, "created_at", "modified_at", "entity", false, {
+            readonly id: {
+                readonly type: "number";
+                readonly required: true;
+            };
+            readonly login: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly name: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly avatar_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly html_url: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly dependsOn: readonly ["id"];
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
+        }, {
+            id: {
+                type: "number";
+                required: true;
+            };
+            login: {
+                type: "string";
+                required: true;
+            };
+            name: {
+                type: "string";
+                required: true;
+            };
+            avatar_url: {
+                type: "string";
+                required: true;
+            };
+            html_url: {
+                type: "string";
+                required: true;
+            };
+            pk: {
+                partitionKey: true;
+                type: "string";
+                default: () => string;
+            };
+            sk: {
+                sortKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
+                    id: string;
+                }) => string;
+            };
+        }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
+            id: {
+                type: "number";
+                required: true;
+            };
+            login: {
+                type: "string";
+                required: true;
+            };
+            name: {
+                type: "string";
+                required: true;
+            };
+            avatar_url: {
+                type: "string";
+                required: true;
+            };
+            html_url: {
+                type: "string";
+                required: true;
+            };
+            pk: {
+                partitionKey: true;
+                type: "string";
+                default: () => string;
+            };
+            sk: {
+                sortKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
+                    id: string;
+                }) => string;
+            };
+        }, true, "created_at", "modified_at", "entity", false>, {
+            name: string;
+            entity: string;
+            id: number;
+            pk: string;
+            sk: string;
+            avatar_url: string;
+            modified_at: string;
+            created_at: string;
+            login: string;
+            html_url: string;
+        }, {
+            name: string;
+            entity: string;
+            id: number;
+            pk: string;
+            sk: string;
+            avatar_url: string;
+            modified_at: string;
+            created_at: string;
+            login: string;
+            html_url: string;
         }, {
             pk?: string | undefined;
-            sk?: string | undefined;
+            sk: string;
+        } | {
+            pk?: string | undefined;
+            id: number;
+        } | {
+            pk?: string | undefined;
+            sk: string;
+        } | {
+            pk?: string | undefined;
+            id: number;
         }>;
     };
     constructor(props: {

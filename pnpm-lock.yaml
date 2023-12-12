@@ -152,6 +152,9 @@ importers:
       '@spencerduballcom/db':
         specifier: workspace:^
         version: link:../db
+      axios:
+        specifier: ^1.6.2
+        version: 1.6.2
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0

@@ -1,64 +1,105 @@
 import { Form, useLoaderData } from "@remix-run/react";
-import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
-import { logRequest } from "~/lib/util/utilities.server";
+import { redirect, type LoaderFunctionArgs, type ActionFunctionArgs, json } from "@remix-run/node";
+import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
 import { Config } from "sst/node/config";
 import { pg } from "~/lib/util/utilities.server";
 import { sql } from "kysely";
-import { z } from "zod";
+import { ZodError, z } from "zod";
 import * as Avatar from "@radix-ui/react-avatar";
-import { Button } from "~/lib/ui/button";
+import { IconButton } from "~/lib/ui/button";
+import { RiLoginCircleLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { ZJsonString } from "~/lib/util/client";
+import { ZMockGhUser, ZOAuthOTC } from "@spencerduballcom/db/ddb";
 
-const users = [
-  {
-    id: 1,
-    username: "mamta_verma",
-    name: "Mamta Verma",
-    avatar_url:
-      "https://dev-spencerduballcom-appstack-bucketd7feb781-uqu5hr97ecal.s3.amazonaws.com/mocks/users/1/avatar.png",
-    github_url: "https://api.github.com/users/mamta_verma",
-    roles: ["admin"],
-  },
-  {
-    id: 2,
-    username: "shiny_banana",
-    name: "Shiny Banana",
-    avatar_url:
-      "https://dev-spencerduballcom-appstack-bucketd7feb781-uqu5hr97ecal.s3.amazonaws.com/mocks/users/2/avatar.png",
-    github_url: "https://api.github.com/users/shiny_banana",
-    roles: ["admin"],
-  },
-  {
-    id: 3,
-    username: "micro_flan",
-    name: "Micro Flan",
-    avatar_url:
-      "https://dev-spencerduballcom-appstack-bucketd7feb781-uqu5hr97ecal.s3.amazonaws.com/mocks/users/3/avatar.png",
-    github_url: "https://api.github.com/users/shiny_banana",
-    roles: [],
-  },
-  {
-    id: 4,
-    username: "textured_tortoise",
-    name: "Textured Toroise",
-    avatar_url:
-      "https://dev-spencerduballcom-appstack-bucketd7feb781-uqu5hr97ecal.s3.amazonaws.com/mocks/users/4/avatar.png",
-    github_url: "https://api.github.com/users/textured_tortoise",
-    roles: [],
-  },
-];
+const ZSearch = z.object({
+  client_id: z.string(),
+  redirect_uri: z.string(),
+  scope: z.string(),
+  state: ZJsonString.pipe(z.object({ id: z.string(), redirect_uri: z.string() })),
+});
+const ZFormData = z.object({ search: ZJsonString.pipe(ZSearch), user_id: z.coerce.number() });
 
-const ZSearch = z.object({ client_id: z.string(), redirect_uri: z.string(), scope: z.string(), state: z.string() });
+export async function action({ request }: ActionFunctionArgs) {
+  const log = logger();
+  await logRequest(log, request);
+
+  // parse the form data
+  let data: z.infer<typeof ZFormData>;
+  try {
+    log.info("Parsing the form data ...");
+    data = ZFormData.parse(Object.fromEntries(await request.formData()));
+    log.info("Success: Parsed valid form data.");
+  } catch (e) {
+    if (e instanceof ZodError) {
+      log.info("Failure: Did not receive valid form data.");
+      log.info(e);
+      return json({ message: e.message }, { status: 400 });
+    } else {
+      log.error("Failure: Did not receive valid form data.");
+      log.error(e);
+      return json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+    }
+  }
+
+  // Validate the Client ID Matches
+  // ------------------------------
+  // Validate that the client_id matches our client credentials. If it doesn't then this response could be coming
+  // from an app other than ours.
+  if (Config.GITHUB_CLIENT_ID !== data.search.client_id) throw redirect(data.search.state.redirect_uri);
+
+  // Check for the User in DB
+  // ------------------------
+  // Even though we are mocking the user and not validating credentials, we should check that the user actually exists.
+  // If we don't then other parts of the app may break or work incorrectly.
+  const user = await pg().selectFrom("users").where("id", "=", data.user_id).select("id").executeTakeFirst();
+  if (!user) return json({ message: "User does not exist in the database." }, { status: 400 });
+
+  // Issue the OTC
+  // -------------
+  // By checking the user exists we have simulated validating the user's credentials as Github would. Now we can issue
+  // an OTC which the user may exchange for an access_token. First we will create the OTC in the database here.
+  let otc: z.infer<typeof ZOAuthOTC>;
+  try {
+    log.info("Creating the OTC for the user in ddb ...");
+    otc = await ddb()
+      .entities.oauthOTC.update({ user_id: user.id, scope: data.search.scope }, { returnValues: "ALL_NEW" })
+      .then(({ Attributes }) => ZOAuthOTC.parse(Attributes));
+    log.info("Success: Created the OTC for the user in ddb.");
+  } catch (e) {
+    if (e instanceof ZodError) {
+      log.info("Failure: Failed to create the OTC record.");
+      log.info(e);
+      return json({ message: e.message }, { status: 400 });
+    } else {
+      log.error("Failure: Failed to create the OTC record.");
+      log.error(e);
+      return json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+    }
+  }
+
+  // Redirect User with OTC
+  // ----------------------
+  // We have successfully validated the user, now we can redirect the user to the redirect_uri to finish authorizing
+  // with the newly created OTC.
+  log.info("Redirecting to redirect_uri ...");
+  const search = new URLSearchParams({ state: JSON.stringify(data.search.state), code: otc.id });
+  return redirect(`${data.search.redirect_uri}?${search.toString()}`);
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await logRequest(request);
+  const log = logger();
+  await logRequest(log, request);
 
   // IMPORTANT!
   // ----------
   // If we are in a production environment, we do NOT want users to be able to access this mocked github oauth
   // endpoint. We want this page to be invisible to public users. Also if we are in any other environment that
   // does not have MOCKS_ENABLED we want to hide this page.
-  if (Config.STAGE === "prod" || Config.MOCKS_ENABLED !== "TRUE")
+  if (Config.STAGE === "prod" || Config.MOCKS_ENABLED !== "TRUE") {
+    if (Config.STAGE === "prod") log.info("In 'prod' environment, cannot use mocks here.");
+    else log.info("Mocks are not enabled, check the MOCKS_ENABLED environment variable.");
     throw new Response(null, { status: 404, statusText: "Not Found" });
+  }
 
   // Ensure Required Search Params
   // -----------------------------
@@ -67,34 +108,69 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // state code, or back to "/". We could check for these items in the browser, but we have all the data we need
   // in the HTTP request. Plus it's easier to just redirect from here rather than hitting the database and sending
   // a 200 response.
-  const url = new URL(request.url);
-  const search = await ZSearch.parseAsync(Object.fromEntries(new URLSearchParams(url.search))).catch(() => {
-    if (url.searchParams.has("redirect_uri")) throw redirect(url.searchParams.get("redirect_uri")!);
-    else throw redirect("/");
-  });
+  let search: z.infer<typeof ZSearch>;
+  try {
+    log.info("Parsing the search parameters ...");
+    const url = new URL(request.url);
+    search = ZSearch.parse(Object.fromEntries(new URLSearchParams(url.search)));
+    log.info("Success: Parsed the search parameters successfully.");
+  } catch (e) {
+    log.info("Failure: Required search params are not present.");
+    log.info(e);
+    try {
+      const url = new URL(request.url);
+      const { redirect_uri } = ZSearch.shape.state.parse(url.searchParams.get("state"));
+      throw redirect(redirect_uri);
+    } catch (e) {}
+    throw redirect("/");
+  }
 
   // get the possible database users that the requester could assume
-  // const users = await pg()
-  //   .selectFrom("users")
-  //   .leftJoin("user_roles", "users.id", "user_roles.user_id")
-  //   .select([
-  //     "id",
-  //     "username",
-  //     "name",
-  //     "avatar_url",
-  //     "github_url",
-  //     // sql<string[]>`coalesce(array_agg(user_roles.role_id) filter (where user_roles.role_id is not null), '{}')`.as(
-  //     sql<string[]>`array_remove(array_agg(user_roles.role_id), NULL)`.as("roles"),
-  //   ])
-  //   .groupBy("users.id")
-  //   .execute();
-  // users.sort((a, b) => a.id - b.id);
+  log.info("Retrieving all users ...");
+  const users = await pg()
+    .selectFrom("users")
+    .leftJoin("user_roles", "users.id", "user_roles.user_id")
+    .select([
+      "id",
+      "username",
+      "name",
+      "avatar_url",
+      "github_url",
+      sql<string[]>`array_remove(array_agg(user_roles.role_id), NULL)`.as("roles"),
+    ])
+    .groupBy("users.id")
+    .execute()
+    .catch((e) => {
+      log.error("Failure: There was an issue retrieving the users from the database.");
+      log.error(e);
+      throw json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+    });
+  users.sort((curr, prev) => curr.id - prev.id);
+  log.info("Success: Retrieved all users.");
 
-  return { users, search };
+  // Get Mock Github Users
+  // ---------------------
+  // We can get the entire set of mock github users which will allow us to test the signin flow too. After getting all
+  // the mock users, filter the existing users from the list.
+  // (1) get the mock users
+  let ghUsers = await ddb()
+    .entities.mockGhUser.query("mock_gh_user")
+    .then(async ({ Items }) => ZMockGhUser.array().parseAsync(Items))
+    .catch((e) => {
+      log.error("Failure: Getting mock db users failed.", e);
+      throw json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+    });
+
+  // (2) filter the useres
+  const existingUserIds = users.map((users) => users.id);
+  ghUsers = ghUsers.filter(({ id }) => !existingUserIds.includes(id));
+  ghUsers.sort((curr, next) => curr.id - next.id);
+
+  return { users, ghUsers, search };
 }
 
 export default function Authorize() {
-  const { users, search } = useLoaderData<typeof loader>();
+  const { users, ghUsers, search } = useLoaderData<typeof loader>();
 
   return (
     <main className="grid w-full justify-items-center">
@@ -106,18 +182,17 @@ export default function Authorize() {
             Click on one of the options to sign in, you can assume the person for testing and development 😃
           </p>
         </section>
-        <span>{JSON.stringify(users)}</span>
-        <span>{JSON.stringify(search)}</span>
         {/* User Selection */}
         <Form method="post">
           <input type="hidden" name="search" value={JSON.stringify(search)} />
+          <h2 className="text-3xl font-bold text-blue-11 py-4">Existing Users</h2>
           <div className="flex flex-wrap gap-4">
             {users.map((user) => (
               <div
                 key={user.id.toString()}
-                className="p-4 bg-slate-2 border-slate-6 shadow-md rounded-md hover:scale-105 hover:shadow-lg transition-all grid grid-flow-col gap-4 w-80 auto-cols-max"
+                className="p-4 bg-slate-2 border-slate-4 rounded-md grid grid-flow-col gap-4 w-80 grid-cols-[max-content_1fr_max-content] border"
               >
-                <Avatar.Root className="text-md relative flex h-24 w-24 md:h-32 md:w-32 overflow-hidden rounded-full ">
+                <Avatar.Root className="text-md relative flex h-16 w-16 overflow-hidden rounded-full">
                   <Avatar.Image
                     className="aspect-square h-full w-full"
                     src={user.avatar_url}
@@ -130,10 +205,50 @@ export default function Authorize() {
                 <div className="grid content-center auto-rows-max">
                   <p className="leading-tight text-lg font-semibold">{user.name}</p>
                   <p>{user.roles}</p>
-                  <Button type="submit" colorScheme="slate" size="xs">
-                    Sign In
-                  </Button>
                 </div>
+                <IconButton
+                  type="submit"
+                  name="user_id"
+                  value={user.id}
+                  aria-label="sign in"
+                  variant="subtle"
+                  size="md"
+                  icon={<RiLoginCircleLine />}
+                  className="self-center justify-self-end"
+                />
+              </div>
+            ))}
+          </div>
+          <h2 className="text-3xl font-bold text-purple-11 py-4 mt-4">Non-Existing Users</h2>
+          <div className="flex flex-wrap gap-4">
+            {ghUsers.map((user) => (
+              <div
+                key={user.id.toString()}
+                className="p-4 bg-slate-2 border-slate-4 rounded-md grid grid-flow-col gap-4 w-80 grid-cols-[max-content_1fr_max-content] border"
+              >
+                <Avatar.Root className="text-md relative flex h-16 w-16 overflow-hidden rounded-full">
+                  <Avatar.Image
+                    className="aspect-square h-full w-full"
+                    src={user.avatar_url}
+                    alt={`A profile photo of ${user.name}`}
+                  />
+                  <Avatar.Fallback className="flex h-full w-full items-center justify-center rounded-full bg-slate-3">
+                    {user.name}
+                  </Avatar.Fallback>
+                </Avatar.Root>
+                <div className="grid content-center auto-rows-max">
+                  <p className="leading-tight text-lg font-semibold">{user.name}</p>
+                </div>
+                <IconButton
+                  type="submit"
+                  name="user_id"
+                  value={user.id}
+                  aria-label="sign in"
+                  variant="subtle"
+                  size="md"
+                  icon={<RiLoginCircleLine />}
+                  className="self-center justify-self-end"
+                />
               </div>
             ))}
           </div>

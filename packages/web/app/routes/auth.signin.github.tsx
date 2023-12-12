@@ -4,7 +4,8 @@ import { Config } from "sst/node/config";
 import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await logRequest(request);
+  const log = logger();
+  await logRequest(log, request);
 
   // if a 'redirect_uri' was specified in the request, capture it
   const search = new URL(request.url).searchParams;

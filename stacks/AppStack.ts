@@ -85,7 +85,7 @@ export function AppStack({ app, stack }: StackContext) {
 
   // define the resources (subpaths) in the bucket that are to be made public
   const publicBucketPaths = [`${bucket.bucketArn}/blog/*`];
-  if (app.stage !== "prod") publicBucketPaths.push(`${bucket.bucketArn}/mocks/*`);
+  if (app.stage !== "prod") publicBucketPaths.push(`${bucket.bucketArn}/mock/*`);
 
   // add permissions for public files
   bucket.cdk.bucket.addToResourcePolicy(

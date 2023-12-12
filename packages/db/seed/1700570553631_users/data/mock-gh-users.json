@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "login": "mamta_verma",
+    "name": "Mamta Verma",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/1/avatar.png",
+    "html_url": "https://api.github.com/users/mamta_verma",
+    "created_at": "2002-05-30T15:40:04.430Z",
+    "modified_at": "2002-05-30T15:40:04.430Z"
+  },
+  {
+    "id": 2,
+    "login": "shiny_banana",
+    "name": "Shiny Banana",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/2/avatar.png",
+    "html_url": "https://api.github.com/users/shiny_banana",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 3,
+    "login": "micro_flan",
+    "name": "Micro Flan",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/3/avatar.png",
+    "html_url": "https://api.github.com/users/shiny_banana",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 4,
+    "login": "textured_tortoise",
+    "name": "Textured Toroise",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/4/avatar.png",
+    "html_url": "https://api.github.com/users/textured_tortoise",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 5,
+    "login": "harry_potter",
+    "name": "Harry Potter",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/5/avatar.png",
+    "html_url": "https://api.github.com/users/harry_potter",
+    "created_at": "2002-05-30T15:40:04.430Z",
+    "modified_at": "2002-05-30T15:40:04.430Z"
+  },
+  {
+    "id": 6,
+    "login": "twirly_mustache",
+    "name": "Twirly Mustache",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/6/avatar.png",
+    "html_url": "https://api.github.com/users/twirly_mustache",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 7,
+    "login": "super_sweden",
+    "name": "Super Sweden",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/7/avatar.png",
+    "html_url": "https://api.github.com/users/super_sweden",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 8,
+    "login": "ron_weasley",
+    "name": "Ron Weasley",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/8/avatar.png",
+    "html_url": "https://api.github.com/users/ron_weasley",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 9,
+    "login": "wide_fro",
+    "name": "Wide Fro",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/9/avatar.png",
+    "html_url": "https://api.github.com/users/wide_fro",
+    "created_at": "2002-05-30T15:40:04.430Z",
+    "modified_at": "2002-05-30T15:40:04.430Z"
+  },
+  {
+    "id": 10,
+    "login": "florida_woman",
+    "name": "Florida Woman",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/10/avatar.png",
+    "html_url": "https://api.github.com/users/",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 11,
+    "login": "old_nerd",
+    "name": "Old Nerd",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/11/avatar.png",
+    "html_url": "https://api.github.com/users/florida_woman",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 12,
+    "login": "christian_bale",
+    "name": "Christian Bale",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/12/avatar.png",
+    "html_url": "https://api.github.com/users/old_nerd",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 13,
+    "login": "refried_stache",
+    "name": "Refried Stache",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/13/avatar.png",
+    "html_url": "https://api.github.com/users/refried_stache",
+    "created_at": "2002-05-30T15:40:04.430Z",
+    "modified_at": "2002-05-30T15:40:04.430Z"
+  },
+  {
+    "id": 14,
+    "login": "netflix_lady",
+    "name": "Netflix Lady",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/14/avatar.png",
+    "html_url": "https://api.github.com/users/netflix_lady",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 15,
+    "login": "dino_lady",
+    "name": "Dino Lady",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/15/avatar.png",
+    "html_url": "https://api.github.com/users/dino_lady",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 16,
+    "login": "dax_raad",
+    "name": "Dax Raad",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/16/avatar.png",
+    "html_url": "https://api.github.com/users/dax_raad",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 17,
+    "login": "single_scoop",
+    "name": "Single Scoop",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/17/avatar.png",
+    "html_url": "https://api.github.com/users/single_scoop",
+    "created_at": "2002-05-30T15:40:04.430Z",
+    "modified_at": "2002-05-30T15:40:04.430Z"
+  },
+  {
+    "id": 18,
+    "login": "sandy_cheeks",
+    "name": "Sandy Cheeks",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/18/avatar.png",
+    "html_url": "https://api.github.com/users/sandy_cheeks",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 19,
+    "login": "imma_fed",
+    "name": "Imma Fed",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/19/avatar.png",
+    "html_url": "https://api.github.com/users/imma_fed",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  },
+  {
+    "id": 20,
+    "login": "bed_head",
+    "name": "Bed Head",
+    "avatar_url": "{{S3_BUCKET}}/mock/users/20/avatar.png",
+    "html_url": "https://api.github.com/users/bed_head",
+    "created_at": "2002-06-06T15:40:04.430Z",
+    "modified_at": "2002-06-06T15:40:04.430Z"
+  }
+]
