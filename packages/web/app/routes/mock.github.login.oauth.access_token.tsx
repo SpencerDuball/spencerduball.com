@@ -33,8 +33,8 @@ export async function action({ request }: ActionFunctionArgs) {
   // If a header of { Accept: "application/json" } is not passed to Github in exchange for an access_token then a
   // format other than JSON will be supplied. Check for this in the MOCK to prevent any surprises in the actual API.
   log.info("Checking for 'Accept' header ...");
-  if (request.headers.get("Accept") === "application/json") {
-    log.info("Failure: { Accept: 'application/json' } not supplied.");
+  if (request.headers.get("Accept") !== "application/json") {
+    log.info(request.headers, "Failure: { Accept: 'application/json' } not supplied.");
     return json(
       { message: "WARNING: 'Accept' header is missing and will cause issues with actual Github API." },
       { status: 500 }
@@ -66,6 +66,7 @@ export async function action({ request }: ActionFunctionArgs) {
     log.info("Success: Retrieved the OTC from the database.");
   } catch (e) {
     log.info("Failure: The OTC does not exist in the database.");
+    log.info(e);
     return json({ message: "The OTC did not exist, aborting signin." }, { status: 400 });
   }
 

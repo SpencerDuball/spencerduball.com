@@ -29,10 +29,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     );
   logger().info("Success: Created the oauth_state_code.");
 
-  // collect the oauth search parameters
+  // Collect Search Parameters
+  // -------------------------
   const params = new URLSearchParams();
   params.append("client_id", Config.GITHUB_CLIENT_ID);
-  params.append("redirect_uri", Config.SITE_URL);
+  params.append("redirect_uri", "/auth/callback/github");
   params.append("scope", "user");
   params.append("state", stateCode.code);
 
@@ -42,5 +43,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // and allows local dev and even staging environments to assume roles.
   const authorizePath =
     Config.MOCKS_ENABLED === "TRUE" ? `/mock/github/login/oauth/authorize` : `https://github.com/login/oauth/authorize`;
+
   return redirect(`${authorizePath}?${params.toString()}`);
 };

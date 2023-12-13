@@ -17,7 +17,10 @@ const ZSearch = z.object({
   scope: z.string(),
   state: ZJsonString.pipe(z.object({ id: z.string(), redirect_uri: z.string() })),
 });
-const ZFormData = z.object({ search: ZJsonString.pipe(ZSearch), user_id: z.coerce.number() });
+const ZFormData = z.object({
+  search: ZJsonString.pipe(ZSearch.extend({ state: z.object({ id: z.string(), redirect_uri: z.string() }) })),
+  user_id: z.coerce.number(),
+});
 
 export async function action({ request }: ActionFunctionArgs) {
   const log = logger();
@@ -27,6 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
   let data: z.infer<typeof ZFormData>;
   try {
     log.info("Parsing the form data ...");
+    log.info(Object.fromEntries(await request.clone().formData()));
     data = ZFormData.parse(Object.fromEntries(await request.formData()));
     log.info("Success: Parsed valid form data.");
   } catch (e) {

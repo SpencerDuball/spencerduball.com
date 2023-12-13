@@ -85,7 +85,7 @@
     "login": "florida_woman",
     "name": "Florida Woman",
     "avatar_url": "{{S3_BUCKET}}/mock/users/10/avatar.png",
-    "html_url": "https://api.github.com/users/",
+    "html_url": "https://api.github.com/users/florida_woman",
     "created_at": "2002-06-06T15:40:04.430Z",
     "modified_at": "2002-06-06T15:40:04.430Z"
   },
@@ -94,7 +94,7 @@
     "login": "old_nerd",
     "name": "Old Nerd",
     "avatar_url": "{{S3_BUCKET}}/mock/users/11/avatar.png",
-    "html_url": "https://api.github.com/users/florida_woman",
+    "html_url": "https://api.github.com/users/old_nerd",
     "created_at": "2002-06-06T15:40:04.430Z",
     "modified_at": "2002-06-06T15:40:04.430Z"
   },
@@ -103,16 +103,16 @@
     "login": "christian_bale",
     "name": "Christian Bale",
     "avatar_url": "{{S3_BUCKET}}/mock/users/12/avatar.png",
-    "html_url": "https://api.github.com/users/old_nerd",
+    "html_url": "https://api.github.com/users/christian_bale",
     "created_at": "2002-06-06T15:40:04.430Z",
     "modified_at": "2002-06-06T15:40:04.430Z"
   },
   {
     "id": 13,
-    "login": "refried_stache",
-    "name": "Refried Stache",
+    "login": "tan_stache",
+    "name": "Tan Stache",
     "avatar_url": "{{S3_BUCKET}}/mock/users/13/avatar.png",
-    "html_url": "https://api.github.com/users/refried_stache",
+    "html_url": "https://api.github.com/users/tan_stache",
     "created_at": "2002-05-30T15:40:04.430Z",
     "modified_at": "2002-05-30T15:40:04.430Z"
   },

@@ -43,7 +43,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // (1) Retrieve the oauth_state_code
   log.info("Retrieving the oauth_state_code from the database ...");
   const oauthStateCode = await ddb()
-    .entities.oauthOTC.get({ pk: `oauth_otc#${search.code}`, sk: `oauth_otc#${search.code}` })
+    .entities.oauthOTC.get({ pk: `oauth_state_code#${search.state.id}`, sk: `oauth_state_code#${search.state.id}` })
     .catch((e) => {
       log.error("Failure: There was an issue querying the database.");
       log.error(e);
@@ -53,18 +53,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       if (!Item) {
         log.info("Failure: The oauth_state_code did not exist in the database.");
         throw redirect(search.state.redirect_uri);
-      } else
+      } else {
         return ZOAuthStateCode.parseAsync(Item).catch((e) => {
           log.error("Failure: The oauth_state_code did not match the expected output.");
           log.error(e);
           throw redirect(search.state.redirect_uri);
         });
+      }
     });
   log.info("Success: Retrieved the oauth_state_code from the database.");
 
   // (2) Ensure the oauth_state_code matches the state from the search params.
   log.info("Validating the oauth_state_code matches ...");
-  if (oauthStateCode.code !== search.code) {
+  if (oauthStateCode.code !== JSON.stringify(search.state)) {
     log.info("Failure: The oauth_state_codes did not match.");
     throw redirect(search.state.redirect_uri);
   }
@@ -76,18 +77,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const ZAccessTokenRes = z.object({ access_token: z.string(), scope: z.string(), token_type: z.string() });
 
   let accessTokenUrl: string;
-  if (Config.MOCKS_ENABLED) accessTokenUrl = "/mocks/github/login/oauth/access_token";
+  if (Config.MOCKS_ENABLED)
+    accessTokenUrl = new URL("/mock/github/login/oauth/access_token?_data", Config.SITE_URL).href;
   else accessTokenUrl = "https://github.com/login/oauth/access_token";
 
   // retrieve the access_token
   log.info("Requesting access_token from Github ...");
-  const accessTokenBody = {
+  const accessTokenData = {
     client_id: Config.GITHUB_CLIENT_ID,
     client_secret: Config.GITHUB_CLIENT_SECRET,
     code: search.code,
   };
+  const accessTokenFormData = new FormData();
+  for (let [k, v] of Object.entries(accessTokenData)) accessTokenFormData.append(k, v);
   const { access_token, token_type } = await axios
-    .post(accessTokenUrl, accessTokenBody, {
+    .post(accessTokenUrl, accessTokenFormData, {
       headers: { Accept: "application/json" },
     })
     .catch((e) => {
@@ -116,7 +120,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
 
   let userInfoUrl: string;
-  if (Config.MOCKS_ENABLED) userInfoUrl = "/mocks/api-github/user";
+  if (Config.MOCKS_ENABLED) userInfoUrl = new URL("/mock/api-github/user?_data", Config.SITE_URL).href;
   else userInfoUrl = "https://api.github.com/user";
 
   // retrieve the userinfo
@@ -143,4 +147,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       github_url,
     }));
   log.info("Success: Retrieved the userinfo from Github.");
+
+  log.info("LOOK MOM WE DID IT!");
+  log.info(userInfo);
 };

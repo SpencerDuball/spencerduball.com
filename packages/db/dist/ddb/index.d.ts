@@ -300,7 +300,7 @@ export declare const ZOAuthAccessToken: z.ZodObject<{
     scope: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
-    user_id: z.ZodString;
+    user_id: z.ZodNumber;
     modified: z.ZodString;
     created: z.ZodString;
     entity: z.ZodString;
@@ -308,7 +308,7 @@ export declare const ZOAuthAccessToken: z.ZodObject<{
     created: string;
     modified: string;
     entity: string;
-    user_id: string;
+    user_id: number;
     id: string;
     pk: string;
     sk: string;
@@ -317,7 +317,7 @@ export declare const ZOAuthAccessToken: z.ZodObject<{
     created: string;
     modified: string;
     entity: string;
-    user_id: string;
+    user_id: number;
     id: string;
     pk: string;
     sk: string;

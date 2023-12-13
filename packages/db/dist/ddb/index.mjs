@@ -130,7 +130,7 @@ export const ZOAuthAccessToken = z.object({
     scope: z.string(),
     pk: z.string(),
     sk: z.string(),
-    user_id: z.string(),
+    user_id: z.number(),
     modified: z.string(),
     created: z.string(),
     entity: z.string(),

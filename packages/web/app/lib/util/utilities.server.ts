@@ -76,6 +76,5 @@ export async function logRequest(logger: Logger, request: Request) {
     `Headers: ${await format(JSON.stringify(Object.fromEntries(req.headers.entries())), { parser: "json" })}`
   );
   logger.info(`Body:\n${await req.text().catch((e) => "No body text.")}`);
-  logger.info(`JSON:\n${await req.json().catch((e) => "No body json.")}`);
   logger.info("----- END REQUEST INFO -----");
 }
