@@ -1,6 +1,7 @@
 import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
 import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 import { Config } from "sst/node/config";
+import { ZodError } from "zod";
 import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -12,22 +13,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const redirect_uri = search.has("redirect_uri") ? search.get("redirect_uri")! : "/";
 
   // create a state code
-  logger().info("Creating the oauth_state_code in the database ...");
+  log.info("Creating the oauth_state_code in the database ...");
   const stateCode = await ddb()
     .entities.oauthStateCode.update({ redirect_uri }, { returnValues: "ALL_NEW" })
+    .then(async ({ Attributes }) => ZOAuthStateCode.parseAsync(Attributes))
     .catch((e) => {
-      logger().error("There was an issue querying the database.");
-      logger().error(e);
-      throw redirect(redirect_uri);
-    })
-    .then(async ({ Attributes }) =>
-      ZOAuthStateCode.parseAsync(Attributes).catch((e) => {
-        logger().error("The oauth_state_code did not match the expected output.");
-        logger().error(e);
+      if (e instanceof ZodError) {
+        log.error(e, "The oauth_state_code did not match the expected output.");
         throw redirect(redirect_uri);
-      })
-    );
-  logger().info("Success: Created the oauth_state_code.");
+      }
+      log.error(e, "There was an issue writing to the database.");
+      throw redirect(redirect_uri);
+    });
+  log.info("Success: Created the oauth_state_code.");
 
   // Collect Search Parameters
   // -------------------------

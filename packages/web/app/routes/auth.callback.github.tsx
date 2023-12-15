@@ -25,8 +25,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     search = ZSearch.parse(Object.fromEntries(new URLSearchParams(url.search)));
     log.info("Success: Parsed the search parameters successfully.");
   } catch (e) {
-    log.info("Failure: Required search params are not present.");
-    log.info(e);
+    log.info(e, "Failure: Required search params are not present.");
     try {
       const url = new URL(request.url);
       const { redirect_uri } = ZSearch.shape.state.parse(url.searchParams.get("state"));
@@ -45,8 +44,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const oauthStateCode = await ddb()
     .entities.oauthOTC.get({ pk: `oauth_state_code#${search.state.id}`, sk: `oauth_state_code#${search.state.id}` })
     .catch((e) => {
-      log.error("Failure: There was an issue querying the database.");
-      log.error(e);
+      log.error(e, "Failure: There was an issue querying the database.");
       throw json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
     })
     .then(async ({ Item }) => {
@@ -55,8 +53,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         throw redirect(search.state.redirect_uri);
       } else {
         return ZOAuthStateCode.parseAsync(Item).catch((e) => {
-          log.error("Failure: The oauth_state_code did not match the expected output.");
-          log.error(e);
+          log.error(e, "Failure: The oauth_state_code did not match the expected output.");
           throw redirect(search.state.redirect_uri);
         });
       }
@@ -95,14 +92,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       headers: { Accept: "application/json" },
     })
     .catch((e) => {
-      log.info("Failure: Request to Github failed.");
-      log.info(e);
+      log.info(e, "Failure: Request to Github failed.");
       throw redirect(search.state.redirect_uri);
     })
     .then(async ({ data }) => ZAccessTokenRes.parseAsync(data))
     .catch((e) => {
-      log.error("Failure: Response from Github did not match expected schema.");
-      log.error(e);
+      log.error(e, "Failure: Response from Github did not match expected schema.");
       throw redirect(search.state.redirect_uri);
     });
   log.info("Success: Retrieved the access_token from Github.");
@@ -128,14 +123,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userInfo = await axios
     .get(userInfoUrl, { headers: { Authorization: `${token_type} ${access_token}` } })
     .catch((e) => {
-      log.error("Failure: There was an error retrieveing the userinfo from Github.");
-      log.error(e);
+      log.error(e, "Failure: There was an error retrieveing the userinfo from Github.");
       throw redirect(search.state.redirect_uri);
     })
     .then(({ data }) =>
       ZGithubUserInfo.parseAsync(data).catch((e) => {
-        log.error("Failure: Response from Github did not match expected schema.");
-        log.error(e);
+        log.error(e, "Failure: Response from Github did not match expected schema.");
         throw redirect(search.state.redirect_uri);
       })
     )

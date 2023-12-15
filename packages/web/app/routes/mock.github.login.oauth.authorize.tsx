@@ -26,68 +26,83 @@ export async function action({ request }: ActionFunctionArgs) {
   const log = logger();
   await logRequest(log, request);
 
-  // parse the form data
-  let data: z.infer<typeof ZFormData>;
-  try {
-    log.info("Parsing the form data ...");
-    log.info(Object.fromEntries(await request.clone().formData()));
-    data = ZFormData.parse(Object.fromEntries(await request.formData()));
-    log.info("Success: Parsed valid form data.");
-  } catch (e) {
-    if (e instanceof ZodError) {
-      log.info("Failure: Did not receive valid form data.");
-      log.info(e);
-      return json({ message: e.message }, { status: 400 });
-    } else {
-      log.error("Failure: Did not receive valid form data.");
-      log.error(e);
-      return json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
-    }
+  // IMPORTANT!
+  // ----------
+  // If we are in a production environment, we do NOT want users to be able to access this mocked github oauth
+  // endpoint. We want this page to be invisible to public users. Also if we are in any other environment that
+  // does not have MOCKS_ENABLED we want to hide this page.
+  if (Config.STAGE === "prod" || Config.MOCKS_ENABLED !== "TRUE") {
+    if (Config.STAGE === "prod") log.info("In 'prod' environment, cannot use mocks here.");
+    else log.info("Mocks are not enabled, check the MOCKS_ENABLED environment variable.");
+    throw new Response(null, { status: 404, statusText: "Not Found" });
   }
 
-  // Validate the Client ID Matches
-  // ------------------------------
-  // Validate that the client_id matches our client credentials. If it doesn't then this response could be coming
-  // from an app other than ours.
-  if (Config.GITHUB_CLIENT_ID !== data.search.client_id) throw redirect(data.search.state.redirect_uri);
+  switch (request.method) {
+    case "POST": {
+      // parse the form data
+      let data: z.infer<typeof ZFormData>;
+      try {
+        const formData = await request.formData();
+        log.info(formData, "Parsing the form data ...");
+        data = ZFormData.parse(Object.fromEntries(formData));
+        log.info("Success: Parsed valid form data.");
+      } catch (e) {
+        if (e instanceof ZodError) {
+          log.info(e, "Failure: Did not receive valid form data.");
+          return json({ message: e.message }, { status: 400 });
+        } else {
+          log.error(e, "Failure: There was an issue processing the request.");
+          return json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+        }
+      }
 
-  // Check for the User in DB
-  // ------------------------
-  // Even though we are mocking the user and not validating credentials, we should check that the user actually exists.
-  // If we don't then other parts of the app may break or work incorrectly.
-  const user = await pg().selectFrom("users").where("id", "=", data.user_id).select("id").executeTakeFirst();
-  if (!user) return json({ message: "User does not exist in the database." }, { status: 400 });
+      // Validate the Client ID Matches
+      // ------------------------------
+      // Validate that the client_id matches our client credentials. If it doesn't then this response could be coming
+      // from an app other than ours.
+      if (Config.GITHUB_CLIENT_ID !== data.search.client_id) throw redirect(data.search.state.redirect_uri);
 
-  // Issue the OTC
-  // -------------
-  // By checking the user exists we have simulated validating the user's credentials as Github would. Now we can issue
-  // an OTC which the user may exchange for an access_token. First we will create the OTC in the database here.
-  let otc: z.infer<typeof ZOAuthOTC>;
-  try {
-    log.info("Creating the OTC for the user in ddb ...");
-    otc = await ddb()
-      .entities.oauthOTC.update({ user_id: user.id, scope: data.search.scope }, { returnValues: "ALL_NEW" })
-      .then(({ Attributes }) => ZOAuthOTC.parse(Attributes));
-    log.info("Success: Created the OTC for the user in ddb.");
-  } catch (e) {
-    if (e instanceof ZodError) {
-      log.info("Failure: Failed to create the OTC record.");
-      log.info(e);
-      return json({ message: e.message }, { status: 400 });
-    } else {
-      log.error("Failure: Failed to create the OTC record.");
-      log.error(e);
-      return json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+      // Check for the User in DB
+      // ------------------------
+      // Even though we are mocking the user and not validating credentials, we should check that the user actually exists.
+      // If we don't then other parts of the app may break or work incorrectly.
+      const user = await pg().selectFrom("users").where("id", "=", data.user_id).select("id").executeTakeFirst();
+      if (!user) return json({ message: "User does not exist in the database." }, { status: 400 });
+
+      // Issue the OTC
+      // -------------
+      // By checking the user exists we have simulated validating the user's credentials as Github would. Now we can issue
+      // an OTC which the user may exchange for an access_token. First we will create the OTC in the database here.
+      let otc: z.infer<typeof ZOAuthOTC>;
+      try {
+        log.info("Creating the OTC for the user in ddb ...");
+        otc = await ddb()
+          .entities.oauthOTC.update({ user_id: user.id, scope: data.search.scope }, { returnValues: "ALL_NEW" })
+          .then(({ Attributes }) => ZOAuthOTC.parse(Attributes));
+        log.info("Success: Created the OTC for the user in ddb.");
+      } catch (e) {
+        if (e instanceof ZodError) {
+          log.info(e, "Failure: Failed to create the OTC record.");
+          return json({ message: e.message }, { status: 400 });
+        } else {
+          log.error(e, "Failure: Failed to create the OTC record.");
+          return json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+        }
+      }
+
+      // Redirect User with OTC
+      // ----------------------
+      // We have successfully validated the user, now we can redirect the user to the redirect_uri to finish authorizing
+      // with the newly created OTC.
+      log.info("Redirecting to redirect_uri ...");
+      const search = new URLSearchParams({ state: JSON.stringify(data.search.state), code: otc.id });
+      return redirect(`${data.search.redirect_uri}?${search.toString()}`);
+    }
+    default: {
+      log.info("This method is not allowed, only POST is defined.");
+      throw new Response(null, { status: 405, statusText: "Method Not Allowed" });
     }
   }
-
-  // Redirect User with OTC
-  // ----------------------
-  // We have successfully validated the user, now we can redirect the user to the redirect_uri to finish authorizing
-  // with the newly created OTC.
-  log.info("Redirecting to redirect_uri ...");
-  const search = new URLSearchParams({ state: JSON.stringify(data.search.state), code: otc.id });
-  return redirect(`${data.search.redirect_uri}?${search.toString()}`);
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -119,14 +134,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     search = ZSearch.parse(Object.fromEntries(new URLSearchParams(url.search)));
     log.info("Success: Parsed the search parameters successfully.");
   } catch (e) {
-    log.info("Failure: Required search params are not present.");
-    log.info(e);
+    log.info(e, "Failure: Required search params are not present.");
     try {
       const url = new URL(request.url);
       const { redirect_uri } = ZSearch.shape.state.parse(url.searchParams.get("state"));
       throw redirect(redirect_uri);
-    } catch (e) {}
-    throw redirect("/");
+    } catch (e) {
+      throw redirect("/");
+    }
   }
 
   // get the possible database users that the requester could assume
@@ -145,8 +160,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     .groupBy("users.id")
     .execute()
     .catch((e) => {
-      log.error("Failure: There was an issue retrieving the users from the database.");
-      log.error(e);
+      log.error(e, "Failure: There was an issue retrieving the users from the database.");
       throw json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
     });
   users.sort((curr, prev) => curr.id - prev.id);
@@ -161,7 +175,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     .entities.mockGhUser.query("mock_gh_user")
     .then(async ({ Items }) => ZMockGhUser.array().parseAsync(Items))
     .catch((e) => {
-      log.error("Failure: Getting mock db users failed.", e);
+      log.error(e, "Failure: Getting mock db users failed.");
       throw json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
     });
 

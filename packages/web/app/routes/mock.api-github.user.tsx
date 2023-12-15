@@ -2,12 +2,24 @@ import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
 import { z } from "zod";
 import { ZOAuthAccessToken, type OAuthAccessToken, MockGhUserType, ZMockGhUser } from "@spencerduballcom/db/ddb";
+import { Config } from "sst/node/config";
 
 const ZAuthorizationHeader = z.custom<`Bearer ${string}`>((val: any) => /^Bearer .+$/.test(val));
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const log = logger();
   await logRequest(log, request);
+
+  // IMPORTANT!
+  // ----------
+  // If we are in a production environment, we do NOT want users to be able to access this mocked github oauth
+  // endpoint. We want this page to be invisible to public users. Also if we are in any other environment that
+  // does not have MOCKS_ENABLED we want to hide this page.
+  if (Config.STAGE === "prod" || Config.MOCKS_ENABLED !== "TRUE") {
+    if (Config.STAGE === "prod") log.info("In 'prod' environment, cannot use mocks here.");
+    else log.info("Mocks are not enabled, check the MOCKS_ENABLED environment variable.");
+    throw new Response(null, { status: 404, statusText: "Not Found" });
+  }
 
   // Ensure Required Authorization Header
   // ------------------------------------
@@ -19,8 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     authorization = ZAuthorizationHeader.parse(request.headers.get("Authorization"));
     log.info("Success: The 'Authorization' header is of a valid schema.");
   } catch (e) {
-    log.info("Failure: The 'Authorization' header did not meet the schema.");
-    log.info(e);
+    log.info(e, "Failure: The 'Authorization' header did not meet the schema.");
     return json({ message: "Valid access_token header was not passed." }, { status: 400 });
   }
 
@@ -38,8 +49,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .then(({ Item }) => ZOAuthAccessToken.parse(Item));
     log.info("Success: Retrieved acess_token from ddb.");
   } catch (e) {
-    log.info("Failure: Access token couldn't be retrieved from ddb.");
-    log.info(e);
+    log.info(e, "Failure: Access token couldn't be retrieved from ddb.");
     return json({ message: "Access token didn't exist in the database." }, { status: 400 });
   }
 
@@ -54,8 +64,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .then(({ Item }) => ZMockGhUser.parse(Item));
     log.info("Success: Retrieved user info from ddb.");
   } catch (e) {
-    log.error("Failure: User info couldn't be retrieved from ddb.");
-    log.error(e);
+    log.error(e, "Failure: User info couldn't be retrieved from ddb.");
     return json({ message: "User info could not be retrieved from db. " }, { status: 500 });
   }
 

@@ -68,13 +68,35 @@ export function logger() {
 //----------------------------------------------------------------------------
 export async function logRequest(logger: Logger, request: Request) {
   const req = request.clone();
-
-  logger.info("---- START REQUEST INFO ----");
-  logger.info(`Request: ${req.method} ${req.url}`);
-  logger.info(`Cache: ${req.cache}, Keep-Alive: ${req.keepalive}, Mode: ${req.mode}`);
-  logger.info(
-    `Headers: ${await format(JSON.stringify(Object.fromEntries(req.headers.entries())), { parser: "json" })}`
-  );
-  logger.info(`Body:\n${await req.text().catch((e) => "No body text.")}`);
-  logger.info("----- END REQUEST INFO -----");
+  const url = new URL(req.url);
+  const reqObj = {
+    body: req.body,
+    cache: req.cache,
+    credentials: req.credentials,
+    destination: req.destination,
+    headers: req.headers,
+    integrity: req.integrity,
+    keepalive: req.keepalive,
+    method: req.method,
+    mode: req.mode,
+    redirect: req.redirect,
+    referrer: req.referrer,
+    referrerPolicy: req.referrerPolicy,
+    signal: req.signal,
+    url: {
+      hash: url.hash,
+      host: url.host,
+      hostname: url.hostname,
+      href: url.href,
+      origin: url.origin,
+      password: url.password,
+      pathname: url.pathname,
+      port: url.port,
+      protocol: url.protocol,
+      search: url.search,
+      searchParams: Object.fromEntries(url.searchParams.entries()),
+      username: url.username,
+    },
+  };
+  logger.info({ request: reqObj });
 }
