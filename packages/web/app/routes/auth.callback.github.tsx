@@ -1,8 +1,9 @@
-import { type LoaderFunctionArgs, redirect, json } from "@remix-run/node";
+import { type LoaderFunctionArgs, redirect, json, createSession } from "@remix-run/node";
 import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 import { z } from "zod";
 import { ZJsonString } from "~/lib/util/client";
-import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
+import { sqldb, ddb, logger, logRequest } from "~/lib/util/utilities.server";
+import { ZCreateSession, commitSession, getSession } from "~/lib/session.server";
 import { Config } from "sst/node/config";
 import axios from "axios";
 
@@ -141,6 +142,69 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }));
   log.info("Success: Retrieved the userinfo from Github.");
 
-  log.info("LOOK MOM WE DID IT!");
-  log.info(userInfo);
+  // Create/Update User
+  // ------------------
+  // If the user exists in the database, update their github info with the fresh info. If they don't exist in in the
+  // database, create them.
+  log.info("Retrieving the user from our database ...");
+  const user = await sqldb()
+    .updateTable("users")
+    .where("id", "=", userInfo.id)
+    .set({ ...userInfo, modified_at: new Date() })
+    .returningAll()
+    .executeTakeFirstOrThrow()
+    .then((usr) => {
+      log.info("Success: Updated the user in the database.");
+      return usr;
+    })
+    .catch(async () => {
+      // Looks like user didn't exist, create them now
+      log.info("User did not exist, creating new user ...");
+      const usr = await sqldb()
+        .insertInto("users")
+        .values({ ...userInfo, created_at: new Date(), modified_at: new Date() })
+        .returningAll()
+        .executeTakeFirstOrThrow();
+      log.info("Success: Created the user in the database.");
+      return usr;
+    })
+    .catch((e) => {
+      log.error(e, "Failure: There was an issue updating/creating a user in the database.");
+      throw json({ message: "There was an error updating/creating the user." }, { status: 500 });
+    });
+
+  // Retrieve User Roles
+  // -------------------
+  // Get the roles for the user as we will need them when issuing a session token.
+  log.info("Retrieving the user roles from the database ...");
+  const roles = await sqldb()
+    .selectFrom("user_roles")
+    .select("role_id")
+    .where("user_roles.user_id", "=", user.id)
+    .execute()
+    .then((roles) => roles.map(({ role_id }) => role_id))
+    .catch((e) => {
+      log.error(e, "Failure: There was an error retrieving the roles from the db.");
+      throw json({ message: "There was an error querying the database." }, { status: 500 });
+    });
+  log.info("Success: Retrieved the user roles from the database.");
+
+  console.log(roles);
+
+  // Create User Session
+  // -------------------
+  // Now we can create the user session with an expires at date of 90 days. This will allow our users to skip signing
+  // in for up to 90 days, and we can mitigate them ever needing to sign in as long as they sign in at least every 90
+  // days. The second part of issuing sessions will be to check the user's session on the server if it was issues more
+  // than 24 hours ago and issue a new one if so. This logic takes place in `entry.server.tsx`.
+  log.info("Creating the user session in the database ...");
+  const secure = new URL(request.url).hostname === "localhost" ? false : true;
+  const { id: user_id, username, name, avatar_url, github_url } = user;
+  const session = await commitSession(
+    createSession(ZCreateSession.parse({ user_id, username, name, avatar_url, github_url, roles })),
+    { secure }
+  );
+  log.info("Success: Created the user session in the database.");
+
+  return redirect(search.state.redirect_uri, { headers: { "Set-Cookie": session } });
 };

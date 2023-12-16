@@ -13,6 +13,7 @@ declare global {
   var __ddbClient: Ddb;
   var __s3Client: S3Client;
   var __sqlClient: SqlDbClient;
+  var __logger: Logger;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -53,14 +54,26 @@ export function sqldb() {
 }
 
 /**
- * Retrieves the pino logger function with common configuration. This adds a `traceId` that is useful for parsing which
- * request a log message belongs to. In Remix, we commonly have multiple requests running in parallel and the ability
- * to determine which messages belong to which action/loader is helpful.
+ * Creates a pino logger with common configuration. This adds a `traceId` that is useful for parsing which request a
+ * log message belongs to. This should be used at the start of a request to ensure that a new logger context is
+ * created so as not to reuse the old logger's configuration.
  *
  * @returns Logger
  */
 export function logger() {
-  return pino().child({ traceId: randomUUID() });
+  global.__logger = pino().child({ traceId: randomUUID() });
+  return global.__logger;
+}
+
+/**
+ * Retrieves the current pino logger to preserve common configuration. This is useful when trying to log nested deeply
+ * in a call stack.
+ *
+ * @returns Logger
+ */
+export function getLogger() {
+  if (global.__logger) return global.__logger;
+  else return logger();
 }
 
 //----------------------------------------------------------------------------
