@@ -241,6 +241,34 @@ export function AppStack({ app, stack }: StackContext) {
   }
 
   //-----------------------------------------------------------------------------------------------
+  // Update Lambda Environment
+  // -------------------------
+  // In our deployment we have updated the SST Parameters for a few items. What has actually
+  // happend is the SSM Parameter has been updated, but the lambdas that consume them have no idea
+  // that there was an update as these SST Parameters are inlined as environment variables. We need
+  // to run a custom resource that will compare environments and update the lambdas.
+  //
+  //-----------------------------------------------------------------------------------------------
+
+  const updateLambdaEnvFn = new Function(stack, "UpdateLambdaEnvFn", {
+    architecture: "arm_64",
+    handler: "packages/functions/src/custom-resource/deploy-fns.updateLambdaEnvironment",
+    enableLiveDev: false,
+    permissions: ["ssm", "lambda"],
+  });
+  const updateSiteLambdaEnvProvider = new Provider(stack, "UpdateSiteLambdaEnvProvider", {
+    onEventHandler: updateLambdaEnvFn,
+  });
+  new CustomResource(stack, "UpdateSiteLambdaEnvCr", {
+    serviceToken: updateSiteLambdaEnvProvider.serviceToken,
+    properties: {
+      FnArn: site.cdk?.function?.functionArn,
+      AppName: app.name,
+      StageName: app.stage,
+    },
+  });
+
+  //-----------------------------------------------------------------------------------------------
   // Define Stack Outputs
   // --------------------
   // The outputs of the stack.

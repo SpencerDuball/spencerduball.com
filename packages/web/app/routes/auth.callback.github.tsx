@@ -75,9 +75,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const ZAccessTokenRes = z.object({ access_token: z.string(), scope: z.string(), token_type: z.string() });
 
   let accessTokenUrl: string;
-  if (Config.MOCKS_ENABLED)
+  if (Config.MOCKS_ENABLED) {
+    log.info(`Config.STAGE = ${Config.STAGE}`);
+    log.info(`Config.BUCKET_URL = ${Config.BUCKET_URL}`);
+    log.info(`Config.SITE_URL = ${Config.SITE_URL}`);
+    log.info(`accessTokenUrl = ${new URL("/mock/github/login/oauth/access_token?_data", Config.SITE_URL).href}`);
     accessTokenUrl = new URL("/mock/github/login/oauth/access_token?_data", Config.SITE_URL).href;
-  else accessTokenUrl = "https://github.com/login/oauth/access_token";
+  } else accessTokenUrl = "https://github.com/login/oauth/access_token";
 
   // retrieve the access_token
   log.info("Requesting access_token from Github ...");
