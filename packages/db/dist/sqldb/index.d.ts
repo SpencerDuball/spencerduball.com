@@ -23,5 +23,5 @@ export interface IDatabase {
     roles: IRole;
     user_roles: IUserRole;
 }
-export type PgClient = Kysely<IDatabase>;
-export declare function createClient(connectionString: string): Kysely<IDatabase>;
+export type SqlDbClient = Kysely<IDatabase>;
+export declare function createClient(url: string, authToken: string): Kysely<IDatabase>;

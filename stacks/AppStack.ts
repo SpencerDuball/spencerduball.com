@@ -25,6 +25,7 @@ export function AppStack({ app, stack }: StackContext) {
   const GITHUB_CLIENT_ID = new Config.Secret(stack, "GITHUB_CLIENT_ID");
   const GITHUB_CLIENT_SECRET = new Config.Secret(stack, "GITHUB_CLIENT_SECRET");
   const DATABASE_URL = new Config.Secret(stack, "DATABASE_URL");
+  const DATABASE_AUTH_TOKEN = new Config.Secret(stack, "DATABASE_AUTH_TOKEN");
   const MOCKS_ENABLED = new Config.Parameter(stack, "MOCKS_ENABLED", {
     value: app.stage === "prod" ? "FALSE" : "TRUE",
   });
@@ -115,6 +116,7 @@ export function AppStack({ app, stack }: StackContext) {
       GITHUB_CLIENT_ID,
       GITHUB_CLIENT_SECRET,
       DATABASE_URL,
+      DATABASE_AUTH_TOKEN,
       BUCKET_URL,
       MOCKS_ENABLED,
     ],

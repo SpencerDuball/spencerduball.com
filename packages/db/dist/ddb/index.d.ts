@@ -11,6 +11,7 @@ export declare const SessionSchema: {
         readonly pk: {
             readonly partitionKey: true;
             readonly type: "string";
+            readonly dependsOn: readonly ["id"];
             readonly default: (data: {
                 id: string;
             }) => string;
@@ -18,6 +19,7 @@ export declare const SessionSchema: {
         readonly sk: {
             readonly sortKey: true;
             readonly type: "string";
+            readonly dependsOn: readonly ["id"];
             readonly default: (data: {
                 id: string;
             }) => string;
@@ -55,12 +57,12 @@ export declare const SessionSchema: {
             readonly type: "string";
             readonly required: true;
         };
-        readonly roles: {
-            readonly type: "list";
-        };
         readonly ttl: {
             readonly type: "number";
             readonly required: true;
+        };
+        readonly roles: {
+            readonly type: "list";
         };
     };
 };
@@ -68,29 +70,33 @@ export declare const ZSession: z.ZodObject<{
     id: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
+    gsi1pk: z.ZodString;
+    gsi1sk: z.ZodString;
+    modified: z.ZodString;
+    created: z.ZodString;
+    entity: z.ZodString;
     user_id: z.ZodNumber;
     username: z.ZodString;
     name: z.ZodString;
     avatar_url: z.ZodOptional<z.ZodString>;
     github_url: z.ZodString;
-    roles: z.ZodEffects<z.ZodArray<z.ZodString, "many">, string[], unknown>;
     ttl: z.ZodNumber;
-    modified: z.ZodString;
-    created: z.ZodString;
-    entity: z.ZodString;
+    roles: z.ZodEffects<z.ZodArray<z.ZodString, "many">, string[], unknown>;
 }, "strip", z.ZodTypeAny, {
     name: string;
     username: string;
     created: string;
     modified: string;
     entity: string;
-    user_id: number;
     id: string;
+    user_id: number;
     pk: string;
     sk: string;
+    gsi1pk: string;
+    gsi1sk: string;
     github_url: string;
-    roles: string[];
     ttl: number;
+    roles: string[];
     avatar_url?: string | undefined;
 }, {
     name: string;
@@ -98,10 +104,12 @@ export declare const ZSession: z.ZodObject<{
     created: string;
     modified: string;
     entity: string;
-    user_id: number;
     id: string;
+    user_id: number;
     pk: string;
     sk: string;
+    gsi1pk: string;
+    gsi1sk: string;
     github_url: string;
     ttl: number;
     avatar_url?: string | undefined;
@@ -128,6 +136,7 @@ export declare const OAuthStateCodeSchema: {
         readonly pk: {
             readonly partitionKey: true;
             readonly type: "string";
+            readonly dependsOn: readonly ["id"];
             readonly default: (data: {
                 id: string;
             }) => string;
@@ -135,13 +144,10 @@ export declare const OAuthStateCodeSchema: {
         readonly sk: {
             readonly sortKey: true;
             readonly type: "string";
+            readonly dependsOn: readonly ["id"];
             readonly default: (data: {
                 id: string;
             }) => string;
-        };
-        readonly redirect_uri: {
-            readonly type: "string";
-            readonly required: true;
         };
         readonly code: {
             readonly type: "string";
@@ -155,18 +161,22 @@ export declare const OAuthStateCodeSchema: {
             readonly type: "number";
             readonly default: () => number;
         };
+        readonly redirect_uri: {
+            readonly type: "string";
+            readonly required: true;
+        };
     };
 };
 export declare const ZOAuthStateCode: z.ZodObject<{
     id: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
-    redirect_uri: z.ZodString;
     code: z.ZodString;
     ttl: z.ZodNumber;
     modified: z.ZodString;
     created: z.ZodString;
     entity: z.ZodString;
+    redirect_uri: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     code: string;
     created: string;
@@ -196,10 +206,6 @@ export declare const OAuthOTCSchema: {
             readonly type: "string";
             readonly default: () => string;
         };
-        readonly scope: {
-            readonly type: "string";
-            readonly required: true;
-        };
         readonly pk: {
             readonly partitionKey: true;
             readonly type: "string";
@@ -216,32 +222,36 @@ export declare const OAuthOTCSchema: {
                 id: string;
             }) => string;
         };
-        readonly user_id: {
-            readonly type: "number";
-            readonly required: true;
-        };
         readonly ttl: {
             readonly type: "number";
             readonly default: () => number;
+        };
+        readonly scope: {
+            readonly type: "string";
+            readonly required: true;
+        };
+        readonly user_id: {
+            readonly type: "number";
+            readonly required: true;
         };
     };
 };
 export declare const ZOAuthOTC: z.ZodObject<{
     id: z.ZodString;
-    scope: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
-    user_id: z.ZodNumber;
     ttl: z.ZodNumber;
     modified: z.ZodString;
     created: z.ZodString;
     entity: z.ZodString;
+    scope: z.ZodString;
+    user_id: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
     created: string;
     modified: string;
     entity: string;
-    user_id: number;
     id: string;
+    user_id: number;
     pk: string;
     sk: string;
     ttl: number;
@@ -250,8 +260,8 @@ export declare const ZOAuthOTC: z.ZodObject<{
     created: string;
     modified: string;
     entity: string;
-    user_id: number;
     id: string;
+    user_id: number;
     pk: string;
     sk: string;
     ttl: number;
@@ -265,10 +275,6 @@ export declare const OAuthAccessTokenSchema: {
             readonly type: "string";
             readonly default: () => string;
         };
-        readonly scope: {
-            readonly type: "string";
-            readonly required: true;
-        };
         readonly pk: {
             readonly partitionKey: true;
             readonly type: "string";
@@ -285,48 +291,68 @@ export declare const OAuthAccessTokenSchema: {
                 id: string;
             }) => string;
         };
-        readonly user_id: {
-            readonly type: "number";
-            readonly required: true;
-        };
         readonly ttl: {
             readonly type: "number";
             readonly default: () => number;
+        };
+        readonly scope: {
+            readonly type: "string";
+            readonly required: true;
+        };
+        readonly user_id: {
+            readonly type: "number";
+            readonly required: true;
         };
     };
 };
 export declare const ZOAuthAccessToken: z.ZodObject<{
     id: z.ZodString;
-    scope: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
-    user_id: z.ZodNumber;
+    ttl: z.ZodNumber;
     modified: z.ZodString;
     created: z.ZodString;
     entity: z.ZodString;
+    scope: z.ZodString;
+    user_id: z.ZodNumber;
 }, "strip", z.ZodTypeAny, {
     created: string;
     modified: string;
     entity: string;
-    user_id: number;
     id: string;
+    user_id: number;
     pk: string;
     sk: string;
+    ttl: number;
     scope: string;
 }, {
     created: string;
     modified: string;
     entity: string;
-    user_id: number;
     id: string;
+    user_id: number;
     pk: string;
     sk: string;
+    ttl: number;
     scope: string;
 }>;
 export type OAuthAccessToken = ReturnType<typeof ZOAuthAccessToken.parse>;
 export declare const MockGhUserSchema: {
     readonly name: "MockGhUser";
     readonly attributes: {
+        readonly pk: {
+            readonly partitionKey: true;
+            readonly type: "string";
+            readonly default: () => string;
+        };
+        readonly sk: {
+            readonly sortKey: true;
+            readonly type: "string";
+            readonly dependsOn: readonly ["id"];
+            readonly default: (data: {
+                id: string;
+            }) => string;
+        };
         readonly id: {
             readonly type: "number";
             readonly required: true;
@@ -347,34 +373,21 @@ export declare const MockGhUserSchema: {
             readonly type: "string";
             readonly required: true;
         };
-        readonly pk: {
-            readonly partitionKey: true;
-            readonly type: "string";
-            readonly default: () => string;
-        };
-        readonly sk: {
-            readonly sortKey: true;
-            readonly type: "string";
-            readonly dependsOn: readonly ["id"];
-            readonly default: (data: {
-                id: string;
-            }) => string;
-        };
     };
     readonly modifiedAlias: "modified_at";
     readonly createdAlias: "created_at";
 };
 export declare const ZMockGhUser: z.ZodObject<{
-    id: z.ZodNumber;
-    login: z.ZodString;
-    name: z.ZodString;
-    avatar_url: z.ZodString;
-    html_url: z.ZodString;
     pk: z.ZodString;
     sk: z.ZodString;
     modified_at: z.ZodString;
     created_at: z.ZodString;
     entity: z.ZodString;
+    id: z.ZodNumber;
+    login: z.ZodString;
+    name: z.ZodString;
+    avatar_url: z.ZodString;
+    html_url: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     name: string;
     entity: string;
@@ -410,6 +423,7 @@ export declare class Ddb {
             readonly pk: {
                 readonly partitionKey: true;
                 readonly type: "string";
+                readonly dependsOn: readonly ["id"];
                 readonly default: (data: {
                     id: string;
                 }) => string;
@@ -417,13 +431,10 @@ export declare class Ddb {
             readonly sk: {
                 readonly sortKey: true;
                 readonly type: "string";
+                readonly dependsOn: readonly ["id"];
                 readonly default: (data: {
                     id: string;
                 }) => string;
-            };
-            readonly redirect_uri: {
-                readonly type: "string";
-                readonly required: true;
             };
             readonly code: {
                 readonly type: "string";
@@ -437,6 +448,10 @@ export declare class Ddb {
                 readonly type: "number";
                 readonly default: () => number;
             };
+            readonly redirect_uri: {
+                readonly type: "string";
+                readonly required: true;
+            };
         }, {
             id: {
                 type: "string";
@@ -445,6 +460,7 @@ export declare class Ddb {
             pk: {
                 partitionKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -452,13 +468,10 @@ export declare class Ddb {
             sk: {
                 sortKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
-            };
-            redirect_uri: {
-                type: "string";
-                required: true;
             };
             code: {
                 type: "string";
@@ -471,6 +484,10 @@ export declare class Ddb {
             ttl: {
                 type: "number";
                 default: () => number;
+            };
+            redirect_uri: {
+                type: "string";
+                required: true;
             };
         }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
             id: {
@@ -480,6 +497,7 @@ export declare class Ddb {
             pk: {
                 partitionKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -487,13 +505,10 @@ export declare class Ddb {
             sk: {
                 sortKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
-            };
-            redirect_uri: {
-                type: "string";
-                required: true;
             };
             code: {
                 type: "string";
@@ -506,6 +521,10 @@ export declare class Ddb {
             ttl: {
                 type: "number";
                 default: () => number;
+            };
+            redirect_uri: {
+                type: "string";
+                required: true;
             };
         }, true, "created", "modified", "entity", false>, {
             code?: string | undefined;
@@ -528,8 +547,52 @@ export declare class Ddb {
             sk: string;
             redirect_uri: string;
         }, {
-            pk?: string | undefined;
-            sk?: string | undefined;
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            id?: string | undefined;
+            sk: string;
+        } | {
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
         }>;
         session: Entity<"Session", undefined, undefined, undefined, true, true, true, "created", "modified", "entity", false, {
             readonly id: {
@@ -539,6 +602,7 @@ export declare class Ddb {
             readonly pk: {
                 readonly partitionKey: true;
                 readonly type: "string";
+                readonly dependsOn: readonly ["id"];
                 readonly default: (data: {
                     id: string;
                 }) => string;
@@ -546,6 +610,7 @@ export declare class Ddb {
             readonly sk: {
                 readonly sortKey: true;
                 readonly type: "string";
+                readonly dependsOn: readonly ["id"];
                 readonly default: (data: {
                     id: string;
                 }) => string;
@@ -583,12 +648,12 @@ export declare class Ddb {
                 readonly type: "string";
                 readonly required: true;
             };
-            readonly roles: {
-                readonly type: "list";
-            };
             readonly ttl: {
                 readonly type: "number";
                 readonly required: true;
+            };
+            readonly roles: {
+                readonly type: "list";
             };
         }, {
             id: {
@@ -598,6 +663,7 @@ export declare class Ddb {
             pk: {
                 partitionKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -605,6 +671,7 @@ export declare class Ddb {
             sk: {
                 sortKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -642,12 +709,12 @@ export declare class Ddb {
                 type: "string";
                 required: true;
             };
-            roles: {
-                type: "list";
-            };
             ttl: {
                 type: "number";
                 required: true;
+            };
+            roles: {
+                type: "list";
             };
         }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
             id: {
@@ -657,6 +724,7 @@ export declare class Ddb {
             pk: {
                 partitionKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -664,6 +732,7 @@ export declare class Ddb {
             sk: {
                 sortKey: true;
                 type: "string";
+                dependsOn: ["id"];
                 default: (data: {
                     id: string;
                 }) => string;
@@ -701,19 +770,19 @@ export declare class Ddb {
                 type: "string";
                 required: true;
             };
-            roles: {
-                type: "list";
-            };
             ttl: {
                 type: "number";
                 required: true;
             };
+            roles: {
+                type: "list";
+            };
         }, true, "created", "modified", "entity", false>, {
             id?: string | undefined;
-            avatar_url?: string | undefined;
-            roles?: any[] | undefined;
             gsi1pk?: string | undefined;
             gsi1sk?: string | undefined;
+            avatar_url?: string | undefined;
+            roles?: any[] | undefined;
             name: string;
             username: string;
             created: string;
@@ -726,10 +795,10 @@ export declare class Ddb {
             ttl: number;
         }, {
             id?: string | undefined;
-            avatar_url?: string | undefined;
-            roles?: any[] | undefined;
             gsi1pk?: string | undefined;
             gsi1sk?: string | undefined;
+            avatar_url?: string | undefined;
+            roles?: any[] | undefined;
             name: string;
             username: string;
             created: string;
@@ -741,17 +810,57 @@ export declare class Ddb {
             github_url: string;
             ttl: number;
         }, {
-            pk?: string | undefined;
-            sk?: string | undefined;
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            id?: string | undefined;
+            sk: string;
+        } | {
+            pk: string;
+            id?: string | undefined;
+        } | {
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+        } | {
+            id?: string | undefined;
+            pk: string;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
+        } | {
+            id?: string | undefined;
+        } | {
+            id?: string | undefined;
+            sk: string;
         }>;
         oauthOTC: Entity<"OAuthOTC", undefined, undefined, undefined, true, true, true, "created", "modified", "entity", false, {
             readonly id: {
                 readonly type: "string";
                 readonly default: () => string;
-            };
-            readonly scope: {
-                readonly type: "string";
-                readonly required: true;
             };
             readonly pk: {
                 readonly partitionKey: true;
@@ -769,23 +878,23 @@ export declare class Ddb {
                     id: string;
                 }) => string;
             };
-            readonly user_id: {
-                readonly type: "number";
-                readonly required: true;
-            };
             readonly ttl: {
                 readonly type: "number";
                 readonly default: () => number;
+            };
+            readonly scope: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly user_id: {
+                readonly type: "number";
+                readonly required: true;
             };
         }, {
             id: {
                 type: "string";
                 default: () => string;
             };
-            scope: {
-                type: "string";
-                required: true;
-            };
             pk: {
                 partitionKey: true;
                 type: "string";
@@ -802,23 +911,23 @@ export declare class Ddb {
                     id: string;
                 }) => string;
             };
-            user_id: {
-                type: "number";
-                required: true;
-            };
             ttl: {
                 type: "number";
                 default: () => number;
+            };
+            scope: {
+                type: "string";
+                required: true;
+            };
+            user_id: {
+                type: "number";
+                required: true;
             };
         }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
             id: {
                 type: "string";
                 default: () => string;
             };
-            scope: {
-                type: "string";
-                required: true;
-            };
             pk: {
                 partitionKey: true;
                 type: "string";
@@ -835,13 +944,17 @@ export declare class Ddb {
                     id: string;
                 }) => string;
             };
-            user_id: {
-                type: "number";
-                required: true;
-            };
             ttl: {
                 type: "number";
                 default: () => number;
+            };
+            scope: {
+                type: "string";
+                required: true;
+            };
+            user_id: {
+                type: "number";
+                required: true;
             };
         }, true, "created", "modified", "entity", false>, {
             id?: string | undefined;
@@ -916,10 +1029,6 @@ export declare class Ddb {
                 readonly type: "string";
                 readonly default: () => string;
             };
-            readonly scope: {
-                readonly type: "string";
-                readonly required: true;
-            };
             readonly pk: {
                 readonly partitionKey: true;
                 readonly type: "string";
@@ -936,23 +1045,23 @@ export declare class Ddb {
                     id: string;
                 }) => string;
             };
-            readonly user_id: {
-                readonly type: "number";
-                readonly required: true;
-            };
             readonly ttl: {
                 readonly type: "number";
                 readonly default: () => number;
+            };
+            readonly scope: {
+                readonly type: "string";
+                readonly required: true;
+            };
+            readonly user_id: {
+                readonly type: "number";
+                readonly required: true;
             };
         }, {
             id: {
                 type: "string";
                 default: () => string;
             };
-            scope: {
-                type: "string";
-                required: true;
-            };
             pk: {
                 partitionKey: true;
                 type: "string";
@@ -969,23 +1078,23 @@ export declare class Ddb {
                     id: string;
                 }) => string;
             };
-            user_id: {
-                type: "number";
-                required: true;
-            };
             ttl: {
                 type: "number";
                 default: () => number;
+            };
+            scope: {
+                type: "string";
+                required: true;
+            };
+            user_id: {
+                type: "number";
+                required: true;
             };
         }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
             id: {
                 type: "string";
                 default: () => string;
             };
-            scope: {
-                type: "string";
-                required: true;
-            };
             pk: {
                 partitionKey: true;
                 type: "string";
@@ -1002,13 +1111,17 @@ export declare class Ddb {
                     id: string;
                 }) => string;
             };
-            user_id: {
-                type: "number";
-                required: true;
-            };
             ttl: {
                 type: "number";
                 default: () => number;
+            };
+            scope: {
+                type: "string";
+                required: true;
+            };
+            user_id: {
+                type: "number";
+                required: true;
             };
         }, true, "created", "modified", "entity", false>, {
             id?: string | undefined;
@@ -1079,6 +1192,19 @@ export declare class Ddb {
             sk: string;
         }>;
         mockGhUser: Entity<"MockGhUser", undefined, undefined, undefined, true, true, true, "created_at", "modified_at", "entity", false, {
+            readonly pk: {
+                readonly partitionKey: true;
+                readonly type: "string";
+                readonly default: () => string;
+            };
+            readonly sk: {
+                readonly sortKey: true;
+                readonly type: "string";
+                readonly dependsOn: readonly ["id"];
+                readonly default: (data: {
+                    id: string;
+                }) => string;
+            };
             readonly id: {
                 readonly type: "number";
                 readonly required: true;
@@ -1099,20 +1225,20 @@ export declare class Ddb {
                 readonly type: "string";
                 readonly required: true;
             };
-            readonly pk: {
-                readonly partitionKey: true;
-                readonly type: "string";
-                readonly default: () => string;
+        }, {
+            pk: {
+                partitionKey: true;
+                type: "string";
+                default: () => string;
             };
-            readonly sk: {
-                readonly sortKey: true;
-                readonly type: "string";
-                readonly dependsOn: readonly ["id"];
-                readonly default: (data: {
+            sk: {
+                sortKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
                     id: string;
                 }) => string;
             };
-        }, {
             id: {
                 type: "number";
                 required: true;
@@ -1132,21 +1258,21 @@ export declare class Ddb {
             html_url: {
                 type: "string";
                 required: true;
-            };
-            pk: {
-                partitionKey: true;
-                type: "string";
-                default: () => string;
-            };
-            sk: {
-                sortKey: true;
-                type: "string";
-                dependsOn: ["id"];
-                default: (data: {
-                    id: string;
-                }) => string;
             };
         }, import("dynamodb-toolbox/dist/cjs/classes/Entity/types").ParseAttributes<{
+            pk: {
+                partitionKey: true;
+                type: "string";
+                default: () => string;
+            };
+            sk: {
+                sortKey: true;
+                type: "string";
+                dependsOn: ["id"];
+                default: (data: {
+                    id: string;
+                }) => string;
+            };
             id: {
                 type: "number";
                 required: true;
@@ -1166,19 +1292,6 @@ export declare class Ddb {
             html_url: {
                 type: "string";
                 required: true;
-            };
-            pk: {
-                partitionKey: true;
-                type: "string";
-                default: () => string;
-            };
-            sk: {
-                sortKey: true;
-                type: "string";
-                dependsOn: ["id"];
-                default: (data: {
-                    id: string;
-                }) => string;
             };
         }, true, "created_at", "modified_at", "entity", false>, {
             name: string;

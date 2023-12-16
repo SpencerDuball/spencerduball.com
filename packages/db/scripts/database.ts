@@ -4,8 +4,7 @@ import prompts from "prompts";
 import { Config } from "sst/node/config";
 import ora from "ora";
 import { Kysely, Migrator, FileMigrationProvider, MigrationInfo, sql } from "kysely";
-import { PostgresJSDialect } from "kysely-postgres-js";
-import pg from "postgres";
+import { LibsqlDialect } from "@libsql/kysely-libsql";
 import path from "path";
 import fs from "fs-extra";
 import {
@@ -15,7 +14,7 @@ import {
   DeleteObjectsCommand,
 } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
-import { createClient } from "../src/pg";
+import { createClient } from "../src/sqldb";
 import { Ddb } from "../src/ddb";
 import { Table } from "sst/node/table";
 import { AttributeValue, DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
@@ -142,7 +141,8 @@ async function migrateStatus({ db }: DbScriptProps) {
   // create the connection
   let spinner = ora("Connecting to the database ...").start();
   let dbase =
-    db || new Kysely({ dialect: new PostgresJSDialect({ postgres: pg(Config.DATABASE_URL, { idle_timeout: 30 }) }) });
+    db ||
+    new Kysely({ dialect: new LibsqlDialect({ url: Config.DATABASE_URL, authToken: Config.DATABASE_AUTH_TOKEN }) });
 
   // create the migrator
   const migrationFolder = path.resolve("migrations");
@@ -185,7 +185,8 @@ async function migrate({ db }: DbScriptProps) {
   // create the connection
   let spinner = ora("Connecting to the database ...").start();
   let dbase =
-    db || new Kysely({ dialect: new PostgresJSDialect({ postgres: pg(Config.DATABASE_URL, { idle_timeout: 30 }) }) });
+    db ||
+    new Kysely({ dialect: new LibsqlDialect({ url: Config.DATABASE_URL, authToken: Config.DATABASE_AUTH_TOKEN }) });
 
   // apply the migrations
   const migrationFolder = path.resolve("migrations");
@@ -220,18 +221,19 @@ async function reset({ db }: DbScriptProps) {
   // create the connection
   let spinner = ora("Connecting to the database ...").start();
   let dbase =
-    db || new Kysely({ dialect: new PostgresJSDialect({ postgres: pg(Config.DATABASE_URL, { idle_timeout: 30 }) }) });
+    db ||
+    new Kysely({ dialect: new LibsqlDialect({ url: Config.DATABASE_URL, authToken: Config.DATABASE_AUTH_TOKEN }) });
 
   // get the tablenames to drop
   spinner.text = "Retrieving all tables to drop ...";
-  const tablenames = await sql<any>`SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'`
+  const tablenames = await sql<any>`SELECT name FROM sqlite_master WHERE type="table"`
     .execute(dbase)
-    .then(({ rows }) => rows.map(({ tablename }) => tablename as string));
+    .then(({ rows }) => rows.map(({ name }) => name as string));
 
   // remove the tables
   for await (let [idx, tablename] of tablenames.entries()) {
     spinner.text = `(${idx + 1}/${tablenames.length}) Removing table ${tablename} ...`;
-    await sql`DROP TABLE IF EXISTS ${sql.raw(tablename)} CASCADE`.execute(dbase);
+    await sql`DROP TABLE IF EXISTS ${sql.raw(tablename)}`.execute(dbase);
   }
 
   // close the connection if the db client was not passed into the function
@@ -251,7 +253,7 @@ async function reset({ db }: DbScriptProps) {
 async function seed({}: DbScriptProps) {
   // create the connection
   let spinner = ora("Connecting to the database ...").start();
-  const db = createClient(Config.DATABASE_URL);
+  const db = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
   const s3 = new S3Client({});
   const ddb = new Ddb({ tableName: Table.table.tableName, client: new DynamoDBClient({ region: Config.REGION }) });
   spinner.stop();
@@ -284,20 +286,20 @@ async function seed({}: DbScriptProps) {
 async function seedReset({}: DbScriptProps) {
   // create the connection
   let spinner = ora("Connecting to the database ...").start();
-  let dbase = createClient(Config.DATABASE_URL);
+  let dbase = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
 
   // get the tablenames to truncate
   spinner.text = "Clearing the database tables ...";
-  const tablenames =
-    await sql<any>`SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename NOT LIKE 'kysely_%'`
-      .execute(dbase)
-      .then(({ rows }) => rows.map(({ tablename }) => tablename));
+  const tablenames = await sql<any>`SELECT name FROM sqlite_master WHERE type="table" AND name NOT LIKE "kysely_%"`
+    .execute(dbase)
+    .then(({ rows }) => rows.map(({ name }) => name));
 
   // truncate the tables
   spinner.text = "Clearing the S3 objects ...";
-  for await (let tablename of tablenames) await sql`TRUNCATE TABLE ${sql.table(tablename)} CASCADE`.execute(dbase);
+  for await (let tablename of tablenames) await sql`DELETE FROM ${sql.table(tablename)}`.execute(dbase);
   if (tablenames.includes("blogs")) {
-    await sql`SELECT setval(pg_get_serial_sequence('blog', 'id'), COALESCE(MAX(id) +1, 1), false) FROM blogs`.execute(
+    // reset the serial sequence of the "blogs" table
+    await sql`UPDATE sqlite_sequence SET seq = (SELECT COALESCE(MAX(col) +1, 1) FROM blogs) WHERE name="blogs"`.execute(
       dbase
     );
   }

@@ -7,9 +7,9 @@
       "default": "./dist/ddb/index.mjs",
       "types": "./dist/ddb/index.d.ts"
     },
-    "./pg": {
-      "default": "./dist/pg/index.mjs",
-      "types": "./dist/pg/index.d.ts"
+    "./sqldb": {
+      "default": "./dist/sqldb/index.mjs",
+      "types": "./dist/sqldb/index.d.ts"
     }
   },
   "scripts": {
@@ -38,6 +38,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.449.0",
     "@aws-sdk/lib-dynamodb": "^3.449.0",
+    "@libsql/kysely-libsql": "^0.3.0",
     "dynamodb-toolbox": "^0.9.2",
     "kysely": "^0.26.3",
     "kysely-postgres-js": "^2.0.0",

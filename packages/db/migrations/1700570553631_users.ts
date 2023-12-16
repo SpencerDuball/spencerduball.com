@@ -11,12 +11,12 @@ async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable("users")
     .addColumn("id", "integer", (col) => col.primaryKey())
-    .addColumn("username", "varchar", (col) => col.notNull())
-    .addColumn("name", "varchar", (col) => col.notNull())
-    .addColumn("avatar_url", "varchar", (col) => col.notNull())
-    .addColumn("github_url", "varchar", (col) => col.notNull())
-    .addColumn("created_at", "timestamp", (col) => col.defaultTo(sql`now()`).notNull())
-    .addColumn("modified_at", "timestamp", (col) => col.defaultTo(sql`now()`).notNull())
+    .addColumn("username", "text", (col) => col.notNull())
+    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("avatar_url", "text", (col) => col.notNull())
+    .addColumn("github_url", "text", (col) => col.notNull())
+    .addColumn("created_at", "text", (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+    .addColumn("modified_at", "text", (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
     .execute();
 
   /**
@@ -27,10 +27,10 @@ async function up(db: Kysely<any>): Promise<void> {
    */
   await db.schema
     .createTable("roles")
-    .addColumn("id", "varchar", (col) => col.primaryKey())
-    .addColumn("description", "varchar", (col) => col.notNull())
-    .addColumn("created_at", "timestamp", (col) => col.defaultTo(sql`now()`).notNull())
-    .addColumn("modified_at", "timestamp", (col) => col.defaultTo(sql`now()`).notNull())
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("description", "text", (col) => col.notNull())
+    .addColumn("created_at", "text", (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
+    .addColumn("modified_at", "text", (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull())
     .execute();
 
   /**
@@ -39,7 +39,7 @@ async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable("user_roles")
     .addColumn("user_id", "integer", (col) => col.references("users.id").onDelete("cascade").notNull())
-    .addColumn("role_id", "varchar(255)", (col) => col.references("roles.id").onDelete("cascade").notNull())
+    .addColumn("role_id", "text", (col) => col.references("roles.id").onDelete("cascade").notNull())
     .addPrimaryKeyConstraint("user_roles_pk", ["user_id", "role_id"])
     .execute();
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import fs from "fs-extra";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import type { PgClient } from "../../src/pg";
+import type { SqlDbClient } from "../../src/sqldb";
 import { ZMockGhUser, type Ddb } from "../../src/ddb";
 import { Config } from "sst/node/config";
 import { Bucket } from "sst/node/bucket";
@@ -9,7 +9,7 @@ import { glob } from "glob";
 import mime from "mime";
 
 interface DbScriptProps {
-  db: PgClient;
+  db: SqlDbClient;
   s3: S3Client;
   ddb: Ddb;
 }

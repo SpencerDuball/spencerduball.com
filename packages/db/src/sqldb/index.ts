@@ -1,10 +1,8 @@
 import { Kysely, ColumnType } from "kysely";
-import { PostgresJSDialect } from "kysely-postgres-js";
-import pg from "postgres";
+import { LibsqlDialect } from "@libsql/kysely-libsql";
 // TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore
-import ms from "ms";
 
 /* ------------------------------------------------------------------------------------------------------------
  * Define Tables
@@ -40,10 +38,8 @@ export interface IDatabase {
   user_roles: IUserRole;
 }
 
-export type PgClient = Kysely<IDatabase>;
+export type SqlDbClient = Kysely<IDatabase>;
 
-export function createClient(connectionString: string) {
-  return new Kysely<IDatabase>({
-    dialect: new PostgresJSDialect({ postgres: pg(connectionString, { max: 1, idle_timeout: ms("5m") / 1000 }) }),
-  });
+export function createClient(url: string, authToken: string) {
+  return new Kysely<IDatabase>({ dialect: new LibsqlDialect({ url, authToken }) });
 }

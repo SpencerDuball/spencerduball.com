@@ -1,5 +1,5 @@
 import { Ddb } from "@spencerduballcom/db/ddb";
-import { createClient, type PgClient } from "@spencerduballcom/db/pg";
+import { createClient, type SqlDbClient } from "@spencerduballcom/db/sqldb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Config } from "sst/node/config";
@@ -12,7 +12,7 @@ import { randomUUID } from "crypto";
 declare global {
   var __ddbClient: Ddb;
   var __s3Client: S3Client;
-  var __pgClient: PgClient;
+  var __sqlClient: SqlDbClient;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -47,9 +47,9 @@ export function s3() {
  *
  * @returns Pg
  */
-export function pg() {
-  if (!global.__pgClient) global.__pgClient = createClient(Config.DATABASE_URL);
-  return global.__pgClient;
+export function sqldb() {
+  if (!global.__sqlClient) global.__sqlClient = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
+  return global.__sqlClient;
 }
 
 /**

@@ -2,7 +2,7 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { redirect, type LoaderFunctionArgs, type ActionFunctionArgs, json } from "@remix-run/node";
 import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
 import { Config } from "sst/node/config";
-import { pg } from "~/lib/util/utilities.server";
+import { sqldb } from "~/lib/util/utilities.server";
 import { sql } from "kysely";
 import { ZodError, z } from "zod";
 import * as Avatar from "@radix-ui/react-avatar";
@@ -66,7 +66,7 @@ export async function action({ request }: ActionFunctionArgs) {
       // ------------------------
       // Even though we are mocking the user and not validating credentials, we should check that the user actually exists.
       // If we don't then other parts of the app may break or work incorrectly.
-      const user = await pg().selectFrom("users").where("id", "=", data.user_id).select("id").executeTakeFirst();
+      const user = await sqldb().selectFrom("users").where("id", "=", data.user_id).select("id").executeTakeFirst();
       if (!user) return json({ message: "User does not exist in the database." }, { status: 400 });
 
       // Issue the OTC
@@ -146,7 +146,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // get the possible database users that the requester could assume
   log.info("Retrieving all users ...");
-  const users = await pg()
+  const users = await sqldb()
     .selectFrom("users")
     .leftJoin("user_roles", "users.id", "user_roles.user_id")
     .select([
@@ -155,7 +155,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       "name",
       "avatar_url",
       "github_url",
-      sql<string[]>`array_remove(array_agg(user_roles.role_id), NULL)`.as("roles"),
+      sql<string[]>`COALESCE(GROUP_CONCAT(user_roles.role_id), '')`.as("roles"),
     ])
     .groupBy("users.id")
     .execute()
