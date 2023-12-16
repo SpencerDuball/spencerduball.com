@@ -74,9 +74,9 @@ const { getSession, commitSession, destroySession } = createSessionStorage({
   },
   async readData(id) {
     // get the session info
-    const session = await ddb()
-      .entities.session.get({ pk: `session#${id}`, sk: `session#${id}` })
-      .then(({ Item }) => ZSession.parse(Item));
+    const { Item } = await ddb().entities.session.get({ pk: `session#${id}`, sk: `session#${id}` });
+    if (!Item) return null;
+    const session = ZSession.parse(Item);
 
     // check that the session isn't expired
     const timeInSeconds = new Date().getTime() / 1000;
@@ -88,7 +88,12 @@ const { getSession, commitSession, destroySession } = createSessionStorage({
     const ttl = expires
       ? Math.round(expires.getTime() / 1000)
       : Math.round((new Date().getTime() + ms(MAX_AGE)) / 1000);
-    await ddb().entities.session.update({ ...ZSession.parse(data), ttl, pk: `session#${id}`, sk: `session#${id}` });
+    await ddb().entities.session.update({
+      ...ZSession.partial().parse(data),
+      ttl,
+      pk: `session#${id}`,
+      sk: `session#${id}`,
+    });
   },
   async deleteData(id) {
     await ddb().entities.session.delete({ pk: `session#${id}`, sk: `session#${id}` });

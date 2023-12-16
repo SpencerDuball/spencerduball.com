@@ -60,14 +60,11 @@ export async function action({ request }: ActionFunctionArgs) {
       // ------------------------------
       // Validate that the client_id matches our client credentials. If it doesn't then this response could be coming
       // from an app other than ours.
-      if (Config.GITHUB_CLIENT_ID !== data.search.client_id) throw redirect(data.search.state.redirect_uri);
-
-      // Check for the User in DB
-      // ------------------------
-      // Even though we are mocking the user and not validating credentials, we should check that the user actually exists.
-      // If we don't then other parts of the app may break or work incorrectly.
-      const user = await sqldb().selectFrom("users").where("id", "=", data.user_id).select("id").executeTakeFirst();
-      if (!user) return json({ message: "User does not exist in the database." }, { status: 400 });
+      log.info("Checking client_id matches ...");
+      if (Config.GITHUB_CLIENT_ID !== data.search.client_id) {
+        log.info("Faliure: client_id did not match.");
+        throw redirect(data.search.state.redirect_uri);
+      }
 
       // Issue the OTC
       // -------------
@@ -77,7 +74,7 @@ export async function action({ request }: ActionFunctionArgs) {
       try {
         log.info("Creating the OTC for the user in ddb ...");
         otc = await ddb()
-          .entities.oauthOTC.update({ user_id: user.id, scope: data.search.scope }, { returnValues: "ALL_NEW" })
+          .entities.oauthOTC.update({ user_id: data.user_id, scope: data.search.scope }, { returnValues: "ALL_NEW" })
           .then(({ Attributes }) => ZOAuthOTC.parse(Attributes));
         log.info("Success: Created the OTC for the user in ddb.");
       } catch (e) {

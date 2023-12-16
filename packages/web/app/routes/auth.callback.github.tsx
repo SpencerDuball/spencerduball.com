@@ -189,8 +189,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   log.info("Success: Retrieved the user roles from the database.");
 
-  console.log(roles);
-
   // Create User Session
   // -------------------
   // Now we can create the user session with an expires at date of 90 days. This will allow our users to skip signing
