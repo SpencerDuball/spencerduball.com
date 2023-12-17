@@ -1,9 +1,8 @@
-import { logger, logRequest } from "~/lib/util/utilities.server";
+import { logger } from "~/lib/util/globals.server";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const log = logger();
-  await logRequest(log, request);
+  logger(request);
   throw new Response(undefined, { status: 404, statusText: "Not Found" });
 }
 

@@ -1,14 +1,13 @@
 import { Config } from "sst/node/config";
 import { createCookie, createSessionStorage, json } from "@remix-run/node";
 import { createTypedCookie } from "remix-utils/typed-cookie";
-import { createTypedSessionStorage } from "remix-utils/typed-session";
 import { ZSession } from "@spencerduballcom/db/ddb";
-import { ddb } from "~/lib/util/utilities.server";
+import { ddb } from "~/lib/util/globals.server";
 // TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore
 import ms from "ms";
-import { ZodError, z } from "zod";
+import { z } from "zod";
 
 export const MAX_AGE = "90d" as const;
 

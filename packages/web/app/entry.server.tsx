@@ -13,7 +13,7 @@ import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { commitSession, getSession, sessionCookie } from "~/lib/session.server";
 import { ZSession } from "@spencerduballcom/db/ddb";
-import { getLogger } from "~/lib/util/utilities.server";
+import { getLogger } from "~/lib/util/globals.server";
 // TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore

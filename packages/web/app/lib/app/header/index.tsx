@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "@remix-run/react";
 import { GlobalCtx, Types } from "~/lib/context/global-ctx";
-import { cn } from "~/lib/util/client";
+import { cn } from "~/lib/util/utils";
 import { IconButton } from "~/lib/ui/button";
 import { RiMenu2Fill, RiMoonFill, RiSunFill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { RxHalf2 } from "react-icons/rx/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451

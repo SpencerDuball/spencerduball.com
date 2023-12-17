@@ -1,7 +1,7 @@
 import { useRouteError, isRouteErrorResponse } from "@remix-run/react";
 import { RiAlarmWarningLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
-import { cn } from "~/lib/util/client";
+import { cn } from "~/lib/util/utils";
 import { Highlight } from "prism-react-renderer";
 
 export function ErrorBoundary() {

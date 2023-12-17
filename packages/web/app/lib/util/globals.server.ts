@@ -5,7 +5,6 @@ import { S3Client } from "@aws-sdk/client-s3";
 import { Config } from "sst/node/config";
 import { Table } from "sst/node/table";
 import pino, { Logger } from "pino";
-import { format } from "prettier";
 import { randomUUID } from "crypto";
 
 // define globals
@@ -53,33 +52,16 @@ export function sqldb() {
   return global.__sqlClient;
 }
 
-/**
- * Creates a pino logger with common configuration. This adds a `traceId` that is useful for parsing which request a
- * log message belongs to. This should be used at the start of a request to ensure that a new logger context is
- * created so as not to reuse the old logger's configuration.
- *
- * @returns Logger
- */
-export function logger() {
-  global.__logger = pino().child({ traceId: randomUUID() });
-  return global.__logger;
-}
-
-/**
- * Retrieves the current pino logger to preserve common configuration. This is useful when trying to log nested deeply
- * in a call stack.
- *
- * @returns Logger
- */
-export function getLogger() {
-  if (global.__logger) return global.__logger;
-  else return logger();
-}
-
 //----------------------------------------------------------------------------
 // Define Common Logger Functions
 //----------------------------------------------------------------------------
-export async function logRequest(logger: Logger, request: Request) {
+/**
+ * Logs the full request object.
+ *
+ * @params Reqeust
+ */
+export function logRequest(request: Request) {
+  const log = getLogger();
   const req = request.clone();
   const url = new URL(req.url);
   const reqObj = {
@@ -111,5 +93,31 @@ export async function logRequest(logger: Logger, request: Request) {
       username: url.username,
     },
   };
-  logger.info({ request: reqObj });
+  log.info({ request: reqObj });
+}
+
+/**
+ * Creates a pino logger with common configuration. This adds a `traceId` that is useful for parsing which request a
+ * log message belongs to. This should be used at the start of a request to ensure that a new logger context is
+ * created so as not to reuse the old logger's configuration. If a Request object is supplied, it will log the
+ * the request object.
+ *
+ * @param request - The request object.
+ * @returns Logger
+ */
+export function logger(request?: Request) {
+  global.__logger = pino().child({ traceId: randomUUID() });
+  if (request) logRequest(request);
+  return global.__logger;
+}
+
+/**
+ * Retrieves the current pino logger to preserve common configuration. This is useful when trying to log nested deeply
+ * in a call stack.
+ *
+ * @returns Logger
+ */
+export function getLogger() {
+  if (global.__logger) return global.__logger;
+  else return logger();
 }

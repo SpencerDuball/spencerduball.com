@@ -1,4 +1,4 @@
-import type { AutoCompleteString } from "~/lib/util/client";
+import type { AutoCompleteString } from "~/lib/util/utils";
 
 /* ------------------------------------------------------------------------------------------------------------
  * Define Context Types

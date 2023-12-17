@@ -1,5 +1,5 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
+import { ddb, logger } from "~/lib/util/globals.server";
 import { z } from "zod";
 import { ZOAuthAccessToken, type OAuthAccessToken, MockGhUserType, ZMockGhUser } from "@spencerduballcom/db/ddb";
 import { Config } from "sst/node/config";
@@ -7,8 +7,7 @@ import { Config } from "sst/node/config";
 const ZAuthorizationHeader = z.custom<`Bearer ${string}`>((val: any) => /^Bearer .+$/.test(val));
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const log = logger();
-  await logRequest(log, request);
+  const log = logger(request);
 
   // IMPORTANT!
   // ----------

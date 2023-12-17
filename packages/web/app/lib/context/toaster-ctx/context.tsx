@@ -1,5 +1,5 @@
 import React from "react";
-import { reducer, Actions, IToast, IToasterState } from "./reducer";
+import { reducer, Actions, IToasterState } from "./reducer";
 import { Toast } from "./toast";
 
 /* ------------------------------------------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 import { type LoaderFunctionArgs, redirect, json, createSession } from "@remix-run/node";
 import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 import { z } from "zod";
-import { ZJsonString } from "~/lib/util/client";
-import { sqldb, ddb, logger, logRequest } from "~/lib/util/utilities.server";
-import { ZCreateSession, commitSession, getSession } from "~/lib/session.server";
+import { ZJsonString } from "~/lib/util/utils";
+import { sqldb, ddb, logger } from "~/lib/util/globals.server";
+import { ZCreateSession, commitSession } from "~/lib/session.server";
 import { Config } from "sst/node/config";
 import axios from "axios";
 
@@ -13,8 +13,7 @@ const ZSearch = z.object({
 });
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const log = logger();
-  await logRequest(log, request);
+  const log = logger(request);
 
   // Ensure Required Search Params
   // -----------------------------

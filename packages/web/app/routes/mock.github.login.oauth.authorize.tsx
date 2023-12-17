@@ -1,14 +1,14 @@
 import { Form, useLoaderData } from "@remix-run/react";
 import { redirect, type LoaderFunctionArgs, type ActionFunctionArgs, json } from "@remix-run/node";
-import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
+import { ddb, logger } from "~/lib/util/globals.server";
 import { Config } from "sst/node/config";
-import { sqldb } from "~/lib/util/utilities.server";
+import { sqldb } from "~/lib/util/globals.server";
 import { sql } from "kysely";
 import { ZodError, z } from "zod";
 import * as Avatar from "@radix-ui/react-avatar";
 import { IconButton } from "~/lib/ui/button";
 import { RiLoginCircleLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
-import { ZJsonString } from "~/lib/util/client";
+import { ZJsonString } from "~/lib/util/utils";
 import { ZMockGhUser, ZOAuthOTC } from "@spencerduballcom/db/ddb";
 
 const ZSearch = z.object({
@@ -23,8 +23,7 @@ const ZFormData = z.object({
 });
 
 export async function action({ request }: ActionFunctionArgs) {
-  const log = logger();
-  await logRequest(log, request);
+  const log = logger(request);
 
   // IMPORTANT!
   // ----------
@@ -103,8 +102,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const log = logger();
-  await logRequest(log, request);
+  const log = logger(request);
 
   // IMPORTANT!
   // ----------

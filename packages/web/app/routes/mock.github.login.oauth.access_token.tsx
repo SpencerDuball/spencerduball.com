@@ -1,14 +1,13 @@
 import { type ActionFunctionArgs, json } from "@remix-run/node";
 import { z, ZodError } from "zod";
-import { ddb, logger, logRequest } from "~/lib/util/utilities.server";
+import { ddb, logger } from "~/lib/util/globals.server";
 import { Config } from "sst/node/config";
 import { ZOAuthAccessToken, ZOAuthOTC } from "@spencerduballcom/db/ddb";
 
 const ZFormData = z.object({ client_id: z.string(), client_secret: z.string(), code: z.string() });
 
 export async function action({ request }: ActionFunctionArgs) {
-  const log = logger();
-  await logRequest(log, request);
+  const log = logger(request);
 
   // IMPORTANT!
   // ----------

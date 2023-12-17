@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { IToast, ToastTypes } from "./reducer";
 import { cva } from "class-variance-authority";
-import { cn } from "~/lib/util/client";
+import { cn } from "~/lib/util/utils";
 import { IconButton } from "~/lib/ui/button";
 import { RiCloseLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { ToasterCtx, Types } from ".";

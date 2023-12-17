@@ -11,7 +11,10 @@ import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
 import { useHydrated } from "remix-utils/use-hydrated";
 import { ToasterProvider } from "~/lib/context/toaster-ctx";
-import { logger, logRequest } from "~/lib/util/utilities.server";
+import { logger } from "~/lib/util/globals.server";
+import { getSessionInfo } from "~/lib/util/utils.server";
+import { ZPublicSession } from "~/lib/util/utils";
+import { Footer } from "~/lib/app/footer";
 
 /**
  * SSR-ONLY
@@ -51,18 +54,16 @@ export const meta: MetaFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const log = logger();
-  await logRequest(log, request);
-
+  logger(request);
   const { theme, cookie: prefsCookie } = await handlePreferencesCookie(request);
-
-  return json({ theme }, { headers: [["Set-Cookie", prefsCookie]] });
+  const session = await getSessionInfo(request).then((s) => (s ? ZPublicSession.parse(s) : null));
+  return json({ theme, session }, { headers: [["Set-Cookie", prefsCookie]] });
 }
 
 function App() {
   // Calculate the "theme" value. When SSR it will come from cookies (if exists), or else it will come from the
   // global context value on client.
-  const { theme } = useLoaderData<typeof loader>();
+  const { theme, session } = useLoaderData<typeof loader>();
   const [{ preferences }] = React.useContext(GlobalCtx);
   const isHydrated = useHydrated();
   const calculatedTheme = isHydrated ? preferences._theme : theme;
@@ -70,6 +71,9 @@ function App() {
   // The theme color needs to be computed in SW to a static value, not a CSS variable. If a CSS variable is
   // used, then the 'theme-color' Meta tag will not update responsively to theme changes on client side.
   const themeColor = calculatedTheme === "dark" ? slateDark.slate1 : slate.slate1;
+
+  // Determine if user is admin
+  const isAdmin = session?.roles.includes("admin") || false;
 
   return (
     <html lang="en" className={calculatedTheme}>
@@ -80,10 +84,13 @@ function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-slate-1">
+      <body className="grid min-h-[100dvh] grid-rows-[min-content_1fr_min-content] bg-slate-1">
         <ToasterProvider>
-          <Header isAdmin={true} />
-          <Outlet />
+          <Header isAdmin={isAdmin} />
+          <div className="justify-start">
+            <Outlet />
+          </div>
+          <Footer session={session} />
           <ScrollRestoration />
           <Scripts />
           <LiveReload />

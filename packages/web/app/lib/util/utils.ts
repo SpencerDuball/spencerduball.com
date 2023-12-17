@@ -1,3 +1,4 @@
+import { ZSession } from "@spencerduballcom/db/ddb";
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
@@ -36,4 +37,16 @@ export const ZJsonString = z.string().transform((str, ctx) => {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid JSON" });
     return z.NEVER;
   }
+});
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Define Generic Zod Types
+ * ------------------------------------------------------------------------------------------------------------------ */
+export const ZPublicSession = ZSession.pick({
+  user_id: true,
+  username: true,
+  name: true,
+  avatar_url: true,
+  github_url: true,
+  roles: true,
 });
