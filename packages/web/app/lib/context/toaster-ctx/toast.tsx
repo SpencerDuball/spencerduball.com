@@ -36,8 +36,18 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 
     const t = type as (typeof ToastTypes)[number];
     const colors = {
-      title: { success: "text-green-11", warning: "text-orange-11", error: "text-red-11", info: "text-slate-11" },
-      description: { success: "text-green-12", warning: "text-orange-12", error: "text-red-12", info: "text-slate-12" },
+      title: {
+        success: "text-green-11",
+        warning: "text-orange-11",
+        error: "text-red-11",
+        info: "text-slate-11",
+      },
+      description: {
+        success: "text-green-12",
+        warning: "text-orange-12",
+        error: "text-red-12",
+        info: "text-slate-12",
+      },
     };
 
     return (
@@ -48,9 +58,9 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         onMouseLeave={() => dispatch({ type: Types.RestartTimer, payload: toastId })}
         {...rest}
       >
-        {title && <p className={cn("col-start-1 col-span-1 font-semibold", colors.title[t || "info"])}>{title}</p>}
+        {title && <p className={cn("col-span-1 col-start-1 font-semibold", colors.title[t || "info"])}>{title}</p>}
         <IconButton
-          className="col-start-2 col-span-1"
+          className="col-span-1 col-start-2"
           size="xs"
           variant="ghost"
           aria-label="dismiss toast"
@@ -60,5 +70,5 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         {description && <p className={cn(colors.description[t || "info"])}>{description}</p>}
       </div>
     );
-  }
+  },
 );

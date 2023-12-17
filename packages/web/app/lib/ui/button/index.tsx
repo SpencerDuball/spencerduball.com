@@ -716,7 +716,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       asChild = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Comp = asChild ? Slot : "button";
 
@@ -759,7 +759,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </Comp>
     );
-  }
+  },
 );
 Button.displayName = "Button";
 
@@ -789,7 +789,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       asChild = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Comp = asChild ? Slot : "button";
 
@@ -813,5 +813,5 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         {isLoading ? Spinner : Icon}
       </Comp>
     );
-  }
+  },
 );

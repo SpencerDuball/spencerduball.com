@@ -11,9 +11,10 @@ import { createReadableStreamFromReadable, createSession } from "@remix-run/node
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-import { commitSession, getSession, sessionCookie } from "~/lib/session.server";
+import { commitSession, getSession, sessionCookie, SESSION_KEY } from "~/lib/session.server";
 import { ZSession } from "@spencerduballcom/db/ddb";
 import { getLogger } from "~/lib/util/globals.server";
+import { parseCookie } from "~/lib/util/utils.server";
 // TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
 // https://github.com/vercel/ms/pull/191
 // @ts-ignore
@@ -26,7 +27,7 @@ export default async function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
-  loadContext: AppLoadContext
+  loadContext: AppLoadContext,
 ) {
   await refreshSession(request.headers, responseHeaders);
 
@@ -39,7 +40,7 @@ function handleBotRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   return new Promise((resolve, reject) => {
     let shellRendered = false;
@@ -57,7 +58,7 @@ function handleBotRequest(
             new Response(stream, {
               headers: responseHeaders,
               status: responseStatusCode,
-            })
+            }),
           );
 
           pipe(body);
@@ -74,7 +75,7 @@ function handleBotRequest(
             console.error(error);
           }
         },
-      }
+      },
     );
 
     setTimeout(abort, ABORT_DELAY);
@@ -85,7 +86,7 @@ function handleBrowserRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   return new Promise((resolve, reject) => {
     let shellRendered = false;
@@ -103,7 +104,7 @@ function handleBrowserRequest(
             new Response(stream, {
               headers: responseHeaders,
               status: responseStatusCode,
-            })
+            }),
           );
 
           pipe(body);
@@ -120,7 +121,7 @@ function handleBrowserRequest(
             console.error(error);
           }
         },
-      }
+      },
     );
 
     setTimeout(abort, ABORT_DELAY);
@@ -142,7 +143,7 @@ async function refreshSession(reqHeaders: Request["headers"], resHeaders: Respon
   const log = getLogger();
 
   const hasSession = await sessionCookie.parse(reqHeaders.get("cookie")).then((s) => !!s);
-  const isSettingSession = await sessionCookie.parse(resHeaders.get("set-cookie")).then((s) => !!s);
+  const isSettingSession = !!parseCookie(SESSION_KEY, resHeaders.get("Set-Cookie") || "");
 
   if (hasSession && !isSettingSession) {
     // retrieve the session data

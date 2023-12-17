@@ -10,10 +10,11 @@ import ms from "ms";
 import { z } from "zod";
 
 export const MAX_AGE = "90d" as const;
+export const SESSION_KEY = "__session";
 
 // Define the Session Cookie
 // -------------------------
-const _sessionCookie = createCookie("__session", {
+const _sessionCookie = createCookie(SESSION_KEY, {
   // Lifetime
   // --------
   // Using the 'maxAge' attribute allows us to set a cookies max age relative to when it is created by the browser.

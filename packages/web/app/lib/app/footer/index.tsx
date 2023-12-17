@@ -1,18 +1,21 @@
 import React from "react";
 import { z } from "zod";
 import { cn, ZPublicSession } from "~/lib/util/utils";
-import { RiTwitterFill, RiGithubFill, RiLoginCircleLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiTwitterFill, RiGithubFill, RiLoginCircleLine, RiCloseLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { PrintablesIcon } from "~/lib/ui/icon";
-import { IconButton } from "~/lib/ui/button";
+import { Button, IconButton } from "~/lib/ui/button";
 import { Link } from "@remix-run/react";
 import * as Avatar from "@radix-ui/react-avatar";
 import * as Dialog from "@radix-ui/react-dialog";
+import { useFetcher } from "@remix-run/react";
 
 export interface FooterProps extends React.HTMLProps<HTMLDivElement> {
   session: z.infer<typeof ZPublicSession> | null;
 }
 
 export function Footer({ session, className, ...props }: FooterProps) {
+  const logout = useFetcher();
+
   return (
     <footer className={cn(`grid h-20 w-full justify-items-center`, className)} {...props}>
       <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4">
@@ -43,6 +46,7 @@ export function Footer({ session, className, ...props }: FooterProps) {
             <PrintablesIcon className="h-4 w-4 text-slate-11" />
           </a>
         </div>
+
         {/* Right Side Footer */}
         <div className="grid auto-cols-min grid-flow-col gap-2">
           {session ? (
@@ -62,9 +66,42 @@ export function Footer({ session, className, ...props }: FooterProps) {
                 </button>
               </Dialog.Trigger>
               <Dialog.Portal>
-                <Dialog.Overlay className="bg-blackA-6 data-[state=open]:animate-overlay-show fixed inset-0"></Dialog.Overlay>
-                <Dialog.Content className="data-[state=open]:animate-content-show fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg focus:outline-none p-4 bg-slate-2 shadow-lg border border-slate-6 h-64 w-80">
-                  <Dialog.Close>X</Dialog.Close>
+                <Dialog.Overlay className="fixed inset-0 bg-blackA-6 data-[state=open]:animate-overlay-show" />
+                <Dialog.Content className="fixed left-1/2 top-1/2 grid w-80 -translate-x-1/2 -translate-y-1/2 auto-cols-auto gap-4 rounded-lg border border-slate-6 bg-slate-2 p-4 shadow-lg focus:outline-none data-[state=open]:animate-content-show">
+                  {/* User Information */}
+                  <div className="grid w-full grid-flow-col grid-cols-[max-content_1fr_max-content] items-center justify-items-start gap-2">
+                    <Avatar.Root className="text-md relative flex h-16 w-16 overflow-hidden rounded-full">
+                      <Avatar.Image
+                        className="aspect-square h-full w-full"
+                        src={session.avatar_url}
+                        alt={`A profile photo of ${session.name}`}
+                      />
+                      <Avatar.Fallback className="flex h-full w-full items-center justify-center rounded-full bg-slate-3">
+                        {session.name.split(" ").reduce((acc, next) => acc + next[0].toUpperCase(), "")}
+                      </Avatar.Fallback>
+                    </Avatar.Root>
+                    <div className="grid auto-rows-max">
+                      <p className="text-lg font-semibold leading-tight">{session.name}</p>
+                      <p className="text-sm text-slate-11">{session.username}</p>
+                    </div>
+                    <div className="self-start pl-4">
+                      <Dialog.Close asChild>
+                        <IconButton
+                          aria-label="close modal"
+                          icon={<RiCloseLine />}
+                          variant="subtle"
+                          size="xs"
+                          className="rounded-full"
+                        />
+                      </Dialog.Close>
+                    </div>
+                  </div>
+                  {/* Signout */}
+                  <logout.Form method="post" action="/auth/signout/github" className="w-full">
+                    <Button colorScheme="red" variant="solid" className="w-full" type="submit">
+                      Logout
+                    </Button>
+                  </logout.Form>
                 </Dialog.Content>
               </Dialog.Portal>
             </Dialog.Root>
@@ -74,7 +111,7 @@ export function Footer({ session, className, ...props }: FooterProps) {
                 aria-label="Toggle Theme"
                 icon={<RiLoginCircleLine />}
                 variant="subtle"
-                className="text-slate-11 bg-transparent"
+                className="bg-transparent text-slate-11"
               />
             </Link>
           )}

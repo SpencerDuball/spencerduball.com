@@ -76,8 +76,8 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                         <Link
                           to="/projects/software"
                           className={cn(
-                            "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
-                            !!pathname.match(/^\/projects\/software\/?.*/ && "bg-slate-7 font-semibold text-slate-12")
+                            "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
+                            !!pathname.match(/^\/projects\/software\/?.*/ && "bg-slate-7 font-semibold text-slate-12"),
                           )}
                         >
                           Software
@@ -87,8 +87,8 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                         <Link
                           to="/projects/3d-print"
                           className={cn(
-                            "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
-                            !!pathname.match(/^\/projects\/3d-print\/?.*/ && "bg-slate-7 font-semibold text-slate-12")
+                            "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
+                            !!pathname.match(/^\/projects\/3d-print\/?.*/ && "bg-slate-7 font-semibold text-slate-12"),
                           )}
                         >
                           3D Print
@@ -98,10 +98,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                         <Link
                           to="/projects/electronics"
                           className={cn(
-                            "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                            "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                             !!pathname.match(
-                              /^\/projects\/electronics\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                            )
+                              /^\/projects\/electronics\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                            ),
                           )}
                         >
                           Electronics
@@ -128,7 +128,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                   onPointerMove={(e) => e.preventDefault()}
                   onPointerLeave={(e) => e.preventDefault()}
                 >
-                  <div className="relative rounded-lg border border-slate-6 bg-slate-3 p-3 shadow-lg grid gap-2">
+                  <div className="relative grid gap-2 rounded-lg border border-slate-6 bg-slate-3 p-3 shadow-lg">
                     <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
                       <Nav.Link asChild>
                         <Link to="/dashboard" className={cn(LinkItemClasses, !!pathname.match(/^\/dashboard\/?$/))}>
@@ -163,10 +163,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           <Link
                             to="/dashboard/cms/blog"
                             className={cn(
-                              "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                              "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                               !!pathname.match(
-                                /^\/dashboard\/cms\/blog\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                              )
+                                /^\/dashboard\/cms\/blog\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                              ),
                             )}
                           >
                             Blog
@@ -176,10 +176,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           <Link
                             to="/dashboard/cms/software"
                             className={cn(
-                              "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                              "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                               !!pathname.match(
-                                /^\/dashboard\/cms\/software\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                              )
+                                /^\/dashboard\/cms\/software\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                              ),
                             )}
                           >
                             Software
@@ -189,10 +189,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           <Link
                             to="/dashboard/cms/3d-print"
                             className={cn(
-                              "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                              "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                               !!pathname.match(
-                                /^\/dashboard\/cms\/3d-print\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                              )
+                                /^\/dashboard\/cms\/3d-print\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                              ),
                             )}
                           >
                             3D Print
@@ -202,10 +202,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           <Link
                             to="/dashboard/cms/electronics"
                             className={cn(
-                              "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                              "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                               !!pathname.match(
-                                /^\/dashboard\/cms\/electronics\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                              )
+                                /^\/dashboard\/cms\/electronics\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                              ),
                             )}
                           >
                             Electronics
@@ -219,7 +219,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
             )}
           </Nav.List>
           <Nav.Indicator className="group z-[11]">
-            <div className="relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-t border-l border-slate-6 bg-slate-3 group-data-[state='visible']:animate-arrow-in group-data-[state='hidden']:animate-arrow-out" />
+            <div className="relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-l border-t border-slate-6 bg-slate-3 group-data-[state='hidden']:animate-arrow-out group-data-[state='visible']:animate-arrow-in" />
           </Nav.Indicator>
           <Nav.Viewport className="absolute top-full z-10 mt-[calc(0.75rem/2+0.5rem)] w-[40rem] max-w-[calc(100vw-1rem*2)] data-[state='close']:animate-slide-down data-[state='open']:animate-slide-up" />
         </Nav.Root>
@@ -276,10 +276,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                             <Link
                               to="/projects/software"
                               className={cn(
-                                "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                                "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                                 !!pathname.match(
-                                  /^\/projects\/software\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                                )
+                                  /^\/projects\/software\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                                ),
                               )}
                             >
                               Software
@@ -289,10 +289,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                             <Link
                               to="/projects/3d-print"
                               className={cn(
-                                "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                                "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                                 !!pathname.match(
-                                  /^\/projects\/3d-print\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                                )
+                                  /^\/projects\/3d-print\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                                ),
                               )}
                             >
                               3D Print
@@ -302,10 +302,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                             <Link
                               to="/projects/electronics"
                               className={cn(
-                                "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                                "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                                 !!pathname.match(
-                                  /^\/projects\/electronics\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                                )
+                                  /^\/projects\/electronics\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                                ),
                               )}
                             >
                               Electronics
@@ -329,10 +329,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                               <Link
                                 to="/dashboard/analytics"
                                 className={cn(
-                                  "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
+                                  "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
                                   !!pathname.match(
-                                    /^\/dashboard\/analytics\/?.*/ && "bg-slate-7 font-semibold text-slate-12"
-                                  )
+                                    /^\/dashboard\/analytics\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                                  ),
                                 )}
                               >
                                 Analytics
@@ -342,8 +342,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                               <Link
                                 to="/dashboard/cms"
                                 className={cn(
-                                  "focus-outline rounded-md p-2 text-center hover:text-slate-12 hover:no-underline bg-slate-6 font-normal text-slate-10",
-                                  !!pathname.match(/^\/dashboard\/cms\/?.*/ && "bg-slate-7 font-semibold text-slate-12")
+                                  "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
+                                  !!pathname.match(
+                                    /^\/dashboard\/cms\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
+                                  ),
                                 )}
                               >
                                 Content
@@ -359,7 +361,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
             </Nav.Item>
           </Nav.List>
           <Nav.Indicator className="group z-[11]">
-            <div className="relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-t border-l border-slate-6 bg-slate-3 group-data-[state='visible']:animate-arrow-in group-data-[state='hidden']:animate-arrow-out" />
+            <div className="relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-l border-t border-slate-6 bg-slate-3 group-data-[state='hidden']:animate-arrow-out group-data-[state='visible']:animate-arrow-in" />
           </Nav.Indicator>
           <Nav.Viewport className="absolute top-full z-10 mt-[calc(0.75rem/2+0.5rem)] w-[40rem] max-w-[calc(100vw-1rem*2)] data-[state='close']:animate-slide-down data-[state='open']:animate-slide-up" />
         </Nav.Root>

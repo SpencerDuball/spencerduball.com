@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => [
 export default function Projects() {
   return (
     <main className="grid w-full justify-items-center">
-      <section className="grid w-full max-w-5xl gap-10 py-6 px-4">
+      <section className="grid w-full max-w-5xl gap-10 px-4 py-6">
         {/* Introduction */}
         <div className="grid max-w-3xl gap-3">
           <h1 className="text-5xl font-extrabold">Projects</h1>

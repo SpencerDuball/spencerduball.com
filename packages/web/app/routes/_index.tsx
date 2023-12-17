@@ -22,10 +22,10 @@ export default function Index() {
 
   return (
     <main className="grid w-full justify-items-center">
-      <section className="grid gap-10 w-full max-w-5xl py-6 px-4">
+      <section className="grid w-full max-w-5xl gap-10 px-4 py-6">
         {/* Profile Card */}
         <div className="md:align-items-center grid w-full auto-rows-max gap-3 rounded-lg bg-gradient-to-r from-yellowA-6 to-crimsonA-6 p-8 md:auto-cols-max md:grid-flow-col md:justify-between">
-          <Avatar.Root className="text-md relative flex h-24 w-24 md:h-32 md:w-32 shrink-0 overflow-hidden rounded-full justify-self-center md:col-start-2 md:justify-self-end">
+          <Avatar.Root className="text-md relative flex h-24 w-24 shrink-0 justify-self-center overflow-hidden rounded-full md:col-start-2 md:h-32 md:w-32 md:justify-self-end">
             <Avatar.Image
               className="aspect-square h-full w-full"
               src="/images/profile.webp"

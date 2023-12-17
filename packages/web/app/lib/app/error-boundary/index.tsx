@@ -11,8 +11,8 @@ export function ErrorBoundary() {
     return (
       // For the height and bottom padding, we are using `theme(spacing.20)` as this is the height of the `Header` component.
       <main className="grid w-full justify-items-center">
-        <div className="w-full max-w-5xl py-6 px-4 grid h-[calc(100dvh-theme(spacing.20))] place-items-center pb-[theme(spacing.20)]">
-          <div className="grid gap-4 justify-items-center">
+        <div className="grid h-[calc(100dvh-theme(spacing.20))] w-full max-w-5xl place-items-center px-4 py-6 pb-[theme(spacing.20)]">
+          <div className="grid justify-items-center gap-4">
             <RiAlarmWarningLine className="h-32 w-32" />
             <h1 className="text-5xl font-semibold">
               {error.status} {error.statusText}
@@ -24,12 +24,12 @@ export function ErrorBoundary() {
   } else if (error instanceof Error) {
     return (
       <main className="grid w-full justify-items-center">
-        <div className="w-full max-w-5xl py-6 px-4 grid gap-10 content-start">
+        <div className="grid w-full max-w-5xl content-start gap-10 px-4 py-6">
           <div className="grid gap-4">
             <h1 className="text-5xl font-semibold">Oops! ...</h1>
             <p className="text-lg text-slate-11">Looks like an error from our end.</p>
           </div>
-          <ScrollArea className="bg-red-3 p-4 rounded-lg max-w-5xl">
+          <ScrollArea className="max-w-5xl rounded-lg bg-red-3 p-4">
             <ScrollViewport>
               <Highlight language="txt" code={error.stack || "No stack trace to display."}>
                 {({ className, tokens, getLineProps, getTokenProps }) => (

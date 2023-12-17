@@ -187,7 +187,7 @@ export default function Authorize() {
 
   return (
     <main className="grid w-full justify-items-center">
-      <div className="grid w-full max-w-5xl py-6 px-4 gap-8">
+      <div className="grid w-full max-w-5xl gap-8 px-4 py-6">
         {/* Introduction */}
         <section className="grid max-w-3xl gap-3">
           <h1 className="text-5xl font-extrabold leading-snug text-slate-11">Github Mock</h1>
@@ -198,12 +198,12 @@ export default function Authorize() {
         {/* User Selection */}
         <Form method="post">
           <input type="hidden" name="search" value={JSON.stringify(search)} />
-          <h2 className="text-3xl font-bold text-blue-11 py-4">Existing Users</h2>
+          <h2 className="py-4 text-3xl font-bold text-blue-11">Existing Users</h2>
           <div className="flex flex-wrap gap-4">
             {users.map((user) => (
               <div
                 key={user.id.toString()}
-                className="p-4 bg-slate-2 border-slate-4 rounded-md grid grid-flow-col gap-4 w-80 grid-cols-[max-content_1fr_max-content] border"
+                className="grid w-80 grid-flow-col grid-cols-[max-content_1fr_max-content] gap-4 rounded-md border border-slate-4 bg-slate-2 p-4"
               >
                 <Avatar.Root className="text-md relative flex h-16 w-16 overflow-hidden rounded-full">
                   <Avatar.Image
@@ -215,8 +215,8 @@ export default function Authorize() {
                     {user.name}
                   </Avatar.Fallback>
                 </Avatar.Root>
-                <div className="grid content-center auto-rows-max">
-                  <p className="leading-tight text-lg font-semibold">{user.name}</p>
+                <div className="grid auto-rows-max content-center">
+                  <p className="text-lg font-semibold leading-tight">{user.name}</p>
                   <p>{user.roles}</p>
                 </div>
                 <IconButton
@@ -232,12 +232,12 @@ export default function Authorize() {
               </div>
             ))}
           </div>
-          <h2 className="text-3xl font-bold text-purple-11 py-4 mt-4">Non-Existing Users</h2>
+          <h2 className="mt-4 py-4 text-3xl font-bold text-purple-11">Non-Existing Users</h2>
           <div className="flex flex-wrap gap-4">
             {ghUsers.map((user) => (
               <div
                 key={user.id.toString()}
-                className="p-4 bg-slate-2 border-slate-4 rounded-md grid grid-flow-col gap-4 w-80 grid-cols-[max-content_1fr_max-content] border"
+                className="grid w-80 grid-flow-col grid-cols-[max-content_1fr_max-content] gap-4 rounded-md border border-slate-4 bg-slate-2 p-4"
               >
                 <Avatar.Root className="text-md relative flex h-16 w-16 overflow-hidden rounded-full">
                   <Avatar.Image
@@ -249,8 +249,8 @@ export default function Authorize() {
                     {user.name}
                   </Avatar.Fallback>
                 </Avatar.Root>
-                <div className="grid content-center auto-rows-max">
-                  <p className="leading-tight text-lg font-semibold">{user.name}</p>
+                <div className="grid auto-rows-max content-center">
+                  <p className="text-lg font-semibold leading-tight">{user.name}</p>
                 </div>
                 <IconButton
                   type="submit"
