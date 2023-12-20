@@ -9,9 +9,9 @@ export function ErrorBoundary() {
 
   if (isRouteErrorResponse(error)) {
     return (
-      // For the height and bottom padding, we are using `theme(spacing.20)` as this is the height of the `Header` component.
+      // For the height, we are subtracting `theme(spacing.40)` which is the height of the `Header` plus `Footer` component from total dvh.
       <main className="grid w-full justify-items-center">
-        <div className="grid h-[calc(100dvh-theme(spacing.20))] w-full max-w-5xl place-items-center px-4 py-6 pb-[theme(spacing.20)]">
+        <div className="grid h-[calc(100dvh-theme(spacing.40))] w-full max-w-5xl place-items-center px-4 py-6 pb-[theme(spacing.40)]">
           <div className="grid justify-items-center gap-4">
             <RiAlarmWarningLine className="h-32 w-32" />
             <h1 className="text-5xl font-semibold">
