@@ -42,14 +42,14 @@ export function GlobalCtxProvider({ children }: { children: React.ReactNode }) {
  * ------------------------------------------------------------------------------------------------------------------ */
 /**
  * Restores the theme from the localStorage if it exists. If the theme was not saved to localStorage, default it to
- * 'dark'. Also used the initial "_theme" value from the "__preferences" cookie.
+ * 'system'. Also used the initial "_theme" value from the "__preferences" cookie.
  *
  * NOTES -
  * This should run once before any other effects related to the 'preferences.theme' or 'preferences._theme'.
  */
 function useRestoreTheme(dispatch: React.Dispatch<Actions>) {
   React.useEffect(() => {
-    let theme: IGlobalCtxState["preferences"]["theme"] = "dark";
+    let theme: IGlobalCtxState["preferences"]["theme"] = "system";
     let _theme: IGlobalCtxState["preferences"]["_theme"] = "dark";
 
     // update the 'theme' from localStorage

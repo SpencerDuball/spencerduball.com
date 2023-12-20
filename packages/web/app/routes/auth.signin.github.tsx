@@ -3,6 +3,7 @@ import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 import { Config } from "sst/node/config";
 import { ZodError } from "zod";
 import { ddb, logger } from "~/lib/util/globals.server";
+import { flash500 } from "~/lib/util/utils.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const log = logger(request);
@@ -16,13 +17,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const stateCode = await ddb()
     .entities.oauthStateCode.update({ redirect_uri }, { returnValues: "ALL_NEW" })
     .then(async ({ Attributes }) => ZOAuthStateCode.parseAsync(Attributes))
-    .catch((e) => {
+    .catch(async (e) => {
       if (e instanceof ZodError) {
         log.error(e, "The oauth_state_code did not match the expected output.");
-        throw redirect(redirect_uri);
+        throw redirect(redirect_uri, { headers: [["Set-Cookie", await flash500]] });
       }
       log.error(e, "There was an issue writing to the database.");
-      throw redirect(redirect_uri);
+      throw redirect(redirect_uri, { headers: [["Set-Cookie", await flash500]] });
     });
   log.info("Success: Created the oauth_state_code.");
 

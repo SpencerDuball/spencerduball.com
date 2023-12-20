@@ -3,9 +3,10 @@ import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 import { z } from "zod";
 import { ZJsonString } from "~/lib/util/utils";
 import { sqldb, ddb, logger } from "~/lib/util/globals.server";
-import { ZCreateSession, commitSession } from "~/lib/session.server";
+import { ZCreateSession, flashCookie, session } from "~/lib/util/sessions.server";
 import { Config } from "sst/node/config";
 import axios from "axios";
+import { flash400, flash401, flash500 } from "~/lib/util/utils.server";
 
 const ZSearch = z.object({
   state: ZJsonString.pipe(z.object({ id: z.string(), redirect_uri: z.string() })),
@@ -29,9 +30,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     try {
       const url = new URL(request.url);
       const { redirect_uri } = ZSearch.shape.state.parse(url.searchParams.get("state"));
-      throw redirect(redirect_uri);
+      throw redirect(redirect_uri, { headers: [["Set-Cookie", await flash400]] });
     } catch (e) {}
-    throw redirect("/");
+    throw redirect("/", { headers: [["Set-Cookie", await flash400]] });
   }
 
   // Confirm OAuth State Code Matches
@@ -50,11 +51,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .then(async ({ Item }) => {
       if (!Item) {
         log.info("Failure: The oauth_state_code did not exist in the database.");
-        throw redirect(search.state.redirect_uri);
+        throw redirect(search.state.redirect_uri, { headers: [["Set-Cookie", await flash401]] });
       } else {
-        return ZOAuthStateCode.parseAsync(Item).catch((e) => {
+        return ZOAuthStateCode.parseAsync(Item).catch(async (e) => {
           log.error(e, "Failure: The oauth_state_code did not match the expected output.");
-          throw redirect(search.state.redirect_uri);
+          throw redirect(search.state.redirect_uri, { headers: [["Set-Cookie", await flash500]] });
         });
       }
     });
@@ -64,7 +65,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   log.info("Validating the oauth_state_code matches ...");
   if (oauthStateCode.code !== JSON.stringify(search.state)) {
     log.info("Failure: The oauth_state_codes did not match.");
-    throw redirect(search.state.redirect_uri);
+    throw redirect(search.state.redirect_uri, { headers: [["Set-Cookie", await flash401]] });
   }
 
   // Request Access Token from Github on Behalf of User
@@ -95,14 +96,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .post(accessTokenUrl, accessTokenFormData, {
       headers: { Accept: "application/json" },
     })
-    .catch((e) => {
+    .catch(async (e) => {
       log.info(e, "Failure: Request to Github failed.");
-      throw redirect(search.state.redirect_uri);
+      throw redirect(search.state.redirect_uri, { headers: [["Set-Cookie", await flash500]] });
     })
     .then(async ({ data }) => ZAccessTokenRes.parseAsync(data))
-    .catch((e) => {
+    .catch(async (e) => {
       log.error(e, "Failure: Response from Github did not match expected schema.");
-      throw redirect(search.state.redirect_uri);
+      throw redirect(search.state.redirect_uri, { headers: [["Set-Cookie", await flash500]] });
     });
   log.info("Success: Retrieved the access_token from Github.");
 
@@ -126,15 +127,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   log.info("Requesting the userinfo from Github ...");
   const userInfo = await axios
     .get(userInfoUrl, { headers: { Authorization: `${token_type} ${access_token}` } })
-    .catch((e) => {
+    .catch(async (e) => {
       log.error(e, "Failure: There was an error retrieveing the userinfo from Github.");
-      throw redirect(search.state.redirect_uri);
+      throw redirect(search.state.redirect_uri, { headers: [["Set-Cookie", await flash500]] });
     })
     .then(({ data }) =>
-      ZGithubUserInfo.parseAsync(data).catch((e) => {
+      ZGithubUserInfo.parseAsync(data).catch(async (e) => {
         log.error(e, "Failure: Response from Github did not match expected schema.");
-        throw redirect(search.state.redirect_uri);
-      })
+        throw redirect(search.state.redirect_uri, { headers: [["Set-Cookie", await flash500]] });
+      }),
     )
     .then(({ id, login: username, name, avatar_url, html_url: github_url }) => ({
       id,
@@ -149,6 +150,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // ------------------
   // If the user exists in the database, update their github info with the fresh info. If they don't exist in in the
   // database, create them.
+  let isNewUser = false;
   log.info("Retrieving the user from our database ...");
   const user = await sqldb()
     .updateTable("users")
@@ -157,11 +159,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .returningAll()
     .executeTakeFirstOrThrow()
     .then((usr) => {
+      isNewUser = false;
       log.info("Success: Updated the user in the database.");
       return usr;
     })
     .catch(async () => {
       // Looks like user didn't exist, create them now
+      isNewUser = true;
       log.info("User did not exist, creating new user ...");
       const usr = await sqldb()
         .insertInto("users")
@@ -201,11 +205,26 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   log.info("Creating the user session in the database ...");
   const secure = new URL(request.url).hostname === "localhost" ? false : true;
   const { id: user_id, username, name, avatar_url, github_url } = user;
-  const session = await commitSession(
+  const sesh = await session.commitSession(
     createSession(ZCreateSession.parse({ user_id, username, name, avatar_url, github_url, roles })),
-    { secure }
+    { secure },
   );
   log.info("Success: Created the user session in the database.");
 
-  return redirect(search.state.redirect_uri, { headers: { "Set-Cookie": session } });
+  // create flash for login success
+  const firstName = name.split(" ").slice(0, -1).join(" ");
+  const flashLogin = await flashCookie.serialize({
+    type: "success",
+    placement: "top",
+    title: isNewUser ? `Welcome!` : `Logged In`,
+    description: isNewUser ? `Welcome the the site ${firstName}!` : `Welcome back to the site ${firstName}!`,
+    duration: 5000,
+  });
+
+  return redirect(search.state.redirect_uri, {
+    headers: [
+      ["Set-Cookie", sesh],
+      ["Set-Cookie", flashLogin],
+    ],
+  });
 };

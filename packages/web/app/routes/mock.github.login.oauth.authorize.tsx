@@ -10,6 +10,7 @@ import { IconButton } from "~/lib/ui/button";
 import { RiLoginCircleLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { ZJsonString } from "~/lib/util/utils";
 import { ZMockGhUser, ZOAuthOTC } from "@spencerduballcom/db/ddb";
+import { flash400, flash401 } from "~/lib/util/utils.server";
 
 const ZSearch = z.object({
   client_id: z.string(),
@@ -62,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
       log.info("Checking client_id matches ...");
       if (Config.GITHUB_CLIENT_ID !== data.search.client_id) {
         log.info("Faliure: client_id did not match.");
-        throw redirect(data.search.state.redirect_uri);
+        throw redirect(data.search.state.redirect_uri, { headers: [["Set-Cookie", await flash401]] });
       }
 
       // Issue the OTC
@@ -133,9 +134,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     try {
       const url = new URL(request.url);
       const { redirect_uri } = ZSearch.shape.state.parse(url.searchParams.get("state"));
-      throw redirect(redirect_uri);
+      throw redirect(redirect_uri, { headers: [["Set-Cookie", await flash400]] });
     } catch (e) {
-      throw redirect("/");
+      throw redirect("/", { headers: [["Set-Cookie", await flash400]] });
     }
   }
 

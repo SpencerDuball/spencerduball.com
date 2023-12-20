@@ -1,5 +1,5 @@
 import { type ActionFunctionArgs, json } from "@remix-run/node";
-import { sessionCookie } from "~/lib/session.server";
+import { flashCookie, sessionCookie } from "~/lib/util/sessions.server";
 import { ddb, logger } from "~/lib/util/globals.server";
 import { getSessionInfo } from "~/lib/util/utils.server";
 
@@ -24,7 +24,20 @@ export async function action({ request }: ActionFunctionArgs) {
       }
 
       log.info("Responding with Set-Cookie to delete session from browser.");
-      return new Response(null, { status: 200, headers: { "Set-Cookie": deleteCookie } });
+      const flash = await flashCookie.serialize({
+        type: "success",
+        placement: "top",
+        title: "Signed Out",
+        description: "You have successfully been signed out.",
+        duration: 5000,
+      });
+      return new Response(null, {
+        status: 200,
+        headers: [
+          ["Set-Cookie", deleteCookie],
+          ["Set-Cookie", flash],
+        ],
+      });
     }
     default: {
       log.info("This method is not allowed, only POST is defined.");

@@ -1,20 +1,22 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { cssBundleHref } from "@remix-run/css-bundle";
 import { json } from "@remix-run/node";
 import type { LinksFunction, MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import tailwind from "~/tailwind.css";
 import Inter from "@fontsource-variable/inter/index.css";
-import { preferences } from "~/lib/cookies";
+import { preferences } from "~/lib/util/cookies";
 import { GlobalCtxProvider, GlobalCtx } from "~/lib/context/global-ctx";
 import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
 import { useHydrated } from "remix-utils/use-hydrated";
-import { ToasterProvider } from "~/lib/context/toaster-ctx";
+import { ToasterProvider, Types } from "~/lib/context/toaster-ctx";
 import { logger } from "~/lib/util/globals.server";
 import { getSessionInfo } from "~/lib/util/utils.server";
 import { ZPublicSession } from "~/lib/util/utils";
 import { Footer } from "~/lib/app/footer";
+import { flashCookie, _flashCookie } from "~/lib/util/sessions.server";
+import { ToasterCtx } from "~/lib/context/toaster-ctx";
 
 /**
  * SSR-ONLY
@@ -55,9 +57,31 @@ export const meta: MetaFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   logger(request);
+
+  // handle actions
   const { theme, cookie: prefsCookie } = await handlePreferencesCookie(request);
   const session = await getSessionInfo(request).then((s) => (s ? ZPublicSession.parse(s) : null));
-  return json({ theme, session }, { headers: [["Set-Cookie", prefsCookie]] });
+  const flash = await flashCookie.parse(request.headers.get("cookie"));
+
+  // build the headers
+  const headers: HeadersInit = [["Set-Cookie", prefsCookie]];
+  if (flash) headers.push(["Set-Cookie", await _flashCookie.serialize("", { maxAge: 0 })]);
+
+  return json({ theme, session, flash }, { headers });
+}
+
+/**
+ * This component will retrieve the flash message and display it as a toast.
+ */
+function DisplayFlash() {
+  const { flash } = useLoaderData<typeof loader>();
+  const [, dispatch] = useContext(ToasterCtx);
+
+  useEffect(() => {
+    if (flash) dispatch({ type: Types.AddToast, payload: flash });
+  }, [flash]);
+
+  return <></>;
 }
 
 function App() {
@@ -91,6 +115,7 @@ function App() {
             <Outlet />
           </div>
           <Footer session={session} />
+          <DisplayFlash />
           <ScrollRestoration />
           <Scripts />
           <LiveReload />

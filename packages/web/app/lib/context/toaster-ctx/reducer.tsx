@@ -75,7 +75,8 @@ export const reducer = (state: IToasterState, action: Actions) => {
         ...action.payload,
       };
       state.addToQueue({ type: Types.RestartTimer, payload: id });
-      return { ...state, toasts: [...state.toasts, toast].sort(sortToasts) };
+      const newToasts = [...state.toasts, toast].sort(sortToasts);
+      return { ...state, toasts: newToasts };
     }
     case Types.UpsertToast: {
       const toast = state.toasts.find(({ id }) => id === action.payload.id);
@@ -113,7 +114,8 @@ export const reducer = (state: IToasterState, action: Actions) => {
     case Types.RemoveToast: {
       const toast = state.toasts.find(({ id }) => id === action.payload);
       while (toast && toast.timeoutIds.length > 0) clearTimeout(toast.timeoutIds.pop());
-      return { ...state, toasts: state.toasts.filter(({ id }) => id !== action.payload) };
+      const filteredToasts = state.toasts.filter(({ id }) => id !== action.payload);
+      return { ...state, toasts: filteredToasts };
     }
     case Types.RemoveTimer: {
       const toast = state.toasts.find(({ id }) => id === action.payload);
@@ -134,7 +136,7 @@ export const reducer = (state: IToasterState, action: Actions) => {
       if (toast.duration !== Infinity) {
         const timeoutId = window.setTimeout(
           () => state.addToQueue({ type: Types.RemoveToast, payload: newToast.id }),
-          newToast.duration
+          newToast.duration,
         );
         newToast.timeoutIds.push(timeoutId);
       }

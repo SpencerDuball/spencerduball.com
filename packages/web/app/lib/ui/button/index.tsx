@@ -9,7 +9,8 @@ import { RiLoader4Fill } from "react-icons/ri/index.js"; // TODO: Remove the 'in
  * Define Component Variants
  * ------------------------------------------------------------------------------------------------------------ */
 // Button
-const buttonDefaultClasses = "focus-outline rounded-md relative grid grid-flow-col place-items-center gap-2";
+const buttonDefaultClasses =
+  "focus-outline rounded-md relative grid grid-flow-col place-items-center gap-2 auto-cols-max justify-center";
 const buttonConfig = {
   variants: {
     size: {
@@ -806,7 +807,9 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     return (
       <Comp
         disabled={!!isDisabled || !!isLoading}
-        className={cn(iconButtonVariants({ variant, size, colorScheme, isDisabled, isLoading, isActive, className }))}
+        className={cn(
+          iconButtonVariants({ variant, size, colorScheme, isDisabled, isLoading, isActive, isRound, className }),
+        )}
         ref={ref}
         {...props}
       >

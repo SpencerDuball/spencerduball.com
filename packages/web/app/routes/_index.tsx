@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import * as Avatar from "@radix-ui/react-avatar";
-import { RiTwitterFill, RiGithubFill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiTwitterXFill, RiGithubFill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { PrintablesIcon } from "~/lib/ui/icon";
 import { Button } from "~/lib/ui/button";
 import React from "react";
@@ -50,7 +50,7 @@ export default function Index() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <RiTwitterFill className="h-4 w-4" />
+                <RiTwitterXFill className="h-4 w-4" />
               </a>
               <a
                 className="focus-outline h-min w-min p-2"

@@ -1,6 +1,6 @@
 import { redirect } from "@remix-run/node";
 import { ZSession } from "@spencerduballcom/db/ddb";
-import { getSession } from "~/lib/session.server";
+import { flashCookie, session } from "~/lib/util/sessions.server";
 import Cookie from "cookie";
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -26,7 +26,8 @@ export function redirectToLogin(url: string) {
  * @returns The typesafe session data.
  */
 export async function getSessionInfo(request: Request) {
-  return await getSession(request.headers.get("cookie"))
+  return await session
+    .getSession(request.headers.get("cookie"))
     .then((s) => ZSession.parse(s.data))
     .catch(() => null);
 }
@@ -52,3 +53,36 @@ export function parseCookie(key: string, cookie: string) {
 
   return result;
 }
+
+/**
+ * A standard flash cookie to use when handling a 400 type request.
+ */
+export const flash400 = flashCookie.serialize({
+  type: "error",
+  placement: "top",
+  title: "Error - 400",
+  description: "Required inputs were not supplied.",
+  duration: 5000,
+});
+
+/**
+ * A standard flash cookie to use when handling a 401 type request.
+ */
+export const flash401 = flashCookie.serialize({
+  type: "error",
+  placement: "top",
+  title: "Error - 401",
+  description: "User is not authorized to access this resource.",
+  duration: 500,
+});
+
+/**
+ * A standard flash cookie to use when handling a 500 type request.
+ */
+export const flash500 = flashCookie.serialize({
+  type: "error",
+  placement: "top",
+  title: "Error - 500",
+  description: "Oops! Looks like an error on our side, please try again later.",
+  duration: 5000,
+});

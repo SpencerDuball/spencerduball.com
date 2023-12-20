@@ -11,7 +11,7 @@ import { createReadableStreamFromReadable, createSession } from "@remix-run/node
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-import { commitSession, getSession, sessionCookie, SESSION_KEY } from "~/lib/session.server";
+import { session, sessionCookie, SESSION_KEY } from "~/lib/util/sessions.server";
 import { ZSession } from "@spencerduballcom/db/ddb";
 import { getLogger } from "~/lib/util/globals.server";
 import { parseCookie } from "~/lib/util/utils.server";
@@ -129,9 +129,21 @@ function handleBrowserRequest(
 }
 
 export const handleDataRequest: HandleDataRequestFunction = async (response, { request }) => {
+  fixEmptyResponseHeaders(response);
   await refreshSession(request.headers, response.headers);
   return response;
 };
+
+/**
+ * This function will update the 'Content-Type' header to 'text/plain' if the 'Content-Length' is 0. This fixes a bug
+ * noticed only when deployed to CloudFront where responses with an empty body (null/undefined) seem to have a default
+ * 'Content-Type: application/json'. Remix then tries to parse the body for JSON and a client-side error is thrown.
+ *
+ * TODO: This GH issue tracks this: [CREATE REMIX ISSUE FOR THIS]
+ */
+function fixEmptyResponseHeaders(res: Response) {
+  if (!res.body) res.headers.set("Content-Type", "text/plain");
+}
 
 /**
  * This function will take in the request headers and response headers then compare the current time to the modified_at
@@ -147,7 +159,8 @@ async function refreshSession(reqHeaders: Request["headers"], resHeaders: Respon
 
   if (hasSession && !isSettingSession) {
     // retrieve the session data
-    const session = await getSession(reqHeaders.get("cookie"))
+    const sesh = await session
+      .getSession(reqHeaders.get("cookie"))
       .then(async ({ data }) => ZSession.parseAsync(data))
       .catch(async (e) => {
         log.warn(e, "Error: Session was malformed, deleting the session cookie.");
@@ -155,10 +168,10 @@ async function refreshSession(reqHeaders: Request["headers"], resHeaders: Respon
       });
 
     // if session older than 24h update it
-    if (session) {
-      const msSinceRefresh = new Date().getTime() - new Date(session.modified).getTime();
+    if (sesh) {
+      const msSinceRefresh = new Date().getTime() - new Date(sesh.modified).getTime();
       if (msSinceRefresh > ms("24h")) {
-        const sessionCookie = await commitSession(createSession(undefined, session.id));
+        const sessionCookie = await session.commitSession(createSession(undefined, sesh.id));
         resHeaders.append("Set-Cookie", sessionCookie);
       }
     }
