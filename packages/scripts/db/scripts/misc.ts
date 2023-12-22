@@ -12,6 +12,7 @@ import path from "path";
 import fs from "fs-extra";
 import { migrate } from "./migrate";
 import { seed } from "./seed";
+import { spawn, execSync } from "child_process";
 
 /**
  * This function will reset the database, S3 bucket, and dynamodb to their original state. Everything will be removed
@@ -70,4 +71,28 @@ export async function setup({ sqldb, s3Client, ddb }: ScriptInput) {
 
   // apply all habitat and seed data
   await seed({ sqldb: db, s3Client: s3, ddb: dynamo });
+}
+
+export async function start() {
+  // check if libsql is installed
+  const libdInstalled = !!execSync("sqld --version", { encoding: "utf8" }).match(/^sqld sqld \d+\.\d+\.\d+/);
+  if (!libdInstalled)
+    console.error(
+      "Missing! `sqld` program needs to be installed, please see the instructions here for installing this:",
+      "https://github.com/tursodatabase/libsql/blob/main/docs/BUILD-RUN.md#build-and-install-with-homebrew",
+    );
+
+  // check if turso is installed
+  const tursoInstalled = !!execSync("turso --version", { encoding: "utf8" }).match(/^turso version v\d+\.\d+\.\d+/);
+  if (!tursoInstalled)
+    console.error(
+      "Missing! `turso` program needs to be installed, please see the instructions here for installing this:",
+      "https://docs.turso.tech/reference/turso-cli#homebrew-macos-and-linux",
+    );
+
+  // start the database
+  const url = new URL(Config.DATABASE_URL);
+  if (url.hostname === "127.0.0.1" && url.port) {
+    spawn(`turso`, ["dev", `--port=${url.port}`], { stdio: "inherit" });
+  } else console.error("Check the DATABASE_URL, it doesn't match the localhost or is missing a port number.");
 }

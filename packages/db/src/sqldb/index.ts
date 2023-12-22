@@ -1,8 +1,5 @@
 import { Kysely, ColumnType } from "kysely";
 import { LibsqlDialect } from "@libsql/kysely-libsql";
-// TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
-// https://github.com/vercel/ms/pull/191
-// @ts-ignore
 
 /* ------------------------------------------------------------------------------------------------------------
  * Define Tables

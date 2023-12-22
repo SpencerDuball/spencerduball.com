@@ -10,7 +10,8 @@
     "db:seed:replant": "sst bind 'tsx db/index.ts db:seed:replant'",
     "db:seed:reset": "sst bind 'tsx db/index.ts db:seed:reset'",
     "db:reset": "sst bind 'tsx db/index.ts db:reset'",
-    "db:setup": "sst bind 'tsx db/index.ts db:setup'"
+    "db:setup": "sst bind 'tsx db/index.ts db:setup'",
+    "db:start": "sst bind 'tsx db/index.ts db:start'"
   },
   "devDependencies": {
     "@aws-sdk/client-dynamodb": "^3.449.0",

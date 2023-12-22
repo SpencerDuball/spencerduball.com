@@ -44,6 +44,10 @@ async function main() {
     .command("db:setup")
     .description("Applies all migrations, runs all habitat scripts, and runs all seed scripts.")
     .action(async () => misc.setup({}));
+  program
+    .command("db:start")
+    .description("Starts the localhost database at the given port.")
+    .action(async () => misc.start());
 
   // execute the program
   await program.parseAsync();
