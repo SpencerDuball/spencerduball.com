@@ -158,3 +158,12 @@ This section gives an overview of the main scripts that will be run when develop
   - `pnpm sst dev` - Launches the SST console, pulls down the configuration/serets for intellisense, deploys dev stage resources.
   - `pnpm sst deploy --stage staging` - Deploys the `staging` stage.
   - `pnpm sst deploy --stage prod` - Deploys the `prod` stage.
+  - `pnpm sst secrets set <secret_name> <secret_value> [--stage stage]` - Sets a secret for the specified stage.
+  - `pnpm sst secrets list [--stage stage]` - Prints all secrets and their values.
+
+## Design
+
+The design for multipart systems such as authentication and theme settings are contained in the following links:
+
+- [Authentication/Authorization](/doc/design/auth)
+- [Website Theme](/doc/design/theme)
