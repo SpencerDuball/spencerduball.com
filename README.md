@@ -165,5 +165,5 @@ This section gives an overview of the main scripts that will be run when develop
 
 The design for multipart systems such as authentication and theme settings are contained in the following links:
 
-- [Authentication/Authorization](/doc/design/auth)
-- [Website Theme](/doc/design/theme)
+- [Authentication/Authorization](/doc/design/auth.md)
+- [Website Theme](/doc/design/theme.md)
