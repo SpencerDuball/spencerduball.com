@@ -2,7 +2,7 @@
 
 The intended audience of this website would almost exclusively be developers, so using Github as an OAuth provider makes sense for authenticating users. There are some high level requirements for Authentication:
 
-1. [Limited Logins](#limited-logins): Users should only need to log in once so long as they visit the site within a 90 day period of their last login.
+1. [Limited Logins](#limited-logins): Users should only need to log in once so long as they visit the site within a 90 day period of their last login. AKA sessions renew a 90 day lease on every refresh.
 2. [Mocked Users](#mocked-users): The site should support having a pool of fake users for development and staging environments so that testing can be simulated with more than actual Github users.
 
 ## Limited Logins
@@ -24,7 +24,7 @@ The first way is to create a session token on the server that does not expire, o
 The second way is to create a session token on the server that expires in 90 days, and then send a `Set-Cookie` header to the browser with an `Expires-At` of 90 days too. Every request to the server will update the session token on the server, and it will update the cookie's `Expires-At` time. This is an example of a rolling session.
 
 **Pros:**
-- The session doesn't ever need to expires. A user could theoretically be signed in permanently such that they continue to visit the site within the `Expires-At` limit of the session/cookie.
+- The session doesn't ever need to expire. A user could theoretically be signed in permanently such that they continue to visit the site within the `Expires-At` limit of the session/cookie.
 - There will never be an instance where the user appears signed in on the browser, but is not when they request a resource from the server.
 - The database won't fill up unnecessarily as we can put a TTL on the sessions corresponding with their expiration.
 
@@ -36,6 +36,45 @@ The second way is to create a session token on the server that expires in 90 day
 The solution to the problem is to use Rolling Sessions but only updating the server and browser `ttl` and `Expires-At` after a period of time has passed. We don't need to extend a user's session every time they make a server request as this puts unnecessary strain on the server, and it's very unlikely that the time inbetween requests is important to the user. With a lifespan of 90 days, we can limit the refresh of a sessions only 1 time in a 24 hour span. This allows for the benefits of the Rolling Server Sessions without the downfalls, and we won't run into any issues of filling out database up with unused items like the Long Server Sessions since out sessions will have much shorter lifespans.
 
 One other issue of concern was how to update a server session when there are multiple requests in parallel? For example, when visiting a page in Remix there will be multiple parallel requests, a great feature of Remix. This presents the issue where each request will attempt to update the session which could cause race conditions. This issue is not that important however as the session ID (or key) will be the same regardless of the last request to update the session, and the `TTL`/`Expires-At` will be so close in time that the last `Set-Cookie` header's `Expires-At` may differ by probably a maximum of 1000ms.
+
+This solution is implemented in the [entry.server.tsx](/packages/web/app/entry.server.tsx) file with the `refreshSession` function. For every document request we send (handled by `handleRequest` function) we will refresh the session, and for every data request we send (handled by `handleDataRequest` function) we will refresh the session. These functions are called AFTER a all other processing for the request has occurred, so we can check if there is already an attempt to set the session token - if not we will upate the TTL if appropriate.
+
+Implementing rolling sessions is documented in more detail here: https://sergiodxa.com/articles/add-rolling-sessions-to-remix
+
+```tsx
+/**
+ * This function will take in the request headers and response headers then compare the current time to the modified_at
+ * time of the user's session. If the session has not been updated in more than 24 hours, we will update it to extend
+ * the TTL. This allows a user to maintain a token for an unlimited period and not need to log back in such that they
+ * continue to visit the site within 90d time windows.
+ */
+async function refreshSession(reqHeaders: Request["headers"], resHeaders: Response["headers"]) {
+  const log = getLogger();
+
+  const hasSession = await sessionCookie.parse(reqHeaders.get("cookie")).then((s) => !!s);
+  const isSettingSession = !!parseCookie(SESSION_KEY, resHeaders.get("Set-Cookie") || "");
+
+  if (hasSession && !isSettingSession) {
+    // retrieve the session data
+    const sesh = await session
+      .getSession(reqHeaders.get("cookie"))
+      .then(async ({ data }) => ZSession.parseAsync(data))
+      .catch(async (e) => {
+        log.warn(e, "Error: Session was malformed, deleting the session cookie.");
+        resHeaders.append("Set-Cookie", await sessionCookie.serialize(""));
+      });
+
+    // if session older than 24h update it
+    if (sesh) {
+      const msSinceRefresh = new Date().getTime() - new Date(sesh.modified).getTime();
+      if (msSinceRefresh > ms("24h")) {
+        const sessionCookie = await session.commitSession(createSession(undefined, sesh.id));
+        resHeaders.append("Set-Cookie", sessionCookie);
+      }
+    }
+  }
+}
+```
 
 ## Mocking Users
 
