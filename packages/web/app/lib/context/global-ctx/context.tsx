@@ -31,8 +31,7 @@ export function GlobalCtxProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = React.useReducer(reducer, InitialGlobalCtxState);
 
   // run effects
-  useRestoreTheme(dispatch);
-  useComputeResolvedTheme([state.preferences.theme, dispatch]);
+  useSiteThemeHandler(dispatch, state.preferences.theme);
 
   return <GlobalCtx.Provider value={[state, dispatch]}>{children}</GlobalCtx.Provider>;
 }
@@ -40,14 +39,13 @@ export function GlobalCtxProvider({ children }: { children: React.ReactNode }) {
 /* ------------------------------------------------------------------------------------------------------------------
  * Define Hooks
  * ------------------------------------------------------------------------------------------------------------------ */
-/**
- * Restores the theme from the localStorage if it exists. If the theme was not saved to localStorage, default it to
- * 'system'. Also used the initial "_theme" value from the "__preferences" cookie.
- *
- * NOTES -
- * This should run once before any other effects related to the 'preferences.theme' or 'preferences._theme'.
- */
-function useRestoreTheme(dispatch: React.Dispatch<Actions>) {
+function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, theme: IGlobalCtxState["preferences"]["theme"]) {
+  // Restore Site Theme
+  // ------------------
+  // This effect restores the site theme from localStorage if it exists. If the theme was not saved to localStorage,
+  // default it to 'system'. This effect also initializes the initial '_theme' from the '__preferences' cookie value.
+  //
+  // [Order-Dependent 1/2]
   React.useEffect(() => {
     let theme: IGlobalCtxState["preferences"]["theme"] = "system";
     let _theme: IGlobalCtxState["preferences"]["_theme"] = "dark";
@@ -73,20 +71,17 @@ function useRestoreTheme(dispatch: React.Dispatch<Actions>) {
     // update the context
     dispatch({ type: Types.PatchPreferences, payload: { theme, _theme } });
   }, []);
-}
 
-/**
- * After client-side hydration, this function tracks and computes the resolved theme "_theme" in response to the
- * "theme" changing, or when the theme preferences changes.
- *
- * 1) Determine and update the new 'globalCtx.preferences._theme'
- * 2) Store the new theme in the '__preferences' localStorage key
- * 3) Update the '__preferences' cookie
- */
-function useComputeResolvedTheme([theme, dispatch]: [
-  IGlobalCtxState["preferences"]["theme"],
-  React.Dispatch<Actions>,
-]) {
+  // Compute Resolved Theme
+  // ----------------------
+  // After client-side hydration, this effect tracks and computes the resolved theme "_theme" in response to the "theme"
+  // changing, or when the theme preferences is changed.
+  //
+  // (1) Determine and upate the new 'globalCtx.preferences._theme'
+  // (2) Store the new theme in the '__preferences' localStorage key
+  // (3) Update the '__preferences' cookie
+  //
+  // [Order-Dependent 2/2]
   const prefersDark = useMedia("(prefers-color-scheme: dark)", true);
   const isHydrated = useHydrated();
 
