@@ -139,7 +139,7 @@ export const handleDataRequest: HandleDataRequestFunction = async (response, { r
  * noticed only when deployed to CloudFront where responses with an empty body (null/undefined) seem to have a default
  * 'Content-Type: application/json'. Remix then tries to parse the body for JSON and a client-side error is thrown.
  *
- * TODO: This GH issue tracks this: [CREATE REMIX ISSUE FOR THIS]
+ * TODO: Tracked by this GH issue: https://github.com/remix-run/react-router/issues/11145
  */
 function fixEmptyResponseHeaders(res: Response) {
   if (!res.body) res.headers.set("Content-Type", "text/plain");

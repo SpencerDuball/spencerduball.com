@@ -17,7 +17,7 @@ export const PREFERENCES_KEY = "__preferences";
  * ------------------------------------------------------------------------------------------------------------------ */
 // define initial GlobalCtxState
 export const InitialGlobalCtxState: IGlobalCtxState = {
-  preferences: { theme: "dark", _theme: "dark" },
+  preferences: { theme: "system", _theme: "dark" },
 };
 
 // create GlobalCtx
@@ -39,6 +39,21 @@ export function GlobalCtxProvider({ children }: { children: React.ReactNode }) {
 /* ------------------------------------------------------------------------------------------------------------------
  * Define Hooks
  * ------------------------------------------------------------------------------------------------------------------ */
+
+/**
+ * This hook handles hydrating the site theme, keeping the localStorage and cookie in sync, and preventing theme flash.
+ *
+ * The site theme consists of two parts: the 'theme' and the '_theme'. The 'theme' can be ['system', 'dark', 'light']
+ * while the '_theme' may be only ['dark', 'light]. Since there are really only two themes (indicated by '_theme') we
+ * need to compute what 'system' should evaluate to on the client side. This hook has two main purposes:
+ * (1) Restoring Site Theme - This happens only once and should occur before Compute Resolved Theme or else we may have
+ *     flash issue.
+ * (2) Compute Resolved Theme ('_theme') - This happens any time the 'prefers-color-scheme' changes (system theme), or
+ *     the 'theme' value is toggled. It will update the resolved '_theme' and keep the localStorage + cookie in sync.
+ *
+ * @param dispatch The dispatch function.
+ * @param theme The current theme.
+ */
 function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, theme: IGlobalCtxState["preferences"]["theme"]) {
   // Restore Site Theme
   // ------------------

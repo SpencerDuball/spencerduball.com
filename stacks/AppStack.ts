@@ -95,7 +95,7 @@ export function AppStack({ app, stack }: StackContext) {
       principals: [new AnyPrincipal()],
       actions: ["s3:GetObject"],
       resources: publicBucketPaths,
-    })
+    }),
   );
 
   //-----------------------------------------------------------------------------------------------
