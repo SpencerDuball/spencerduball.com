@@ -27,7 +27,7 @@ async function main() {
     .description("Runs seeds and habitat scripts up to the latest migration applied.")
     .action(async () => await seed.seed({}));
   program
-    .command("db:seed:replant", "Removes all seed data, but keeps habitat data.")
+    .command("db:seed:replant")
     .description("Removes all seed data (not habitat data), and then reapplies the seed data.")
     .action(async () => await seed.replant({}));
   program

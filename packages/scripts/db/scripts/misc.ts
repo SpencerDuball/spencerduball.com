@@ -11,7 +11,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import path from "path";
 import fs from "fs-extra";
 import { migrate } from "./migrate";
-import { seed } from "./seed";
+import { seed, replant } from "./seed";
 import { spawn, execSync } from "child_process";
 
 /**
@@ -93,6 +93,23 @@ export async function start() {
   // start the database
   const url = new URL(Config.DATABASE_URL);
   if (url.hostname === "127.0.0.1" && url.port) {
-    spawn(`turso`, ["dev", `--port=${url.port}`], { stdio: "inherit" });
+    spawn(`turso`, ["dev", `--port=${url.port}`], { stdio: "inherit" }).on("spawn", async () => {
+      // create the clients
+      const db = new Kysely({
+        dialect: new LibsqlDialect({ url: Config.DATABASE_URL, authToken: Config.DATABASE_AUTH_TOKEN }),
+      });
+      const s3 = new S3Client({});
+      const dynamo = new Ddb({
+        tableName: Table.table.tableName,
+        client: new DynamoDBClient({ region: Config.REGION }),
+      });
+
+      // migrate and replant the database
+      await migrate({ sqldb: db, s3Client: s3, ddb: dynamo });
+      await replant({ sqldb: db, s3Client: s3, ddb: dynamo });
+
+      // destroy the database when finished
+      await db.destroy();
+    });
   } else console.error("Check the DATABASE_URL, it doesn't match the localhost or is missing a port number.");
 }
