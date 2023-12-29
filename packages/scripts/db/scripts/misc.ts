@@ -1,6 +1,6 @@
 import ora from "ora";
 import { clearBucket, clearDdb, type ScriptInput } from "../lib";
-import { Migrator, FileMigrationProvider, Kysely, sql, NO_MIGRATIONS } from "kysely";
+import { Kysely } from "kysely";
 import { LibsqlDialect } from "@libsql/kysely-libsql";
 import { Config } from "sst/node/config";
 import { S3Client } from "@aws-sdk/client-s3";
@@ -8,41 +8,43 @@ import { Bucket } from "sst/node/bucket";
 import { Ddb } from "@spencerduballcom/db/ddb";
 import { Table } from "sst/node/table";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import path from "path";
-import fs from "fs-extra";
 import { migrate } from "./migrate";
 import { seed, replant } from "./seed";
 import { spawn, execSync } from "child_process";
+import { createClient } from "@libsql/client";
 
 /**
  * This function will reset the database, S3 bucket, and dynamodb to their original state. Everything will be removed
  * including migration files, habitat data, and seed data.
  */
-export async function reset({ sqldb, s3Client, ddb }: ScriptInput) {
+export async function reset({ s3Client, ddb }: ScriptInput) {
   let spinner = ora("Connecting to the database ...").start();
 
   // create the clients
-  const db =
-    sqldb ??
-    new Kysely({ dialect: new LibsqlDialect({ url: Config.DATABASE_URL, authToken: Config.DATABASE_AUTH_TOKEN }) });
+  const raw = createClient({ url: Config.DATABASE_URL, authToken: Config.DATABASE_AUTH_TOKEN });
   const s3 = s3Client ?? new S3Client({});
   const dynamo =
     ddb ?? new Ddb({ tableName: Table.table.tableName, client: new DynamoDBClient({ region: Config.REGION }) });
 
   // PART 1: Reset the SQL Database
   // ------------------------------
-  // drop all migrations
-  spinner.text = `Dropping all migrations from sql database ...`;
-  const migrationFolder = path.resolve("migrations");
-  const migrator = new Migrator({ db, provider: new FileMigrationProvider({ fs, path, migrationFolder }) });
-  const migrations = (await migrator.getMigrations()).filter((migration) => !!migration.executedAt);
-  await migrator.migrateTo(NO_MIGRATIONS);
-  if (migrations.length > 0) spinner.succeed(`All ${migrations.length} migrations from sql database dropped.`);
-  else spinner.succeed(`No SQL migrations to drop.`);
-
-  // close the connection if the db client was not passed into the function
-  if (!sqldb) await db.destroy();
-  spinner.stop();
+  // To drop all tables in the database we need to turn the 'foreign_keys' checks off and then delete all the tables in
+  // a single executing command string. We can't use the Kysely package because:
+  //
+  // 1. Multiple statements cannot be sent at once in a single query. This is an issue because the 'foreign_keys' pragma
+  //    gets reset right after a query finishes.
+  // 2. We can't use transactions with Kysely to ensure PRAGMA is turned off because Kysely will not allow PRAGMA in a
+  //    transaction (might be a SQL restriction too, not sure).
+  spinner.text = `Dropping all tables from sql database ...`;
+  const dropTableCmds = await raw
+    .execute(`SELECT name FROM sqlite_master WHERE type = 'table'`)
+    .then(({ rows }) => rows.map(({ name }) => `DROP TABLE IF EXISTS "${name}"`));
+  if (dropTableCmds.length > 0) {
+    const dropAllTables = ["PRAGMA foreign_keys=0", ...dropTableCmds, "PRAGMA foreign_keys=1"].join(";") + ";";
+    await raw.executeMultiple(dropAllTables);
+    spinner.succeed(`All ${dropTableCmds.length} tables from SQL database dropped.`);
+  } else spinner.succeed("No SQL tables to drop.");
+  raw.close();
 
   // PART 2: Clear the S3 Bucket
   // ---------------------------

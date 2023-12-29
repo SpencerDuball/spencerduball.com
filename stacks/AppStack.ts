@@ -1,45 +1,28 @@
 import { StackContext, RemixSite, Table, Config, Function, Bucket } from "sst/constructs";
 import { Architecture } from "aws-cdk-lib/aws-lambda";
 import { BillingMode } from "aws-cdk-lib/aws-dynamodb";
-import { Provider } from "aws-cdk-lib/custom-resources";
-import { CustomResource, Duration, RemovalPolicy } from "aws-cdk-lib/core";
-import {
-  Distribution,
-  ViewerProtocolPolicy,
-  LambdaEdgeEventType,
-  CachePolicy,
-  CacheQueryStringBehavior,
-  CacheHeaderBehavior,
-  CacheCookieBehavior,
-} from "aws-cdk-lib/aws-cloudfront";
+import { RemovalPolicy } from "aws-cdk-lib/core";
+import { Distribution, ViewerProtocolPolicy, LambdaEdgeEventType, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { AnyPrincipal, Effect, PolicyStatement } from "aws-cdk-lib/aws-iam";
+import { UpdateLambdaEnv } from "../constructs/UpdateLambdaEnv";
+import { ConfigParameter } from "../constructs/ConfigParameter";
+import { SetCorsRules } from "../constructs/SetCorsRules";
+import { HttpMethods } from "aws-cdk-lib/aws-s3";
 
 export function AppStack({ app, stack }: StackContext) {
   // define global variables
   const prodUrl = "https://spencerduball.com";
 
   // define global parameters & secrets
-  const REGION = new Config.Parameter(stack, "REGION", { value: app.region });
-  const SITE_URL = new Config.Parameter(stack, "SITE_URL", { value: "http://localhost:3000" });
+  const REGION = new ConfigParameter(stack, "REGION", { value: app.region });
+  const SITE_URL = new ConfigParameter(stack, "SITE_URL", { value: "http://localhost:3000" });
   const GITHUB_CLIENT_ID = new Config.Secret(stack, "GITHUB_CLIENT_ID");
   const GITHUB_CLIENT_SECRET = new Config.Secret(stack, "GITHUB_CLIENT_SECRET");
   const DATABASE_URL = new Config.Secret(stack, "DATABASE_URL");
   const DATABASE_AUTH_TOKEN = new Config.Secret(stack, "DATABASE_AUTH_TOKEN");
-  const MOCKS_ENABLED = new Config.Parameter(stack, "MOCKS_ENABLED", {
+  const MOCKS_ENABLED = new ConfigParameter(stack, "MOCKS_ENABLED", {
     value: app.stage === "prod" ? "FALSE" : "TRUE",
-  });
-
-  //-----------------------------------------------------------------------------------------------
-  // Define Shared Resources
-  // -----------------------
-  // Shared constructs used by many other constructs are defined here.
-  //-----------------------------------------------------------------------------------------------
-  const updateSsmParameterFn = new Function(stack, "UpdateSsmParameterFn", {
-    architecture: "arm_64",
-    handler: "packages/functions/src/custom-resource/deploy-fns.updateSsmParameter",
-    enableLiveDev: false,
-    permissions: ["ssm"],
   });
 
   //-----------------------------------------------------------------------------------------------
@@ -64,8 +47,10 @@ export function AppStack({ app, stack }: StackContext) {
   // Create Files Bucket
   // -------------------
   // This is the bucket for files. This needs to be created before the RemixSite in order to bind
-  // this bucket to the RemixSite. We also need to create an SSM parameter for the BUCKET_URL.
-  // This value will need to be updated after the SITE_URL has been determined in this stack.
+  // this bucket to the RemixSite. After creating the bucket we will:
+  //
+  // 1. Create the BUCKET_URL parameter which will be referenced in the RemixSite.
+  // 2. Define the public folder patterns and add them to the Bucket's ResourcePolicy.
   //
   // NOTE: PART 1/2
   //-----------------------------------------------------------------------------------------------
@@ -79,16 +64,15 @@ export function AppStack({ app, stack }: StackContext) {
     },
   });
 
-  // create the BUCKET_URL parameter
-  const BUCKET_URL = new Config.Parameter(stack, "BUCKET_URL", {
-    value: `https://${bucket.bucketName}.s3.${stack.region}.amazonaws.com`,
+  // 1. Create the BUCKET_URL parameter
+  const BUCKET_URL = new ConfigParameter(stack, "BUCKET_URL", {
+    value: `https://${bucket.bucketName}.s3.amazonaws.com`,
   });
 
-  // define the resources (subpaths) in the bucket that are to be made public
+  // 2. Define the public folder patterns, and add the permissions to the ResourcePolicy.
   const publicBucketPaths = [`${bucket.bucketArn}/blog/*`];
-  if (app.stage !== "prod") publicBucketPaths.push(`${bucket.bucketArn}/mock/*`);
+  if (MOCKS_ENABLED.value === "TRUE") publicBucketPaths.push(`${bucket.bucketArn}/mock/*`);
 
-  // add permissions for public files
   bucket.cdk.bucket.addToResourcePolicy(
     new PolicyStatement({
       effect: Effect.ALLOW,
@@ -101,8 +85,21 @@ export function AppStack({ app, stack }: StackContext) {
   //-----------------------------------------------------------------------------------------------
   // Create Remix Site
   // -----------------
-  // This is the actual remix website deployment.
+  // This is the actual remix website deployment. There are a few things we need to do after the
+  // site has been deployed:
+  //
+  // 1. Create a variable that indicates if the site has been deployed to cloudfront. If so there
+  //    are modifications we will want to make to the CloudFront distribution and other items.
+  // 2. Update the SITE_URL. If the site has been deployed to CloudFront we need to make sure the
+  //    SITE_URL SSM parameter has been updated with this new value.
+  // 3. Add a CORS rule so that our deployed site can access S3 resources.
+  //
+  //    The domain name can be 1 of 3 options:
+  //    1. "https://spencerduball.com"             - The SITE_URL in a 'prod' stage.
+  //    2. "https://d111111abcdef8.cloudfront.net" - The SITE_URL in any deployed (staging) stage.
+  //    3. "http://localhost:3000"                 - The SITE_URL in any local (dev) stage.
   //-----------------------------------------------------------------------------------------------
+  // Deploy the site
   const site = new RemixSite(stack, "web", {
     customDomain: app.stage === "prod" ? new URL(prodUrl).hostname : undefined,
     path: "packages/web/",
@@ -111,133 +108,85 @@ export function AppStack({ app, stack }: StackContext) {
     bind: [
       table,
       bucket,
-      REGION,
-      SITE_URL,
+      REGION.Parameter,
+      SITE_URL.Parameter,
       GITHUB_CLIENT_ID,
       GITHUB_CLIENT_SECRET,
       DATABASE_URL,
       DATABASE_AUTH_TOKEN,
-      BUCKET_URL,
-      MOCKS_ENABLED,
+      BUCKET_URL.Parameter,
+      MOCKS_ENABLED.Parameter,
+    ],
+  });
+
+  // 1. Create boolean that indicates if there is a CloudFront deployment
+  const SiteDeployedToCloudFront = !!site.url;
+
+  // 2. Update the SITE_URL with the correct URL
+  if (app.stage === "prod") SITE_URL.update(prodUrl);
+  else if (SiteDeployedToCloudFront) SITE_URL.update(site.url);
+
+  // 3. Add a CORS rule to the bucket
+  new SetCorsRules(stack, "SetBucketCors", {
+    bucket: bucket.cdk.bucket,
+    rules: [
+      {
+        allowedHeaders: ["*"],
+        allowedMethods: [HttpMethods.DELETE, HttpMethods.GET, HttpMethods.HEAD, HttpMethods.POST, HttpMethods.PUT],
+        allowedOrigins: [SITE_URL.value.replace(/\:d+$/, "")],
+      },
     ],
   });
 
   //-----------------------------------------------------------------------------------------------
-  // Update Site Url
-  // ---------------
-  // The domain name can be 1 of 3 options:
-  // 1) "https://spencerduball.com"             - this should be the value in a 'prod' stage.
-  // 2) "https://d111111abcdef8.cloudfront.net" - this should be the value in a 'staging' stage.
-  // 3) "http://localhost:3000"                 - this should be the value in a 'dev' stage.
+  // Update CloudFront for 404 and Files Bucket
+  // ------------------------------------------
+  // When we create the RemixSite and there is a CloudFront deployment our website is accessible
+  // from an HTTPS domain name. We also want the public files we serve from our Bucket to be
+  // accessed from this HTTPS domain name under the "{SITE_URL}/files/*" prefix. In order to
+  // achieve thisthere are a few actions we need to perform:
   //
-  // We need to first create the parameter with the other parameters, this reference needs to be
-  // passed to the RemixSite, 'site'. This 'site' will then output the cloudfront url (option 2)
-  // and now we have all the information needed to update the domain name to the appropriate value.
-  //-----------------------------------------------------------------------------------------------
-  // determine the new url
-  let siteUrl = "http://localhost:3000";
-  if (app.stage === "dev") siteUrl = "http://localhost:3000";
-  else if (app.stage === "prod") siteUrl = prodUrl;
-  else if (site.url) siteUrl = site.url;
-
-  // update the SITE_URL parameter value
-  const updateSiteUrlProvider = new Provider(stack, "UpdateSiteUrlParameter", { onEventHandler: updateSsmParameterFn });
-  new CustomResource(stack, "UpdateSiteUrlCr", {
-    serviceToken: updateSiteUrlProvider.serviceToken,
-    properties: {
-      Value: siteUrl,
-      Name: `/sst/${app.name}/${app.stage}/Parameter/SITE_URL/value`,
-    },
-  });
-
-  //-----------------------------------------------------------------------------------------------
-  // Create Bucket
-  // -------------
-  // The final SITE_URL is necessary in order to finish creating the bucket:
-  // 1) A CORS rule using the SITE_URL needs to be added
-  // 2) The BUCKET_URL parameter needs to be updated based on the SITE_URL
-  // 3) Update the RemixSite's cloudfront distribution so the bucket is accessed at "/files/**/*".
+  // 1. We need to redirect any error responses 4XX - 5XX to our "{SITE_URL}/404" page. If we don't
+  //    do this our error pages will use the default S3 Bucket error page.
+  // 2. We need to change all requests to the CloudFront distribution with prefix of "files/" to
+  //    remove the "files/" prefix when the request goes to the S3 Bucket.
+  // 3. We need to ensure that the CachePolicy is set to CACHING_DISABLED. This is necessary or we
+  //    will have stale files served to our users. This could be tweaked later.
+  // 4. We need to add a behavior to our CloudFront distribution that applies the prior three
+  //    bullets.
+  // 5. Update the BUCKET_URL Parameter to point to the proxied S3 Bucket instead of the raw S3 URL
   //
   // NOTE: PART 2/2
   //-----------------------------------------------------------------------------------------------
-
-  // add the CORS rule to the S3 bucket
-  //
-  // Note: The 'bucket.cdk.bucket' technically should have the '.addCorsRule' method, but upon
-  // trying to use this, it still introduces circular dependencies because of the 'site.url' which
-  // comes from 'siteUrl' parameter. For this reason, we need to use a CustomResource to implement
-  // '.addCorsRule' and query SSM for the updated 'SITE_URL' parameter.
-  const addCorsRuleFn = new Function(stack, "AddCorsRuleFn", {
-    architecture: "arm_64",
-    handler: "packages/functions/src/custom-resource/deploy-fns.addCorsRule",
-    enableLiveDev: false,
-    permissions: ["s3"],
-  });
-  const addCorsRuleProvider = new Provider(stack, "AddCorsRuleProvider", { onEventHandler: addCorsRuleFn });
-  new CustomResource(stack, "AddCorsRuleCr", {
-    serviceToken: addCorsRuleProvider.serviceToken,
-    properties: {
-      BucketName: bucket.bucketName,
-      SiteUrl: siteUrl,
-    },
-  });
-
-  // determine the bucketUrl
-  let bucketUrl = `https://${bucket.bucketName}.s3.amazonaws.com`;
-  if (app.stage !== "dev") bucketUrl = `${siteUrl}/files`;
-
-  // update the BUCKET_URL parameter value
-  const updateBucketUrlProvider = new Provider(stack, "UpdateBucketUrlParameter", {
-    onEventHandler: updateSsmParameterFn,
-  });
-  new CustomResource(stack, "UpdateBucketUrlCr", {
-    serviceToken: updateBucketUrlProvider.serviceToken,
-    properties: {
-      Value: bucketUrl,
-      Name: `/sst/${app.name}/${app.stage}/Parameter/BUCKET_URL/value`,
-    },
-  });
-
-  // Allow access to the S3 bucket from the "{SITE_URL}/files/*" path when not localhost.
-  if (app.stage !== "dev" && site.cdk?.distribution) {
-    // create the lambda@edge to redirect 4XX - 5XX requests to the "{SITE_URL}/404" page.
+  if (SiteDeployedToCloudFront && site.cdk?.distribution) {
+    // 1. Create the lambda@edge to redirect 4XX - 5XX requests to the "{SITE_URL}/404" page.
     const errorResponseRedirectFn = new Function(stack, "ErrorResponseRedirectFn", {
       handler: "packages/functions/src/cloudfront/errorResponseRedirect.handler",
       enableLiveDev: false,
+      _doNotAllowOthersToBind: true,
     });
-    // create the lambda@edge to change the 'uri' path to remove the "files/" prefix
+    // 2. Create the lambda@edge to change the 'uri' path to remove the "files/" prefix
     const filesRequestUriFn = new Function(stack, "FilesRequestUriFn", {
       handler: "packages/functions/src/cloudfront/filesRequestUri.handler",
       enableLiveDev: false,
-    });
-    // create the cache policy for the files distribution
-    const cachePolicy = new CachePolicy(stack, "FilesBucketCache", {
-      queryStringBehavior: CacheQueryStringBehavior.all(),
-      headerBehavior: CacheHeaderBehavior.none(),
-      cookieBehavior: CacheCookieBehavior.none(),
-      defaultTtl: Duration.days(0),
-      maxTtl: Duration.days(365),
-      minTtl: Duration.days(0),
-      enableAcceptEncodingBrotli: true,
-      enableAcceptEncodingGzip: true,
-      comment: "The files bucket's cache policy.",
+      _doNotAllowOthersToBind: true,
     });
 
-    // Add the "files/*" behavior to the site's distribution
+    // 3. Define a cachePolicy
+    const cachePolicy = CachePolicy.CACHING_DISABLED;
+
+    // 4. Add the "files/*" behavior to the site's distribution
     (site.cdk.distribution as any as Distribution).addBehavior("files/*", new S3Origin(bucket.cdk.bucket), {
       edgeLambdas: [
-        {
-          eventType: LambdaEdgeEventType.ORIGIN_RESPONSE,
-          functionVersion: errorResponseRedirectFn.currentVersion,
-        },
-        {
-          eventType: LambdaEdgeEventType.ORIGIN_REQUEST,
-          functionVersion: filesRequestUriFn.currentVersion,
-        },
+        { eventType: LambdaEdgeEventType.ORIGIN_RESPONSE, functionVersion: errorResponseRedirectFn.currentVersion },
+        { eventType: LambdaEdgeEventType.ORIGIN_REQUEST, functionVersion: filesRequestUriFn.currentVersion },
       ],
       viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       cachePolicy,
     });
+
+    // 5. Update the BUCKET_URL to use the proxied URL of "{SITE_URL}/files"
+    BUCKET_URL.update(`${SITE_URL.value}/files`);
   }
 
   //-----------------------------------------------------------------------------------------------
@@ -247,31 +196,13 @@ export function AppStack({ app, stack }: StackContext) {
   // happend is the SSM Parameter has been updated, but the lambdas that consume them have no idea
   // that there was an update as these SST Parameters are inlined as environment variables. We need
   // to run a custom resource that will compare environments and update the lambdas.
-  //
   //-----------------------------------------------------------------------------------------------
-
-  const updateLambdaEnvFn = new Function(stack, "UpdateLambdaEnvFn", {
-    architecture: "arm_64",
-    handler: "packages/functions/src/custom-resource/deploy-fns.updateLambdaEnvironment",
-    enableLiveDev: false,
-    permissions: ["ssm", "lambda"],
-  });
-  const updateSiteLambdaEnvProvider = new Provider(stack, "UpdateSiteLambdaEnvProvider", {
-    onEventHandler: updateLambdaEnvFn,
-  });
-  new CustomResource(stack, "UpdateSiteLambdaEnvCr", {
-    serviceToken: updateSiteLambdaEnvProvider.serviceToken,
-    properties: {
-      FnArn: site.cdk?.function?.functionArn,
-      AppName: app.name,
-      StageName: app.stage,
-    },
-  });
+  new UpdateLambdaEnv(stack, "UpdateRemixEnv", { Fn: site.cdk?.function });
 
   //-----------------------------------------------------------------------------------------------
   // Define Stack Outputs
   // --------------------
   // The outputs of the stack.
   //-----------------------------------------------------------------------------------------------
-  stack.addOutputs({ SiteUrl: siteUrl });
+  stack.addOutputs({ SiteUrl: SITE_URL.value });
 }
