@@ -3,7 +3,9 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 import { useMedia } from "~/lib/hooks/react-use";
 import { cn } from "~/lib/util/utils";
 
-const ScrollArea = React.forwardRef<
+export interface ScrollAreaProps extends React.ComponentPropsWithRef<typeof ScrollAreaPrimitive.Root> {}
+
+export const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
 >(({ className, children, ...props }, ref) => {
@@ -24,7 +26,9 @@ const ScrollArea = React.forwardRef<
 });
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
 
-const ScrollViewport = React.forwardRef<
+export interface ScrollAreaViewportProps extends React.ForwardRefExoticComponent<typeof ScrollAreaPrimitive.Root> {}
+
+export const ScrollViewport = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
@@ -51,5 +55,3 @@ const ScrollBar = React.forwardRef<
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
 ));
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
-
-export { ScrollArea, ScrollViewport };
