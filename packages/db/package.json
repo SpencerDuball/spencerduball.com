@@ -13,18 +13,13 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist/ && tsc --build src && tsx scripts/__dev__/rename-to-mjs.ts",
-    "watch": "rm -rf dist/ && tsc -w",
-    "db:migrate:create": "sst bind 'tsx scripts/database.ts db:migrate:create'",
-    "db:migrate:status": "sst bind 'tsx scripts/database.ts db:migrate:status'",
-    "db:migrate": "sst bind 'tsx scripts/database.ts db:migrate'",
-    "db:reset": "sst bind 'tsx scripts/database.ts db:reset'",
-    "db:seed": "sst bind 'tsx scripts/database.ts db:seed'",
-    "db:seed:reset": "sst bind 'tsx scripts/database.ts db:seed:reset'"
+    "build": "rm -rf dist/ && tsc --build src && tsx --tsconfig ./scripts/tsconfig.json scripts/__dev__/rename-to-mjs.ts",
+    "watch": "rm -rf dist/ && tsc -w"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.451.0",
     "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.10.6",
     "@types/prompts": "^2.4.9",
     "arg": "^5.0.2",
     "fs-extra": "^11.1.1",

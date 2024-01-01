@@ -38,7 +38,10 @@ export async function reset({ s3Client, ddb }: ScriptInput) {
   spinner.text = `Dropping all tables from sql database ...`;
   const dropTableCmds = await raw
     .execute(`SELECT name FROM sqlite_master WHERE type = 'table'`)
-    .then(({ rows }) => rows.map(({ name }) => `DROP TABLE IF EXISTS "${name}"`));
+    .then(({ rows }) =>
+      rows.filter(({ name }) => !/^sqlite_.+/.test(String(name))).map(({ name }) => `DROP TABLE IF EXISTS "${name}"`),
+    );
+  console.log(dropTableCmds);
   if (dropTableCmds.length > 0) {
     const dropAllTables = ["PRAGMA foreign_keys=0", ...dropTableCmds, "PRAGMA foreign_keys=1"].join(";") + ";";
     await raw.executeMultiple(dropAllTables);
