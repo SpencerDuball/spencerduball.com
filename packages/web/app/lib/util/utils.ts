@@ -40,7 +40,7 @@ export const ZJsonString = z.string().transform((str, ctx) => {
 });
 
 /* ------------------------------------------------------------------------------------------------------------------
- * Define Generic Zod Types
+ * Define Shared Zod Types
  * ------------------------------------------------------------------------------------------------------------------ */
 export const ZPublicSession = ZSession.pick({
   user_id: true,
@@ -50,3 +50,25 @@ export const ZPublicSession = ZSession.pick({
   github_url: true,
   roles: true,
 });
+
+// define markdown link utility
+export const ZMdLinkString = z.custom<`[${string}](${string})`>(
+  (val) => typeof val === "string" && /^\[.*\]\(.*\)/.test(val),
+);
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Define Utilities
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+/**
+ * Parses the alt and url from a markdown link string.
+ *
+ * @param value A markdown link string [string](string).
+ * @returns [alt, url]
+ */
+export function parseMdLink(value: string) {
+  ZMdLinkString.parse(value);
+  const alt = value.match(/^\[.*\]/)!.pop()!;
+  const url = value.match(/\(.*\)$/)!.pop()!;
+  return [alt.slice(1, -1), url.slice(1, -1)];
+}

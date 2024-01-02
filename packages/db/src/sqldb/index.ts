@@ -10,15 +10,15 @@ export interface IUser {
   name: string;
   avatar_url: string;
   github_url: string;
-  created_at: ColumnType<Date, Date, never>;
-  modified_at: ColumnType<Date, Date, Date>;
+  created_at: ColumnType<string, string, never>;
+  modified_at: ColumnType<string, string, string>;
 }
 
 export interface IRole {
   id: ColumnType<string, string, never>;
   description: string;
-  created_at: ColumnType<Date, Date, never>;
-  modified_at: ColumnType<Date, Date, Date>;
+  created_at: ColumnType<string, string, never>;
+  modified_at: ColumnType<string, string, string>;
 }
 
 export interface IUserRole {
@@ -36,16 +36,16 @@ export interface IBlog {
   published: boolean;
   published_at: string | null;
   body_modified_at: string;
-  created_at: ColumnType<Date, Date, never>;
-  modified_at: ColumnType<Date, Date, Date>;
+  created_at: ColumnType<string, string, never>;
+  modified_at: ColumnType<string, string, string>;
   author_id: ColumnType<number, number, never>;
 }
 
 export interface IBlogTag {
   name: ColumnType<string, string, never>;
   blog_id: ColumnType<number, number, never>;
-  created_at: ColumnType<Date, Date, never>;
-  modified_at: ColumnType<Date, Date, Date>;
+  created_at: ColumnType<string, string, never>;
+  modified_at: ColumnType<string, string, string>;
 }
 
 export interface IBlogFile {
@@ -55,9 +55,9 @@ export interface IBlogFile {
   alt: string;
   size: ColumnType<number, number, never>;
   type: ColumnType<number, number, never>;
-  expires_at: Date | null;
-  created_at: ColumnType<Date, Date, never>;
-  modified_at: ColumnType<Date, Date, Date>;
+  expires_at: string | null;
+  created_at: ColumnType<string, string, never>;
+  modified_at: ColumnType<string, string, string>;
   blog_id: ColumnType<number, number, never>;
 }
 

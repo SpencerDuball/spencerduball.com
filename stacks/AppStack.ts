@@ -123,6 +123,7 @@ export function AppStack({ app, stack }: StackContext) {
   const SiteDeployedToCloudFront = !!site.url;
 
   // 2. Update the SITE_URL with the correct URL
+  const UrlPortExpr = /\:d+$/;
   if (app.stage === "prod") SITE_URL.update(prodUrl);
   else if (SiteDeployedToCloudFront) SITE_URL.update(site.url);
 
@@ -133,7 +134,7 @@ export function AppStack({ app, stack }: StackContext) {
       {
         allowedHeaders: ["*"],
         allowedMethods: [HttpMethods.DELETE, HttpMethods.GET, HttpMethods.HEAD, HttpMethods.POST, HttpMethods.PUT],
-        allowedOrigins: [SITE_URL.value.replace(/\:d+$/, "")],
+        allowedOrigins: [SITE_URL.value.replace(UrlPortExpr, "")],
       },
     ],
   });

@@ -155,7 +155,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await sqldb()
     .updateTable("users")
     .where("id", "=", userInfo.id)
-    .set({ ...userInfo, modified_at: new Date() })
+    .set({ ...userInfo, modified_at: new Date().toISOString() })
     .returningAll()
     .executeTakeFirstOrThrow()
     .then((usr) => {
@@ -169,7 +169,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       log.info("User did not exist, creating new user ...");
       const usr = await sqldb()
         .insertInto("users")
-        .values({ ...userInfo, created_at: new Date(), modified_at: new Date() })
+        .values({ ...userInfo, created_at: new Date().toISOString(), modified_at: new Date().toISOString() })
         .returningAll()
         .executeTakeFirstOrThrow();
       log.info("Success: Created the user in the database.");
