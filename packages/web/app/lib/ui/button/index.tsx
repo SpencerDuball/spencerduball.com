@@ -649,7 +649,7 @@ const buttonConfig = {
     colorScheme: "slate" as const,
   },
 };
-const buttonVariants = cva(buttonDefaultClasses.split(" "), buttonConfig);
+export const buttonVariants = cva(buttonDefaultClasses.split(" "), buttonConfig);
 
 // ButtonIcon
 const buttonIconDefaultClasses = "";
@@ -663,7 +663,7 @@ const buttonIconConfig = {
     },
   },
 };
-const buttonIconVariants = cva(buttonIconDefaultClasses.split(" "), buttonIconConfig);
+export const buttonIconVariants = cva(buttonIconDefaultClasses.split(" "), buttonIconConfig);
 
 // IconButton
 const iconButtonDefaultClasses = buttonDefaultClasses.split(" ").concat("grid place-items-center").join(" ");
@@ -682,7 +682,7 @@ const iconButtonConfig = {
     },
   },
 };
-const iconButtonVariants = cva(iconButtonDefaultClasses.split(" "), iconButtonConfig);
+export const iconButtonVariants = cva(iconButtonDefaultClasses.split(" "), iconButtonConfig);
 
 /* ------------------------------------------------------------------------------------------------------------
  * Components

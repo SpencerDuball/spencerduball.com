@@ -14,7 +14,6 @@ interface IBlogLiData {
   published_at: string | null;
   author_id: number;
 }
-//h-[5.75rem] w-[11.5rem]
 
 export interface BlogLiProps extends React.ComponentProps<"li"> {
   hasControls?: boolean;
@@ -26,7 +25,9 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
   return (
     <li
       className={cn(
-        "grid max-w-4xl grid-flow-col grid-cols-1 gap-3 rounded-lg border border-slate-4 bg-slate-2 p-3 md:grid-cols-[max-content_1fr]",
+        // The BlogLi height is equal to the largest sub-item + padding height + border height.
+        // This is h-24 (image height) + h-6 (padding height * 2) + 2px (border height * 2) = calc(30/4 + 2px)
+        "grid h-[calc(7.5rem+2px)] max-w-4xl grid-flow-col grid-cols-1 gap-3 rounded-lg border border-slate-4 bg-slate-2 p-3 md:grid-cols-[max-content_1fr]",
         className,
       )}
       {...props}
@@ -35,7 +36,7 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
       <div className="relative hidden pr-0 md:grid">
         <div className="h-24 w-48 animate-pulse rounded bg-slate-3" />
         <img
-          className="absolute left-0 top-0 aspect-[2/1] h-24 w-48 bg-slate-3 object-cover md:overflow-hidden md:rounded"
+          className="absolute left-0 top-0 aspect-[2/1] h-24 w-48 overflow-hidden rounded bg-slate-3 object-cover"
           alt={alt}
           src={url}
         />

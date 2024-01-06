@@ -9,7 +9,8 @@ import { RiSearchLine } from "react-icons/ri/index.js"; // TODO: Remove the 'ind
 import { Button, IconButton } from "~/lib/ui/button";
 import { TimeDescIcon, TimeAscIcon, ViewsAscIcon, ViewsDescIcon } from "~/lib/ui/icon";
 import { colorFromName, ColorList, Tag } from "~/lib/ui/tag";
-import { BlogLi } from "~/lib/ui/blog-li";
+import { BlogLi } from "~/lib/app/blog-li";
+import { Pagination } from "~/lib/ui/pagination";
 
 export const meta: MetaFunction = () => [
   { title: "Blog | Spencer Duball" },
@@ -36,6 +37,7 @@ const ZLoaderSearch = z.object({
   title: z.string().nullable().catch(null),
 });
 type LoaderSearchType = z.infer<typeof ZLoaderSearch>;
+const DefaultParams = { page: 1, maxResults: 30, sort: "created-desc", tags: [], title: null } as const;
 
 /**
  * The loader will run 3 database queries based upon the search parameter inputs:
@@ -60,11 +62,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const params = ZLoaderSearch.parse(Object.fromEntries(search.entries()));
 
   // apply defaults to search parameters
-  const page = params.page || 1;
-  const maxResults = params.maxResults || 30;
-  const sort = params.sort || "created-desc";
-  const tags = params.tags;
-  const title = params.title;
+  const page = params.page || DefaultParams.page;
+  const maxResults = params.maxResults || DefaultParams.maxResults;
+  const sort = params.sort || DefaultParams.sort;
+  const tags = params.tags || DefaultParams.tags;
+  const title = params.title || DefaultParams.title;
 
   //-------------------------------------------------------------------------------------------------------------------
   // Create Blog Query
@@ -198,6 +200,14 @@ export default function Blog() {
     setSearch({ ...search, tags });
   }
 
+  // determine pagination message
+  let paginationMsg = "No blogs found.";
+  if (totalBlogs) {
+    let startIdx = ((params.page || DefaultParams.page) - 1) * (params.maxResults || DefaultParams.maxResults);
+    let endIdx = startIdx + blogs.length;
+    paginationMsg = `Showing blogs ${startIdx} - ${endIdx} of ${totalBlogs}.`;
+  }
+
   return (
     <main className="grid w-full justify-items-center">
       <section className="grid w-full max-w-5xl gap-10 px-4 py-6">
@@ -207,7 +217,9 @@ export default function Blog() {
             <BlogLi key={blog.id} data={blog} />
           ))}
         </ul>
+        {/* Introduction */}
         <div className="row-start-1 grid gap-4">
+          {/* Title & Summary */}
           <div className="grid max-w-3xl gap-2">
             <h1 className="text-5xl font-bold">Posts</h1>
             <p>
@@ -215,17 +227,19 @@ export default function Blog() {
               hope you find something interesting!
             </p>
           </div>
+          {/* Search Controls */}
           <Form ref={formRef} method="get" className="grid gap-3">
             <div className="grid max-w-3xl gap-2">
+              <input type="hidden" name="maxResults" value={search.maxResults ?? 0} disabled={!search.maxResults} />
               <input type="hidden" name="sort" value={search.sort ?? ""} disabled={!search.sort} />
-              <input type="hidden" name="title" value={search.title ?? ""} disabled={!search.title} />
               <input
                 type="hidden"
                 name="tags"
                 value={search.tags.length > 0 ? search.tags : ""}
                 disabled={!(search.tags.length > 0)}
               />
-              <input type="hidden" name="maxResults" value={search.maxResults ?? 0} disabled={!search.maxResults} />
+              <input type="hidden" name="title" value={search.title ?? ""} disabled={!search.title} />
+
               <Popover.Root>
                 <InputGroup variant="filled" size="lg">
                   <InputLeftElement>
@@ -248,6 +262,7 @@ export default function Blog() {
                     </Popover.Trigger>
                   </InputRightElement>
                 </InputGroup>
+                {/* Add button after the Input, need a blank submit button so hitting Enter on the Input will submit the form. */}
                 <button type="submit" className="invisible absolute" />
                 <Popover.Portal container={isMounted ? formRef.current : undefined}>
                   <Popover.Content
@@ -303,6 +318,11 @@ export default function Blog() {
               ))}
             </div>
           </Form>
+        </div>
+        {/* Pagination */}
+        <div className="grid place-items-center gap-1">
+          <Pagination total={totalBlogs} pageSize={search.maxResults || 30} />
+          <p className="text-center text-xs text-slate-9">{paginationMsg}</p>
         </div>
       </section>
     </main>
