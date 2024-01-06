@@ -2,6 +2,7 @@ import { redirect } from "@remix-run/node";
 import { ZSession } from "@spencerduballcom/db/ddb";
 import { flashCookie, session } from "~/lib/util/sessions.server";
 import Cookie from "cookie";
+import { getLogger } from "~/lib/util/globals.server";
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Session Utilities
@@ -86,3 +87,43 @@ export const flash500 = flashCookie.serialize({
   description: "Oops! Looks like an error on our side, please try again later.",
   duration: 5000,
 });
+
+export async function retry<T>(fn: () => T) {
+  let [attempt, maxAttempts] = [0, 10];
+  let error: unknown;
+
+  const logger = getLogger();
+
+  while (attempt < maxAttempts) {
+    try {
+      logger.info("Running function with retries ...");
+      return await fn();
+    } catch (e) {
+      logger.info(`Caught an error ${attempt + 1}/${maxAttempts}`);
+      error = e;
+
+      if (e instanceof Error) {
+        logger.info(e, `e.name = ${e.name}, e.message = ${e.message}, e.cause = ${e.cause}, e.stack = ${e.stack}`);
+        logger.warn(e, `Caught the error, retrying attempt ${attempt + 1}/${maxAttempts} ...`);
+        global.__sqlClient?.destroy().finally(() => (global.__sqlClient = null));
+        attempt = attempt + 1;
+      }
+
+      // if (e instanceof Object && "code" in e) {
+      //   // If a connection error, then destroy the SQL connection
+      //   if (e.code === "ECONNRESET" || e.code === "EPIPE" || e.code === "ETIMEDOUT") {
+      //     logger.warn(e, `Caught the error, retrying attempt ${attempt + 1}/${maxAttempts} ...`);
+      //     global.__sqlClient?.destroy().finally(() => (global.__sqlClient = null));
+      //     attempt = attempt + 1;
+      //   }
+      // } else if (e instanceof Object && "type" in e && e.type === "ClosedError") {
+      //   // If a closed connection error, simply retry the request
+      //   logger.warn(e, `Caught the error, retrying attempt ${attempt + 1}/${maxAttempts} ...`);
+      //   attempt = attempt + 1;
+      // } else throw e;
+    }
+  }
+
+  // if maxAttempts exhausted and there is still an error, throw it
+  throw error;
+}

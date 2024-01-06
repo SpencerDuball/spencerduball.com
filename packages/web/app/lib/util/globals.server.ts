@@ -9,10 +9,10 @@ import { randomUUID } from "crypto";
 
 // define globals
 declare global {
-  var __ddbClient: Ddb;
-  var __s3Client: S3Client;
-  var __sqlClient: SqlDbClient;
-  var __logger: Logger;
+  var __ddbClient: Ddb | null;
+  var __s3Client: S3Client | null;
+  var __sqlClient: SqlDbClient | null;
+  var __logger: Logger | null;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------
@@ -48,7 +48,9 @@ export function s3() {
  * @returns Pg
  */
 export function sqldb() {
-  if (!global.__sqlClient) global.__sqlClient = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
+  if (!global.__sqlClient) {
+    global.__sqlClient = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
+  }
   return global.__sqlClient;
 }
 

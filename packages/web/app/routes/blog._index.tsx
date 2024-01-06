@@ -74,6 +74,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // This is the main query to retrieve all blogs that match the specified search options.
   //-------------------------------------------------------------------------------------------------------------------
   // create base query
+  log.info("Creating blogs query ...");
   let blogsQuery = sqldb()
     .selectFrom("blogs")
     .leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id")
@@ -130,6 +131,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // 2. Retrieve all tags available for a user to filter by.
   //-------------------------------------------------------------------------------------------------------------------
   // 1. Count matching blogs query
+  log.info("Creating totalBlogs query ...");
   const totalBlogsReq = sqldb()
     .with("matching_blogs", (db) => {
       let query = db.selectFrom("blogs").leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id").select("id");
@@ -156,6 +158,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     .then((res) => res.total_blogs);
 
   // 2. Retrieve all tags
+  log.info("Creating tags query ...");
   const tagsReq = sqldb()
     .selectFrom("blog_tags")
     .select("name")
@@ -165,6 +168,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   //-------------------------------------------------------------------------------------------------------------------
 
   // run all requests in parallel & return
+  log.info("Batching all sql requests ...");
   const [blogs, totalBlogs, allTags] = await Promise.all([blogsReq, totalBlogsReq, tagsReq]);
   return json({ blogs, totalBlogs, tags: allTags, params });
 }

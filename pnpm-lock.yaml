@@ -36,6 +36,9 @@ importers:
       '@aws-sdk/lib-dynamodb':
         specifier: ^3.449.0
         version: 3.449.0(@aws-sdk/client-dynamodb@3.449.0)
+      '@libsql/client':
+        specifier: 0.4.0-pre.5
+        version: 0.4.0-pre.5
       '@libsql/kysely-libsql':
         specifier: ^0.3.0
         version: 0.3.0(kysely@0.26.3)
@@ -310,6 +313,9 @@ importers:
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
+      '@types/node':
+        specifier: ^20.10.6
+        version: 20.10.6
       '@types/react':
         specifier: ^18.2.20
         version: 18.2.20

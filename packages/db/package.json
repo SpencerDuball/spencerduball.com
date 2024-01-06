@@ -33,6 +33,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.449.0",
     "@aws-sdk/lib-dynamodb": "^3.449.0",
+    "@libsql/client": "0.4.0-pre.5",
     "@libsql/kysely-libsql": "^0.3.0",
     "dynamodb-toolbox": "^0.9.2",
     "kysely": "^0.26.3",
