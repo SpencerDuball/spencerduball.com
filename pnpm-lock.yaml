@@ -48,49 +48,25 @@ importers:
       kysely:
         specifier: ^0.26.3
         version: 0.26.3
-      kysely-postgres-js:
-        specifier: ^2.0.0
-        version: 2.0.0(kysely@0.26.3)(postgres@3.4.3)
       ms:
         specifier: 3.0.0-canary.1
         version: 3.0.0-canary.1
-      postgres:
-        specifier: ^3.4.3
-        version: 3.4.3
       zod:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
-      '@aws-sdk/client-s3':
-        specifier: ^3.451.0
-        version: 3.451.0
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
       '@types/node':
         specifier: ^20.10.6
         version: 20.10.6
-      '@types/prompts':
-        specifier: ^2.4.9
-        version: 2.4.9
       arg:
         specifier: ^5.0.2
         version: 5.0.2
       fs-extra:
         specifier: ^11.1.1
         version: 11.1.1
-      glob:
-        specifier: ^10.3.10
-        version: 10.3.10
-      mime:
-        specifier: ^4.0.0
-        version: 4.0.0
-      ora:
-        specifier: ^7.0.1
-        version: 7.0.1
-      prompts:
-        specifier: ^2.4.2
-        version: 2.4.2
       tsx:
         specifier: ^4.1.1
         version: 4.1.1
@@ -480,14 +456,14 @@ packages:
     resolution: {integrity: sha512-IzSgsrxUcsrejQbPVilIKy16kAT52EwB6zSaI+M3xxIhKh5+aldEyvI+z6erM7TCLB2BJsFrtHjp6/4/sr+3dA==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.451.0
+      '@aws-sdk/types': 3.468.0
       tslib: 1.14.1
 
   /@aws-crypto/crc32c@3.0.0:
     resolution: {integrity: sha512-ENNPPManmnVJ4BTXlOjAgD7URidbAznURqD0KvfREyc4o20DPYdEldU1f5cQ7Jbj0CJJSPaMIk/9ZshdB3210w==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.451.0
+      '@aws-sdk/types': 3.468.0
       tslib: 1.14.1
 
   /@aws-crypto/ie11-detection@3.0.0:
@@ -513,7 +489,7 @@ packages:
       '@aws-crypto/sha256-js': 3.0.0
       '@aws-crypto/supports-web-crypto': 3.0.0
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.451.0
+      '@aws-sdk/types': 3.468.0
       '@aws-sdk/util-locate-window': 3.465.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
@@ -522,7 +498,7 @@ packages:
     resolution: {integrity: sha512-PnNN7os0+yd1XvXAy23CFOmTbMaDxgxXtTKHybrJ39Y8kGzBATgBFibWJKH6BhytLI/Zyszs87xCOBNyBig6vQ==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.451.0
+      '@aws-sdk/types': 3.468.0
       tslib: 1.14.1
 
   /@aws-crypto/sha256-js@5.2.0:
@@ -542,7 +518,7 @@ packages:
   /@aws-crypto/util@3.0.0:
     resolution: {integrity: sha512-2OJlpeJpCR48CC8r+uKVChzs9Iungj9wkZrl8Z041DWEWvyIHILYKCPNzJghKsivj+S3mLo6BVc7mBNzdxA46w==}
     dependencies:
-      '@aws-sdk/types': 3.451.0
+      '@aws-sdk/types': 3.468.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
 
@@ -6661,13 +6637,6 @@ packages:
     resolution: {integrity: sha512-A0D0aTXvjlqJ5ZILMz3rNfDBOx9hHxLZYv2by47Sm/pqW35zzjusrZTryatjN/Rf8Us2gZrJD+KeHbUSTux1Cw==}
     dev: false
 
-  /@types/prompts@2.4.9:
-    resolution: {integrity: sha512-qTxFi6Buiu8+50/+3DGIWLHM6QuWsEKugJnnP6iv2Mc4ncxE4A/OJkjuVOA+5X0X1S/nq5VJRa8Lu+nwcvbrKA==}
-    dependencies:
-      '@types/node': 20.10.6
-      kleur: 3.0.3
-    dev: true
-
   /@types/prop-types@15.7.11:
     resolution: {integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==}
 
@@ -10371,11 +10340,6 @@ packages:
       json-buffer: 3.0.1
     dev: true
 
-  /kleur@3.0.3:
-    resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
-    engines: {node: '>=6'}
-    dev: true
-
   /kleur@4.1.5:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
@@ -10413,16 +10377,6 @@ packages:
       '@aws-sdk/client-rds-data': 3.484.0
       kysely: 0.25.0
     dev: true
-
-  /kysely-postgres-js@2.0.0(kysely@0.26.3)(postgres@3.4.3):
-    resolution: {integrity: sha512-R1tWx6/x3tSatWvsmbHJxpBZYhNNxcnMw52QzZaHKg7ZOWtHib4iZyEaw4gb2hNKVctWQ3jfMxZT/ZaEMK6kBQ==}
-    peerDependencies:
-      kysely: '>= 0.24.0 < 1'
-      postgres: '>= 3.4.0 < 4'
-    dependencies:
-      kysely: 0.26.3
-      postgres: 3.4.3
-    dev: false
 
   /kysely@0.25.0:
     resolution: {integrity: sha512-srn0efIMu5IoEBk0tBmtGnoUss4uwvxtbFQWG/U2MosfqIace1l43IFP1PmEpHRDp+Z79xIcKEqmHH3dAvQdQA==}
@@ -12028,11 +11982,6 @@ packages:
       source-map-js: 1.0.2
     dev: true
 
-  /postgres@3.4.3:
-    resolution: {integrity: sha512-iHJn4+M9vbTdHSdDzNkC0crHq+1CUdFhx+YqCE+SqWxPjm+Zu63jq7yZborOBF64c8pc58O5uMudyL1FQcHacA==}
-    engines: {node: '>=12'}
-    dev: false
-
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
@@ -12174,14 +12123,6 @@ packages:
     resolution: {integrity: sha512-WnR9obtgW+rG4oUV3hSnNGl1pHm3V1H/qD9iJBumGSmVsSC5HpZOLuu8qdMb6yCItGfT7dcRszejr/5P3i9Pug==}
     dependencies:
       read: 1.0.7
-    dev: true
-
-  /prompts@2.4.2:
-    resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
-    engines: {node: '>= 6'}
-    dependencies:
-      kleur: 3.0.3
-      sisteransi: 1.0.5
     dev: true
 
   /prop-types@15.8.1:
@@ -12922,10 +12863,6 @@ packages:
   /signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
-    dev: true
-
-  /sisteransi@1.0.5:
-    resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
     dev: true
 
   /slash@3.0.0:

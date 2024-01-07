@@ -1,4 +1,4 @@
-import { Kysely, ColumnType } from "kysely";
+import { Kysely, ColumnType, SqliteAdapter, DummyDriver, SqliteIntrospector, SqliteQueryCompiler } from "kysely";
 import { LibsqlDialect } from "@libsql/kysely-libsql";
 
 /* ------------------------------------------------------------------------------------------------------------
@@ -78,3 +78,12 @@ export type SqlDbClient = Kysely<IDatabase>;
 export function createClient(url: string, authToken: string) {
   return new Kysely<IDatabase>({ dialect: new LibsqlDialect({ url, authToken }) });
 }
+
+export const db = new Kysely<IDatabase>({
+  dialect: {
+    createAdapter: () => new SqliteAdapter(),
+    createDriver: () => new DummyDriver(),
+    createIntrospector: (db) => new SqliteIntrospector(db),
+    createQueryCompiler: () => new SqliteQueryCompiler(),
+  },
+});

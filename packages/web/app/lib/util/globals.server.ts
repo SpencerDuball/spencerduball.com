@@ -1,5 +1,6 @@
 import { Ddb } from "@spencerduballcom/db/ddb";
-import { createClient, type SqlDbClient } from "@spencerduballcom/db/sqldb";
+import { createClient, SqlDbClient } from "@spencerduballcom/db/sqldb";
+import { InferResult, Compilable, CompiledQuery } from "kysely";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Config } from "sst/node/config";
@@ -48,11 +49,10 @@ export function s3() {
  * @returns Pg
  */
 export function sqldb() {
-  if (!global.__sqlClient) {
-    global.__sqlClient = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
-  }
+  if (!global.__sqlClient) global.__sqlClient = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
   return global.__sqlClient;
 }
+export { db } from "@spencerduballcom/db/sqldb";
 
 //----------------------------------------------------------------------------
 // Define Common Logger Functions

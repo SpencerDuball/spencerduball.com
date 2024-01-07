@@ -2,7 +2,7 @@ import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import React from "react";
 import { z } from "zod";
-import { logger, sqldb } from "~/lib/util/globals.server";
+import { logger, sqldb, db } from "~/lib/util/globals.server";
 import * as Popover from "@radix-ui/react-popover";
 import { InputGroup, Input, InputLeftElement, InputRightElement } from "~/lib/ui/input";
 import { RiSearchLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
@@ -170,6 +170,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // run all requests in parallel & return
   log.info("Batching all sql requests ...");
   const [blogs, totalBlogs, allTags] = await Promise.all([blogsReq, totalBlogsReq, tagsReq]);
+
   return json({ blogs, totalBlogs, tags: allTags, params });
 }
 //---------------------------------------------------------------------------------------------------------------------

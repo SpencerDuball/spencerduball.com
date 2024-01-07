@@ -60,3 +60,4 @@ export interface IDatabase {
 }
 export type SqlDbClient = Kysely<IDatabase>;
 export declare function createClient(url: string, authToken: string): Kysely<IDatabase>;
+export declare const db: Kysely<IDatabase>;
