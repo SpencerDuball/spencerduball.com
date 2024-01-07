@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, json } from "@remix-run/node";
+import { type ActionFunctionArgs } from "@remix-run/node";
 import { flashCookie, sessionCookie } from "~/lib/util/sessions.server";
 import { ddb, logger } from "~/lib/util/globals.server";
 import { getSessionInfo } from "~/lib/util/utils.server";

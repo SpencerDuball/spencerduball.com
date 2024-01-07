@@ -1,8 +1,7 @@
 import { Form, useLoaderData } from "@remix-run/react";
 import { redirect, type LoaderFunctionArgs, type ActionFunctionArgs, json } from "@remix-run/node";
-import { ddb, logger } from "~/lib/util/globals.server";
+import { db, ddb, logger } from "~/lib/util/globals.server";
 import { Config } from "sst/node/config";
-import { sqldb } from "~/lib/util/globals.server";
 import { sql } from "kysely";
 import { ZodError, z } from "zod";
 import * as Avatar from "@radix-ui/react-avatar";
@@ -10,7 +9,7 @@ import { IconButton } from "~/lib/ui/button";
 import { RiLoginCircleLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
 import { ZJsonString } from "~/lib/util/utils";
 import { ZMockGhUser, ZOAuthOTC } from "@spencerduballcom/db/ddb";
-import { flash400, flash401 } from "~/lib/util/utils.server";
+import { flash400, flash401, execute } from "~/lib/util/utils.server";
 
 const ZSearch = z.object({
   client_id: z.string(),
@@ -142,23 +141,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // get the possible database users that the requester could assume
   log.info("Retrieving all users ...");
-  const users = await sqldb()
-    .selectFrom("users")
-    .leftJoin("user_roles", "users.id", "user_roles.user_id")
-    .select([
-      "id",
-      "username",
-      "name",
-      "avatar_url",
-      "github_url",
-      sql<string[]>`COALESCE(GROUP_CONCAT(user_roles.role_id), '')`.as("roles"),
-    ])
-    .groupBy("users.id")
-    .execute()
-    .catch((e) => {
-      log.error(e, "Failure: There was an issue retrieving the users from the database.");
-      throw json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
-    });
+  const users = await execute(
+    db
+      .selectFrom("users")
+      .leftJoin("user_roles", "users.id", "user_roles.user_id")
+      .select([
+        "id",
+        "username",
+        "name",
+        "avatar_url",
+        "github_url",
+        sql<string[]>`COALESCE(GROUP_CONCAT(user_roles.role_id), '')`.as("roles"),
+      ])
+      .groupBy("users.id"),
+  ).catch((e) => {
+    log.error(e, "Failure: There was an issue retrieving the users from the database.");
+    throw json({ message: "Oops! Looks like an error from our end." }, { status: 500 });
+  });
   users.sort((curr, prev) => curr.id - prev.id);
   log.info("Success: Retrieved all users.");
 

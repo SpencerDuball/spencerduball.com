@@ -3,6 +3,9 @@ import { ZSession } from "@spencerduballcom/db/ddb";
 import { flashCookie, session } from "~/lib/util/sessions.server";
 import Cookie from "cookie";
 import { getLogger } from "~/lib/util/globals.server";
+import { z } from "zod";
+import { InferResult, Compilable, CompiledQuery } from "kysely";
+import { sqldb } from "~/lib/util/globals.server";
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Session Utilities
@@ -88,42 +91,111 @@ export const flash500 = flashCookie.serialize({
   duration: 5000,
 });
 
-export async function retry<T>(fn: () => T) {
+/* ------------------------------------------------------------------------------------------------------------------
+ * Kysely Utilities
+ * -----------------
+ * Wrappers for Kysely's "execute", "executeTakeFirst", or "executeTakeFirstOrThrow".
+ * ------------------------------------------------------------------------------------------------------------------ */
+
+/** Adds a wait before next commands are executed. */
+async function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ *
+ * @param fn The function to retry.
+ * @returns
+ */
+async function retry<T>(fn: () => Promise<T>) {
+  const log = getLogger();
   let [attempt, maxAttempts] = [0, 10];
+
   let error: unknown;
-
-  const logger = getLogger();
-
-  while (attempt < maxAttempts) {
+  do {
     try {
-      logger.info("Running function with retries ...");
       return await fn();
     } catch (e) {
-      logger.info(`Caught an error ${attempt + 1}/${maxAttempts}`);
       error = e;
+      const isConnectionIssue = z
+        .object({ code: z.enum(["ECONNRESET", "EPIPE", "ETIMEDOUT"]) })
+        .or(z.object({ type: z.literal("ClosedError") }))
+        .nullable()
+        .catch(null)
+        .transform((val) => !!val)
+        .parse(e);
 
-      if (e instanceof Error) {
-        logger.info(e, `e.name = ${e.name}, e.message = ${e.message}, e.cause = ${e.cause}, e.stack = ${e.stack}`);
-        logger.warn(e, `Caught the error, retrying attempt ${attempt + 1}/${maxAttempts} ...`);
-        global.__sqlClient?.destroy().finally(() => (global.__sqlClient = null));
+      // reset the connection if there was a connection issue
+      if (isConnectionIssue) {
+        log.warn(e, `Caught a database connection error, retrying attempt ${attempt + 1}/${maxAttempts} ...`);
+        await global.__sqlClient?.destroy().finally(() => (global.__sqlClient = null));
+        await delay(5 ** attempt); // backoff calling function again exponentially
         attempt = attempt + 1;
-      }
+      } else throw e;
+    }
+  } while (attempt < maxAttempts);
 
-      // if (e instanceof Object && "code" in e) {
-      //   // If a connection error, then destroy the SQL connection
-      //   if (e.code === "ECONNRESET" || e.code === "EPIPE" || e.code === "ETIMEDOUT") {
-      //     logger.warn(e, `Caught the error, retrying attempt ${attempt + 1}/${maxAttempts} ...`);
-      //     global.__sqlClient?.destroy().finally(() => (global.__sqlClient = null));
-      //     attempt = attempt + 1;
-      //   }
-      // } else if (e instanceof Object && "type" in e && e.type === "ClosedError") {
-      //   // If a closed connection error, simply retry the request
-      //   logger.warn(e, `Caught the error, retrying attempt ${attempt + 1}/${maxAttempts} ...`);
-      //   attempt = attempt + 1;
-      // } else throw e;
+  // throw the error if number of retries has failed
+  throw error;
+}
+
+/**
+ * Executes a kysely command with exponential backoff and retries for database connection failures. This should be used
+ * for all queries to the SQL database as underlying connection socket may close unexpectedly. In these situations we
+ * will attempt to run the query again after making a new connection.
+ *
+ * @param cmd The Kysely command to run.
+ * @returns
+ */
+export async function execute<T, C extends Compilable<T> | CompiledQuery<T>>(cmd: C): Promise<InferResult<C>> {
+  let command = "compile" in cmd ? cmd.compile() : (cmd as CompiledQuery<T>);
+
+  async function fn() {
+    switch (command.query.kind) {
+      case "DeleteQueryNode":
+      case "UpdateQueryNode":
+      case "InsertQueryNode": {
+        if (command.query.returning)
+          return sqldb()
+            .executeQuery(command)
+            .then(({ rows }) => rows as InferResult<C>);
+        else return sqldb().executeQuery(command) as any as Promise<InferResult<C>>;
+      }
+      case "SelectQueryNode": {
+        return sqldb()
+          .executeQuery(command)
+          .then(({ rows }) => rows as InferResult<C>);
+      }
+      default: {
+        return sqldb().executeQuery(command) as any as Promise<InferResult<C>>;
+      }
     }
   }
 
-  // if maxAttempts exhausted and there is still an error, throw it
-  throw error;
+  return retry(fn);
+}
+
+/**
+ * This function is a helper that can be run on the results of an 'execute' call to extract the first item from an
+ * array of results. If an item isn't found, then 'undefined' will be returned.
+ *
+ * @param input The result of 'execute'.
+ * @returns The first element of an 'execute' or undefined.
+ */
+export function takeFirst<T>(input: (T | undefined)[]) {
+  const [result] = input;
+  return result;
+}
+
+/**
+ * This function is a helper that can be run on the results of an 'execute' call to extract the first item from an
+ * array of results. If an item isn't found, then and error will be thrown.
+ *
+ * @param input The result of an 'execute'.
+ * @returns The first element of an 'execute'.
+ */
+export function takeFirstOrThrow<T>(input: (T | undefined)[]) {
+  const [result] = input;
+  if (result === undefined) throw new Error("No result was found for the query.");
+  return result;
 }

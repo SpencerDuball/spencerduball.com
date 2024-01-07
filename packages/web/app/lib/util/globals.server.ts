@@ -1,12 +1,12 @@
 import { Ddb } from "@spencerduballcom/db/ddb";
 import { createClient, SqlDbClient } from "@spencerduballcom/db/sqldb";
-import { InferResult, Compilable, CompiledQuery } from "kysely";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Config } from "sst/node/config";
 import { Table } from "sst/node/table";
 import pino, { Logger } from "pino";
 import { randomUUID } from "crypto";
+import { z } from "zod";
 
 // define globals
 declare global {
@@ -52,6 +52,11 @@ export function sqldb() {
   if (!global.__sqlClient) global.__sqlClient = createClient(Config.DATABASE_URL, Config.DATABASE_AUTH_TOKEN);
   return global.__sqlClient;
 }
+
+/**
+ * Returns a Kysely<IDatabase> instance, but does not have a client connection attached. This allows for creating
+ * queries without needing to create database clients.
+ */
 export { db } from "@spencerduballcom/db/sqldb";
 
 //----------------------------------------------------------------------------

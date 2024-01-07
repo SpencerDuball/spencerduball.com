@@ -1,4 +1,12 @@
-import { Kysely, ColumnType, SqliteAdapter, DummyDriver, SqliteIntrospector, SqliteQueryCompiler } from "kysely";
+import {
+  Kysely,
+  ColumnType,
+  SqliteAdapter,
+  DummyDriver,
+  SqliteIntrospector,
+  SqliteQueryCompiler,
+  InferResult,
+} from "kysely";
 import { LibsqlDialect } from "@libsql/kysely-libsql";
 
 /* ------------------------------------------------------------------------------------------------------------

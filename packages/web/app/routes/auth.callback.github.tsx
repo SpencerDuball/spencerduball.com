@@ -2,11 +2,11 @@ import { type LoaderFunctionArgs, redirect, json, createSession } from "@remix-r
 import { ZOAuthStateCode } from "@spencerduballcom/db/ddb";
 import { z } from "zod";
 import { ZJsonString } from "~/lib/util/utils";
-import { sqldb, ddb, logger } from "~/lib/util/globals.server";
+import { db, ddb, logger } from "~/lib/util/globals.server";
 import { ZCreateSession, flashCookie, session } from "~/lib/util/sessions.server";
 import { Config } from "sst/node/config";
 import axios from "axios";
-import { flash400, flash401, flash500 } from "~/lib/util/utils.server";
+import { flash400, flash401, flash500, execute, takeFirstOrThrow } from "~/lib/util/utils.server";
 
 const ZSearch = z.object({
   state: ZJsonString.pipe(z.object({ id: z.string(), redirect_uri: z.string() })),
@@ -152,12 +152,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // database, create them.
   let isNewUser = false;
   log.info("Retrieving the user from our database ...");
-  const user = await sqldb()
-    .updateTable("users")
-    .where("id", "=", userInfo.id)
-    .set({ ...userInfo, modified_at: new Date().toISOString() })
-    .returningAll()
-    .executeTakeFirstOrThrow()
+  const user = await execute(
+    db
+      .updateTable("users")
+      .where("id", "=", userInfo.id)
+      .set({ ...userInfo, modified_at: new Date().toISOString() })
+      .returningAll(),
+  )
+    .then((res) => takeFirstOrThrow(res))
     .then((usr) => {
       isNewUser = false;
       log.info("Success: Updated the user in the database.");
@@ -167,11 +169,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       // Looks like user didn't exist, create them now
       isNewUser = true;
       log.info("User did not exist, creating new user ...");
-      const usr = await sqldb()
-        .insertInto("users")
-        .values({ ...userInfo, created_at: new Date().toISOString(), modified_at: new Date().toISOString() })
-        .returningAll()
-        .executeTakeFirstOrThrow();
+      const usr = await execute(
+        db
+          .insertInto("users")
+          .values({ ...userInfo, created_at: new Date().toISOString(), modified_at: new Date().toISOString() })
+          .returningAll(),
+      ).then((res) => takeFirstOrThrow(res));
       log.info("Success: Created the user in the database.");
       return usr;
     })
@@ -184,11 +187,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // -------------------
   // Get the roles for the user as we will need them when issuing a session token.
   log.info("Retrieving the user roles from the database ...");
-  const roles = await sqldb()
-    .selectFrom("user_roles")
-    .select("role_id")
-    .where("user_roles.user_id", "=", user.id)
-    .execute()
+  const roles = await execute(db.selectFrom("user_roles").select("role_id").where("user_roles.user_id", "=", user.id))
     .then((roles) => roles.map(({ role_id }) => role_id))
     .catch((e) => {
       log.error(e, "Failure: There was an error retrieving the roles from the db.");

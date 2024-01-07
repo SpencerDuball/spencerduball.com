@@ -6,7 +6,7 @@ import { QueryOptions } from "dynamodb-toolbox";
 import { z } from "zod";
 import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 
-const S3_MAX_BATCH = 1000;
+const S3_MAX_BATCH = 25;
 
 /** Common input to all scripts including seed and fixture scripts. */
 export interface ScriptInput<T = any> {

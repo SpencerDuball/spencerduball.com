@@ -3,6 +3,7 @@ import { Form, useLoaderData } from "@remix-run/react";
 import React from "react";
 import { z } from "zod";
 import { logger, sqldb, db } from "~/lib/util/globals.server";
+import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
 import * as Popover from "@radix-ui/react-popover";
 import { InputGroup, Input, InputLeftElement, InputRightElement } from "~/lib/ui/input";
 import { RiSearchLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
@@ -75,7 +76,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   //-------------------------------------------------------------------------------------------------------------------
   // create base query
   log.info("Creating blogs query ...");
-  let blogsQuery = sqldb()
+  let blogsQuery = db
     .selectFrom("blogs")
     .leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id")
     .select([
@@ -86,7 +87,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       "views",
       "published_at",
       "published",
-      sqldb().fn.agg<string>("group_concat", ["blog_tags.name"]).as("tags"),
+      db.fn.agg<string>("group_concat", ["blog_tags.name"]).as("tags"),
     ]);
 
   // apply the "published" filter
@@ -100,7 +101,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         .select("blog_id")
         .where("name", "in", tags)
         .groupBy("blog_id")
-        .having(sub.fn.count("name"), "=", tags.length),
+        .having(db.fn.count("name"), "=", tags.length),
     );
   }
   blogsQuery = blogsQuery.groupBy("blogs.id");
@@ -118,9 +119,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   blogsQuery = blogsQuery.limit(maxResults).offset((page - 1) * maxResults);
 
   // apply data transforms
-  const blogsReq = blogsQuery
-    .execute()
-    .then((blogs) => blogs.map((blog) => ({ ...blog, tags: blog.tags.length > 0 ? blog.tags.split(",") : [] })));
+  const blogsReq = execute(blogsQuery).then((blogs) =>
+    blogs.map((blog) => ({ ...blog, tags: blog.tags.length > 0 ? blog.tags.split(",") : [] })),
+  );
 
   //-------------------------------------------------------------------------------------------------------------------
   // Create Supplemental Queries
@@ -132,39 +133,36 @@ export async function loader({ request }: LoaderFunctionArgs) {
   //-------------------------------------------------------------------------------------------------------------------
   // 1. Count matching blogs query
   log.info("Creating totalBlogs query ...");
-  const totalBlogsReq = sqldb()
-    .with("matching_blogs", (db) => {
-      let query = db.selectFrom("blogs").leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id").select("id");
+  const totalBlogsReq = execute(
+    db
+      .with("matching_blogs", (sub) => {
+        let query = sub.selectFrom("blogs").leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id").select("id");
 
-      // apply the "published" filter
-      query = query.where("published", "=", true);
+        // apply the "published" filter
+        query = query.where("published", "=", true);
 
-      // apply the "tags" filter
-      if (tags.length > 0) {
-        query = query
-          .where("blog_tags.name", "in", tags)
-          .groupBy("blogs.id")
-          .having(sqldb().fn.count("blog_tags.name"), "=", tags.length);
-      } else query = query.groupBy("blogs.id");
+        // apply the "tags" filter
+        if (tags.length > 0) {
+          query = query
+            .where("blog_tags.name", "in", tags)
+            .groupBy("blogs.id")
+            .having(db.fn.count("blog_tags.name"), "=", tags.length);
+        } else query = query.groupBy("blogs.id");
 
-      // apply the title filter if exists
-      if (title) query = query.where("title", "like", `%${title}%`);
+        // apply the title filter if exists
+        if (title) query = query.where("title", "like", `%${title}%`);
 
-      return query;
-    })
-    .selectFrom("matching_blogs")
-    .select(sqldb().fn.countAll<number>().as("total_blogs"))
-    .executeTakeFirstOrThrow()
-    .then((res) => res.total_blogs);
+        return query;
+      })
+      .selectFrom("matching_blogs")
+      .select(db.fn.countAll<number>().as("total_blogs")),
+  ).then((res) => takeFirstOrThrow(res).total_blogs);
 
   // 2. Retrieve all tags
   log.info("Creating tags query ...");
-  const tagsReq = sqldb()
-    .selectFrom("blog_tags")
-    .select("name")
-    .groupBy("name")
-    .execute()
-    .then((tags) => tags.map(({ name }) => name).sort());
+  const tagsReq = execute(db.selectFrom("blog_tags").select("name").groupBy("name")).then((tags) =>
+    tags.map(({ name }) => name).sort(),
+  );
   //-------------------------------------------------------------------------------------------------------------------
 
   // run all requests in parallel & return
