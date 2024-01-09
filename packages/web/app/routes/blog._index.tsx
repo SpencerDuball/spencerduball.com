@@ -2,7 +2,7 @@ import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import React from "react";
 import { z } from "zod";
-import { logger, sqldb, db } from "~/lib/util/globals.server";
+import { logger, db } from "~/lib/util/globals.server";
 import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
 import * as Popover from "@radix-ui/react-popover";
 import { InputGroup, Input, InputLeftElement, InputRightElement } from "~/lib/ui/input";
@@ -12,6 +12,7 @@ import { TimeDescIcon, TimeAscIcon, ViewsAscIcon, ViewsDescIcon } from "~/lib/ui
 import { colorFromName, ColorList, Tag } from "~/lib/ui/tag";
 import { BlogLi } from "~/lib/app/blog-li";
 import { Pagination } from "~/lib/ui/pagination";
+import { tagsTfmr, coverImgTfmr } from "~/model/blogs";
 
 export const meta: MetaFunction = () => [
   { title: "Blog | Spencer Duball" },
@@ -120,7 +121,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // apply data transforms
   const blogsReq = execute(blogsQuery).then((blogs) =>
-    blogs.map((blog) => ({ ...blog, tags: blog.tags.length > 0 ? blog.tags.split(",") : [] })),
+    blogs.map((blog) => ({ ...blog, tags: tagsTfmr(blog.tags), cover_img: coverImgTfmr(blog.cover_img) })),
   );
 
   //-------------------------------------------------------------------------------------------------------------------

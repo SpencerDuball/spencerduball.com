@@ -33,17 +33,14 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
           <Nav.List className="grid list-none grid-flow-col gap-4">
             <Nav.Item asChild>
               <Nav.Link asChild>
-                <Link to="/" className={cn(DesktopLinkClasses, !!pathname.match(/^\/$/) && "text-slate-12")}>
+                <Link to="/" className={cn(DesktopLinkClasses, /^\/$/.test(pathname) && "text-slate-12")}>
                   Home
                 </Link>
               </Nav.Link>
             </Nav.Item>
             <Nav.Item asChild>
               <Nav.Link asChild>
-                <Link
-                  to="/blog"
-                  className={cn(DesktopLinkClasses, !!pathname.match(/^\/blog\/?.*/) && "text-slate-12")}
-                >
+                <Link to="/blog" className={cn(DesktopLinkClasses, /^\/blog\/?.*/.test(pathname) && "text-slate-12")}>
                   Blog
                 </Link>
               </Nav.Link>
@@ -51,7 +48,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
             <Nav.Item className="grid">
               <Nav.Trigger asChild>
                 <button
-                  className={cn(DesktopLinkClasses, !!pathname.match(/^\/projects\/?$/) && "text-slate-12")}
+                  className={cn(DesktopLinkClasses, /^\/projects\/?$/.test(pathname) && "text-slate-12")}
                   onPointerMove={(e) => e.preventDefault()}
                   onPointerLeave={(e) => e.preventDefault()}
                 >
@@ -68,7 +65,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                     <Nav.Link asChild>
                       <Link
                         to="/projects"
-                        className={cn(LinkItemClasses, !!pathname.match(/^\/projects\/?$/) && "text-slate-12")}
+                        className={cn(LinkItemClasses, /^\/projects\/?$/.test(pathname) && "text-slate-12")}
                       >
                         <p className="font-semibold">Projects</p>
                         <p>Check out some of the projects I work on.</p>
@@ -80,7 +77,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           to="/projects/software"
                           className={cn(
                             "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                            !!pathname.match(/^\/projects\/software\/?.*/) && "bg-slate-7 font-semibold text-slate-12",
+                            /^\/projects\/software\/?.*/.test(pathname) && "bg-slate-7 font-semibold text-slate-12",
                           )}
                         >
                           Software
@@ -91,7 +88,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           to="/projects/3d-print"
                           className={cn(
                             "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                            !!pathname.match(/^\/projects\/3d-print\/?.*/) && "bg-slate-7 font-semibold text-slate-12",
+                            /^\/projects\/3d-print\/?.*/.test(pathname) && "bg-slate-7 font-semibold text-slate-12",
                           )}
                         >
                           3D Print
@@ -102,8 +99,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           to="/projects/electronics"
                           className={cn(
                             "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                            !!pathname.match(/^\/projects\/electronics\/?.*/) &&
-                              "bg-slate-7 font-semibold text-slate-12",
+                            /^\/projects\/electronics\/?.*/.test(pathname) && "bg-slate-7 font-semibold text-slate-12",
                           )}
                         >
                           Electronics
@@ -118,7 +114,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
               <Nav.Item className="grid">
                 <Nav.Trigger asChild>
                   <button
-                    className={cn(DesktopLinkClasses, !!pathname.match(/^\/dashhboard\/?.*$/) && "text-slate-12")}
+                    className={cn(DesktopLinkClasses, /^\/dashboard\/?.*$/.test(pathname) && "text-slate-12")}
                     onPointerMove={(e) => e.preventDefault()}
                     onPointerLeave={(e) => e.preventDefault()}
                   >
@@ -135,7 +131,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                       <Nav.Link asChild>
                         <Link
                           to="/dashboard"
-                          className={cn(LinkItemClasses, !!pathname.match(/^\/dashboard\/?$/) && "text-slate-12")}
+                          className={cn(LinkItemClasses, /^\/dashboard\/?$/.test(pathname) && "text-slate-12")}
                         >
                           <p className="font-semibold">Home</p>
                           <p>See the site overview and recent activity.</p>
@@ -148,7 +144,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           to="/dashboard/analytics"
                           className={cn(
                             LinkItemClasses,
-                            !!pathname.match(/^\/dashboard\/analytics\/?.*/) && "text-slate-12",
+                            /^\/dashboard\/analytics\/?.*/.test(pathname) && "text-slate-12",
                           )}
                         >
                           <p className="font-semibold">Analytics</p>
@@ -160,7 +156,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                       <Nav.Link asChild>
                         <Link
                           to="/dashboard/cms"
-                          className={cn(LinkItemClasses, !!pathname.match(/^\/dashboard\/cms\/?$/) && "text-slate-12")}
+                          className={cn(LinkItemClasses, /^\/dashboard\/cms\/?$/.test(pathname) && "text-slate-12")}
                         >
                           <p className="font-semibold">Content</p>
                           <p>Create/delete/update the site content.</p>
@@ -172,8 +168,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                             to="/dashboard/cms/blog"
                             className={cn(
                               "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                              !!pathname.match(/^\/dashboard\/cms\/blog\/?.*/) &&
-                                "bg-slate-7 font-semibold text-slate-12",
+                              /^\/dashboard\/cms\/blog\/?.*/.test(pathname) && "bg-slate-7 font-semibold text-slate-12",
                             )}
                           >
                             Blog
@@ -196,7 +191,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                             to="/dashboard/cms/3d-print"
                             className={cn(
                               "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                              !!pathname.match(/^\/dashboard\/cms\/3d-print\/?.*/) &&
+                              /^\/dashboard\/cms\/3d-print\/?.*/.test(pathname) &&
                                 "bg-slate-7 font-semibold text-slate-12",
                             )}
                           >
@@ -208,7 +203,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                             to="/dashboard/cms/electronics"
                             className={cn(
                               "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                              !!pathname.match(/^\/dashboard\/cms\/electronics\/?.*/) &&
+                              /^\/dashboard\/cms\/electronics\/?.*/.test(pathname) &&
                                 "bg-slate-7 font-semibold text-slate-12",
                             )}
                           >
@@ -254,7 +249,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                     <nav className="grid gap-2">
                       <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
                         <Nav.Link asChild>
-                          <Link to="/" className={cn(LinkItemClasses, !!pathname.match(/^\/$/))}>
+                          <Link to="/" className={cn(LinkItemClasses, /^\/$/.test(pathname) && "text-slate-12")}>
                             <p className="font-semibold">Home</p>
                             <p>About me, site summary, and recent activity.</p>
                           </Link>
@@ -262,7 +257,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                       </div>
                       <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
                         <Nav.Link asChild>
-                          <Link to="/blog" className={cn(LinkItemClasses, !!pathname.match(/^\/blog\/?.*$/))}>
+                          <Link
+                            to="/blog"
+                            className={cn(LinkItemClasses, /^\/blog\/?.*$/.test(pathname) && "text-slate-12")}
+                          >
                             <p className="font-semibold">Blog</p>
                             <p>Check out my blog.</p>
                           </Link>
@@ -270,7 +268,10 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                       </div>
                       <div className="grid gap-2 rounded-lg bg-slate-4 p-4">
                         <Nav.Link asChild>
-                          <Link to="/projects" className={cn(LinkItemClasses, !!pathname.match(/^\/projects\/?.*$/))}>
+                          <Link
+                            to="/projects"
+                            className={cn(LinkItemClasses, /^\/projects\/?$/.test(pathname) && "text-slate-12")}
+                          >
                             <p className="font-semibold">Projects</p>
                             <p>Check out some of the projects I work on.</p>
                           </Link>
@@ -281,9 +282,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                               to="/projects/software"
                               className={cn(
                                 "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                                !!pathname.match(
-                                  /^\/projects\/software\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
-                                ),
+                                /^\/projects\/software\/?.*/.test(pathname) && "bg-slate-7 font-semibold text-slate-12",
                               )}
                             >
                               Software
@@ -294,9 +293,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                               to="/projects/3d-print"
                               className={cn(
                                 "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                                !!pathname.match(
-                                  /^\/projects\/3d-print\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
-                                ),
+                                /^\/projects\/3d-print\/?.*/.test(pathname) && "bg-slate-7 font-semibold text-slate-12",
                               )}
                             >
                               3D Print
@@ -307,9 +304,8 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                               to="/projects/electronics"
                               className={cn(
                                 "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                                !!pathname.match(
-                                  /^\/projects\/electronics\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
-                                ),
+                                /^\/projects\/electronics\/?.*/.test(pathname) &&
+                                  "bg-slate-7 font-semibold text-slate-12",
                               )}
                             >
                               Electronics
@@ -322,7 +318,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                           <Nav.Link asChild>
                             <Link
                               to="/dashboard"
-                              className={cn(LinkItemClasses, !!pathname.match(/^\/projects\/?.*$/))}
+                              className={cn(LinkItemClasses, /^\/dashboard\/?$/.test(pathname) && "text-slate-12")}
                             >
                               <p className="font-semibold">Dashboard</p>
                               <p>Create/delete/update the site content.</p>
@@ -334,9 +330,8 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                                 to="/dashboard/analytics"
                                 className={cn(
                                   "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                                  !!pathname.match(
-                                    /^\/dashboard\/analytics\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
-                                  ),
+                                  /^\/dashboard\/analytics\/?.*/.test(pathname) &&
+                                    "bg-slate-7 font-semibold text-slate-12",
                                 )}
                               >
                                 Analytics
@@ -347,9 +342,7 @@ export function Header({ isAdmin, className, ...props }: HeaderProps) {
                                 to="/dashboard/cms"
                                 className={cn(
                                   "focus-outline rounded-md bg-slate-6 p-2 text-center font-normal text-slate-10 hover:text-slate-12 hover:no-underline",
-                                  !!pathname.match(
-                                    /^\/dashboard\/cms\/?.*/ && "bg-slate-7 font-semibold text-slate-12",
-                                  ),
+                                  /^\/dashboard\/cms\/?.*/.test(pathname) && "bg-slate-7 font-semibold text-slate-12",
                                 )}
                               >
                                 Content

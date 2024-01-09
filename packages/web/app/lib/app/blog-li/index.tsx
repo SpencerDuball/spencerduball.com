@@ -1,14 +1,14 @@
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 import { Link } from "@remix-run/react";
 import * as React from "react";
-import { cn, parseMdLink } from "~/lib/util/utils";
+import { cn } from "~/lib/util/utils";
 import { ColorList, Tag, colorFromName } from "~/lib/ui/tag";
 
 interface IBlogLiData {
   tags: string[];
   title: string;
   id: number;
-  cover_img: string;
+  cover_img: { alt: string; url: string };
   views: number;
   published: boolean;
   published_at: string | null;
@@ -21,7 +21,6 @@ export interface BlogLiProps extends React.ComponentProps<"li"> {
 }
 
 export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) {
-  const [alt, url] = parseMdLink(data.cover_img);
   return (
     <li
       className={cn(
@@ -37,8 +36,8 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
         <div className="h-24 w-48 animate-pulse rounded bg-slate-3" />
         <img
           className="absolute left-0 top-0 aspect-[2/1] h-24 w-48 overflow-hidden rounded bg-slate-3 object-cover"
-          alt={alt}
-          src={url}
+          alt={data.cover_img.alt}
+          src={data.cover_img.url}
         />
       </div>
       {/* Info Section */}
@@ -66,7 +65,7 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
           <Link to={`/blog/${data.id}`} className="focus-outline line-clamp-2 text-xl font-semibold leading-[1.15]">
             {data.title}
           </Link>
-          <p className="text-sm text-slate-9">
+          <p className="text-sm text-slate-9" suppressHydrationWarning>
             {data.published_at ? new Date(data.published_at).toLocaleDateString() : "Unpublished"} &#11825; {data.views}{" "}
             Views
           </p>
