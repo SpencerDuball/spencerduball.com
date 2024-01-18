@@ -1,3 +1,4 @@
+import * as React from "react";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { logger, db } from "~/lib/util/globals.server";
 import { z } from "zod";
@@ -7,6 +8,7 @@ import Markdoc from "@markdoc/markdoc";
 import { config } from "~/lib/ui/markdoc";
 import { ZYamlString } from "~/lib/util/utils";
 import { useLoaderData } from "@remix-run/react";
+import { components } from "~/lib/ui/markdoc";
 
 //---------------------------------------------------------------------------------------------------------------------
 // Define Loader Function
@@ -77,13 +79,15 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export default function Blog() {
   const { blog, meta, content } = useLoaderData<typeof loader>();
 
+  const Content = React.useMemo(() => Markdoc.renderers.react(content, React, { components }), [content]);
+
   return (
     <>
       <p>{JSON.stringify(blog)}</p>
       <br />
       <p>{JSON.stringify(meta)}</p>
       <br />
-      <p>{JSON.stringify(content)}</p>
+      <div className="grid w-full max-w-3xl px-2 sm:px-3 md:px-0">{Content}</div>
     </>
   );
 }
