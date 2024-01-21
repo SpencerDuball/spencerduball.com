@@ -12,7 +12,7 @@ import { TimeDescIcon, TimeAscIcon, ViewsAscIcon, ViewsDescIcon } from "~/lib/ui
 import { colorFromName, ColorList, Tag } from "~/lib/ui/tag";
 import { BlogLi } from "~/lib/app/blog-li";
 import { Pagination } from "~/lib/ui/pagination";
-import { tagsTfmr, coverImgTfmr } from "~/model/blogs";
+import { parseBlog } from "~/model/blogs";
 
 export const meta: MetaFunction = () => [
   { title: "Blog | Spencer Duball" },
@@ -120,9 +120,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   blogsQuery = blogsQuery.limit(maxResults).offset((page - 1) * maxResults);
 
   // apply data transforms
-  const blogsReq = execute(blogsQuery).then((blogs) =>
-    blogs.map((blog) => ({ ...blog, tags: tagsTfmr(blog.tags), cover_img: coverImgTfmr(blog.cover_img) })),
-  );
+  const blogsReq = execute(blogsQuery).then((blogs) => blogs.map((blog) => parseBlog(blog)));
 
   //-------------------------------------------------------------------------------------------------------------------
   // Create Supplemental Queries

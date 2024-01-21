@@ -1,11 +1,17 @@
-import { IBlog } from "@spencerduballcom/db/sqldb";
+import { IBlog as _IBlog } from "@spencerduballcom/db/sqldb";
 import { z } from "zod";
-import { ZJsonString } from "~/lib/util/utils";
+import { Simplify, Selectable } from "kysely";
 
 //---------------------------------------------------------------------------------------------------------------------
 // Zod Types
 //---------------------------------------------------------------------------------------------------------------------
 
+// The type of the full Blog as returned from a SQL query.
+export interface ISqlBlog extends Selectable<_IBlog> {
+  tags: string;
+}
+
+// The type of the full Blog after raw SQL response has been transformed into appropriate objects.
 export const ZBlog = z.object({
   id: z.number(),
   title: z.string(),
@@ -19,38 +25,36 @@ export const ZBlog = z.object({
   created_at: z.string(),
   modified_at: z.string(),
   author_id: z.number(),
+  tags: z.string().array(),
 });
+export type IBlog = z.infer<typeof ZBlog>;
 
-export const ZBlogWithTags = ZBlog.extend({
-  tags: z.string().transform((str: string) => (str.length > 0 ? str.split(",") : [])),
-});
-
+// The type of the Blog's meta information contained in the frontmatter.
 export const ZBlogMeta = z.object({
   title: z.string(),
   description: z.string(),
   tags: z.string().array(),
   cover_img: ZBlog.shape.cover_img,
 });
+export type IBlogMeta = z.infer<typeof ZBlogMeta>;
 
 //---------------------------------------------------------------------------------------------------------------------
 // Database Utilities
 //---------------------------------------------------------------------------------------------------------------------
-/**
- * Takes in the 'tags' string from the database and parses it into an array of tags.
- *
- * @param tags The CSV tags string from the database.
- * @returns An array of tags.
- */
-export function tagsTfmr(tags: string) {
-  return tags.length > 0 ? tags.split(",") : [];
-}
 
 /**
- * Takes in the 'cover_img' string from the database and parses it into the JSON object.
- *
- * @param cover_img The cover_img JSON string from the database.
- * @returns The cover_img object.
+ * This function takes in a SQL response and transforms it into a more accurate JavaScript object representation of the
+ * Blog.
  */
-export function coverImgTfmr(cover_img: string) {
-  return ZJsonString.pipe(ZBlog.shape.cover_img).parse(cover_img);
+export function parseBlog<T extends Partial<ISqlBlog>>(
+  blog: T,
+): Simplify<Pick<IBlog, keyof T extends Partial<keyof ISqlBlog> ? keyof T : never>> {
+  const _blog = { ...blog } as any;
+  if (blog.cover_img) _blog.cover_img = JSON.parse(blog.cover_img);
+  if (blog.published_at) _blog.published_at = new Date(blog.published_at);
+  if (blog.body_modified_at) _blog.body_modified_at = new Date(blog.body_modified_at);
+  if (blog.created_at) _blog.created_at = new Date(blog.created_at);
+  if (blog.modified_at) _blog.modified_at = new Date(blog.modified_at);
+  if (blog.tags) _blog.tags = blog.tags.length > 0 ? blog.tags.split(",") : [];
+  return _blog;
 }

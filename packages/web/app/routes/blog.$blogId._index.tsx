@@ -3,7 +3,7 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { logger, db } from "~/lib/util/globals.server";
 import { z } from "zod";
 import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
-import { tagsTfmr, coverImgTfmr, ZBlogMeta } from "~/model/blogs";
+import { parseBlog, ZBlogMeta } from "~/model/blogs";
 import Markdoc from "@markdoc/markdoc";
 import { config } from "~/lib/ui/markdoc";
 import { ZYamlString } from "~/lib/util/utils";
@@ -38,11 +38,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       .where("id", "=", blogId)
       .where("published", "=", true)
       .groupBy("blogs.id")
-      .selectAll()
+      .selectAll("blogs")
       .select(db.fn.agg<string>("group_concat", ["blog_tags.name"]).as("tags")),
   )
     .then((res) => takeFirstOrThrow(res))
-    .then((blog) => ({ ...blog, tags: tagsTfmr(blog.tags), cover_img: coverImgTfmr(blog.cover_img) }))
+    .then((blog) => parseBlog(blog))
     .catch((e) => {
       log.info(e, `Failure: Blog with id ${blogId} does not exist.`);
       throw new Response(null, { status: 404, statusText: "Not Found" });

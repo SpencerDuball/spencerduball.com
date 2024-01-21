@@ -3,17 +3,12 @@ import { Link } from "@remix-run/react";
 import * as React from "react";
 import { cn } from "~/lib/util/utils";
 import { ColorList, Tag, colorFromName } from "~/lib/ui/tag";
+import { IBlog } from "~/model/blogs";
 
-interface IBlogLiData {
-  tags: string[];
-  title: string;
-  id: number;
-  cover_img: { alt: string; url: string };
-  views: number;
-  published: boolean;
-  published_at: string | null;
-  author_id: number;
-}
+type IBlogLiData = Pick<
+  IBlog,
+  "tags" | "title" | "id" | "cover_img" | "views" | "published" | "published_at" | "author_id"
+>;
 
 export interface BlogLiProps extends React.ComponentProps<"li"> {
   hasControls?: boolean;

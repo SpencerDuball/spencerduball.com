@@ -1,7 +1,6 @@
 import { Config } from "sst/node/config";
-import { createCookie, createSessionStorage, createCookieSessionStorage } from "@remix-run/node";
+import { createCookie, createSessionStorage } from "@remix-run/node";
 import { createTypedCookie } from "remix-utils/typed-cookie";
-import { createTypedSessionStorage } from "remix-utils/typed-session";
 import { ZSession } from "@spencerduballcom/db/ddb";
 import { ddb } from "~/lib/util/globals.server";
 // TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
