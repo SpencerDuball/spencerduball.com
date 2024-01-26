@@ -1,0 +1,34 @@
+app = "spencerduballcom"
+primary_region = "ord"
+swap_size_mb = 512
+
+[build]
+  dockerfile = "Dockerfile"
+  ignorefile = ".dockerignore"
+
+  [build.args]
+    MODE="PROD"
+
+[mounts]
+  source = "spencerduballcom_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_start_machines = false
+  auto_stop_machines = false
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "10s"
+    timeout = "2s"
+    grace_period = "5s"
+    method = "get"
+    path = "/" # TODO: Update this to /healthcheck and follow the Remix indie template
+    protocol = "http"
+    tls_skip_verify = false
+
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "1gb"

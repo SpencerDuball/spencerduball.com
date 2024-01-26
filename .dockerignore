@@ -1,0 +1,10 @@
+# ignore VCS files
+.git
+.gitignore
+
+# ignore JS ecosystem packages
+node_modules
+
+# ignore Remix files
+build
+cache
