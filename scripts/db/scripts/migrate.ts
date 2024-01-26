@@ -25,8 +25,8 @@ export async function migrate() {
   let spinner = ora("Connecting to the database ...").start();
 
   // create the connection
-  const MODE = z.string().catch("DEV").parse(process.env.MODE);
-  const DATABASE_URL = MODE === "dev" ? path.resolve(ROOT_DIR, "sqlite.db") : "/data/sqlite.db";
+  const DATABASE_URL = z.string().catch(path.resolve(ROOT_DIR, "sqlite.db")).parse(process.env.DATABASE_URL);
+  fs.ensureDirSync(path.dirname(DATABASE_URL));
   const db = new Kysely({ dialect: new SqliteDialect({ database: new SQLite(DATABASE_URL) }) });
 
   // apply the migrations

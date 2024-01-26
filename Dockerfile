@@ -13,6 +13,9 @@ RUN corepack enable
 # Install the linux packages necessary for sqlite
 RUN apt-get update -y && apt-get install -y sqlite3
 
+# Setup the database path
+ENV DATABASE_URL="/data/sqlite.db"
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Part 2: Install all pnpm packages to a cached volume.
 # ---------------------------------------------------------------------------------------------------------------------
@@ -45,14 +48,6 @@ WORKDIR /spencerduballcom
 # Build the remix application.
 RUN pnpm run build
 
-# -----------------------------------------------------------------------------
-# Create The Database
-# -------------------
-
-# Run the migration script (this will create the database too)
-RUN mkdir /data && chmod -R 666 /data
-RUN pnpm run db:migrate
-
 # ---------------------------------------------------------------------------------------------------------------------
 # Part 4: Copy minimal files, install only production dependencies, and start the app.
 # ---------------------------------------------------------------------------------------------------------------------
@@ -61,7 +56,10 @@ RUN pnpm run db:migrate
 FROM base AS launch
 COPY --from=build /spencerduballcom/build /spencerduballcom/build
 COPY --from=build /spencerduballcom/package.json /spencerduballcom/pnpm-lock.yaml /spencerduballcom/
-COPY --from=build /data/sqlite.db /data/sqlite.db
+
+# Next copy over the scripts/ folder and start.sh so we can apply database migrations
+COPY --from=build /spencerduballcom/scripts /spencerduballcom/scripts
+COPY --from=build /spencerduballcom/start.sh /spencerduballcom/start.sh
 
 # Next install the production dependencies only utilizing the cached packages.
 WORKDIR /spencerduballcom
@@ -70,4 +68,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 # Finally run the application on port 8080, the preferred port recommened by fly.io.
 EXPOSE 8080
 ENV PORT="8080"
-CMD ["pnpm", "start"]
+
+RUN chmod +x start.sh
+ENTRYPOINT [ "./start.sh" ]

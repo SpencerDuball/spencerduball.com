@@ -6,9 +6,6 @@ swap_size_mb = 512
   dockerfile = "Dockerfile"
   ignorefile = ".dockerignore"
 
-  [build.args]
-    MODE="PROD"
-
 [mounts]
   source = "spencerduballcom_data"
   destination = "/data"
