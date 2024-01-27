@@ -10,13 +10,18 @@
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
     "---DATABASE SCRIPTS---": "",
-    "db:migrate": "tsx --tsconfig=scripts/tsconfig.json scripts/db/index.ts db:migrate"
+    "db:migrate:create": "tsx --tsconfig=scripts/tsconfig.json scripts/db/index.ts db:migrate:create",
+    "db:migrate": "tsx --tsconfig=scripts/tsconfig.json scripts/db/index.ts db:migrate",
+    "db:migrate:status": "tsx --tsconfig=scripts/tsconfig.json scripts/db/index.ts db:migrate:status",
+    "---ENV SCRIPTS---": "",
+    "env:get": "tsx --tsconfig=scripts/tsconfig.json scripts/env/index.ts env:get"
   },
   "dependencies": {
     "@remix-run/node": "^2.5.1",
     "@remix-run/react": "^2.5.1",
     "@remix-run/serve": "^2.5.1",
     "@tsconfig/node20": "^20.1.2",
+    "axios": "^1.6.7",
     "better-sqlite3": "^9.3.0",
     "commander": "^11.1.0",
     "dotenv": "^16.4.1",
@@ -45,7 +50,8 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "typescript": "^5.1.6",
     "vite": "^5.0.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "wrangler": "^3.25.0"
   },
   "engines": {
     "node": ">=20.0.0"

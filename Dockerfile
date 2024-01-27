@@ -13,9 +13,6 @@ RUN corepack enable
 # Install the linux packages necessary for sqlite
 RUN apt-get update -y && apt-get install -y sqlite3
 
-# Setup the database path
-ENV DATABASE_URL="/data/sqlite.db"
-
 # ---------------------------------------------------------------------------------------------------------------------
 # Part 2: Install all pnpm packages to a cached volume.
 # ---------------------------------------------------------------------------------------------------------------------
@@ -36,10 +33,6 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 # Part 3: Build the application, create the database, and apply migrations to the database.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
-# Build The App
-# -------------
-
 # Copy over the application & move to that directory
 FROM deps AS build
 COPY . /spencerduballcom
@@ -49,7 +42,35 @@ WORKDIR /spencerduballcom
 RUN pnpm run build
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Part 4: Copy minimal files, install only production dependencies, and start the app.
+# Part 4 (PROD): Copy minimal files, install only production dependencies, and start the app.
+# ---------------------------------------------------------------------------------------------------------------------
+
+# First copy over the build/ output and the package.json + package-lock.json files.
+FROM base AS prod
+COPY --from=build /spencerduballcom/build /spencerduballcom/build
+COPY --from=build /spencerduballcom/package.json /spencerduballcom/pnpm-lock.yaml /spencerduballcom/
+
+# Next copy over the scripts/ folder and start.prod.sh so we can apply database migrations
+COPY --from=build /spencerduballcom/scripts /spencerduballcom/scripts
+RUN rm -rf /spencerduballcom/scripts/seed
+COPY --from=build /spencerduballcom/start.prod.sh /spencerduballcom/start.prod.sh
+
+# Next install the production dependencies only utilizing the cached packages.
+WORKDIR /spencerduballcom
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+
+# Setup environment variables
+ENV DATABASE_URL="/data/sqlite.db"
+
+# Finally run the application on port 8080, the preferred port recommened by fly.io.
+EXPOSE 8080
+ENV PORT="8080"
+
+RUN chmod +x start.prod.sh
+ENTRYPOINT [ "./start.prod.sh" ]
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Part 4 (STAGE): Copy minimal files, install only production dependencies, and start the app.
 # ---------------------------------------------------------------------------------------------------------------------
 
 # First copy over the build/ output and the package.json + package-lock.json files.
@@ -57,17 +78,21 @@ FROM base AS launch
 COPY --from=build /spencerduballcom/build /spencerduballcom/build
 COPY --from=build /spencerduballcom/package.json /spencerduballcom/pnpm-lock.yaml /spencerduballcom/
 
-# Next copy over the scripts/ folder and start.sh so we can apply database migrations
+# Next copy over the scripts/ folder and start.stage.sh so we can apply database migrations
 COPY --from=build /spencerduballcom/scripts /spencerduballcom/scripts
-COPY --from=build /spencerduballcom/start.sh /spencerduballcom/start.sh
+COPY --from=build /spencerduballcom/start.stage.sh /spencerduballcom/start.stage.sh
 
 # Next install the production dependencies only utilizing the cached packages.
 WORKDIR /spencerduballcom
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
+# Setup environment variables
+ENV DATABASE_URL="/data/sqlite.db"
+ENV GITHUB_MOCK_DATA="/data/github-mock.json"
+
 # Finally run the application on port 8080, the preferred port recommened by fly.io.
 EXPOSE 8080
 ENV PORT="8080"
 
-RUN chmod +x start.sh
-ENTRYPOINT [ "./start.sh" ]
+RUN chmod +x start.stage.sh
+ENTRYPOINT [ "./start.stage.sh" ]

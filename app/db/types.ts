@@ -1,5 +1,4 @@
-import { Kysely, ColumnType } from "kysely";
-import * as sqlite from "better-sqlite3";
+import { ColumnType } from "kysely";
 
 /* ------------------------------------------------------------------------------------------------------------
  * Define Tables
