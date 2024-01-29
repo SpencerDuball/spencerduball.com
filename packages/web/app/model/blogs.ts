@@ -1,6 +1,12 @@
 import { IBlog as _IBlog } from "@spencerduballcom/db/sqldb";
 import { z } from "zod";
 import { Simplify, Selectable } from "kysely";
+import { compile } from "@mdx-js/mdx";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+import remarkGfm from "remark-gfm";
+import rehypeMdxCodeProps from "rehype-mdx-code-props";
+import { ZYamlString } from "~/lib/util/utils";
 
 //---------------------------------------------------------------------------------------------------------------------
 // Zod Types
@@ -20,10 +26,10 @@ export const ZBlog = z.object({
   body: z.string(),
   views: z.number(),
   published: z.boolean(),
-  published_at: z.string().nullable(),
-  body_modified_at: z.string(),
-  created_at: z.string(),
-  modified_at: z.string(),
+  published_at: z.date().nullable(),
+  body_modified_at: z.date(),
+  created_at: z.date(),
+  modified_at: z.date(),
   author_id: z.number(),
   tags: z.string().array(),
 });
@@ -57,4 +63,36 @@ export function parseBlog<T extends Partial<ISqlBlog>>(
   if (blog.modified_at) _blog.modified_at = new Date(blog.modified_at);
   if (blog.tags) _blog.tags = blog.tags.length > 0 ? blog.tags.split(",") : [];
   return _blog;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+// MDX Utilities
+//---------------------------------------------------------------------------------------------------------------------
+
+/**
+ * Takes in the raw MDX and compiles it into the MDX string ready for transformation into React code.
+ * Takes in the raw MDX and compiles it into
+ *
+ * @param mdx The raw MDX string.
+ */
+export async function compileMdx(mdx: string) {
+  // extract the frontmatter
+  const yamlLines: string[] = [];
+  let capturingYaml = false;
+  for (const line of mdx.split("\n")) {
+    if (line.startsWith("---") && capturingYaml) break;
+    if (capturingYaml) yamlLines.push(line);
+    if (line.startsWith("---") && !capturingYaml) capturingYaml = true;
+  }
+  const frontmatter = ZYamlString.pipe(ZBlogMeta).parse(yamlLines.join("\n"));
+
+  // compile the MDX to a VFile string
+  const content = String(
+    await compile(mdx, {
+      outputFormat: "function-body",
+      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm, rehypeMdxCodeProps],
+    }),
+  );
+
+  return { frontmatter, content };
 }

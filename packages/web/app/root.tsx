@@ -42,9 +42,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // -------------------
   // Retrieves and parses the theme from the __preferences cookie. If the cookie is invalid or doesn't exist then
   // respond with a Set-Cookie to set the __preferences cookie. The theme will be used in SSR of the app.
-  let prefs = await preferences.parse(request.headers.get("cookie"));
+  let prefs = await preferences.parse(request.headers.get("cookie")).catch(() => null);
   if (!prefs) {
-    prefs = { theme: "dark" };
+    prefs = { theme: "dark", codeTheme: "dark" };
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
 
@@ -61,7 +61,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const flash = await flashCookie.parse(request.headers.get("cookie"));
   if (flash) resHeaders.push(["Set-Cookie", await _flashCookie.serialize("", { maxAge: 0 })]);
 
-  return json({ theme: prefs.theme, session, flash }, { headers: resHeaders });
+  return json({ prefs, session, flash }, { headers: resHeaders });
 }
 
 /**
@@ -79,7 +79,7 @@ function DisplayFlash() {
 }
 
 function App() {
-  const { theme, session } = useLoaderData<typeof loader>();
+  const { prefs, session } = useLoaderData<typeof loader>();
 
   // Handle Site Theme
   // -----------------
@@ -88,7 +88,7 @@ function App() {
   // for the <meta name="theme-color"> tag imperatively as the meta tags will not update appropriately when the
   // CSS variables change.
   const [{ preferences }] = React.useContext(GlobalCtx);
-  const calculatedTheme = useHydrated() ? preferences._theme : theme;
+  const calculatedTheme = useHydrated() ? preferences._theme : prefs.theme;
   const metaThemeColor = calculatedTheme === "dark" ? slateDark.slate1 : slate.slate1;
 
   return (
@@ -118,8 +118,10 @@ function App() {
 }
 
 export default function AppWithContext() {
+  const { prefs } = useLoaderData<typeof loader>();
+
   return (
-    <GlobalCtxProvider>
+    <GlobalCtxProvider _codeTheme={prefs.codeTheme} _theme={prefs.theme}>
       <App />
     </GlobalCtxProvider>
   );

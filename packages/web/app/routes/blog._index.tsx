@@ -80,16 +80,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let blogsQuery = db
     .selectFrom("blogs")
     .leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id")
-    .select([
-      "id",
-      "title",
-      "cover_img",
-      "author_id",
-      "views",
-      "published_at",
-      "published",
-      db.fn.agg<string>("group_concat", ["blog_tags.name"]).as("tags"),
-    ]);
+    .selectAll("blogs")
+    .select(db.fn.agg<string>("group_concat", ["blog_tags.name"]).as("tags"));
 
   // apply the "published" filter
   blogsQuery = blogsQuery.where("published", "=", true);
@@ -120,7 +112,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   blogsQuery = blogsQuery.limit(maxResults).offset((page - 1) * maxResults);
 
   // apply data transforms
-  const blogsReq = execute(blogsQuery).then((blogs) => blogs.map((blog) => parseBlog(blog)));
+  const blogsReq = execute(blogsQuery);
 
   //-------------------------------------------------------------------------------------------------------------------
   // Create Supplemental Queries
@@ -216,7 +208,7 @@ export default function Blog() {
         {/* Blog Items */}
         <ul className="row-start-2 grid gap-3">
           {blogs.map((blog) => (
-            <BlogLi key={blog.id} data={blog} />
+            <BlogLi key={blog.id} data={parseBlog(blog)} />
           ))}
         </ul>
         {/* Introduction */}

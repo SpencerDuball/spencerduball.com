@@ -9,6 +9,10 @@ export interface IGlobalCtxState {
     theme: "dark" | "light" | "system";
     /** The actual theme displayed on the page, and saved to cookie can be either "dark" or "light". */
     _theme: "dark" | "light";
+    /** The codeTheme on the client side can be "dark", "light", or "system". */
+    codeTheme: "dark" | "light" | "system";
+    /** The actual codeTheme displayed on the page, and saved to cookie can be either "dark" or "light". */
+    _codeTheme: "dark" | "light";
   };
 }
 
@@ -21,11 +25,13 @@ type ActionMap<M extends { [index: string]: any }> = {
 
 export enum Types {
   ToggleTheme = "TOGGLE_THEME",
+  ToggleCodeTheme = "TOGGLE_CODE_THEME",
   PatchPreferences = "PATCH_PREFERENCES",
 }
 
 export type Payload = {
   [Types.ToggleTheme]: undefined;
+  [Types.ToggleCodeTheme]: undefined;
   [Types.PatchPreferences]: Partial<IGlobalCtxState["preferences"]>;
 };
 
@@ -42,6 +48,15 @@ export const reducer = (state: IGlobalCtxState, action: Actions) => {
       if (state.preferences.theme === "light") next.preferences.theme = "dark";
       else if (state.preferences.theme === "dark") next.preferences.theme = "system";
       else next.preferences.theme = "light";
+
+      return next;
+    }
+    case Types.ToggleCodeTheme: {
+      let next = structuredClone(state);
+
+      if (state.preferences.codeTheme === "light") next.preferences.codeTheme = "dark";
+      else if (state.preferences.codeTheme === "dark") next.preferences.codeTheme = "system";
+      else next.preferences.codeTheme = "light";
 
       return next;
     }

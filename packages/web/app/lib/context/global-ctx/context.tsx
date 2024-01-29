@@ -17,7 +17,7 @@ export const PREFERENCES_KEY = "__preferences";
  * ------------------------------------------------------------------------------------------------------------------ */
 // define initial GlobalCtxState
 export const InitialGlobalCtxState: IGlobalCtxState = {
-  preferences: { theme: "system", _theme: "dark" },
+  preferences: { theme: "system", _theme: "dark", codeTheme: "system", _codeTheme: "dark" },
 };
 
 // create GlobalCtx
@@ -26,12 +26,21 @@ export const GlobalCtx = React.createContext<[IGlobalCtxState, React.Dispatch<Ac
   () => null,
 ]);
 
-export function GlobalCtxProvider({ children }: { children: React.ReactNode }) {
+export interface GlobalCtxProviderProps {
+  _theme: "light" | "dark";
+  _codeTheme: "light" | "dark";
+  children: React.ReactNode;
+}
+
+export function GlobalCtxProvider({ _theme, _codeTheme, children }: GlobalCtxProviderProps) {
   // define the state
-  const [state, dispatch] = React.useReducer(reducer, InitialGlobalCtxState);
+  const [state, dispatch] = React.useReducer(reducer, {
+    ...InitialGlobalCtxState,
+    preferences: { ...InitialGlobalCtxState.preferences, _codeTheme, _theme },
+  });
 
   // run effects
-  useSiteThemeHandler(dispatch, state.preferences.theme);
+  useSiteThemeHandler(dispatch, state.preferences);
 
   return <GlobalCtx.Provider value={[state, dispatch]}>{children}</GlobalCtx.Provider>;
 }
@@ -54,7 +63,7 @@ export function GlobalCtxProvider({ children }: { children: React.ReactNode }) {
  * @param dispatch The dispatch function.
  * @param theme The current theme.
  */
-function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, theme: IGlobalCtxState["preferences"]["theme"]) {
+function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, preferences: IGlobalCtxState["preferences"]) {
   // Restore Site Theme
   // ------------------
   // This effect restores the site theme from localStorage if it exists. If the theme was not saved to localStorage,
@@ -62,29 +71,35 @@ function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, theme: IGlobalCt
   //
   // [Order-Dependent 1/2]
   React.useEffect(() => {
-    let theme: IGlobalCtxState["preferences"]["theme"] = "system";
-    let _theme: IGlobalCtxState["preferences"]["_theme"] = "dark";
+    let prefs: IGlobalCtxState["preferences"] = {
+      theme: "system",
+      _theme: "dark",
+      codeTheme: "system",
+      _codeTheme: "dark",
+    };
 
     // update the 'theme' from localStorage
     try {
       // retrieve the preferences, base64 decode it, and parse for valid JSON
-      let prefs = JSON.parse(atob(localStorage.getItem(PREFERENCES_KEY)!));
+      let localStoragePrefs = JSON.parse(atob(localStorage.getItem(PREFERENCES_KEY)!));
 
       // extract the theme
-      theme = z.object({ theme: z.enum(["light", "dark", "system"]) }).parse(prefs).theme;
+      prefs.theme = z.object({ theme: z.enum(["light", "dark", "system"]) }).parse(localStoragePrefs).theme;
+      prefs.codeTheme = z.object({ codeTheme: z.enum(["light", "dark", "system"]) }).parse(localStoragePrefs).codeTheme;
     } catch (e) {}
 
     // update the '_theme' from the cookie value
     try {
       // retrieve the preferences cookie, base64 decode it, and parse for valid JSON
-      let prefs = JSON.parse(atob(Cookies.get(PREFERENCES_KEY)!));
+      let cookiePrefs = JSON.parse(atob(Cookies.get(PREFERENCES_KEY)!));
 
       // extract the theme
-      _theme = z.object({ theme: z.enum(["light", "dark"]) }).parse(prefs).theme;
+      prefs._theme = z.object({ theme: z.enum(["light", "dark"]) }).parse(cookiePrefs).theme;
+      prefs._codeTheme = z.object({ codeTheme: z.enum(["light", "dark"]) }).parse(cookiePrefs).codeTheme;
     } catch (e) {}
 
     // update the context
-    dispatch({ type: Types.PatchPreferences, payload: { theme, _theme } });
+    dispatch({ type: Types.PatchPreferences, payload: prefs });
   }, []);
 
   // Compute Resolved Theme
@@ -103,12 +118,20 @@ function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, theme: IGlobalCt
   React.useEffect(() => {
     if (isHydrated) {
       // determine the new resolved theme: _theme
-      let _theme: typeof theme = "dark";
-      if (theme === "light" || (theme === "system" && !prefersDark)) _theme = "light";
+      let _theme: typeof preferences.theme = "dark";
+      if (preferences.theme === "light" || (preferences.theme === "system" && !prefersDark)) _theme = "light";
+
+      // determine the new resolved codeTheme: _codeTheme
+      let _codeTheme: typeof preferences.codeTheme = "dark";
+      if (preferences.codeTheme === "light" || (preferences.codeTheme === "system" && _theme !== "dark"))
+        _codeTheme = "light";
 
       // update localStorage and cookies
-      localStorage.setItem(PREFERENCES_KEY, btoa(JSON.stringify({ theme })));
-      Cookies.set(PREFERENCES_KEY, btoa(JSON.stringify({ theme: _theme })), {
+      localStorage.setItem(
+        PREFERENCES_KEY,
+        btoa(JSON.stringify({ theme: preferences.theme, codeTheme: preferences.codeTheme })),
+      );
+      Cookies.set(PREFERENCES_KEY, btoa(JSON.stringify({ theme: _theme, codeTheme: _codeTheme })), {
         "Max-Age": String(ms("400d")),
         secure: false,
         domain: new URL(window.location.href).hostname.replace(/\:d+$/, ""),
@@ -117,7 +140,7 @@ function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, theme: IGlobalCt
       });
 
       // update context
-      dispatch({ type: Types.PatchPreferences, payload: { _theme } });
+      dispatch({ type: Types.PatchPreferences, payload: { _theme, _codeTheme } });
     }
-  }, [theme, prefersDark, isHydrated]);
+  }, [preferences.theme, preferences.codeTheme, prefersDark, isHydrated]);
 }

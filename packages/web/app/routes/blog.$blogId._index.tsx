@@ -3,12 +3,12 @@ import { LoaderFunctionArgs, json } from "@remix-run/node";
 import { logger, db } from "~/lib/util/globals.server";
 import { z } from "zod";
 import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
-import { parseBlog, ZBlogMeta } from "~/model/blogs";
-import Markdoc from "@markdoc/markdoc";
-import { config } from "~/lib/ui/markdoc";
-import { ZYamlString } from "~/lib/util/utils";
+import { parseBlog, compileMdx } from "~/model/blogs";
 import { useLoaderData } from "@remix-run/react";
-import { components } from "~/lib/ui/markdoc";
+import { components } from "~/lib/ui/mdx";
+import { runSync } from "@mdx-js/mdx";
+import * as runtime from "react/jsx-runtime";
+import { BlogView } from "~/lib/app/blog-view";
 
 //---------------------------------------------------------------------------------------------------------------------
 // Define Loader Function
@@ -42,7 +42,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       .select(db.fn.agg<string>("group_concat", ["blog_tags.name"]).as("tags")),
   )
     .then((res) => takeFirstOrThrow(res))
-    .then((blog) => parseBlog(blog))
     .catch((e) => {
       log.info(e, `Failure: Blog with id ${blogId} does not exist.`);
       throw new Response(null, { status: 404, statusText: "Not Found" });
@@ -50,8 +49,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   log.info("Success: Retrieved the blog.");
 
   //-------------------------------------------------------------------------------------------------------------------
-  // Generate Markdoc
-  //---------------------
+  // Validate Frontmatter and Compile Blog
+  //--------------------------------------
   // To generate the markdoc content we will:
   // 1. Parse - parse the input string into an AST
   // 2. Validate - validate that the frontmatter and markdoc are valid
@@ -59,35 +58,18 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   //-------------------------------------------------------------------------------------------------------------------
   // 1. Parse the string into an AST
   log.info("Building the blog ...");
-  const ast = Markdoc.parse(body);
 
-  // 2. Validate the frontmatter and body
-  const meta = ZYamlString.pipe(ZBlogMeta).parse(ast.attributes.frontmatter);
-  const errors = Markdoc.validate(ast, config);
-  if (errors.length > 0) {
-    log.error(errors, "Failed to validate the markdoc content.");
-    throw errors;
-  }
+  const { content } = await compileMdx(body);
 
-  // 3. Build the AST into renderable content
-  const content = Markdoc.transform(ast, config);
-  log.info("Success: Built the blog.");
-
-  return json({ blog, meta, content });
+  return json({ blog, content, url: request.url });
 }
 
 export default function Blog() {
-  const { blog, meta, content } = useLoaderData<typeof loader>();
+  const { blog, content, url } = useLoaderData<typeof loader>();
 
-  const Content = React.useMemo(() => Markdoc.renderers.react(content, React, { components }), [content]);
+  const Content = React.useMemo(() => runSync(content, { ...runtime, Fragment: React.Fragment }), [content]);
 
-  return (
-    <>
-      <p>{JSON.stringify(blog)}</p>
-      <br />
-      <p>{JSON.stringify(meta)}</p>
-      <br />
-      <div className="grid w-full max-w-3xl px-2 sm:px-3 md:px-0">{Content}</div>
-    </>
-  );
+  return <BlogView data={{ url, content, ...parseBlog(blog) }} />;
 }
+
+export { ErrorBoundary } from "~/lib/app/error-boundary";

@@ -5,10 +5,7 @@ import { cn } from "~/lib/util/utils";
 import { ColorList, Tag, colorFromName } from "~/lib/ui/tag";
 import { IBlog } from "~/model/blogs";
 
-type IBlogLiData = Pick<
-  IBlog,
-  "tags" | "title" | "id" | "cover_img" | "views" | "published" | "published_at" | "author_id"
->;
+type IBlogLiData = Omit<IBlog, "body">;
 
 export interface BlogLiProps extends React.ComponentProps<"li"> {
   hasControls?: boolean;

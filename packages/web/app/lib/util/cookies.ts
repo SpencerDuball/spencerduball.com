@@ -38,5 +38,5 @@ export const preferences = createTypedCookie({
     path: "/",
     sameSite: "lax",
   }),
-  schema: z.object({ theme: z.enum(["light", "dark"]) }).nullable(),
+  schema: z.object({ theme: z.enum(["light", "dark"]), codeTheme: z.enum(["light", "dark"]) }).nullable(),
 });
