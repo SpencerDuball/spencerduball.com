@@ -181,8 +181,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
               className={cn(
                 "absolute bottom-0 left-0 right-0 rounded-none",
                 preferences._codeTheme === "dark"
-                  ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4"
-                  : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4",
+                  ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4 focus:outline-_blueDark-6"
+                  : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4 focus:outline-_blue-6",
               )}
               onClick={() => setIsExpanded(!isExpanded)}
             >
@@ -197,8 +197,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4"
-              : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4",
+              ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4 focus:outline-_blueDark-6"
+              : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4 focus:outline-_blue-6",
           )}
           aria-label="Toggle code theme."
           onClick={() => dispatch({ type: Types.ToggleCodeTheme })}
@@ -209,8 +209,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4"
-              : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4",
+              ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4 focus:outline-_blueDark-6"
+              : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4 focus:outline-_blue-6",
           )}
           aria-label="Copy to clipboard."
           onClick={onCopy}

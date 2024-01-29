@@ -18,7 +18,7 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
       className={cn(
         // The BlogLi height is equal to the largest sub-item + padding height + border height.
         // This is h-24 (image height) + h-6 (padding height * 2) + 2px (border height * 2) = calc(30/4 + 2px)
-        "grid h-[calc(7.5rem+2px)] max-w-4xl grid-flow-col grid-cols-1 gap-3 rounded-lg border border-slate-4 bg-slate-2 p-3 md:grid-cols-[max-content_1fr]",
+        "grid h-[calc(7.5rem+2px)] grid-flow-col grid-cols-1 gap-3 rounded-lg border border-slate-4 bg-slate-2 p-3 md:grid-cols-[max-content_1fr]",
         className,
       )}
       {...props}

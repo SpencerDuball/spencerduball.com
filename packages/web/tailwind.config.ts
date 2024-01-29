@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 import { createPlugin } from "windy-radix-palette";
-import { slate, slateDark } from "@radix-ui/colors";
+import { slate, slateDark, blue, blueDark } from "@radix-ui/colors";
 
 console.log(JSON.stringify(slate));
 
@@ -70,6 +70,12 @@ export default {
           10: slateDark.slate10,
           11: slateDark.slate11,
           12: slateDark.slate12,
+        },
+        _blue: {
+          6: blue.blue6,
+        },
+        _blueDark: {
+          6: blueDark.blue6,
         },
       },
       animation: {

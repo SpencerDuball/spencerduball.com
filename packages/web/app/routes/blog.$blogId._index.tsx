@@ -67,8 +67,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export default function Blog() {
   const { blog, content, url } = useLoaderData<typeof loader>();
 
-  const Content = React.useMemo(() => runSync(content, { ...runtime, Fragment: React.Fragment }), [content]);
-
   return <BlogView data={{ url, content, ...parseBlog(blog) }} />;
 }
 
