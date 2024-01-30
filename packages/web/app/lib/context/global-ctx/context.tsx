@@ -1,7 +1,6 @@
 import React from "react";
 import type { IGlobalCtxState, Actions } from "./reducer";
 import { reducer, Types, ZGlobalCtxState } from "./reducer";
-import { z } from "zod";
 import { useHydrated } from "remix-utils/use-hydrated";
 import { useMedia } from "~/lib/hooks/react-use";
 import Cookies from "js-cookie";
@@ -41,7 +40,7 @@ export function GlobalCtxProvider({ _theme, _codeTheme, children }: GlobalCtxPro
   });
 
   // run effects
-  useSiteThemeHandler(dispatch, state.preferences);
+  useSitePreferences(dispatch, state.preferences);
 
   return <GlobalCtx.Provider value={[state, dispatch]}>{children}</GlobalCtx.Provider>;
 }
@@ -64,7 +63,7 @@ export function GlobalCtxProvider({ _theme, _codeTheme, children }: GlobalCtxPro
  * @param dispatch The dispatch function.
  * @param preferences The current theme.
  */
-function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, preferences: IGlobalCtxState["preferences"]) {
+function useSitePreferences(dispatch: React.Dispatch<Actions>, preferences: IGlobalCtxState["preferences"]) {
   // Restore Preferences
   // -------------------
   // This effect restores the 'preferences' from localStorage if it exists. If the 'preferences' are not stored in
@@ -83,8 +82,8 @@ function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, preferences: IGl
       // retrieve the preferences, base64 decode it, and parse for valid JSON
       let localStoragePrefs = JSON.parse(atob(localStorage.getItem(PREFERENCES_KEY)!));
 
-      // extract the theme
-      prefs = ZGlobalCtxState.shape.preferences.parse(localStoragePrefs);
+      // update the preferences
+      prefs = { ...prefs, ...ZGlobalCtxState.shape.preferences.partial().parse(localStoragePrefs) };
     } catch (e) {}
 
     // update the context
@@ -115,7 +114,7 @@ function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, preferences: IGl
         PREFERENCES_KEY,
         btoa(JSON.stringify({ theme: preferences.theme, codeTheme: preferences.codeTheme })),
       );
-      Cookies.set(PREFERENCES_KEY, btoa(JSON.stringify({ theme: _theme, codeTheme: _codeTheme })), {
+      Cookies.set(PREFERENCES_KEY, btoa(JSON.stringify({ _theme, _codeTheme })), {
         "Max-Age": String(ms("400d")),
         secure: false,
         domain: new URL(window.location.href).hostname.replace(/\:d+$/, ""),

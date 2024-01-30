@@ -9,7 +9,6 @@ import { preferences } from "~/lib/util/cookies";
 import { GlobalCtxProvider, GlobalCtx } from "~/lib/context/global-ctx";
 import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
-import { useHydrated } from "remix-utils/use-hydrated";
 import { ToasterProvider, Types } from "~/lib/context/toaster-ctx";
 import { logger } from "~/lib/util/globals.server";
 import { getSessionInfo } from "~/lib/util/utils.server";
@@ -44,7 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // respond with a Set-Cookie to set the __preferences cookie. The theme will be used in SSR of the app.
   let prefs = await preferences.parse(request.headers.get("cookie")).catch(() => null);
   if (!prefs) {
-    prefs = { theme: "dark", codeTheme: "dark" };
+    prefs = { _theme: "dark", _codeTheme: "dark" };
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
 
@@ -115,7 +114,7 @@ export default function AppWithContext() {
   const { prefs } = useLoaderData<typeof loader>();
 
   return (
-    <GlobalCtxProvider _codeTheme={prefs.codeTheme} _theme={prefs.theme}>
+    <GlobalCtxProvider _codeTheme={prefs._codeTheme} _theme={prefs._theme}>
       <App />
     </GlobalCtxProvider>
   );
