@@ -131,7 +131,7 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
     <pre
       className={cn(
         "relative mt-6 grid h-max overflow-hidden rounded-lg [&_.token]:font-mono",
-        preferences._codeTheme === "dark" ? "bg-_slateDark-3" : "bg-_slate-3",
+        preferences._codeTheme === "dark" ? "bg-slateDark-3" : "bg-slateLight-3",
         className,
       )}
       {...props}
@@ -141,8 +141,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           className={cn(
             "border-b p-3 font-mono text-sm",
             preferences._codeTheme === "dark"
-              ? "text-_slateDark-12 border-b-_slateDark-5"
-              : "text-_slate-12 border-b-_slate-5",
+              ? "text-slateDark-12 border-b-slateDark-5"
+              : "text-slateLight-12 border-b-slateLight-5",
           )}
         >
           {filename}
@@ -181,8 +181,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
               className={cn(
                 "absolute bottom-0 left-0 right-0 rounded-none",
                 preferences._codeTheme === "dark"
-                  ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4 focus:outline-_blueDark-6"
-                  : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4 focus:outline-_blue-6",
+                  ? "text-slateDark-9 hover:text-slateDark-11 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
+                  : "text-slateLight-9 hover:text-slateLight-11 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
               )}
               onClick={() => setIsExpanded(!isExpanded)}
             >
@@ -197,8 +197,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4 focus:outline-_blueDark-6"
-              : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4 focus:outline-_blue-6",
+              ? "text-slateDark-9 hover:text-slateDark-11 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
+              : "text-slateLight-9 hover:text-slateLight-11 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
           )}
           aria-label="Toggle code theme."
           onClick={() => dispatch({ type: Types.ToggleCodeTheme })}
@@ -209,13 +209,19 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-_slateDark-9 hover:text-_slateDark-11 hover:bg-_slateDark-3 active:bg-_slateDark-4 focus:outline-_blueDark-6"
-              : "text-_slate-9 hover:text-_slate-11 hover:bg-_slate-3 active:bg-_slate-4 focus:outline-_blue-6",
+              ? "text-slateDark-9 hover:text-slateDark-11 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
+              : "text-slateLight-9 hover:text-slateLight-11 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
           )}
           aria-label="Copy to clipboard."
           onClick={onCopy}
           icon={
-            copy.copied ? <RiCheckLine className="h-4 w-4 text-green-9" /> : <RiClipboardLine className="h-4 w-4" />
+            copy.copied ? (
+              <RiCheckLine
+                className={cn("h-4 w-4", preferences._codeTheme === "dark" ? "text-greenDark-9" : "text-greenLight-9")}
+              />
+            ) : (
+              <RiClipboardLine className="h-4 w-4" />
+            )
           }
         />
       </div>

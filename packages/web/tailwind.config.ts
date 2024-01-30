@@ -1,11 +1,33 @@
 import type { Config } from "tailwindcss";
 import { createPlugin } from "windy-radix-palette";
-import { slate, slateDark, blue, blueDark } from "@radix-ui/colors";
-
-console.log(JSON.stringify(slate));
+import { slate, slateDark, blue, blueDark, green, greenDark } from "@radix-ui/colors";
 
 // define the tailwind colors
 const colors = createPlugin();
+
+// define radix scale helpers, this is used when we need to override the default theme such as MDX code component
+type IRadixScale = {
+  0: string;
+  1: string;
+  2: string;
+  3: string;
+  4: string;
+  5: string;
+  6: string;
+  7: string;
+  8: string;
+  9: string;
+  10: string;
+  11: string;
+  12: string;
+};
+function createRadixScale<T extends Record<string, string>>(color: T) {
+  const c: Record<string, string> = {};
+  Object.values(color).forEach((color, idx) => {
+    c[idx + 1] = color;
+  });
+  return c as IRadixScale;
+}
 
 export default {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
@@ -43,40 +65,12 @@ export default {
       },
       colors: {
         // added so overrides can work UI components nested in the code views
-        _slate: {
-          1: slate.slate1,
-          2: slate.slate2,
-          3: slate.slate3,
-          4: slate.slate4,
-          5: slate.slate5,
-          6: slate.slate6,
-          7: slate.slate7,
-          8: slate.slate8,
-          9: slate.slate9,
-          10: slate.slate10,
-          11: slate.slate11,
-          12: slate.slate12,
-        },
-        _slateDark: {
-          1: slateDark.slate1,
-          2: slateDark.slate2,
-          3: slateDark.slate3,
-          4: slateDark.slate4,
-          5: slateDark.slate5,
-          6: slateDark.slate6,
-          7: slateDark.slate7,
-          8: slateDark.slate8,
-          9: slateDark.slate9,
-          10: slateDark.slate10,
-          11: slateDark.slate11,
-          12: slateDark.slate12,
-        },
-        _blue: {
-          6: blue.blue6,
-        },
-        _blueDark: {
-          6: blueDark.blue6,
-        },
+        slateLight: createRadixScale(slate),
+        slateDark: createRadixScale(slateDark),
+        blueLight: createRadixScale(blue),
+        blueDark: createRadixScale(blueDark),
+        greenLight: createRadixScale(green),
+        greenDark: createRadixScale(greenDark),
       },
       animation: {
         // header menu

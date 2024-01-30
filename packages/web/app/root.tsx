@@ -79,20 +79,14 @@ function DisplayFlash() {
 }
 
 function App() {
-  const { prefs, session } = useLoaderData<typeof loader>();
-
-  // Handle Site Theme
-  // -----------------
-  // When the site is SSRed, the theme will be determined by the cookie returned from the server request. After
-  // hydration the theme will be set from the value in the GlobalCtx. We also need to determine the theme color
-  // for the <meta name="theme-color"> tag imperatively as the meta tags will not update appropriately when the
-  // CSS variables change.
+  const { session } = useLoaderData<typeof loader>();
   const [{ preferences }] = React.useContext(GlobalCtx);
-  const calculatedTheme = useHydrated() ? preferences._theme : prefs.theme;
-  const metaThemeColor = calculatedTheme === "dark" ? slateDark.slate1 : slate.slate1;
+
+  // The name="theme-color" meta tag must be supplied with an actual hex value, not a class.
+  const metaThemeColor = preferences._theme === "dark" ? slateDark.slate1 : slate.slate1;
 
   return (
-    <html lang="en" className={calculatedTheme}>
+    <html lang="en" className={preferences._theme}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

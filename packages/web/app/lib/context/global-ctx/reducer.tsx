@@ -1,20 +1,23 @@
+import { z } from "zod";
+
 /* ------------------------------------------------------------------------------------------------------------
  * Define Context Types
  * ------------------------------------------------------------------------------------------------------------ */
 
 // define the full context state
-export interface IGlobalCtxState {
-  preferences: {
+export const ZGlobalCtxState = z.object({
+  preferences: z.object({
     /** The theme on the client side can be "dark", "light", or "system". */
-    theme: "dark" | "light" | "system";
+    theme: z.enum(["dark", "light", "system"]),
     /** The actual theme displayed on the page, and saved to cookie can be either "dark" or "light". */
-    _theme: "dark" | "light";
+    _theme: z.enum(["dark", "light"]),
     /** The codeTheme on the client side can be "dark", "light", or "system". */
-    codeTheme: "dark" | "light" | "system";
+    codeTheme: z.enum(["dark", "light", "system"]),
     /** The actual codeTheme displayed on the page, and saved to cookie can be either "dark" or "light". */
-    _codeTheme: "dark" | "light";
-  };
-}
+    _codeTheme: z.enum(["dark", "light"]),
+  }),
+});
+export type IGlobalCtxState = z.infer<typeof ZGlobalCtxState>;
 
 /* ------------------------------------------------------------------------------------------------------------
  * Create ActionMap

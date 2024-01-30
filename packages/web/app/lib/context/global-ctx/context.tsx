@@ -1,6 +1,6 @@
 import React from "react";
 import type { IGlobalCtxState, Actions } from "./reducer";
-import { reducer, Types } from "./reducer";
+import { reducer, Types, ZGlobalCtxState } from "./reducer";
 import { z } from "zod";
 import { useHydrated } from "remix-utils/use-hydrated";
 import { useMedia } from "~/lib/hooks/react-use";
@@ -33,7 +33,8 @@ export interface GlobalCtxProviderProps {
 }
 
 export function GlobalCtxProvider({ _theme, _codeTheme, children }: GlobalCtxProviderProps) {
-  // define the state
+  // Define the state of the context and ensure that the _theme and _codeTheme from the cookie are injected as part of
+  // the initial value, or else there will be theme flashes.
   const [state, dispatch] = React.useReducer(reducer, {
     ...InitialGlobalCtxState,
     preferences: { ...InitialGlobalCtxState.preferences, _codeTheme, _theme },
@@ -50,52 +51,40 @@ export function GlobalCtxProvider({ _theme, _codeTheme, children }: GlobalCtxPro
  * ------------------------------------------------------------------------------------------------------------------ */
 
 /**
- * This hook handles hydrating the site theme, keeping the localStorage and cookie in sync, and preventing theme flash.
+ * This hook handles hydrating preferences upon initial site visit, keeping the localStorage and cookie in sync after
+ * theme changes, and computing the new resolved theme.
  *
- * The site theme consists of two parts: the 'theme' and the '_theme'. The 'theme' can be ['system', 'dark', 'light']
- * while the '_theme' may be only ['dark', 'light]. Since there are really only two themes (indicated by '_theme') we
- * need to compute what 'system' should evaluate to on the client side. This hook has two main purposes:
- * (1) Restoring Site Theme - This happens only once and should occur before Compute Resolved Theme or else we may have
- *     flash issue.
- * (2) Compute Resolved Theme ('_theme') - This happens any time the 'prefers-color-scheme' changes (system theme), or
- *     the 'theme' value is toggled. It will update the resolved '_theme' and keep the localStorage + cookie in sync.
+ * A theme consisits of two parts, the actual "theme" and the resolved "_theme". The actual theme can be
+ * light/dark/system and the resolved theme must be either light/dark (system is not a value we actualy display!). This
+ * hook consists of two parts:
+ *   1. Restore Preferences    - Upon initial visit the preferences need to be retrieved from the localStorage.
+ *   2. Compute Resolved Theme - With any change to the "theme", "codeTheme", or "prefersDark" we need to recompute the
+ *                               resolved themes "_theme" and "_codeTheme".
  *
  * @param dispatch The dispatch function.
- * @param theme The current theme.
+ * @param preferences The current theme.
  */
 function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, preferences: IGlobalCtxState["preferences"]) {
-  // Restore Site Theme
-  // ------------------
-  // This effect restores the site theme from localStorage if it exists. If the theme was not saved to localStorage,
-  // default it to 'system'. This effect also initializes the initial '_theme' from the '__preferences' cookie value.
+  // Restore Preferences
+  // -------------------
+  // This effect restores the 'preferences' from localStorage if it exists. If the 'preferences' are not stored in
+  // localStorage it will be defaulted to 'system'.
   //
   // [Order-Dependent 1/2]
   React.useEffect(() => {
+    // Setup a default if nothing is in localStorage.
     let prefs: IGlobalCtxState["preferences"] = {
+      ...preferences,
       theme: "system",
-      _theme: "dark",
       codeTheme: "system",
-      _codeTheme: "dark",
     };
 
-    // update the 'theme' from localStorage
     try {
       // retrieve the preferences, base64 decode it, and parse for valid JSON
       let localStoragePrefs = JSON.parse(atob(localStorage.getItem(PREFERENCES_KEY)!));
 
       // extract the theme
-      prefs.theme = z.object({ theme: z.enum(["light", "dark", "system"]) }).parse(localStoragePrefs).theme;
-      prefs.codeTheme = z.object({ codeTheme: z.enum(["light", "dark", "system"]) }).parse(localStoragePrefs).codeTheme;
-    } catch (e) {}
-
-    // update the '_theme' from the cookie value
-    try {
-      // retrieve the preferences cookie, base64 decode it, and parse for valid JSON
-      let cookiePrefs = JSON.parse(atob(Cookies.get(PREFERENCES_KEY)!));
-
-      // extract the theme
-      prefs._theme = z.object({ theme: z.enum(["light", "dark"]) }).parse(cookiePrefs).theme;
-      prefs._codeTheme = z.object({ codeTheme: z.enum(["light", "dark"]) }).parse(cookiePrefs).codeTheme;
+      prefs = ZGlobalCtxState.shape.preferences.parse(localStoragePrefs);
     } catch (e) {}
 
     // update the context
@@ -104,12 +93,8 @@ function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, preferences: IGl
 
   // Compute Resolved Theme
   // ----------------------
-  // After client-side hydration, this effect tracks and computes the resolved theme "_theme" in response to the "theme"
-  // changing, or when the theme preferences is changed.
-  //
-  // (1) Determine and upate the new 'globalCtx.preferences._theme'
-  // (2) Store the new theme in the '__preferences' localStorage key
-  // (3) Update the '__preferences' cookie
+  // After client-side hydration, this effect tracks and computes the "_theme" and "_codeTheme" based on the "theme" and
+  // "codeTheme" respectively.
   //
   // [Order-Dependent 2/2]
   const prefersDark = useMedia("(prefers-color-scheme: dark)", true);
@@ -117,11 +102,10 @@ function useSiteThemeHandler(dispatch: React.Dispatch<Actions>, preferences: IGl
 
   React.useEffect(() => {
     if (isHydrated) {
-      // determine the new resolved theme: _theme
+      // determine the new resolved theme: _theme & _codeTheme
       let _theme: typeof preferences.theme = "dark";
       if (preferences.theme === "light" || (preferences.theme === "system" && !prefersDark)) _theme = "light";
 
-      // determine the new resolved codeTheme: _codeTheme
       let _codeTheme: typeof preferences.codeTheme = "dark";
       if (preferences.codeTheme === "light" || (preferences.codeTheme === "system" && _theme !== "dark"))
         _codeTheme = "light";
