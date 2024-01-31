@@ -3,6 +3,7 @@ import { RiAlarmWarningLine } from "react-icons/ri";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 import { cn } from "~/lib/util/utils";
 import { Highlight } from "prism-react-renderer";
+import { statusText } from "~/lib/util/utils";
 
 export function ErrorBoundary() {
   const error = useRouteError();
@@ -15,7 +16,7 @@ export function ErrorBoundary() {
           <div className="grid justify-items-center gap-4">
             <RiAlarmWarningLine className="h-32 w-32" />
             <h1 className="text-5xl font-semibold">
-              {error.status} {error.statusText}
+              {error.status} {error.statusText || statusText(error.status)}
             </h1>
           </div>
         </div>
