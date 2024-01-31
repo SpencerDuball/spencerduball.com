@@ -2,10 +2,10 @@ import * as React from "react";
 import type { MDXComponents } from "mdx/types";
 import { cn } from "~/lib/util/utils";
 import { Link } from "@remix-run/react";
-import { RiCheckLine, RiClipboardLine, RiExternalLinkLine, RiMoonLine, RiSunLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiCheckLine, RiClipboardLine, RiExternalLinkLine, RiMoonLine, RiSunLine } from "react-icons/ri";
 import { z } from "zod";
 import { GlobalCtx, Types } from "~/lib/context/global-ctx";
-import { RxHalf2 } from "react-icons/rx/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RxHalf2 } from "react-icons/rx";
 import { ScrollArea, ScrollViewport } from "../scroll-box";
 import { Highlight, themes } from "prism-react-renderer";
 import { Button, IconButton } from "~/lib/ui/button";
@@ -164,9 +164,9 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
                     const isLineEmpty = line[0].empty;
                     if (isLastLine && isLineEmpty) return null;
                     return (
-                      <div key={i} {...getLineProps({ line, key: i })}>
+                      <div key={i} {...getLineProps({ line })}>
                         {line.map((token, key) => (
-                          <span key={i} {...getTokenProps({ token, key })} />
+                          <span key={key} {...getTokenProps({ token })} />
                         ))}
                       </div>
                     );
@@ -181,8 +181,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
               className={cn(
                 "absolute bottom-0 left-0 right-0 rounded-none",
                 preferences._codeTheme === "dark"
-                  ? "text-slateDark-9 hover:text-slateDark-11 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
-                  : "text-slateLight-9 hover:text-slateLight-11 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
+                  ? "text-slateDark-9 hover:text-slateDark-11 bg-slateDark-3 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
+                  : "text-slateLight-9 hover:text-slateLight-11 bg-slateLight-3 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
               )}
               onClick={() => setIsExpanded(!isExpanded)}
             >
@@ -197,8 +197,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-slateDark-9 hover:text-slateDark-11 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
-              : "text-slateLight-9 hover:text-slateLight-11 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
+              ? "text-slateDark-9 hover:text-slateDark-11 bg-slateDark-3 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
+              : "text-slateLight-9 hover:text-slateLight-11 bg-slateLight-3 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
           )}
           aria-label="Toggle code theme."
           onClick={() => dispatch({ type: Types.ToggleCodeTheme })}
@@ -209,8 +209,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-slateDark-9 hover:text-slateDark-11 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
-              : "text-slateLight-9 hover:text-slateLight-11 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
+              ? "text-slateDark-9 hover:text-slateDark-11 bg-slateDark-3 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
+              : "text-slateLight-9 hover:text-slateLight-11 bg-slateLight-3 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
           )}
           aria-label="Copy to clipboard."
           onClick={onCopy}

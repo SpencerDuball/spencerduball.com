@@ -12,7 +12,7 @@ import { BlogLi } from "~/lib/app/blog-li";
 import { Pagination } from "~/lib/ui/pagination";
 import * as Popover from "@radix-ui/react-popover";
 import { IconButton } from "~/lib/ui/button";
-import { RiAddLine, RiSearchLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiAddLine, RiSearchLine } from "react-icons/ri";
 import { InputGroup, InputLeftElement, Input, InputRightElement } from "~/lib/ui/input";
 import { Button } from "~/lib/ui/button";
 import { Tag, colorFromName, ColorList } from "~/lib/ui/tag";

@@ -199,3 +199,16 @@ export function takeFirstOrThrow<T>(input: (T | undefined)[]) {
   if (result === undefined) throw new Error("No result was found for the query.");
   return result;
 }
+/* ------------------------------------------------------------------------------------------------------------------
+ * Shared Zod Helpers
+ * ------------------------------------------------------------------------------------------------------------------ */
+export const ZPublicSession = ZSession.pick({
+  user_id: true,
+  username: true,
+  name: true,
+  avatar_url: true,
+  github_url: true,
+  roles: true,
+});
+
+export type IPublicSession = z.infer<typeof ZPublicSession>;

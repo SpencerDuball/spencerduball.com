@@ -1,31 +1,28 @@
 import React, { useEffect, useContext } from "react";
-import { cssBundleHref } from "@remix-run/css-bundle";
 import { json } from "@remix-run/node";
 import type { LinksFunction, MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
-import tailwind from "~/tailwind.css";
-import Inter from "@fontsource-variable/inter/index.css";
 import { preferences } from "~/lib/util/cookies";
 import { GlobalCtxProvider, GlobalCtx } from "~/lib/context/global-ctx";
 import { slate, slateDark } from "@radix-ui/colors";
 import { Header } from "~/lib/app/header";
 import { ToasterProvider, Types } from "~/lib/context/toaster-ctx";
 import { logger } from "~/lib/util/globals.server";
-import { getSessionInfo } from "~/lib/util/utils.server";
-import { ZPublicSession } from "~/lib/util/utils";
+import { getSessionInfo, ZPublicSession } from "~/lib/util/utils.server";
 import { Footer } from "~/lib/app/footer";
 import { flashCookie, _flashCookie } from "~/lib/util/sessions.server";
 import { ToasterCtx } from "~/lib/context/toaster-ctx";
 
+// import css files
+import "~/tailwind.css";
+import "@fontsource-variable/inter/index.css";
+
 export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: tailwind },
-  { rel: "stylesheet", href: Inter },
   { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
   { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
   { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
   { rel: "manifest", href: "/site.webmanifest" },
   { rel: "mask-icon", href: "/safari-pinned-tab.svg", color: "#5bbad5" },
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
 ];
 
 export const meta: MetaFunction = () => [

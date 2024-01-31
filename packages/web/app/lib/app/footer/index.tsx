@@ -1,7 +1,8 @@
 import React from "react";
 import { z } from "zod";
-import { cn, ZPublicSession } from "~/lib/util/utils";
-import { RiTwitterXFill, RiGithubFill, RiLoginCircleLine, RiCloseLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { cn } from "~/lib/util/utils";
+import type { IPublicSession } from "~/lib/util/utils.server";
+import { RiTwitterXFill, RiGithubFill, RiLoginCircleLine, RiCloseLine } from "react-icons/ri";
 import { PrintablesIcon } from "~/lib/ui/icon";
 import { Button, IconButton } from "~/lib/ui/button";
 import { type FetcherWithComponents, Link } from "@remix-run/react";
@@ -10,7 +11,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useFetcher } from "@remix-run/react";
 
 interface SignedInIconProps {
-  session: z.infer<typeof ZPublicSession>;
+  session: IPublicSession;
   logout: FetcherWithComponents<unknown>;
 }
 function SignedInIcon({ session, logout }: SignedInIconProps) {
@@ -78,7 +79,7 @@ function SignedInIcon({ session, logout }: SignedInIconProps) {
 }
 
 export interface FooterProps extends React.HTMLProps<HTMLDivElement> {
-  session: z.infer<typeof ZPublicSession> | null;
+  session: IPublicSession | null;
 }
 
 export function Footer({ session, className, ...props }: FooterProps) {

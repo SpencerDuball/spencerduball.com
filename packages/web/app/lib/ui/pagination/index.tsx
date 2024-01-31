@@ -2,7 +2,7 @@ import { Link, useLocation, type Location, LinkProps } from "@remix-run/react";
 import { cn } from "~/lib/util/utils";
 import { z } from "zod";
 import { IconButtonProps, buttonVariants, iconButtonVariants } from "../button";
-import { RiArrowRightSLine, RiArrowLeftSLine, RiMoreFill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiArrowRightSLine, RiArrowLeftSLine, RiMoreFill } from "react-icons/ri";
 
 /**
  * This function will parse the location object for the "?page=" search parameter. If it is found the page number

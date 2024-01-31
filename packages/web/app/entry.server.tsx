@@ -129,6 +129,9 @@ function handleBrowserRequest(
 }
 
 export const handleDataRequest: HandleDataRequestFunction = async (response, { request }) => {
+  // TODO: In addition to the `fixEmptyResponseHeaders` maybe also check for statusText and add
+  // an appropriate message too? This would solve the 404 issues. Or can just have custom logic in
+  // the `$.tsx` for 404 specifically?
   fixEmptyResponseHeaders(response);
   await refreshSession(request.headers, response.headers);
   return response;

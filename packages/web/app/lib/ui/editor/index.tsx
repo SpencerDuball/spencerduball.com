@@ -18,10 +18,10 @@ import {
   RiTextWrap,
   RiMoonFill,
   RiSunFill,
-} from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
-import { SiPrettier } from "react-icons/si/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
-import { DiVim } from "react-icons/di/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
-import { RxHalf2 } from "react-icons/rx/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+} from "react-icons/ri";
+import { SiPrettier } from "react-icons/si";
+import { DiVim } from "react-icons/di";
+import { RxHalf2 } from "react-icons/rx";
 import { Types } from "./reducer";
 import { GlobalCtx } from "~/lib/context/global-ctx";
 

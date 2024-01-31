@@ -3,7 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import { cn } from "~/lib/util/utils";
-import { RiLoader4Fill } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this: https://github.com/remix-run/remix/discussions/7451
+import { RiLoader4Fill } from "react-icons/ri";
 
 /* ------------------------------------------------------------------------------------------------------------
  * Define Component Variants

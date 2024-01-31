@@ -2,7 +2,7 @@ import * as React from "react";
 import { IconButton } from "~/lib/ui/button";
 import { cn } from "~/lib/util/utils";
 import { IBlog } from "~/model/blogs";
-import { RiTwitterXFill, RiLinkM, RiCheckLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiTwitterXFill, RiLinkM, RiCheckLine } from "react-icons/ri";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 import { Tag, colorFromName, ColorList } from "~/lib/ui/tag";
 import { runSync } from "@mdx-js/mdx";

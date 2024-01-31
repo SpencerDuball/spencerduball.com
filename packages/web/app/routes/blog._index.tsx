@@ -6,7 +6,7 @@ import { logger, db } from "~/lib/util/globals.server";
 import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
 import * as Popover from "@radix-ui/react-popover";
 import { InputGroup, Input, InputLeftElement, InputRightElement } from "~/lib/ui/input";
-import { RiSearchLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiSearchLine } from "react-icons/ri";
 import { Button, IconButton } from "~/lib/ui/button";
 import { TimeDescIcon, TimeAscIcon, ViewsAscIcon, ViewsDescIcon } from "~/lib/ui/icon";
 import { colorFromName, ColorList, Tag } from "~/lib/ui/tag";

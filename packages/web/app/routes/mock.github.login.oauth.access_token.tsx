@@ -47,7 +47,7 @@ export async function action({ request }: ActionFunctionArgs) {
         log.info(request.headers, "Failure: { Accept: 'application/json' } not supplied.");
         return json(
           { message: "WARNING: 'Accept' header is missing and will cause issues with actual Github API." },
-          { status: 500 }
+          { status: 500 },
         );
       }
       log.info("Success: Checked for 'Accept' header successfully.");

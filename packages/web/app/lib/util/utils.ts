@@ -66,15 +66,6 @@ export const ZYamlString = z.string().transform((str, ctx) => {
 /* ------------------------------------------------------------------------------------------------------------------
  * Define Shared Zod Types
  * ------------------------------------------------------------------------------------------------------------------ */
-export const ZPublicSession = ZSession.pick({
-  user_id: true,
-  username: true,
-  name: true,
-  avatar_url: true,
-  github_url: true,
-  roles: true,
-});
-
 // define markdown link utility
 export const ZMdLink = z.custom<`[${string}](${string})`>(
   (val) => typeof val === "string" && /^\[.*\]\(.*\)/.test(val),

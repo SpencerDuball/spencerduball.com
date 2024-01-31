@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import { RiArrowRightLine } from "react-icons/ri/index.js"; // TODO: Remove the 'index.js' after this issue: https://github.com/remix-run/remix/discussions/7451
+import { RiArrowRightLine } from "react-icons/ri";
 import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => [
