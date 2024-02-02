@@ -1,6 +1,6 @@
 import { createTheme } from "@uiw/codemirror-themes";
 import { tags as t } from "@lezer/highlight";
-import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
+import CodeMirror, { ReactCodeMirrorProps, EditorView } from "@uiw/react-codemirror";
 import { ScrollArea, type ScrollAreaProps, ScrollViewport } from "~/lib/ui/scroll-box";
 import { useHydrated } from "remix-utils/use-hydrated";
 import React, { useRef, useMemo, useContext } from "react";
@@ -181,13 +181,18 @@ export function Editor({ cm, className, ...props }: EditorProps) {
   // Memoize the extensions as they are expensive to recompute on each render.
   // In development extensions sometimes cause styles to be lost on hot reloads, a full refresh may be needed.
   const extensions = useMemo(
-    () => [markdown({ base: markdownLanguage, codeLanguages: languages }), state.settings.mode === "vim" ? vim() : []],
+    () => [
+      markdown({ base: markdownLanguage, codeLanguages: languages }),
+      state.settings.mode === "vim" ? vim() : [],
+      state.settings.lineWrap ? EditorView.lineWrapping : [],
+    ],
     [state.settings],
   );
 
   // Disable iOS Auto Zoom for Small Font
   // ------------------------------------
   // On iOS we will disable the zoom on touchStart, this will prevent the auto-zoom happening on text less than 16px.
+  // We also need to re-enable the zoom onBlur as disabling this site-wide permanently is not accessible.
   function disableIOSInputZoom(e: React.TouchEvent<HTMLDivElement>) {
     if (isHydrated) {
       const el = document.querySelector("meta[name=viewport]");
@@ -208,9 +213,6 @@ export function Editor({ cm, className, ...props }: EditorProps) {
     }
   }
 
-  // Enable iOS Auto Zoom
-  // --------------------
-  // After disabling the zoom on touchStart, we need to reenable it for any future interactions.
   function enableIOSInputZoom(e: React.FocusEvent<HTMLDivElement, Element>) {
     if (typeof window !== undefined) {
       const el = document.querySelector("meta[name=viewport]");
@@ -223,14 +225,25 @@ export function Editor({ cm, className, ...props }: EditorProps) {
     }
   }
 
-  // determine theme
+  // Determine Editor Theme
+  // ----------------------
+  // The editor theme can be toggled between "dark", "light", and "system". The system color will follow any setting
+  // that the site "_theme" matches.
   let _theme: "light" | "dark" = "dark";
   const [{ preferences }] = useContext(GlobalCtx);
   if (state.settings.theme === "system") _theme = preferences._theme;
   else _theme = state.settings.theme;
 
   return isHydrated ? (
-    <ScrollArea className={cn("overflow-hidden rounded-lg", _theme, className)} {...props}>
+    <ScrollArea
+      className={cn(
+        "overflow-hidden rounded-lg",
+        _theme === "dark" ? "[&_.scroll-area-thumb]:bg-slateDark-10" : "[&_.scroll-area-thumb]:bg-slateLight-10",
+        _theme,
+        className,
+      )}
+      {...props}
+    >
       <ScrollViewport ref={viewportRef}>
         <CodeMirror
           minHeight="100%"

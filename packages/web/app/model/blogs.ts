@@ -9,6 +9,21 @@ import rehypeMdxCodeProps from "rehype-mdx-code-props";
 import { ZYamlString } from "~/lib/util/utils";
 
 //---------------------------------------------------------------------------------------------------------------------
+// Templates
+//---------------------------------------------------------------------------------------------------------------------
+export const BLOG_TEMPLATE = [
+  "---",
+  "title: New Blog About Interesting Things",
+  "description: A blog about some interesting things that will capture the attention of your reader.",
+  "tags: [typescript, react]",
+  "cover_img",
+  "  alt: A description of the image.",
+  "  url: /images/blog/default-cover-img.png",
+  "---",
+  "Ahh, the opening word of your new blog. This section should bring the reading into your story by presenting a situation or problem to be solved.",
+].join("\n");
+
+//---------------------------------------------------------------------------------------------------------------------
 // Zod Types
 //---------------------------------------------------------------------------------------------------------------------
 

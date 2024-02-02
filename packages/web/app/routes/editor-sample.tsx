@@ -1,4 +1,5 @@
 import { Editor, EditorProvider, Toolbar } from "~/lib/ui/editor";
+import { BLOG_TEMPLATE } from "~/model/blogs";
 
 function EditorSample() {
   return (
@@ -6,7 +7,7 @@ function EditorSample() {
       {/* For the height, we are subtracting `theme(spacing.40)` which is `Header` height + `Footer` height. */}
       <section className="grid h-[calc(100dvh-theme(spacing.40))] w-full max-w-5xl grid-rows-[max-content_1fr] justify-items-center gap-2 px-4 py-4">
         <Toolbar />
-        <Editor className="h-full w-full" />
+        <Editor className="h-full w-full" cm={{ value: BLOG_TEMPLATE }} />
       </section>
     </main>
   );

@@ -22,7 +22,7 @@ export interface IEditorState {
 // Define editor context.
 //---------------------------------------------------------------------------------------------------------------------
 export const InitialEditorState: IEditorState = {
-  settings: { mode: "normal", theme: "system", lineWrap: true },
+  settings: { mode: "normal", theme: "system", lineWrap: false },
 };
 
 export const EditorCtx = React.createContext<[IEditorState, React.Dispatch<Actions>]>([InitialEditorState, () => null]);
@@ -31,8 +31,17 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = React.useReducer(reducer, InitialEditorState);
 
   // restore the settings
+  useRestoreSettings(state, dispatch);
+
+  return <EditorCtx.Provider value={[state, dispatch]}>{children}</EditorCtx.Provider>;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+// Define hooks.
+//---------------------------------------------------------------------------------------------------------------------
+function useRestoreSettings(state: IEditorState, dispatch: React.Dispatch<Actions>) {
   React.useEffect(() => {
-    let settings = { ...InitialEditorState.settings };
+    let settings = { ...state.settings };
     try {
       const settingsStr = localStorage.getItem(EDITOR_SETTINGS_KEY);
       settings = ZEditorSettings.parse(JSON.parse(settingsStr || ""));
@@ -41,6 +50,4 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     }
     dispatch({ type: Types.PatchState, payload: { settings } });
   }, []);
-
-  return <EditorCtx.Provider value={[state, dispatch]}>{children}</EditorCtx.Provider>;
 }
