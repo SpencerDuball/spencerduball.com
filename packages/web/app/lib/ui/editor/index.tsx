@@ -52,14 +52,14 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
       {...props}
     >
       {/* Left Menu Items */}
-      <div className="grid grid-flow-col gap-1">
+      <div className="grid grid-flow-col gap-1.5">
         <IconButton size="sm" aria-label="Save content." variant="ghost" icon={<RiSaveLine />} />
         <IconButton size="sm" aria-label="Format content." variant="ghost" icon={<SiPrettier />} />
       </div>
       {/* Divider */}
       <div className="h-full w-px bg-slate-5" />
       {/* Center Menu Items */}
-      <div className="grid grid-flow-col gap-1">
+      <div className="grid grid-flow-col gap-1.5">
         <IconButton size="sm" aria-label="Go to edit view." variant="ghost" icon={<RiCodeSSlashFill />} />
         <IconButton size="sm" aria-label="Go to preview view." variant="ghost" icon={<RiArticleLine />} />
         <IconButton size="sm" aria-label="Go to attachments view." variant="ghost" icon={<RiAttachment2 />} />
@@ -67,7 +67,7 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
       {/* Divider */}
       <div className="h-full w-px bg-slate-5" />
       {/* Right Menu Items */}
-      <div className="grid grid-flow-col gap-1">
+      <div className="grid grid-flow-col gap-1.5">
         <IconButton
           size="sm"
           aria-label="Toggle editor theme."
