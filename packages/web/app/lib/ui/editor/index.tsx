@@ -1,11 +1,11 @@
 import { createTheme } from "@uiw/codemirror-themes";
 import { tags as t } from "@lezer/highlight";
-import CodeMirror, { ReactCodeMirrorProps, EditorView } from "@uiw/react-codemirror";
-import { ScrollArea, type ScrollAreaProps, ScrollViewport } from "~/lib/ui/scroll-box";
-import { useHydrated } from "remix-utils/use-hydrated";
-import React, { useRef, useMemo, useContext } from "react";
+import CodeMirror, { ReactCodeMirrorProps, EditorView, lineNumbers, scrollPastEnd } from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
+import { type ScrollAreaProps } from "~/lib/ui/scroll-box";
+import { useHydrated } from "remix-utils/use-hydrated";
+import React, { useMemo, useContext } from "react";
 import { vim } from "@replit/codemirror-vim";
 import { cn } from "~/lib/util/utils";
 import { EditorCtx, IEditorState } from "./context";
@@ -109,7 +109,7 @@ const githubLight = createTheme({
     foreground: "#24292e",
     selection: "#BBDFFF",
     selectionMatch: "#BBDFFF",
-    gutterBackground: "transparent",
+    gutterBackground: "#e7e9db",
     gutterForeground: "#6e7781",
     lineHighlight: "#C0DAE3",
     gutterBorder: "transparent",
@@ -130,13 +130,13 @@ const githubLight = createTheme({
 const githubDark = createTheme({
   theme: "dark",
   settings: {
-    background: "#1A191B", // "#0d1117",
+    background: "#1A191B",
     foreground: "#c9d1d9",
     caret: "#c9d1d9",
     selection: "#003d73",
     selectionMatch: "#003d73",
     lineHighlight: "#36334280",
-    gutterBackground: "transparent",
+    gutterBackground: "#1A191B",
     gutterBorder: "transparent",
   },
   styles: [
@@ -158,23 +158,7 @@ export interface EditorProps extends ScrollAreaProps {
 
 export function Editor({ cm, className, ...props }: EditorProps) {
   const isHydrated = useHydrated();
-  const viewportRef = useRef<HTMLDivElement>(null!);
   const [state] = useContext(EditorCtx);
-
-  // Min Line Number Width
-  // ---------------------
-  // This TW class ensures that the line number display on the left of the editor will always be the width of at least
-  // 3 characters. The 8px accounts for the padding size as well (pl=5px & lr=3px).
-  const minCharsGutter = "[&_.cm-lineNumbers]:min-w-[calc(3ch+8px)]";
-
-  // Scroll Past Margin
-  // ------------------
-  // This function adds padding to the bottom of content so that the user can scroll past the last line of content.
-  // without this the user would need to write every new line at the bottom of the screen (where end of editor is).
-  const setupScrollPastContent: ReactCodeMirrorProps["onCreateEditor"] = (view) => {
-    const cmContent = view.dom.getElementsByClassName("cm-content")[0] as HTMLElement;
-    if (cmContent && viewportRef.current) cmContent.style.paddingBottom = `${viewportRef.current.clientHeight}px`;
-  };
 
   // Define Editor Extensions
   // ----------------------------------
@@ -182,7 +166,12 @@ export function Editor({ cm, className, ...props }: EditorProps) {
   // In development extensions sometimes cause styles to be lost on hot reloads, a full refresh may be needed.
   const extensions = useMemo(
     () => [
+      // Add support for markdown syntax highlighting.
       markdown({ base: markdownLanguage, codeLanguages: languages }),
+      // Ensure lineNumbers gutter reserves space for at least 3 digits to prevent layout shift.
+      lineNumbers({ formatNumber: (lineNo) => lineNo.toString().padStart(3, "\u00A0") }),
+      // Allow editor to scroll past content
+      scrollPastEnd(),
       state.settings.mode === "vim" ? vim() : [],
       state.settings.lineWrap ? EditorView.lineWrapping : [],
     ],
@@ -235,37 +224,30 @@ export function Editor({ cm, className, ...props }: EditorProps) {
   else _theme = state.settings.theme;
 
   return isHydrated ? (
-    <ScrollArea
+    <CodeMirror
       className={cn(
-        "overflow-hidden rounded-lg",
-        _theme === "dark" ? "[&_.scroll-area-thumb]:bg-slateDark-10" : "[&_.scroll-area-thumb]:bg-slateLight-10",
-        _theme,
-        className,
+        "h-full min-h-0 w-full min-w-0 overflow-clip rounded-lg [&_.cm-editor]:h-full [&_.cm-editor]:w-full",
+        "[&_.cm-scroller]:scrollbar-thin [&_.cm-scroller]:scrollbar-thumb-rounded-full",
+        _theme === "dark"
+          ? "[&_.cm-scroller]:scrollbar-track-slateDark-3 [&_.cm-scroller]:scrollbar-thumb-slateDark-6 [&_.cm-scroller]:scrollbar-corner-slateDark-3"
+          : "[&_.cm-scroller]:scrollbar-track-slateLight-3 [&_.cm-scroller]:scrollbar-thumb-slateLight-6 [&_.cm-scroller]:scrollbar-corner-slateLight-3",
       )}
-      {...props}
-    >
-      <ScrollViewport ref={viewportRef}>
-        <CodeMirror
-          minHeight="100%"
-          className={cn(minCharsGutter)}
-          extensions={extensions}
-          theme={_theme === "light" ? githubLight : githubDark}
-          onCreateEditor={(view, state) => {
-            setupScrollPastContent(view, state);
-            cm?.onCreateEditor && cm.onCreateEditor(view, state);
-          }}
-          onTouchStart={(e) => {
-            disableIOSInputZoom(e);
-            cm?.onTouchStart && cm.onTouchStart(e);
-          }}
-          onBlur={(e) => {
-            enableIOSInputZoom(e);
-            cm?.onBlur && cm.onBlur(e);
-          }}
-          {...cm}
-        />
-      </ScrollViewport>
-    </ScrollArea>
+      extensions={extensions}
+      theme={_theme === "light" ? githubLight : githubDark}
+      onCreateEditor={(view, state) => {
+        setTimeout(() => view.scrollDOM.scrollTo({ top: 0 }), 0);
+        cm?.onCreateEditor && cm.onCreateEditor(view, state);
+      }}
+      onTouchStart={(e) => {
+        disableIOSInputZoom(e);
+        cm?.onTouchStart && cm.onTouchStart(e);
+      }}
+      onBlur={(e) => {
+        enableIOSInputZoom(e);
+        cm?.onBlur && cm.onBlur(e);
+      }}
+      {...cm}
+    />
   ) : (
     <div className={cn("animate-pulse rounded-md bg-slate-3", className)} />
   );
