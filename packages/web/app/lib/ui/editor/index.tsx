@@ -152,11 +152,9 @@ const githubDark = createTheme({
   ],
 });
 
-export interface EditorProps extends ScrollAreaProps {
-  cm?: ReactCodeMirrorProps;
-}
+export interface EditorProps extends ReactCodeMirrorProps {}
 
-export function Editor({ cm, className, ...props }: EditorProps) {
+export function Editor({ className, onCreateEditor, onTouchStart, onBlur, ...props }: EditorProps) {
   const isHydrated = useHydrated();
   const [state] = useContext(EditorCtx);
 
@@ -233,20 +231,21 @@ export function Editor({ cm, className, ...props }: EditorProps) {
           : "[&_.cm-scroller]:scrollbar-track-slateLight-3 [&_.cm-scroller]:scrollbar-thumb-slateLight-6 [&_.cm-scroller]:scrollbar-corner-slateLight-3",
       )}
       extensions={extensions}
+      basicSetup={{ autocompletion: false }}
       theme={_theme === "light" ? githubLight : githubDark}
       onCreateEditor={(view, state) => {
         setTimeout(() => view.scrollDOM.scrollTo({ top: 0 }), 0);
-        cm?.onCreateEditor && cm.onCreateEditor(view, state);
+        onCreateEditor && onCreateEditor(view, state);
       }}
       onTouchStart={(e) => {
         disableIOSInputZoom(e);
-        cm?.onTouchStart && cm.onTouchStart(e);
+        onTouchStart && onTouchStart(e);
       }}
       onBlur={(e) => {
         enableIOSInputZoom(e);
-        cm?.onBlur && cm.onBlur(e);
+        onBlur && onBlur(e);
       }}
-      {...cm}
+      {...props}
     />
   ) : (
     <div className={cn("animate-pulse rounded-md bg-slate-3", className)} />

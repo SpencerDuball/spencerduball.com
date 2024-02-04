@@ -1,6 +1,6 @@
 import * as React from "react";
 import { TimeDescIcon, TimeAscIcon, ViewsAscIcon, ViewsDescIcon } from "~/lib/ui/icon";
-import { Form, Link, useLoaderData, useFetcher } from "@remix-run/react";
+import { Form, Link, useLoaderData, useFetcher, useFetchers } from "@remix-run/react";
 import { redirect, json } from "@remix-run/node";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { getSessionInfo } from "~/lib/util/utils.server";
@@ -167,6 +167,12 @@ export const meta: MetaFunction = () => [
 export default function Blog() {
   const { blogs, totalBlogs, tags, params, userId } = useLoaderData<typeof loader>();
 
+  // use a useFetchers to filter out a blog that is being deleted
+  const deletingBlogs = useFetchers()
+    .filter((f) => f.formAction?.match(/\/blog\/\d+$/) && f.formMethod === "DELETE")
+    .map((f) => z.coerce.number().parse(f.formData!.get("id")));
+  const optimisticTotalBlogs = totalBlogs - deletingBlogs.length;
+
   // Form Reference for Portal Popover
   // ---------------------------------
   // The popover to select the sort order will by default be portaled to the root of the html page. Since we want this
@@ -196,10 +202,10 @@ export default function Blog() {
 
   // determine pagination message
   let paginationMsg = "No blogs found.";
-  if (totalBlogs) {
+  if (optimisticTotalBlogs) {
     let startIdx = ((params.page || DefaultParams.page) - 1) * (params.maxResults || DefaultParams.maxResults);
-    let endIdx = startIdx + blogs.length;
-    paginationMsg = `Showing blogs ${startIdx} - ${endIdx} of ${totalBlogs}.`;
+    let endIdx = startIdx + blogs.length - deletingBlogs.length;
+    paginationMsg = `Showing blogs ${startIdx} - ${endIdx} of ${optimisticTotalBlogs}.`;
   }
 
   // add fetcher for creating a new blog post
@@ -229,7 +235,7 @@ export default function Blog() {
           </div>
           <div className="grid w-full gap-2 justify-self-end rounded-lg bg-brown-3 px-4 py-5 shadow-sm md:w-64 md:px-6 md:py-6">
             <p className="text-slate-11">Posts</p>
-            <p className="text-4xl font-extrabold">{totalBlogs}</p>
+            <p className="text-4xl font-extrabold">{optimisticTotalBlogs}</p>
           </div>
         </div>
         {/* Main Content */}
@@ -241,9 +247,19 @@ export default function Blog() {
           */}
           {/* Blog Items */}
           <ul className="row-start-2 grid gap-3">
-            {blogs.map((blog) => (
-              <BlogLi key={blog.id} data={parseBlog(blog)} />
-            ))}
+            {blogs.map((blog) => {
+              // If the blog is being deleted, we need to set it's visibility to hidden. If we remove the blog completely
+              // it will unmount the `useFetcher` and we will not get a revalidation on this page.
+              const isDeleting = deletingBlogs.includes(blog.id);
+              return (
+                <BlogLi
+                  key={blog.id}
+                  data={parseBlog(blog)}
+                  hasControls={true}
+                  className={isDeleting ? "hidden" : undefined}
+                />
+              );
+            })}
           </ul>
           {/* Search Controls */}
           <div className="grid grid-cols-[1fr_max-content] gap-3">
@@ -354,7 +370,7 @@ export default function Blog() {
         </div>
         {/* Pagination */}
         <div className="grid place-items-center gap-1">
-          <Pagination total={totalBlogs} pageSize={search.maxResults || 30} />
+          <Pagination total={optimisticTotalBlogs} pageSize={search.maxResults || 30} />
           <p className="text-center text-xs text-slate-9">{paginationMsg}</p>
         </div>
       </div>

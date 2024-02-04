@@ -1,14 +1,105 @@
-import * as React from "react";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { logger, db } from "~/lib/util/globals.server";
 import { z } from "zod";
 import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
+import { ZBooleanString } from "~/lib/util/utils";
 import { parseBlog, compileMdx } from "~/model/blogs";
+import { deleteBlog, patchBlog } from "~/model/blogs.server";
 import { useLoaderData } from "@remix-run/react";
-import { components } from "~/lib/ui/mdx";
-import { runSync } from "@mdx-js/mdx";
-import * as runtime from "react/jsx-runtime";
 import { BlogView } from "~/lib/app/blog-view";
+
+//---------------------------------------------------------------------------------------------------------------------
+// Define Action Function
+// ----------------------
+// Define the action function and all associated utilties, validators, etc.
+//---------------------------------------------------------------------------------------------------------------------
+const ZPatchPayload = z.object({
+  /** The ID of the blog. */
+  id: z.coerce.number(),
+  /** The body of the blog. */
+  body: z.string().optional(),
+  /** The views count of the blog. */
+  views: z.coerce.number().optional(),
+  /** The published status of the blog. */
+  published: ZBooleanString.optional(),
+});
+type IPatchPayload = z.infer<typeof ZPatchPayload>;
+
+const ZDeletePayload = z.object({
+  /** The ID of the blog. */
+  id: z.coerce.number(),
+});
+type IDeletePayload = z.infer<typeof ZDeletePayload>;
+
+export async function action({ request }: ActionFunctionArgs) {
+  const log = logger(request);
+
+  switch (request.method) {
+    case "PATCH": {
+      // Validate FormData
+      // -----------------
+      // The information must be sent as FormData. We also need to validate that at least one updatable input was send
+      // (body, views, published).
+      log.info("Parsing the FormData from the request ...");
+      let data: IPatchPayload;
+      try {
+        data = ZPatchPayload.parse(Object.fromEntries((await request.formData()).entries()));
+      } catch (e) {
+        log.info(e, "Invalid FormData was sent with the request.");
+        throw json(
+          { message: "Invalid FormData was sent with the request." },
+          { status: 400, statusText: "Bad Request" },
+        );
+      }
+      if (!("body" in data || "views" in data || "published" in data)) {
+        log.info(data, "Invalid FormData was sent with the request.");
+        throw json(
+          { message: "Invalid FormData was sent with the request." },
+          { status: 400, statusText: "Bad Request" },
+        );
+      }
+
+      // Update Database
+      // ---------------
+      // Send an update to the database.
+      await patchBlog(data).catch((e) => {
+        log.error(e, "There was an error updating the blog.");
+        throw json({}, { status: 500, statusText: "Server Error" });
+      });
+
+      return json({}, { status: 200, statusText: "OK" });
+    }
+    case "DELETE": {
+      // Validate FormData
+      // -----------------
+      // The information must be sent as FormData.
+      log.info("Parsing the FormData from the request ...");
+      let data: IDeletePayload;
+      try {
+        data = ZDeletePayload.parse(Object.fromEntries((await request.formData()).entries()));
+      } catch (e) {
+        log.info(e, "Invalid FormData was sent with the request.");
+        throw json(
+          { message: "Invalid FormData was sent with the request." },
+          { status: 400, statusText: "Bad Request" },
+        );
+      }
+
+      // Delete Blog
+      // -----------
+      await deleteBlog(data).catch((e) => {
+        log.error(e, "There was an error updating the blog.");
+        throw json({}, { status: 500, statusText: "Server Error" });
+      });
+
+      return json({}, { status: 200, statusText: "OK" });
+    }
+    default: {
+      log.info("This method is not allowed.");
+      throw new Response(null, { status: 405, statusText: "Method Not Allowed" });
+    }
+  }
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 // Define Loader Function

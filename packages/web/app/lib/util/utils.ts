@@ -1,4 +1,3 @@
-import { ZSession } from "@spencerduballcom/db/ddb";
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
@@ -62,6 +61,15 @@ export const ZYamlString = z.string().transform((str, ctx) => {
     return z.NEVER;
   }
 });
+
+/**
+ * A schema utility for a coercable Boolean from string.
+ *
+ * @example
+ * ZBooleanString.parse("false")
+ *
+ */
+export const ZBooleanString = z.enum(["true", "false"]).transform((value) => value === "true");
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Define Shared Zod Types
