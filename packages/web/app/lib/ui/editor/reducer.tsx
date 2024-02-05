@@ -1,5 +1,4 @@
-import type { IEditorState } from "./context";
-import type { EditorState } from "@uiw/react-codemirror";
+import type { IEditorData, IEditorEffects, IEditorState } from "./context";
 
 export const EDITOR_SETTINGS_KEY = "EDITOR_SETTINGS";
 
@@ -13,10 +12,9 @@ export enum Types {
   ToggleMode = "TOGGLE_MODE",
   ToggleLineWrap = "TOGGLE_LINE_WRAP",
   // state.data
-  PutValue = "PUT_VALUE",
-  PutScroll = "PUT_SCROLL",
-  PutCursor = "PUT_CURSOR",
   PatchData = "PATCH_DATA",
+  // state.data
+  PatchEffects = "PATCH_EFFECTS",
   // an escape for updating the state
   PatchState = "PATCH_STATE",
 }
@@ -27,10 +25,9 @@ type Payload = {
   [Types.ToggleMode]: undefined;
   [Types.ToggleLineWrap]: undefined;
   // state.data
-  [Types.PutValue]: string;
-  [Types.PutScroll]: { x: number; y: number };
-  [Types.PutCursor]: number;
-  [Types.PatchData]: Partial<{ value: string; scroll: { x: number; y: number }; cursor: number; state: EditorState }>;
+  [Types.PatchData]: Partial<IEditorData>;
+  // state.effects
+  [Types.PatchEffects]: Partial<IEditorEffects>;
   // an excape for updating state
   [Types.PatchState]: Partial<IEditorState>;
 };
@@ -73,24 +70,15 @@ export const reducer = (state: IEditorState, action: Actions) => {
       return next;
     }
     // state.data
-    case Types.PutValue: {
-      const next = { ...state };
-      next.data.value = action.payload;
-      return next;
-    }
-    case Types.PutScroll: {
-      const next = { ...state };
-      next.data.scroll = action.payload;
-      return next;
-    }
-    case Types.PutCursor: {
-      const next = { ...state };
-      next.data.cursor = action.payload;
-      return next;
-    }
     case Types.PatchData: {
       const next = { ...state };
       next.data = { ...state.data, ...action.payload };
+      return next;
+    }
+    // state.effects
+    case Types.PatchEffects: {
+      const next = { ...state };
+      next.effects = { ...state.effects, ...action.payload };
       return next;
     }
     // an escape for updating state

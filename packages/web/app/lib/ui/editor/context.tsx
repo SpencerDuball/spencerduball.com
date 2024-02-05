@@ -25,10 +25,18 @@ export interface IEditorData {
   state: EditorState | null;
 }
 
+// define effect types
+export interface IEditorEffects {
+  scroll: { x: number; y: number } | null;
+  cursor: number | null;
+  isMounted: boolean;
+}
+
 // define editor state
 export interface IEditorState {
   settings: IEditorSettings;
   data: IEditorData;
+  effects: IEditorEffects;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -37,6 +45,7 @@ export interface IEditorState {
 export const InitialEditorState: IEditorState = {
   settings: { mode: "normal", theme: "system", lineWrap: false },
   data: { value: "", scroll: { x: 0, y: 0 }, cursor: 0, state: null },
+  effects: { scroll: null, cursor: null, isMounted: false },
 };
 
 export const EditorCtx = React.createContext<[IEditorState, React.Dispatch<Actions>]>([InitialEditorState, () => null]);

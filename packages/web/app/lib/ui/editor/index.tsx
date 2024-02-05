@@ -88,7 +88,7 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
             if (ctx.data.state) {
               const { value, position } = await prettify(ctx.data.state);
               dispatch({ type: Types.PatchData, payload: { state: ctx.data.state, value, cursor: position } });
-              // new EditorView({ state: ctx.data.state }).dispatch({ selection: { anchor: position, head: position } });
+              dispatch({ type: Types.PatchEffects, payload: { cursor: position } });
             }
           }}
         />
@@ -290,8 +290,36 @@ export function Editor({
   if (ctx.settings.theme === "system") _theme = preferences._theme;
   else _theme = ctx.settings.theme;
 
+  // Handle Editor Effects
+  // ---------------------
+  // Certain effects such as restoring the scroll position, restoring the cursor position, and translating the cursor
+  // position after formatting must be done through effects.
+  const editorRef = React.useRef<ReactCodeMirrorRef>(null!);
+
+  // Next we will run effects if they exist, or if the isMounted has changed.
+  React.useEffect(() => {
+    const view = editorRef.current?.view;
+
+    if (view && ctx.effects.isMounted) {
+      const effects = structuredClone(ctx.effects);
+      let shouldDispatch = false;
+      if (effects.scroll) {
+        editorRef.current.view!.scrollDOM.scrollTo({ left: ctx.effects.scroll!.x, top: ctx.effects.scroll!.y });
+        effects.scroll = null;
+        shouldDispatch = true;
+      }
+      if (effects.cursor) {
+        editorRef.current.view!.dispatch({ selection: { anchor: effects.cursor, head: effects.cursor } });
+        effects.cursor = null;
+        shouldDispatch = true;
+      }
+      if (shouldDispatch) dispatch({ type: Types.PatchEffects, payload: effects });
+    }
+  }, [ctx.effects]);
+
   return isHydrated ? (
     <CodeMirror
+      ref={editorRef}
       className={cn(
         "h-full min-h-0 w-full min-w-0 overflow-clip rounded-lg [&_.cm-editor]:h-full [&_.cm-editor]:w-full",
         "[&_.cm-scroller]:scrollbar-thin [&_.cm-scroller]:scrollbar-thumb-rounded-full",
@@ -303,9 +331,11 @@ export function Editor({
       basicSetup={{ autocompletion: false }}
       theme={_theme === "light" ? githubLight : githubDark}
       onCreateEditor={(view, state) => {
-        view.scrollDOM.scrollTo({ left: ctx.data.scroll.x, top: ctx.data.scroll.y });
-        view.dispatch({ selection: { anchor: ctx.data.cursor, head: ctx.data.cursor } });
         dispatch({ type: Types.PatchData, payload: { state } });
+        dispatch({
+          type: Types.PatchEffects,
+          payload: { scroll: ctx.data.scroll, cursor: ctx.data.cursor, isMounted: true },
+        });
         onCreateEditor && onCreateEditor(view, state);
       }}
       onTouchStart={(e) => {
@@ -323,7 +353,6 @@ export function Editor({
         const value = viewUpdate.state.doc.toString();
         const cursor = viewUpdate.state?.selection.ranges[0].from;
         if (JSON.stringify(state) !== JSON.stringify(ctx.data.state)) {
-          console.log("yo");
           dispatch({ type: Types.PatchData, payload: { scroll, value, cursor, state } });
         }
       }}
@@ -331,8 +360,12 @@ export function Editor({
         // TODO: When mounting scroll restore will fire twice, and for some reason the second will have less scroll
         // than the first. Need to debug why that is to fix scroll restore.
         const cmScroller = e.currentTarget.getElementsByClassName("cm-scroller")[0];
-        if (cmScroller)
-          dispatch({ type: Types.PutScroll, payload: { x: cmScroller.scrollLeft, y: cmScroller.scrollTop } });
+        if (cmScroller) {
+          dispatch({
+            type: Types.PatchData,
+            payload: { scroll: { x: cmScroller.scrollLeft, y: cmScroller.scrollTop } },
+          });
+        }
         onScrollCapture && onScrollCapture(e);
       }}
       {...props}
