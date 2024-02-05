@@ -12,7 +12,7 @@ import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { useHydrated } from "remix-utils/use-hydrated";
 import React, { useMemo, useContext } from "react";
-import { vim } from "@replit/codemirror-vim";
+import { Vim, vim } from "@replit/codemirror-vim";
 import { cn } from "~/lib/util/utils";
 import { EditorCtx } from "./context";
 import { IconButton, type IconButtonProps } from "~/lib/ui/button";
@@ -316,6 +316,20 @@ export function Editor({
       if (shouldDispatch) dispatch({ type: Types.PatchEffects, payload: effects });
     }
   }, [ctx.effects]);
+
+  // Enable Vim Commands
+  // -------------------
+  React.useEffect(() => {
+    if (ctx.settings.mode === "vim") {
+      Vim.defineEx("write", "w", async function () {
+        if (ctx.data.state) {
+          const { value, position } = await prettify(ctx.data.state);
+          dispatch({ type: Types.PatchData, payload: { state: ctx.data.state, value, cursor: position } });
+          dispatch({ type: Types.PatchEffects, payload: { cursor: position } });
+        }
+      });
+    }
+  }, [ctx.settings.mode, ctx.data]);
 
   return isHydrated ? (
     <CodeMirror

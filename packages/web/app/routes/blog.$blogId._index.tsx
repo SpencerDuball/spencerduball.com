@@ -149,7 +149,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   //-------------------------------------------------------------------------------------------------------------------
   // 1. Parse the string into an AST
   log.info("Building the blog ...");
-
   const { content } = await compileMdx(body);
 
   return json({ blog, content, url: request.url });
