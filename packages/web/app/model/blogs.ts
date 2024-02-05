@@ -16,7 +16,7 @@ export const BLOG_TEMPLATE = [
   "title: New Blog About Interesting Things",
   "description: A blog about some interesting things that will capture the attention of your reader.",
   "tags: [typescript, react]",
-  "cover_img",
+  "cover_img:",
   "  alt: A description of the image.",
   "  url: /images/blog/default-cover-img.png",
   "---",

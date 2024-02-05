@@ -13,6 +13,7 @@ import { colorFromName, ColorList, Tag } from "~/lib/ui/tag";
 import { BlogLi } from "~/lib/app/blog-li";
 import { Pagination } from "~/lib/ui/pagination";
 import { parseBlog } from "~/model/blogs";
+import { Config } from "sst/node/config";
 
 export const meta: MetaFunction = () => [
   { title: "Blog | Spencer Duball" },

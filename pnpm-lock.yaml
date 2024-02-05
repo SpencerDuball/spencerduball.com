@@ -252,6 +252,9 @@ importers:
       pino:
         specifier: ^8.16.1
         version: 8.16.1
+      prettier:
+        specifier: ^3.0.3
+        version: 3.0.3
       prism-react-renderer:
         specifier: ^2.2.0
         version: 2.2.0(react@18.3.0-canary-971b62f47-20240129)
@@ -328,9 +331,6 @@ importers:
       pino-pretty:
         specifier: ^10.2.3
         version: 10.2.3
-      prettier:
-        specifier: ^3.0.3
-        version: 3.0.3
       prettier-plugin-tailwindcss:
         specifier: ^0.5.9
         version: 0.5.9(prettier@3.0.3)
@@ -12895,7 +12895,6 @@ packages:
     resolution: {integrity: sha512-L/4pUDMxcNa8R/EthV08Zt42WBO4h1rarVtK0K+QJG0X187OLo7l699jWw0GKuwzkPQ//jMFA/8Xm6Fh3J/DAg==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
 
   /pretty-format@27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}

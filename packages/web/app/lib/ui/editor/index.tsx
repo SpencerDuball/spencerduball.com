@@ -1,14 +1,20 @@
 import { createTheme } from "@uiw/codemirror-themes";
 import { tags as t } from "@lezer/highlight";
-import CodeMirror, { ReactCodeMirrorProps, EditorView, lineNumbers, scrollPastEnd } from "@uiw/react-codemirror";
+import CodeMirror, {
+  ReactCodeMirrorProps,
+  EditorView,
+  lineNumbers,
+  scrollPastEnd,
+  EditorState,
+  ReactCodeMirrorRef,
+} from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
-import { type ScrollAreaProps } from "~/lib/ui/scroll-box";
 import { useHydrated } from "remix-utils/use-hydrated";
 import React, { useMemo, useContext } from "react";
 import { vim } from "@replit/codemirror-vim";
 import { cn } from "~/lib/util/utils";
-import { EditorCtx, IEditorState } from "./context";
+import { EditorCtx } from "./context";
 import { IconButton, type IconButtonProps } from "~/lib/ui/button";
 import {
   RiSaveLine,
@@ -24,6 +30,19 @@ import { DiVim } from "react-icons/di";
 import { RxHalf2 } from "react-icons/rx";
 import { Types } from "./reducer";
 import { GlobalCtx } from "~/lib/context/global-ctx";
+import { Link, useHref, useLocation } from "@remix-run/react";
+import p from "prettier/plugins/markdown";
+import { formatWithCursor } from "prettier/standalone";
+
+async function prettify(state: EditorState) {
+  const beforeValue = state.doc.toString();
+  const { formatted: afterValue, cursorOffset } = await formatWithCursor(beforeValue, {
+    cursorOffset: state.selection.ranges[0].from ?? 0,
+    parser: "markdown",
+    plugins: [p],
+  });
+  return { value: afterValue, position: cursorOffset };
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 // Toolbar
@@ -36,12 +55,18 @@ export interface ToolbarProps extends React.ComponentProps<"div"> {
 }
 
 export function Toolbar({ className, ...props }: ToolbarProps) {
-  const [state, dispatch] = useContext(EditorCtx);
+  const [ctx, dispatch] = useContext(EditorCtx);
 
   // determine the theme icon
   let themeIcon = <RxHalf2 />;
-  if (state.settings.theme === "dark") themeIcon = <RiMoonFill />;
-  else if (state.settings.theme === "light") themeIcon = <RiSunFill />;
+  if (ctx.settings.theme === "dark") themeIcon = <RiMoonFill />;
+  else if (ctx.settings.theme === "light") themeIcon = <RiSunFill />;
+
+  // define the navigation paths
+  const { pathname } = useLocation();
+  const editHref = useHref("edit");
+  const previewHref = useHref("preview");
+  const attachmentsHref = useHref("attachments");
 
   return (
     <div
@@ -54,15 +79,51 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
       {/* Left Menu Items */}
       <div className="grid grid-flow-col gap-1.5">
         <IconButton size="sm" aria-label="Save content." variant="ghost" icon={<RiSaveLine />} />
-        <IconButton size="sm" aria-label="Format content." variant="ghost" icon={<SiPrettier />} />
+        <IconButton
+          size="sm"
+          aria-label="Format content."
+          variant="ghost"
+          icon={<SiPrettier />}
+          onClick={async () => {
+            if (ctx.data.state) {
+              const { value, position } = await prettify(ctx.data.state);
+              dispatch({ type: Types.PatchData, payload: { state: ctx.data.state, value, cursor: position } });
+              // new EditorView({ state: ctx.data.state }).dispatch({ selection: { anchor: position, head: position } });
+            }
+          }}
+        />
       </div>
       {/* Divider */}
       <div className="h-full w-px bg-slate-5" />
       {/* Center Menu Items */}
       <div className="grid grid-flow-col gap-1.5">
-        <IconButton size="sm" aria-label="Go to edit view." variant="ghost" icon={<RiCodeSSlashFill />} />
-        <IconButton size="sm" aria-label="Go to preview view." variant="ghost" icon={<RiArticleLine />} />
-        <IconButton size="sm" aria-label="Go to attachments view." variant="ghost" icon={<RiAttachment2 />} />
+        <Link to={editHref}>
+          <IconButton
+            isActive={pathname === editHref}
+            size="sm"
+            aria-label="Go to edit view."
+            variant="ghost"
+            icon={<RiCodeSSlashFill />}
+          />
+        </Link>
+        <Link to={previewHref}>
+          <IconButton
+            isActive={pathname === previewHref}
+            size="sm"
+            aria-label="Go to preview view."
+            variant="ghost"
+            icon={<RiArticleLine />}
+          />
+        </Link>
+        <Link to={attachmentsHref}>
+          <IconButton
+            isActive={pathname === attachmentsHref}
+            size="sm"
+            aria-label="Go to attachments view."
+            variant="ghost"
+            icon={<RiAttachment2 />}
+          />
+        </Link>
       </div>
       {/* Divider */}
       <div className="h-full w-px bg-slate-5" />
@@ -80,7 +141,7 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
           aria-label="Toggle vim mode."
           variant="ghost"
           icon={<DiVim />}
-          isActive={state.settings.mode === "vim"}
+          isActive={ctx.settings.mode === "vim"}
           onClick={() => dispatch({ type: Types.ToggleMode })}
         />
         <IconButton
@@ -88,7 +149,7 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
           aria-label="Toggle text wrap."
           variant="ghost"
           icon={<RiTextWrap />}
-          isActive={state.settings.lineWrap === true}
+          isActive={ctx.settings.lineWrap === true}
           onClick={() => dispatch({ type: Types.ToggleLineWrap })}
         />
       </div>
@@ -154,9 +215,17 @@ const githubDark = createTheme({
 
 export interface EditorProps extends ReactCodeMirrorProps {}
 
-export function Editor({ className, onCreateEditor, onTouchStart, onBlur, ...props }: EditorProps) {
+export function Editor({
+  className,
+  onCreateEditor,
+  onTouchStart,
+  onBlur,
+  onScrollCapture,
+  onUpdate,
+  ...props
+}: EditorProps) {
   const isHydrated = useHydrated();
-  const [state] = useContext(EditorCtx);
+  const [ctx, dispatch] = useContext(EditorCtx);
 
   // Define Editor Extensions
   // ----------------------------------
@@ -170,10 +239,10 @@ export function Editor({ className, onCreateEditor, onTouchStart, onBlur, ...pro
       lineNumbers({ formatNumber: (lineNo) => lineNo.toString().padStart(3, "\u00A0") }),
       // Allow editor to scroll past content
       scrollPastEnd(),
-      state.settings.mode === "vim" ? vim() : [],
-      state.settings.lineWrap ? EditorView.lineWrapping : [],
+      ctx.settings.mode === "vim" ? vim() : [],
+      ctx.settings.lineWrap ? EditorView.lineWrapping : [],
     ],
-    [state.settings],
+    [ctx.settings],
   );
 
   // Disable iOS Auto Zoom for Small Font
@@ -218,8 +287,8 @@ export function Editor({ className, onCreateEditor, onTouchStart, onBlur, ...pro
   // that the site "_theme" matches.
   let _theme: "light" | "dark" = "dark";
   const [{ preferences }] = useContext(GlobalCtx);
-  if (state.settings.theme === "system") _theme = preferences._theme;
-  else _theme = state.settings.theme;
+  if (ctx.settings.theme === "system") _theme = preferences._theme;
+  else _theme = ctx.settings.theme;
 
   return isHydrated ? (
     <CodeMirror
@@ -234,7 +303,9 @@ export function Editor({ className, onCreateEditor, onTouchStart, onBlur, ...pro
       basicSetup={{ autocompletion: false }}
       theme={_theme === "light" ? githubLight : githubDark}
       onCreateEditor={(view, state) => {
-        setTimeout(() => view.scrollDOM.scrollTo({ top: 0 }), 0);
+        view.scrollDOM.scrollTo({ left: ctx.data.scroll.x, top: ctx.data.scroll.y });
+        view.dispatch({ selection: { anchor: ctx.data.cursor, head: ctx.data.cursor } });
+        dispatch({ type: Types.PatchData, payload: { state } });
         onCreateEditor && onCreateEditor(view, state);
       }}
       onTouchStart={(e) => {
@@ -244,6 +315,25 @@ export function Editor({ className, onCreateEditor, onTouchStart, onBlur, ...pro
       onBlur={(e) => {
         enableIOSInputZoom(e);
         onBlur && onBlur(e);
+      }}
+      value={ctx.data.value}
+      onUpdate={(viewUpdate) => {
+        const state = viewUpdate.state;
+        const scroll = { x: viewUpdate.view.scrollDOM.scrollLeft, y: viewUpdate.view.scrollDOM.scrollTop };
+        const value = viewUpdate.state.doc.toString();
+        const cursor = viewUpdate.state?.selection.ranges[0].from;
+        if (JSON.stringify(state) !== JSON.stringify(ctx.data.state)) {
+          console.log("yo");
+          dispatch({ type: Types.PatchData, payload: { scroll, value, cursor, state } });
+        }
+      }}
+      onScrollCapture={(e) => {
+        // TODO: When mounting scroll restore will fire twice, and for some reason the second will have less scroll
+        // than the first. Need to debug why that is to fix scroll restore.
+        const cmScroller = e.currentTarget.getElementsByClassName("cm-scroller")[0];
+        if (cmScroller)
+          dispatch({ type: Types.PutScroll, payload: { x: cmScroller.scrollLeft, y: cmScroller.scrollTop } });
+        onScrollCapture && onScrollCapture(e);
       }}
       {...props}
     />
