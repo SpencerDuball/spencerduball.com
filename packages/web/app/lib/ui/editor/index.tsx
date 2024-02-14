@@ -15,7 +15,7 @@ import React, { useMemo, useContext } from "react";
 import { Vim, vim } from "@replit/codemirror-vim";
 import { cn } from "~/lib/util/utils";
 import { EditorCtx } from "./context";
-import { IconButton, type IconButtonProps } from "~/lib/ui/button";
+import { IconButton } from "~/lib/ui/button";
 import {
   RiSaveLine,
   RiCodeSSlashFill,
@@ -30,9 +30,10 @@ import { DiVim } from "react-icons/di";
 import { RxHalf2 } from "react-icons/rx";
 import { Types } from "./reducer";
 import { GlobalCtx } from "~/lib/context/global-ctx";
-import { Link, useHref, useLocation } from "@remix-run/react";
+import { FetcherWithComponents, Link, useFetcher, useHref, useLocation } from "@remix-run/react";
 import p from "prettier/plugins/markdown";
 import { formatWithCursor } from "prettier/standalone";
+import { ToasterCtx } from "~/lib/context/toaster-ctx";
 
 async function prettify(state: EditorState) {
   const beforeValue = state.doc.toString();
@@ -50,11 +51,10 @@ async function prettify(state: EditorState) {
 // This is the toolbar from which settings can be toggled, the markdown can be saved, and previews can be triggered.
 //---------------------------------------------------------------------------------------------------------------------
 export interface ToolbarProps extends React.ComponentProps<"div"> {
-  save?: IconButtonProps;
-  format?: IconButtonProps;
+  onSave: <T>(value: string, save: FetcherWithComponents<T>) => void;
 }
 
-export function Toolbar({ className, ...props }: ToolbarProps) {
+export function Toolbar({ onSave, className, ...props }: ToolbarProps) {
   const [ctx, dispatch] = useContext(EditorCtx);
 
   // determine the theme icon
@@ -66,7 +66,12 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
   const { pathname } = useLocation();
   const editHref = useHref("edit");
   const previewHref = useHref("preview");
-  const attachmentsHref = useHref("attachments");
+  const filesHref = useHref("files");
+
+  // define the save fetcher
+  const [, dispatchToast] = useContext(ToasterCtx);
+  const save = useFetcher();
+  // TODO: Implement a save toast
 
   return (
     <div
@@ -78,7 +83,14 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
     >
       {/* Left Menu Items */}
       <div className="grid grid-flow-col gap-1.5">
-        <IconButton size="sm" aria-label="Save content." variant="ghost" icon={<RiSaveLine />} />
+        <IconButton
+          size="sm"
+          aria-label="Save content."
+          variant="ghost"
+          icon={<RiSaveLine />}
+          onClick={() => onSave(ctx.data.value, save)}
+          isLoading={save.state !== "idle"}
+        />
         <IconButton
           size="sm"
           aria-label="Format content."
@@ -115,11 +127,11 @@ export function Toolbar({ className, ...props }: ToolbarProps) {
             icon={<RiArticleLine />}
           />
         </Link>
-        <Link to={attachmentsHref}>
+        <Link to={filesHref}>
           <IconButton
-            isActive={pathname === attachmentsHref}
+            isActive={pathname === filesHref}
             size="sm"
-            aria-label="Go to attachments view."
+            aria-label="Go to files view."
             variant="ghost"
             icon={<RiAttachment2 />}
           />

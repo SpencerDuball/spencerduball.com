@@ -56,7 +56,7 @@ export interface IDatabase {
     user_roles: IUserRole;
     blogs: IBlog;
     blog_tags: IBlogTag;
-    blog_file: IBlogFile;
+    blog_files: IBlogFile;
 }
 export type SqlDbClient = Kysely<IDatabase>;
 export declare function createClient(url: string, authToken: string): Kysely<IDatabase>;

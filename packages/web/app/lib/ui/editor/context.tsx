@@ -2,6 +2,7 @@ import * as React from "react";
 import { z } from "zod";
 import { type Actions, reducer, EDITOR_SETTINGS_KEY, Types } from "./reducer";
 import { EditorState } from "@uiw/react-codemirror";
+import { IBlog } from "~/model/blogs";
 
 //---------------------------------------------------------------------------------------------------------------------
 // Define the editor types.

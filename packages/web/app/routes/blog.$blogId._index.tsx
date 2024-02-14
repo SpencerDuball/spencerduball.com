@@ -37,7 +37,7 @@ export async function action({ request }: ActionFunctionArgs) {
   switch (request.method) {
     case "PATCH": {
       // Validate FormData
-      // -----------------
+      // ----------------------------------------------------------------------
       // The information must be sent as FormData. We also need to validate that at least one updatable input was send
       // (body, views, published).
       log.info("Parsing the FormData from the request ...");
@@ -60,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs) {
       }
 
       // Update Database
-      // ---------------
+      // ----------------------------------------------------------------------
       // Send an update to the database.
       await patchBlog(data).catch((e) => {
         log.error(e, "There was an error updating the blog.");
@@ -71,7 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
     case "DELETE": {
       // Validate FormData
-      // -----------------
+      // ----------------------------------------------------------------------
       // The information must be sent as FormData.
       log.info("Parsing the FormData from the request ...");
       let data: IDeletePayload;

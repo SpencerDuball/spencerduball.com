@@ -2,11 +2,12 @@ import * as React from "react";
 import { json } from "@remix-run/node";
 import { EditorCtx } from "~/lib/ui/editor";
 import { ActionFunctionArgs } from "@remix-run/node";
-import axios from "axios";
+import { useFetcher } from "@remix-run/react";
 import { logger } from "~/lib/util/globals.server";
 import { z } from "zod";
-import { compileMdx } from "~/model/blogs";
-import { useHref } from "@remix-run/react";
+import { BlogCtx, compileMdx } from "~/model/blogs";
+import { BlogView, BlogViewSkeleton } from "~/lib/app/blog-view";
+import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 
 const ZPostPayload = z.object({
   /** The MDX string of the blog. */
@@ -48,17 +49,31 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
+// TODO: Probably opt out of using `useFetcher` here. The reason is by using a Remix API, there will be a revalidation
+// for EVERY layout in the app including the root. For this case, we should just use `axios` and a `useEffect` since
+// this will bypass Remix APIs for revalidation logic.
 export default function BlogIdPreview() {
-  const [ctx] = React.useContext(EditorCtx);
-  const href = useHref("");
+  const blog = React.useContext(BlogCtx);
+  const [editor] = React.useContext(EditorCtx);
+  const fetcher = useFetcher<{ content: string }>();
+  const ref = React.useRef<HTMLFormElement>(null!);
 
-  // retrieve the compiled MDX string from the server
-  const [content, setContent] = React.useState<string | null>(null);
   React.useEffect(() => {
-    const data = new FormData();
-    data.set("mdx", ctx.data.value);
-    axios.post(href, data).then(({ data }) => console.log(data));
+    if (ref.current && !fetcher.data && fetcher.state === "idle") fetcher.submit(ref.current);
   }, []);
 
-  return <></>;
+  return (
+    <ScrollArea className="w-full">
+      <ScrollViewport className="w-full">
+        <fetcher.Form hidden ref={ref} method="post">
+          <input type="hidden" name="mdx" value={editor.data.value} />
+        </fetcher.Form>
+        {blog && fetcher.data?.content ? (
+          <BlogView data={{ ...blog, content: fetcher.data?.content, url: "#" }} />
+        ) : (
+          <BlogViewSkeleton />
+        )}
+      </ScrollViewport>
+    </ScrollArea>
+  );
 }

@@ -72,8 +72,8 @@ function Controls({ data, className, ...props }: ControlsProps) {
         </Dialog.Trigger>
       </div>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-blackA-6 data-[state=open]:animate-overlay-show" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 grid w-80 -translate-x-1/2 -translate-y-1/2 auto-cols-auto gap-4 rounded-lg border border-slate-6 bg-slate-2 p-4 shadow-lg focus:outline-none data-[state=open]:animate-content-show">
+        <Dialog.Overlay className="data-[state=open]:animate-overlay-show fixed inset-0 bg-blackA-6" />
+        <Dialog.Content className="data-[state=open]:animate-content-show fixed left-1/2 top-1/2 grid w-80 -translate-x-1/2 -translate-y-1/2 auto-cols-auto gap-4 rounded-lg border border-slate-6 bg-slate-2 p-4 shadow-lg focus:outline-none">
           <div className="relative grid">
             <h1 className="text-xl font-semibold">Are you sure?</h1>
             <p className="text-sm text-slate-11">Press confirm to delete the blog post.</p>
@@ -125,7 +125,7 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
       <div className="relative hidden pr-0 md:grid">
         <div className="h-24 w-48 animate-pulse rounded bg-slate-3" />
         <img
-          className="absolute left-0 top-0 aspect-[2/1] h-24 w-48 overflow-hidden rounded bg-slate-3 object-cover"
+          className="absolute left-0 top-0 aspect-[2/1] h-24 w-48 overflow-hidden rounded object-cover"
           alt={data.cover_img.alt}
           src={data.cover_img.url}
         />

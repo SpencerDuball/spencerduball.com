@@ -112,3 +112,5 @@ export function BlogView({ data, className, ...props }: BlogViewProps) {
     </section>
   );
 }
+
+export { BlogViewSkeleton } from "./skeleton";

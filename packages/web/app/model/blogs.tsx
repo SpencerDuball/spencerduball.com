@@ -1,4 +1,5 @@
-import { IBlog as _IBlog } from "@spencerduballcom/db/sqldb";
+import * as React from "react";
+import { IBlogFile as _IBlogFile, IBlog as _IBlog } from "@spencerduballcom/db/sqldb";
 import { z } from "zod";
 import { Simplify, Selectable } from "kysely";
 import { compile } from "@mdx-js/mdx";
@@ -26,6 +27,9 @@ export const BLOG_TEMPLATE = [
 //---------------------------------------------------------------------------------------------------------------------
 // Zod Types
 //---------------------------------------------------------------------------------------------------------------------
+
+// Blog
+// ----------------------------------------------------------------------------
 
 // The type of the full Blog as returned from a SQL query.
 export interface ISqlBlog extends Selectable<_IBlog> {
@@ -59,6 +63,27 @@ export const ZBlogMeta = z.object({
 });
 export type IBlogMeta = z.infer<typeof ZBlogMeta>;
 
+// BlogFile
+// ----------------------------------------------------------------------------
+
+// The type of the BlogFile as returned from a SQL query.
+export interface ISqlBlogFile extends Selectable<_IBlogFile> {}
+
+// The type of the BlogFile after raw SQL response has been transformed into appropriate objects.
+export const ZBlogFile = z.object({
+  id: z.number(),
+  name: z.string(),
+  url: z.string(),
+  alt: z.string(),
+  size: z.number(),
+  type: z.string(),
+  expires_at: z.date().nullable(),
+  created_at: z.date(),
+  modified_at: z.date(),
+  blog_id: z.number(),
+});
+export type IBlogFile = z.infer<typeof ZBlogFile>;
+
 //---------------------------------------------------------------------------------------------------------------------
 // Database Utilities
 //---------------------------------------------------------------------------------------------------------------------
@@ -78,6 +103,20 @@ export function parseBlog<T extends Partial<ISqlBlog>>(
   if (blog.modified_at) _blog.modified_at = new Date(blog.modified_at);
   if (blog.tags) _blog.tags = blog.tags.length > 0 ? blog.tags.split(",") : [];
   return _blog;
+}
+
+/**
+ * This function takes in a SQL response and transforms it into a more accurate JavaScript object representation of the
+ * BlogFile.
+ */
+export function parseBlogFile<T extends Partial<ISqlBlogFile>>(
+  file: T,
+): Simplify<Pick<IBlogFile, keyof T extends Partial<keyof ISqlBlogFile> ? keyof T : never>> {
+  const _file = { ...file } as any;
+  if (file.created_at) _file.created_at = new Date(file.created_at);
+  if (file.expires_at) _file.expires_at = new Date(file.expires_at);
+  if (file.modified_at) _file.modified_at = new Date(file.modified_at);
+  return _file;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -110,4 +149,20 @@ export async function compileMdx(mdx: string) {
   );
 
   return { frontmatter, content };
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+// Blog Provider
+// -------------
+// This is used in the editing experience to share a single blog result without consistently re-quering for the same
+// info.
+//---------------------------------------------------------------------------------------------------------------------
+export const BlogCtx = React.createContext<IBlog>(null!);
+
+export interface IBlogProvider {
+  blog: IBlog;
+  children: React.ReactNode;
+}
+export function BlogProvider({ blog, children }: IBlogProvider) {
+  return <BlogCtx.Provider value={blog}>{children}</BlogCtx.Provider>;
 }

@@ -1,9 +1,18 @@
+import * as React from "react";
 import { type LoaderFunctionArgs, json } from "@remix-run/node";
-import { Outlet, useLoaderData } from "@remix-run/react";
-import { Toolbar, EditorProvider } from "~/lib/ui/editor";
+import { Outlet, useLoaderData, ShouldRevalidateFunctionArgs } from "@remix-run/react";
+import { type ToolbarProps, Toolbar, EditorProvider } from "~/lib/ui/editor";
 import { logger, db } from "~/lib/util/globals.server";
 import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
 import { z } from "zod";
+import { BlogProvider, parseBlog } from "~/model/blogs";
+
+export function shouldRevalidate({ nextUrl, currentUrl, defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
+  // Don't revalidate when switching between /edit, /preview, /attachments
+  if (nextUrl.toString() !== currentUrl.toString()) return false;
+
+  return defaultShouldRevalidate;
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 // Define Loader Function
@@ -46,12 +55,31 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 export type LoaderType = typeof loader;
 
+//---------------------------------------------------------------------------------------------------------------------
+// Define Route
+//---------------------------------------------------------------------------------------------------------------------
+
 function BlogId() {
+  const { blog } = useLoaderData<typeof loader>();
+
+  // define the save function for the toolbar
+  const onSave = React.useMemo<ToolbarProps["onSave"]>(
+    () => (value, save) => {
+      const data = new FormData();
+      data.set("id", blog.id.toString());
+      data.set("body", value);
+      save.submit(data, { method: "PATCH", action: `/blog/${blog.id}` });
+    },
+    [],
+  );
+
+  // when save is successful, show a succes toast
+
   return (
     <main className="grid w-full justify-items-center">
       {/* For the height, we are subtracting the Header `theme(spacing.20)` and the Footer `theme(spacing.20)`. */}
       <section className="grid h-[calc(100dvh-theme(spacing.40))] w-full max-w-5xl grid-rows-[max-content_1fr] justify-items-center gap-2 px-4 py-4">
-        <Toolbar />
+        <Toolbar onSave={onSave} />
         <Outlet />
       </section>
     </main>
@@ -62,8 +90,10 @@ export default function BlogIdProvider() {
   const { blog } = useLoaderData<typeof loader>();
 
   return (
-    <EditorProvider value={blog.body}>
-      <BlogId />
-    </EditorProvider>
+    <BlogProvider blog={parseBlog(blog)}>
+      <EditorProvider value={blog.body}>
+        <BlogId />
+      </EditorProvider>
+    </BlogProvider>
   );
 }
