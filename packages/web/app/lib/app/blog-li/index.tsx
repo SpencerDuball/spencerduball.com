@@ -1,7 +1,7 @@
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 import { Link, useFetcher } from "@remix-run/react";
 import * as React from "react";
-import { cn } from "~/lib/util/utils";
+import { cn, idFromHeading } from "~/lib/util/utils";
 import { ColorList, Tag, colorFromName } from "~/lib/ui/tag";
 import { IBlog } from "~/model/blogs";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -41,7 +41,6 @@ function Controls({ data, className, ...props }: ControlsProps) {
         {...props}
       >
         <update.Form action={`/blog/${data.id}`} method="patch">
-          <input type="hidden" name="id" value={data.id} />
           <input type="hidden" name="published" value={String(!isPublished)} />
           <IconButton
             type="submit"
@@ -78,7 +77,6 @@ function Controls({ data, className, ...props }: ControlsProps) {
             <h1 className="text-xl font-semibold">Are you sure?</h1>
             <p className="text-sm text-slate-11">Press confirm to delete the blog post.</p>
             <remove.Form action={`/blog/${data.id}`} method="delete" className="grid pt-6">
-              <input type="hidden" name="id" value={data.id} />
               <Button type="submit" variant="solid" colorScheme="red" className="w-full">
                 Confirm
               </Button>
@@ -153,7 +151,10 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
           {hasControls && <Controls data={data} />}
         </div>
         <div className="grid auto-rows-[max-content] gap-1">
-          <Link to={`/blog/${data.id}`} className="focus-outline line-clamp-2 text-xl font-semibold leading-[1.15]">
+          <Link
+            to={`/blog/${idFromHeading(data.title)}-${data.id}`}
+            className="focus-outline line-clamp-2 text-xl font-semibold leading-[1.15]"
+          >
             {data.title}
           </Link>
           <p className="text-sm text-slate-9" suppressHydrationWarning>

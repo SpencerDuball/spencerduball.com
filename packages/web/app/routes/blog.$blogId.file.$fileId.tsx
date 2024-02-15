@@ -18,9 +18,9 @@ type IPatchPayload = z.infer<typeof ZPatchPayload>;
 
 const ZActionParams = z.object({
   /** The ID of the blog that the file belongs to. */
-  blogId: z.coerce.number(),
+  blogId: z.string(),
   /** The ID of the file. */
-  fileId: z.coerce.number(),
+  fileId: z.string(),
 });
 type IActionParams = z.infer<typeof ZActionParams>;
 

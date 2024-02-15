@@ -10,7 +10,7 @@ import { IBlogFile, parseBlogFile } from "~/model/blogs";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 
-const ZLoaderParams = z.object({ blogId: z.coerce.number() });
+const ZLoaderParams = z.object({ blogId: z.string() });
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const log = logger(request);

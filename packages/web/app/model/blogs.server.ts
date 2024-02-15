@@ -20,7 +20,7 @@ import { Bucket } from "sst/node/bucket";
 // ----------------------------------------------------------------------------
 export interface PatchBlogProps {
   /** The ID of the blog. */
-  id: number;
+  id: string;
   /** The body of the blog. */
   body?: string;
   /** The views count of the blog. */
@@ -121,9 +121,9 @@ export async function patchBlog({ id, body, views, published }: PatchBlogProps) 
 // ---------------------------------------------------------------------------
 export interface PatchBlogFileProps {
   /** The ID of the blog. */
-  blogId: number;
+  blogId: string;
   /** The ID of the file. */
-  fileId: number;
+  fileId: string;
   /** The name of the file. */
   name?: string;
   /** The alt text of the file. */
@@ -153,7 +153,7 @@ export async function patchBlogFile({ blogId, fileId, name, alt }: PatchBlogFile
 // ----------------------------------------------------------------------------
 export interface DeleteBlogProps {
   /** The ID of the blog. */
-  id: number;
+  id: string;
 }
 
 /**
@@ -169,9 +169,9 @@ export async function deleteBlog({ id }: DeleteBlogProps) {
 // ----------------------------------------------------------------------------
 export interface DeleteBlogFileProps {
   /** The ID of the blog. */
-  blogId: number;
+  blogId: string;
   /** The ID of the blog file. */
-  fileId: number;
+  fileId: string;
 }
 
 /**
@@ -179,9 +179,6 @@ export interface DeleteBlogFileProps {
  */
 export async function deleteBlogFile({ blogId, fileId }: DeleteBlogFileProps) {
   // TODO: Delete the file from S3
-  const s3 = new S3Client();
-  const Key = new URL(`/blog/${blogId}/`, Config.BUCKET_URL).toString();
-  const deleteS3Response = await s3.send(new DeleteObjectCommand({ Bucket: Bucket.Bucket.bucketName, Key }));
 
   // Delete the record from SQL
   const deleteCmd = db.deleteFrom("blog_files").where("blog_id", "=", blogId).where("id", "=", fileId);

@@ -170,7 +170,7 @@ export default function Blog() {
   // use a useFetchers to filter out a blog that is being deleted
   const deletingBlogs = useFetchers()
     .filter((f) => f.formAction?.match(/\/blog\/\d+$/) && f.formMethod === "DELETE")
-    .map((f) => z.coerce.number().parse(f.formData!.get("id")));
+    .map((f) => z.string().parse(f.formData!.get("id")));
   const optimisticTotalBlogs = totalBlogs - deletingBlogs.length;
 
   // Form Reference for Portal Popover

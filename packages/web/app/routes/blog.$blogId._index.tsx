@@ -14,8 +14,6 @@ import { BlogView } from "~/lib/app/blog-view";
 // Define the action function and all associated utilties, validators, etc.
 //---------------------------------------------------------------------------------------------------------------------
 const ZPatchPayload = z.object({
-  /** The ID of the blog. */
-  id: z.coerce.number(),
   /** The body of the blog. */
   body: z.string().optional(),
   /** The views count of the blog. */
@@ -25,17 +23,15 @@ const ZPatchPayload = z.object({
 });
 type IPatchPayload = z.infer<typeof ZPatchPayload>;
 
-const ZDeletePayload = z.object({
-  /** The ID of the blog. */
-  id: z.coerce.number(),
-});
-type IDeletePayload = z.infer<typeof ZDeletePayload>;
+const ZActionParams = z.object({ blogId: z.string() });
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ params, request }: ActionFunctionArgs) {
   const log = logger(request);
 
   switch (request.method) {
     case "PATCH": {
+      const { blogId } = ZActionParams.parse(params);
+
       // Validate FormData
       // ----------------------------------------------------------------------
       // The information must be sent as FormData. We also need to validate that at least one updatable input was send
@@ -62,37 +58,24 @@ export async function action({ request }: ActionFunctionArgs) {
       // Update Database
       // ----------------------------------------------------------------------
       // Send an update to the database.
-      await patchBlog(data).catch((e) => {
+      await patchBlog({ ...data, id: blogId }).catch((e) => {
         log.error(e, "There was an error updating the blog.");
-        throw json({}, { status: 500, statusText: "Server Error" });
+        throw new Response(null, { status: 500, statusText: "Server Error" });
       });
 
       return json({}, { status: 200, statusText: "OK" });
     }
     case "DELETE": {
-      // Validate FormData
-      // ----------------------------------------------------------------------
-      // The information must be sent as FormData.
-      log.info("Parsing the FormData from the request ...");
-      let data: IDeletePayload;
-      try {
-        data = ZDeletePayload.parse(Object.fromEntries((await request.formData()).entries()));
-      } catch (e) {
-        log.info(e, "Invalid FormData was sent with the request.");
-        throw json(
-          { message: "Invalid FormData was sent with the request." },
-          { status: 400, statusText: "Bad Request" },
-        );
-      }
+      const { blogId } = ZActionParams.parse(params);
 
       // Delete Blog
       // -----------
-      await deleteBlog(data).catch((e) => {
-        log.error(e, "There was an error updating the blog.");
+      await deleteBlog({ id: blogId }).catch((e) => {
+        log.error(e, "There was an error deleting the blog.");
         throw json({}, { status: 500, statusText: "Server Error" });
       });
 
-      return json({}, { status: 200, statusText: "OK" });
+      return new Response(null, { status: 200, statusText: "OK" });
     }
     default: {
       log.info("This method is not allowed.");
@@ -105,7 +88,7 @@ export async function action({ request }: ActionFunctionArgs) {
 // Define Loader Function
 //---------------------------------------------------------------------------------------------------------------------
 // Define params
-const ZLoaderParams = z.object({ blogId: z.coerce.number() });
+const ZLoaderParams = z.object({ blogId: z.string() });
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const log = logger(request);
@@ -116,9 +99,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   // Retrieve the blog with the id corresponding to the "blogId" parameter.
   //-------------------------------------------------------------------------------------------------------------------
   // collect the parameters
-  const { blogId } = await ZLoaderParams.parseAsync(params).catch((e) => {
-    throw new Response(null, { status: 404, statusText: "Not Found" });
-  });
+  const blogId = await ZLoaderParams.parseAsync(params)
+    .then(({ blogId }) => blogId.split("-").pop()!)
+    .catch((e) => {
+      throw new Response(null, { status: 404, statusText: "Not Found" });
+    });
 
   // retrieve the blog
   log.info("Retrieveing the blog ...");

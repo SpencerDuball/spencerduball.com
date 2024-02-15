@@ -8,7 +8,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { z } from "zod";
 
 const ZBlog = z.object({
-  id: z.number(),
+  id: z.string(),
   title: z.string(),
   description: z.string(),
   cover_img: z.string(),
@@ -26,11 +26,11 @@ const ZBlogTag = z.object({
   name: z.string(),
   created_at: z.string(),
   modified_at: z.string(),
-  blog_id: z.number(),
+  blog_id: z.string(),
 });
 
 const ZBlogFile = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   url: z.string(),
   alt: z.string(),
@@ -39,7 +39,7 @@ const ZBlogFile = z.object({
   expires_at: z.string().datetime().nullable(),
   created_at: z.string().datetime(),
   modified_at: z.string().datetime(),
-  blog_id: z.number(),
+  blog_id: z.string(),
 });
 
 /**
@@ -51,6 +51,7 @@ export async function up({ sqldb, s3Client }: ScriptInput) {
   if (!s3Client) throw new Error("s3Client was not supplied and is required.");
 
   // seed the "blogs" table
+  console.log("seeding blog table ...");
   const blogsFileUrl = new URL("./data/blogs.json", import.meta.url);
   const blogsData = await fs.readJson(blogsFileUrl).then((blogs) => ZBlog.array().parse(blogs));
   for (let blog of blogsData) {
@@ -60,6 +61,7 @@ export async function up({ sqldb, s3Client }: ScriptInput) {
   await sqldb.insertInto("blogs").values(blogsData).execute();
 
   // seed the "blog_tags" table
+  console.log("seeding blog_tags table ...");
   const blogTagsFileUrl = new URL("./data/blog_tags.json", import.meta.url);
   const blogTagsData = await fs.readJson(blogTagsFileUrl).then((blogTags) => ZBlogTag.array().parse(blogTags));
   await sqldb.insertInto("blog_tags").values(blogTagsData).execute();

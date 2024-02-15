@@ -103,11 +103,7 @@ export function parseMdLink(value: string) {
  * @returns The URL normalized ID.
  */
 export function idFromHeading(heading: string) {
-  return heading
-    .toLowerCase()
-    .trim()
-    .replace(/\s/g, "-")
-    .replace(/[^a-z1-9-._~]/g, "");
+  return heading.toLowerCase().trim().replace(/\s/g, "-").replace(/[._~]/g, "");
 }
 
 /**

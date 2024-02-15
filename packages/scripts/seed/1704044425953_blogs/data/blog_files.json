@@ -1,1094 +1,1094 @@
 [
   {
-    "id": 7,
+    "id": "f8e8217b",
     "name": "Sample File 7",
-    "url": "{{S3_BUCKET_URL}}/blog/1/sample_photo_7.png",
+    "url": "{{S3_BUCKET_URL}}/blog/4980845b/sample_photo-f8e8217b.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-10-27T00:34:47.038Z",
     "modified_at": "2002-10-27T00:34:47.038Z",
-    "blog_id": 1
+    "blog_id": "4980845b"
   },
   {
-    "id": 41,
+    "id": "e5fb9a19",
     "name": "Sample File 41",
-    "url": "{{S3_BUCKET_URL}}/blog/2/sample_photo_41.png",
+    "url": "{{S3_BUCKET_URL}}/blog/7bbb7a1c/sample_photo-e5fb9a19.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-07-18T04:41:00.548Z",
     "modified_at": "2004-07-18T04:41:00.548Z",
-    "blog_id": 2
+    "blog_id": "7bbb7a1c"
   },
   {
-    "id": 19,
+    "id": "cb8fb4f9",
     "name": "Sample File 19",
-    "url": "{{S3_BUCKET_URL}}/blog/3/sample_photo_19.png",
+    "url": "{{S3_BUCKET_URL}}/blog/68988be5/sample_photo-cb8fb4f9.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-07-14T04:36:05.105Z",
     "modified_at": "2003-07-14T04:36:05.105Z",
-    "blog_id": 3
+    "blog_id": "68988be5"
   },
   {
-    "id": 88,
+    "id": "48c0b7e8",
     "name": "Sample File 88",
-    "url": "{{S3_BUCKET_URL}}/blog/4/sample_photo_88.png",
+    "url": "{{S3_BUCKET_URL}}/blog/ffe4c306/sample_photo-48c0b7e8.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-03-29T21:14:03.744Z",
     "modified_at": "2006-03-29T21:14:03.744Z",
-    "blog_id": 4
+    "blog_id": "ffe4c306"
   },
   {
-    "id": 81,
+    "id": "e1598764",
     "name": "Sample File 81",
-    "url": "{{S3_BUCKET_URL}}/blog/5/sample_photo_81.png",
+    "url": "{{S3_BUCKET_URL}}/blog/00d36aa3/sample_photo-e1598764.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-01-21T11:21:40.554Z",
     "modified_at": "2006-01-21T11:21:40.554Z",
-    "blog_id": 5
+    "blog_id": "00d36aa3"
   },
   {
-    "id": 47,
+    "id": "883e6f2d",
     "name": "Sample File 47",
-    "url": "{{S3_BUCKET_URL}}/blog/6/sample_photo_47.png",
+    "url": "{{S3_BUCKET_URL}}/blog/fcabed78/sample_photo-883e6f2d.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-10-27T23:11:36.635Z",
     "modified_at": "2004-10-27T23:11:36.635Z",
-    "blog_id": 6
+    "blog_id": "fcabed78"
   },
   {
-    "id": 10,
+    "id": "18631448",
     "name": "Sample File 10",
-    "url": "{{S3_BUCKET_URL}}/blog/7/sample_photo_10.png",
+    "url": "{{S3_BUCKET_URL}}/blog/44fa3595/sample_photo-18631448.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-02-05T13:11:26.357Z",
     "modified_at": "2003-02-05T13:11:26.357Z",
-    "blog_id": 7
+    "blog_id": "44fa3595"
   },
   {
-    "id": 18,
+    "id": "c1461e4e",
     "name": "Sample File 18",
-    "url": "{{S3_BUCKET_URL}}/blog/8/sample_photo_18.png",
+    "url": "{{S3_BUCKET_URL}}/blog/7fca7f94/sample_photo-c1461e4e.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-05-08T18:41:18.227Z",
     "modified_at": "2003-05-08T18:41:18.227Z",
-    "blog_id": 8
+    "blog_id": "7fca7f94"
   },
   {
-    "id": 85,
+    "id": "690fa490",
     "name": "Sample File 85",
-    "url": "{{S3_BUCKET_URL}}/blog/9/sample_photo_85.png",
+    "url": "{{S3_BUCKET_URL}}/blog/d804f8c9/sample_photo-690fa490.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-02-25T08:27:09.950Z",
     "modified_at": "2006-02-25T08:27:09.950Z",
-    "blog_id": 9
+    "blog_id": "d804f8c9"
   },
   {
-    "id": 13,
+    "id": "baa61920",
     "name": "Sample File 13",
-    "url": "{{S3_BUCKET_URL}}/blog/10/sample_photo_13.png",
+    "url": "{{S3_BUCKET_URL}}/blog/bdfd8368/sample_photo-baa61920.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-02-27T18:31:19.755Z",
     "modified_at": "2003-02-27T18:31:19.755Z",
-    "blog_id": 10
+    "blog_id": "bdfd8368"
   },
   {
-    "id": 52,
+    "id": "3d273fc5",
     "name": "Sample File 52",
-    "url": "{{S3_BUCKET_URL}}/blog/11/sample_photo_52.png",
+    "url": "{{S3_BUCKET_URL}}/blog/f006663a/sample_photo-3d273fc5.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-12-23T18:07:37.384Z",
     "modified_at": "2004-12-23T18:07:37.384Z",
-    "blog_id": 11
+    "blog_id": "f006663a"
   },
   {
-    "id": 77,
+    "id": "acec7af8",
     "name": "Sample File 77",
-    "url": "{{S3_BUCKET_URL}}/blog/12/sample_photo_77.png",
+    "url": "{{S3_BUCKET_URL}}/blog/73c425db/sample_photo-acec7af8.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-12-01T06:29:46.165Z",
     "modified_at": "2005-12-01T06:29:46.165Z",
-    "blog_id": 12
+    "blog_id": "73c425db"
   },
   {
-    "id": 43,
+    "id": "f3b1f5d5",
     "name": "Sample File 43",
-    "url": "{{S3_BUCKET_URL}}/blog/13/sample_photo_43.png",
+    "url": "{{S3_BUCKET_URL}}/blog/fa8e5159/sample_photo-f3b1f5d5.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-09-15T04:19:59.443Z",
     "modified_at": "2004-09-15T04:19:59.443Z",
-    "blog_id": 13
+    "blog_id": "fa8e5159"
   },
   {
-    "id": 48,
+    "id": "f0b3fecd",
     "name": "Sample File 48",
-    "url": "{{S3_BUCKET_URL}}/blog/14/sample_photo_48.png",
+    "url": "{{S3_BUCKET_URL}}/blog/81e18e0b/sample_photo-f0b3fecd.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-11-19T05:11:42.846Z",
     "modified_at": "2004-11-19T05:11:42.846Z",
-    "blog_id": 14
+    "blog_id": "81e18e0b"
   },
   {
-    "id": 14,
+    "id": "db224fd3",
     "name": "Sample File 14",
-    "url": "{{S3_BUCKET_URL}}/blog/15/sample_photo_14.png",
+    "url": "{{S3_BUCKET_URL}}/blog/ffa01392/sample_photo-db224fd3.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-04-24T03:45:16.896Z",
     "modified_at": "2003-04-24T03:45:16.896Z",
-    "blog_id": 15
+    "blog_id": "ffa01392"
   },
   {
-    "id": 87,
+    "id": "9c33c079",
     "name": "Sample File 87",
-    "url": "{{S3_BUCKET_URL}}/blog/16/sample_photo_87.png",
+    "url": "{{S3_BUCKET_URL}}/blog/284ee1fe/sample_photo-9c33c079.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-03-14T15:14:17.615Z",
     "modified_at": "2006-03-14T15:14:17.615Z",
-    "blog_id": 16
+    "blog_id": "284ee1fe"
   },
   {
-    "id": 8,
+    "id": "479530f6",
     "name": "Sample File 8",
-    "url": "{{S3_BUCKET_URL}}/blog/17/sample_photo_8.png",
+    "url": "{{S3_BUCKET_URL}}/blog/4a943cb6/sample_photo-479530f6.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-10-27T16:17:37.454Z",
     "modified_at": "2002-10-27T16:17:37.454Z",
-    "blog_id": 17
+    "blog_id": "4a943cb6"
   },
   {
-    "id": 29,
+    "id": "077f906b",
     "name": "Sample File 29",
-    "url": "{{S3_BUCKET_URL}}/blog/18/sample_photo_29.png",
+    "url": "{{S3_BUCKET_URL}}/blog/4bddfa63/sample_photo-077f906b.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-02-18T01:45:11.664Z",
     "modified_at": "2004-02-18T01:45:11.664Z",
-    "blog_id": 18
+    "blog_id": "4bddfa63"
   },
   {
-    "id": 55,
+    "id": "f3e55232",
     "name": "Sample File 55",
-    "url": "{{S3_BUCKET_URL}}/blog/19/sample_photo_55.png",
+    "url": "{{S3_BUCKET_URL}}/blog/486d0333/sample_photo-f3e55232.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-01-16T18:53:51.878Z",
     "modified_at": "2005-01-16T18:53:51.878Z",
-    "blog_id": 19
+    "blog_id": "486d0333"
   },
   {
-    "id": 46,
+    "id": "61276734",
     "name": "Sample File 46",
-    "url": "{{S3_BUCKET_URL}}/blog/20/sample_photo_46.png",
+    "url": "{{S3_BUCKET_URL}}/blog/8f17d093/sample_photo-61276734.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-10-24T10:10:03.376Z",
     "modified_at": "2004-10-24T10:10:03.376Z",
-    "blog_id": 20
+    "blog_id": "8f17d093"
   },
   {
-    "id": 91,
+    "id": "de39f2ad",
     "name": "Sample File 91",
-    "url": "{{S3_BUCKET_URL}}/blog/21/sample_photo_91.png",
+    "url": "{{S3_BUCKET_URL}}/blog/39433e5d/sample_photo-de39f2ad.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-06-01T10:33:34.574Z",
     "modified_at": "2006-06-01T10:33:34.574Z",
-    "blog_id": 21
+    "blog_id": "39433e5d"
   },
   {
-    "id": 82,
+    "id": "9ec09e0c",
     "name": "Sample File 82",
-    "url": "{{S3_BUCKET_URL}}/blog/22/sample_photo_82.png",
+    "url": "{{S3_BUCKET_URL}}/blog/ab30829d/sample_photo-9ec09e0c.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-01-25T15:00:40.606Z",
     "modified_at": "2006-01-25T15:00:40.606Z",
-    "blog_id": 22
+    "blog_id": "ab30829d"
   },
   {
-    "id": 1,
+    "id": "0896c69a",
     "name": "Sample File 1",
-    "url": "{{S3_BUCKET_URL}}/blog/23/sample_photo_1.png",
+    "url": "{{S3_BUCKET_URL}}/blog/51d521ba/sample_photo-0896c69a.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-06-05T20:31:18.352Z",
     "modified_at": "2002-06-05T20:31:18.352Z",
-    "blog_id": 23
+    "blog_id": "51d521ba"
   },
   {
-    "id": 60,
+    "id": "9ef3a341",
     "name": "Sample File 60",
-    "url": "{{S3_BUCKET_URL}}/blog/25/sample_photo_60.png",
+    "url": "{{S3_BUCKET_URL}}/blog/2cae129b/sample_photo-9ef3a341.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-03-05T19:55:25.253Z",
     "modified_at": "2005-03-05T19:55:25.253Z",
-    "blog_id": 25
+    "blog_id": "2cae129b"
   },
   {
-    "id": 31,
+    "id": "ea02aac1",
     "name": "Sample File 31",
-    "url": "{{S3_BUCKET_URL}}/blog/26/sample_photo_31.png",
+    "url": "{{S3_BUCKET_URL}}/blog/b284e916/sample_photo-ea02aac1.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-03-26T09:53:31.732Z",
     "modified_at": "2004-03-26T09:53:31.732Z",
-    "blog_id": 26
+    "blog_id": "b284e916"
   },
   {
-    "id": 15,
+    "id": "b6ac9774",
     "name": "Sample File 15",
-    "url": "{{S3_BUCKET_URL}}/blog/27/sample_photo_15.png",
+    "url": "{{S3_BUCKET_URL}}/blog/11102a8d/sample_photo-b6ac9774.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-04-25T21:28:52.488Z",
     "modified_at": "2003-04-25T21:28:52.488Z",
-    "blog_id": 27
+    "blog_id": "11102a8d"
   },
   {
-    "id": 76,
+    "id": "01a8ffa2",
     "name": "Sample File 76",
-    "url": "{{S3_BUCKET_URL}}/blog/28/sample_photo_76.png",
+    "url": "{{S3_BUCKET_URL}}/blog/afe037dd/sample_photo-01a8ffa2.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-11-23T09:01:10.264Z",
     "modified_at": "2005-11-23T09:01:10.264Z",
-    "blog_id": 28
+    "blog_id": "afe037dd"
   },
   {
-    "id": 16,
+    "id": "e9ea8cc8",
     "name": "Sample File 16",
-    "url": "{{S3_BUCKET_URL}}/blog/29/sample_photo_16.png",
+    "url": "{{S3_BUCKET_URL}}/blog/a91a06a8/sample_photo-e9ea8cc8.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-04-26T14:25:57.660Z",
     "modified_at": "2003-04-26T14:25:57.660Z",
-    "blog_id": 29
+    "blog_id": "a91a06a8"
   },
   {
-    "id": 38,
+    "id": "3dc89860",
     "name": "Sample File 38",
-    "url": "{{S3_BUCKET_URL}}/blog/30/sample_photo_38.png",
+    "url": "{{S3_BUCKET_URL}}/blog/a286897d/sample_photo-3dc89860.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-06-09T01:15:12.689Z",
     "modified_at": "2004-06-09T01:15:12.689Z",
-    "blog_id": 30
+    "blog_id": "a286897d"
   },
   {
-    "id": 26,
+    "id": "b5158833",
     "name": "Sample File 26",
-    "url": "{{S3_BUCKET_URL}}/blog/31/sample_photo_26.png",
+    "url": "{{S3_BUCKET_URL}}/blog/8ee9f579/sample_photo-b5158833.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-01-02T16:23:30.973Z",
     "modified_at": "2004-01-02T16:23:30.973Z",
-    "blog_id": 31
+    "blog_id": "8ee9f579"
   },
   {
-    "id": 20,
+    "id": "58831626",
     "name": "Sample File 20",
-    "url": "{{S3_BUCKET_URL}}/blog/32/sample_photo_20.png",
+    "url": "{{S3_BUCKET_URL}}/blog/c069616c/sample_photo-58831626.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-08-19T03:21:55.110Z",
     "modified_at": "2003-08-19T03:21:55.110Z",
-    "blog_id": 32
+    "blog_id": "c069616c"
   },
   {
-    "id": 75,
+    "id": "b2b14a91",
     "name": "Sample File 75",
-    "url": "{{S3_BUCKET_URL}}/blog/33/sample_photo_75.png",
+    "url": "{{S3_BUCKET_URL}}/blog/39f48d57/sample_photo-b2b14a91.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-11-21T20:49:02.839Z",
     "modified_at": "2005-11-21T20:49:02.839Z",
-    "blog_id": 33
+    "blog_id": "39f48d57"
   },
   {
-    "id": 2,
+    "id": "e1490f99",
     "name": "Sample File 2",
-    "url": "{{S3_BUCKET_URL}}/blog/34/sample_photo_2.png",
+    "url": "{{S3_BUCKET_URL}}/blog/5076af82/sample_photo-e1490f99.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-06-15T11:41:10.424Z",
     "modified_at": "2002-06-15T11:41:10.424Z",
-    "blog_id": 34
+    "blog_id": "5076af82"
   },
   {
-    "id": 59,
+    "id": "e7018cce",
     "name": "Sample File 59",
-    "url": "{{S3_BUCKET_URL}}/blog/35/sample_photo_59.png",
+    "url": "{{S3_BUCKET_URL}}/blog/b1c282b6/sample_photo-e7018cce.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-02-06T10:54:00.738Z",
     "modified_at": "2005-02-06T10:54:00.738Z",
-    "blog_id": 35
+    "blog_id": "b1c282b6"
   },
   {
-    "id": 23,
+    "id": "24430891",
     "name": "Sample File 23",
-    "url": "{{S3_BUCKET_URL}}/blog/36/sample_photo_23.png",
+    "url": "{{S3_BUCKET_URL}}/blog/e9adac78/sample_photo-24430891.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-10-16T03:53:00.008Z",
     "modified_at": "2003-10-16T03:53:00.008Z",
-    "blog_id": 36
+    "blog_id": "e9adac78"
   },
   {
-    "id": 9,
+    "id": "a2dda076",
     "name": "Sample File 9",
-    "url": "{{S3_BUCKET_URL}}/blog/37/sample_photo_9.png",
+    "url": "{{S3_BUCKET_URL}}/blog/67d3f147/sample_photo-a2dda076.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-01-29T12:41:33.637Z",
     "modified_at": "2003-01-29T12:41:33.637Z",
-    "blog_id": 37
+    "blog_id": "67d3f147"
   },
   {
-    "id": 72,
+    "id": "bb76bca0",
     "name": "Sample File 72",
-    "url": "{{S3_BUCKET_URL}}/blog/38/sample_photo_72.png",
+    "url": "{{S3_BUCKET_URL}}/blog/1aeb41a1/sample_photo-bb76bca0.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-10-07T08:19:34.735Z",
     "modified_at": "2005-10-07T08:19:34.735Z",
-    "blog_id": 38
+    "blog_id": "1aeb41a1"
   },
   {
-    "id": 65,
+    "id": "5d881453",
     "name": "Sample File 65",
-    "url": "{{S3_BUCKET_URL}}/blog/39/sample_photo_65.png",
+    "url": "{{S3_BUCKET_URL}}/blog/eb993c98/sample_photo-5d881453.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-07-04T08:26:36.617Z",
     "modified_at": "2005-07-04T08:26:36.617Z",
-    "blog_id": 39
+    "blog_id": "eb993c98"
   },
   {
-    "id": 17,
+    "id": "eafca6ad",
     "name": "Sample File 17",
-    "url": "{{S3_BUCKET_URL}}/blog/40/sample_photo_17.png",
+    "url": "{{S3_BUCKET_URL}}/blog/78d4151a/sample_photo-eafca6ad.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-04-27T16:37:40.900Z",
     "modified_at": "2003-04-27T16:37:40.900Z",
-    "blog_id": 40
+    "blog_id": "78d4151a"
   },
   {
-    "id": 80,
+    "id": "d70df4ed",
     "name": "Sample File 80",
-    "url": "{{S3_BUCKET_URL}}/blog/41/sample_photo_80.png",
+    "url": "{{S3_BUCKET_URL}}/blog/d886c673/sample_photo-d70df4ed.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-01-02T13:06:11.811Z",
     "modified_at": "2006-01-02T13:06:11.811Z",
-    "blog_id": 41
+    "blog_id": "d886c673"
   },
   {
-    "id": 90,
+    "id": "8fa2abcd",
     "name": "Sample File 90",
-    "url": "{{S3_BUCKET_URL}}/blog/42/sample_photo_90.png",
+    "url": "{{S3_BUCKET_URL}}/blog/3d18a531/sample_photo-8fa2abcd.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-05-06T08:50:29.578Z",
     "modified_at": "2006-05-06T08:50:29.578Z",
-    "blog_id": 42
+    "blog_id": "3d18a531"
   },
   {
-    "id": 66,
+    "id": "b40e01c0",
     "name": "Sample File 66",
-    "url": "{{S3_BUCKET_URL}}/blog/43/sample_photo_66.png",
+    "url": "{{S3_BUCKET_URL}}/blog/fd40a385/sample_photo-b40e01c0.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-07-20T02:55:01.803Z",
     "modified_at": "2005-07-20T02:55:01.803Z",
-    "blog_id": 43
+    "blog_id": "fd40a385"
   },
   {
-    "id": 33,
+    "id": "45aac316",
     "name": "Sample File 33",
-    "url": "{{S3_BUCKET_URL}}/blog/44/sample_photo_33.png",
+    "url": "{{S3_BUCKET_URL}}/blog/3639edd4/sample_photo-45aac316.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-04-30T07:55:19.343Z",
     "modified_at": "2004-04-30T07:55:19.343Z",
-    "blog_id": 44
+    "blog_id": "3639edd4"
   },
   {
-    "id": 4,
+    "id": "74e3314b",
     "name": "Sample File 4",
-    "url": "{{S3_BUCKET_URL}}/blog/45/sample_photo_4.png",
+    "url": "{{S3_BUCKET_URL}}/blog/01c17762/sample_photo-74e3314b.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-08-18T20:14:09.666Z",
     "modified_at": "2002-08-18T20:14:09.666Z",
-    "blog_id": 45
+    "blog_id": "01c17762"
   },
   {
-    "id": 30,
+    "id": "5b502267",
     "name": "Sample File 30",
-    "url": "{{S3_BUCKET_URL}}/blog/46/sample_photo_30.png",
+    "url": "{{S3_BUCKET_URL}}/blog/a0416310/sample_photo-5b502267.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-02-20T18:17:44.189Z",
     "modified_at": "2004-02-20T18:17:44.189Z",
-    "blog_id": 46
+    "blog_id": "a0416310"
   },
   {
-    "id": 89,
+    "id": "2520c4d2",
     "name": "Sample File 89",
-    "url": "{{S3_BUCKET_URL}}/blog/48/sample_photo_89.png",
+    "url": "{{S3_BUCKET_URL}}/blog/fb2c80dc/sample_photo-2520c4d2.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-04-10T02:58:24.885Z",
     "modified_at": "2006-04-10T02:58:24.885Z",
-    "blog_id": 48
+    "blog_id": "fb2c80dc"
   },
   {
-    "id": 22,
+    "id": "bf4fe684",
     "name": "Sample File 22",
-    "url": "{{S3_BUCKET_URL}}/blog/49/sample_photo_22.png",
+    "url": "{{S3_BUCKET_URL}}/blog/f382c386/sample_photo-bf4fe684.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-08-30T22:15:32.390Z",
     "modified_at": "2003-08-30T22:15:32.390Z",
-    "blog_id": 49
+    "blog_id": "f382c386"
   },
   {
-    "id": 34,
+    "id": "ca98d386",
     "name": "Sample File 34",
-    "url": "{{S3_BUCKET_URL}}/blog/50/sample_photo_34.png",
+    "url": "{{S3_BUCKET_URL}}/blog/2e6747f0/sample_photo-ca98d386.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-05-03T03:35:59.305Z",
     "modified_at": "2004-05-03T03:35:59.305Z",
-    "blog_id": 50
+    "blog_id": "2e6747f0"
   },
   {
-    "id": 44,
+    "id": "741eed64",
     "name": "Sample File 44",
-    "url": "{{S3_BUCKET_URL}}/blog/51/sample_photo_44.png",
+    "url": "{{S3_BUCKET_URL}}/blog/8ed77c46/sample_photo-741eed64.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-09-29T15:36:13.768Z",
     "modified_at": "2004-09-29T15:36:13.768Z",
-    "blog_id": 51
+    "blog_id": "8ed77c46"
   },
   {
-    "id": 32,
+    "id": "b96ce507",
     "name": "Sample File 32",
-    "url": "{{S3_BUCKET_URL}}/blog/52/sample_photo_32.png",
+    "url": "{{S3_BUCKET_URL}}/blog/5567db02/sample_photo-b96ce507.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-04-08T10:09:28.590Z",
     "modified_at": "2004-04-08T10:09:28.590Z",
-    "blog_id": 52
+    "blog_id": "5567db02"
   },
   {
-    "id": 51,
+    "id": "2a46c6ef",
     "name": "Sample File 51",
-    "url": "{{S3_BUCKET_URL}}/blog/53/sample_photo_51.png",
+    "url": "{{S3_BUCKET_URL}}/blog/8fd2e65a/sample_photo-2a46c6ef.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-12-19T20:17:37.773Z",
     "modified_at": "2004-12-19T20:17:37.773Z",
-    "blog_id": 53
+    "blog_id": "8fd2e65a"
   },
   {
-    "id": 40,
+    "id": "f9d9aee7",
     "name": "Sample File 40",
-    "url": "{{S3_BUCKET_URL}}/blog/54/sample_photo_40.png",
+    "url": "{{S3_BUCKET_URL}}/blog/e3e55f83/sample_photo-f9d9aee7.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-07-01T10:53:07.081Z",
     "modified_at": "2004-07-01T10:53:07.081Z",
-    "blog_id": 54
+    "blog_id": "e3e55f83"
   },
   {
-    "id": 27,
+    "id": "4d595605",
     "name": "Sample File 27",
-    "url": "{{S3_BUCKET_URL}}/blog/56/sample_photo_27.png",
+    "url": "{{S3_BUCKET_URL}}/blog/d45896fe/sample_photo-4d595605.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-01-14T11:16:30.366Z",
     "modified_at": "2004-01-14T11:16:30.366Z",
-    "blog_id": 56
+    "blog_id": "d45896fe"
   },
   {
-    "id": 63,
+    "id": "2c4e7205",
     "name": "Sample File 63",
-    "url": "{{S3_BUCKET_URL}}/blog/57/sample_photo_63.png",
+    "url": "{{S3_BUCKET_URL}}/blog/ea6b6ffe/sample_photo-2c4e7205.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-04-17T17:31:01.663Z",
     "modified_at": "2005-04-17T17:31:01.663Z",
-    "blog_id": 57
+    "blog_id": "ea6b6ffe"
   },
   {
-    "id": 69,
+    "id": "e5b5ac7d",
     "name": "Sample File 69",
-    "url": "{{S3_BUCKET_URL}}/blog/59/sample_photo_69.png",
+    "url": "{{S3_BUCKET_URL}}/blog/470f4852/sample_photo-e5b5ac7d.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-08-30T23:43:42.389Z",
     "modified_at": "2005-08-30T23:43:42.389Z",
-    "blog_id": 59
+    "blog_id": "470f4852"
   },
   {
-    "id": 42,
+    "id": "4cff0ff5",
     "name": "Sample File 42",
-    "url": "{{S3_BUCKET_URL}}/blog/60/sample_photo_42.png",
+    "url": "{{S3_BUCKET_URL}}/blog/165c6de2/sample_photo-4cff0ff5.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-07-29T10:34:00.719Z",
     "modified_at": "2004-07-29T10:34:00.719Z",
-    "blog_id": 60
+    "blog_id": "165c6de2"
   },
   {
-    "id": 68,
+    "id": "f4d6b5ff",
     "name": "Sample File 68",
-    "url": "{{S3_BUCKET_URL}}/blog/61/sample_photo_68.png",
+    "url": "{{S3_BUCKET_URL}}/blog/0c70c29c/sample_photo-f4d6b5ff.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-08-24T13:00:14.884Z",
     "modified_at": "2005-08-24T13:00:14.884Z",
-    "blog_id": 61
+    "blog_id": "0c70c29c"
   },
   {
-    "id": 6,
+    "id": "699df2cb",
     "name": "Sample File 6",
-    "url": "{{S3_BUCKET_URL}}/blog/64/sample_photo_6.png",
+    "url": "{{S3_BUCKET_URL}}/blog/999e32a3/sample_photo-699df2cb.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-09-14T16:13:02.028Z",
     "modified_at": "2002-09-14T16:13:02.028Z",
-    "blog_id": 64
+    "blog_id": "999e32a3"
   },
   {
-    "id": 50,
+    "id": "b52ab2b4",
     "name": "Sample File 50",
-    "url": "{{S3_BUCKET_URL}}/blog/65/sample_photo_50.png",
+    "url": "{{S3_BUCKET_URL}}/blog/160da6c9/sample_photo-b52ab2b4.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-12-05T16:01:06.865Z",
     "modified_at": "2004-12-05T16:01:06.865Z",
-    "blog_id": 65
+    "blog_id": "160da6c9"
   },
   {
-    "id": 36,
+    "id": "f3415c20",
     "name": "Sample File 36",
-    "url": "{{S3_BUCKET_URL}}/blog/66/sample_photo_36.png",
+    "url": "{{S3_BUCKET_URL}}/blog/cdd919cb/sample_photo-f3415c20.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-06-03T18:33:50.489Z",
     "modified_at": "2004-06-03T18:33:50.489Z",
-    "blog_id": 66
+    "blog_id": "cdd919cb"
   },
   {
-    "id": 12,
+    "id": "c5aa5723",
     "name": "Sample File 12",
-    "url": "{{S3_BUCKET_URL}}/blog/67/sample_photo_12.png",
+    "url": "{{S3_BUCKET_URL}}/blog/2460b365/sample_photo-c5aa5723.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-02-17T19:22:33.150Z",
     "modified_at": "2003-02-17T19:22:33.150Z",
-    "blog_id": 67
+    "blog_id": "2460b365"
   },
   {
-    "id": 49,
+    "id": "617bd595",
     "name": "Sample File 49",
-    "url": "{{S3_BUCKET_URL}}/blog/68/sample_photo_49.png",
+    "url": "{{S3_BUCKET_URL}}/blog/44cc73c5/sample_photo-617bd595.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-11-25T04:25:57.477Z",
     "modified_at": "2004-11-25T04:25:57.477Z",
-    "blog_id": 68
+    "blog_id": "44cc73c5"
   },
   {
-    "id": 37,
+    "id": "1f26119d",
     "name": "Sample File 37",
-    "url": "{{S3_BUCKET_URL}}/blog/69/sample_photo_37.png",
+    "url": "{{S3_BUCKET_URL}}/blog/5f27512d/sample_photo-1f26119d.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-06-04T02:00:14.867Z",
     "modified_at": "2004-06-04T02:00:14.867Z",
-    "blog_id": 69
+    "blog_id": "5f27512d"
   },
   {
-    "id": 73,
+    "id": "0e45a098",
     "name": "Sample File 73",
-    "url": "{{S3_BUCKET_URL}}/blog/70/sample_photo_73.png",
+    "url": "{{S3_BUCKET_URL}}/blog/2d768672/sample_photo-0e45a098.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-10-18T00:10:09.719Z",
     "modified_at": "2005-10-18T00:10:09.719Z",
-    "blog_id": 70
+    "blog_id": "2d768672"
   },
   {
-    "id": 28,
+    "id": "4513972b",
     "name": "Sample File 28",
-    "url": "{{S3_BUCKET_URL}}/blog/71/sample_photo_28.png",
+    "url": "{{S3_BUCKET_URL}}/blog/81a8f52a/sample_photo-4513972b.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-01-30T12:59:54.459Z",
     "modified_at": "2004-01-30T12:59:54.459Z",
-    "blog_id": 71
+    "blog_id": "81a8f52a"
   },
   {
-    "id": 70,
+    "id": "8ac990f0",
     "name": "Sample File 70",
-    "url": "{{S3_BUCKET_URL}}/blog/72/sample_photo_70.png",
+    "url": "{{S3_BUCKET_URL}}/blog/21d7bba9/sample_photo-8ac990f0.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-09-09T01:10:40.939Z",
     "modified_at": "2005-09-09T01:10:40.939Z",
-    "blog_id": 72
+    "blog_id": "21d7bba9"
   },
   {
-    "id": 45,
+    "id": "38a90155",
     "name": "Sample File 45",
-    "url": "{{S3_BUCKET_URL}}/blog/73/sample_photo_45.png",
+    "url": "{{S3_BUCKET_URL}}/blog/bd17918f/sample_photo-38a90155.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-10-04T04:30:09.067Z",
     "modified_at": "2004-10-04T04:30:09.067Z",
-    "blog_id": 73
+    "blog_id": "bd17918f"
   },
   {
-    "id": 35,
+    "id": "e01a4c8e",
     "name": "Sample File 35",
-    "url": "{{S3_BUCKET_URL}}/blog/74/sample_photo_35.png",
+    "url": "{{S3_BUCKET_URL}}/blog/ef5ce153/sample_photo-e01a4c8e.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-05-19T21:26:43.945Z",
     "modified_at": "2004-05-19T21:26:43.945Z",
-    "blog_id": 74
+    "blog_id": "ef5ce153"
   },
   {
-    "id": 86,
+    "id": "1b10972b",
     "name": "Sample File 86",
-    "url": "{{S3_BUCKET_URL}}/blog/75/sample_photo_86.png",
+    "url": "{{S3_BUCKET_URL}}/blog/b80ab0be/sample_photo-1b10972b.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-03-01T07:28:27.176Z",
     "modified_at": "2006-03-01T07:28:27.176Z",
-    "blog_id": 75
+    "blog_id": "b80ab0be"
   },
   {
-    "id": 78,
+    "id": "f6befd86",
     "name": "Sample File 78",
-    "url": "{{S3_BUCKET_URL}}/blog/77/sample_photo_78.png",
+    "url": "{{S3_BUCKET_URL}}/blog/52698be0/sample_photo-f6befd86.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-12-11T02:23:51.565Z",
     "modified_at": "2005-12-11T02:23:51.565Z",
-    "blog_id": 77
+    "blog_id": "52698be0"
   },
   {
-    "id": 83,
+    "id": "bc1c7391",
     "name": "Sample File 83",
-    "url": "{{S3_BUCKET_URL}}/blog/78/sample_photo_83.png",
+    "url": "{{S3_BUCKET_URL}}/blog/1e5c7af5/sample_photo-bc1c7391.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-01-26T23:19:19.538Z",
     "modified_at": "2006-01-26T23:19:19.538Z",
-    "blog_id": 78
+    "blog_id": "1e5c7af5"
   },
   {
-    "id": 58,
+    "id": "fde80c23",
     "name": "Sample File 58",
-    "url": "{{S3_BUCKET_URL}}/blog/79/sample_photo_58.png",
+    "url": "{{S3_BUCKET_URL}}/blog/325445fb/sample_photo-fde80c23.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-01-31T10:54:14.180Z",
     "modified_at": "2005-01-31T10:54:14.180Z",
-    "blog_id": 79
+    "blog_id": "325445fb"
   },
   {
-    "id": 57,
+    "id": "198e04be",
     "name": "Sample File 57",
-    "url": "{{S3_BUCKET_URL}}/blog/80/sample_photo_57.png",
+    "url": "{{S3_BUCKET_URL}}/blog/704935c4/sample_photo-198e04be.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-01-24T17:52:42.581Z",
     "modified_at": "2005-01-24T17:52:42.581Z",
-    "blog_id": 80
+    "blog_id": "704935c4"
   },
   {
-    "id": 56,
+    "id": "83800568",
     "name": "Sample File 56",
-    "url": "{{S3_BUCKET_URL}}/blog/81/sample_photo_56.png",
+    "url": "{{S3_BUCKET_URL}}/blog/4e33edfe/sample_photo-83800568.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-01-21T20:16:59.164Z",
     "modified_at": "2005-01-21T20:16:59.164Z",
-    "blog_id": 81
+    "blog_id": "4e33edfe"
   },
   {
-    "id": 11,
+    "id": "8a66bfa8",
     "name": "Sample File 11",
-    "url": "{{S3_BUCKET_URL}}/blog/82/sample_photo_11.png",
+    "url": "{{S3_BUCKET_URL}}/blog/4437dc42/sample_photo-8a66bfa8.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-02-17T06:19:18.880Z",
     "modified_at": "2003-02-17T06:19:18.880Z",
-    "blog_id": 82
+    "blog_id": "4437dc42"
   },
   {
-    "id": 61,
+    "id": "3279152b",
     "name": "Sample File 61",
-    "url": "{{S3_BUCKET_URL}}/blog/83/sample_photo_61.png",
+    "url": "{{S3_BUCKET_URL}}/blog/63ae14f7/sample_photo-3279152b.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-03-05T20:20:00.840Z",
     "modified_at": "2005-03-05T20:20:00.840Z",
-    "blog_id": 83
+    "blog_id": "63ae14f7"
   },
   {
-    "id": 67,
+    "id": "3c15ea20",
     "name": "Sample File 67",
-    "url": "{{S3_BUCKET_URL}}/blog/84/sample_photo_67.png",
+    "url": "{{S3_BUCKET_URL}}/blog/c9cbc87a/sample_photo-3c15ea20.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-07-23T12:32:58.414Z",
     "modified_at": "2005-07-23T12:32:58.414Z",
-    "blog_id": 84
+    "blog_id": "c9cbc87a"
   },
   {
-    "id": 54,
+    "id": "122b8bfa",
     "name": "Sample File 54",
-    "url": "{{S3_BUCKET_URL}}/blog/85/sample_photo_54.png",
+    "url": "{{S3_BUCKET_URL}}/blog/cef74e7f/sample_photo-122b8bfa.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-01-15T10:18:26.521Z",
     "modified_at": "2005-01-15T10:18:26.521Z",
-    "blog_id": 85
+    "blog_id": "cef74e7f"
   },
   {
-    "id": 64,
+    "id": "5a4ba75d",
     "name": "Sample File 64",
-    "url": "{{S3_BUCKET_URL}}/blog/86/sample_photo_64.png",
+    "url": "{{S3_BUCKET_URL}}/blog/1877d0ff/sample_photo-5a4ba75d.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-05-29T00:43:43.904Z",
     "modified_at": "2005-05-29T00:43:43.904Z",
-    "blog_id": 86
+    "blog_id": "1877d0ff"
   },
   {
-    "id": 25,
+    "id": "5ac1b41e",
     "name": "Sample File 25",
-    "url": "{{S3_BUCKET_URL}}/blog/87/sample_photo_25.png",
+    "url": "{{S3_BUCKET_URL}}/blog/562ace0d/sample_photo-5ac1b41e.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-10-26T05:56:35.762Z",
     "modified_at": "2003-10-26T05:56:35.762Z",
-    "blog_id": 87
+    "blog_id": "562ace0d"
   },
   {
-    "id": 24,
+    "id": "8565fe96",
     "name": "Sample File 24",
-    "url": "{{S3_BUCKET_URL}}/blog/88/sample_photo_24.png",
+    "url": "{{S3_BUCKET_URL}}/blog/7dcf31bc/sample_photo-8565fe96.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-10-22T15:21:37.702Z",
     "modified_at": "2003-10-22T15:21:37.702Z",
-    "blog_id": 88
+    "blog_id": "7dcf31bc"
   },
   {
-    "id": 5,
+    "id": "189788f9",
     "name": "Sample File 5",
-    "url": "{{S3_BUCKET_URL}}/blog/89/sample_photo_5.png",
+    "url": "{{S3_BUCKET_URL}}/blog/db98613d/sample_photo-189788f9.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-08-29T12:28:38.322Z",
     "modified_at": "2002-08-29T12:28:38.322Z",
-    "blog_id": 89
+    "blog_id": "db98613d"
   },
   {
-    "id": 84,
+    "id": "58624881",
     "name": "Sample File 84",
-    "url": "{{S3_BUCKET_URL}}/blog/90/sample_photo_84.png",
+    "url": "{{S3_BUCKET_URL}}/blog/7ed04216/sample_photo-58624881.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2006-02-08T09:51:36.615Z",
     "modified_at": "2006-02-08T09:51:36.615Z",
-    "blog_id": 90
+    "blog_id": "7ed04216"
   },
   {
-    "id": 21,
+    "id": "5c665ad6",
     "name": "Sample File 21",
-    "url": "{{S3_BUCKET_URL}}/blog/91/sample_photo_21.png",
+    "url": "{{S3_BUCKET_URL}}/blog/5b67a81f/sample_photo-5c665ad6.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2003-08-27T01:26:24.904Z",
     "modified_at": "2003-08-27T01:26:24.904Z",
-    "blog_id": 91
+    "blog_id": "5b67a81f"
   },
   {
-    "id": 62,
+    "id": "28d56a96",
     "name": "Sample File 62",
-    "url": "{{S3_BUCKET_URL}}/blog/92/sample_photo_62.png",
+    "url": "{{S3_BUCKET_URL}}/blog/6ef8104b/sample_photo-28d56a96.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-03-12T09:33:15.097Z",
     "modified_at": "2005-03-12T09:33:15.097Z",
-    "blog_id": 92
+    "blog_id": "6ef8104b"
   },
   {
-    "id": 74,
+    "id": "b8a736e7",
     "name": "Sample File 74",
-    "url": "{{S3_BUCKET_URL}}/blog/93/sample_photo_74.png",
+    "url": "{{S3_BUCKET_URL}}/blog/8abc4394/sample_photo-b8a736e7.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-10-29T06:26:02.972Z",
     "modified_at": "2005-10-29T06:26:02.972Z",
-    "blog_id": 93
+    "blog_id": "8abc4394"
   },
   {
-    "id": 79,
+    "id": "d2f4d5bc",
     "name": "Sample File 79",
-    "url": "{{S3_BUCKET_URL}}/blog/95/sample_photo_79.png",
+    "url": "{{S3_BUCKET_URL}}/blog/01ecd3f9/sample_photo-d2f4d5bc.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-12-24T15:41:44.860Z",
     "modified_at": "2005-12-24T15:41:44.860Z",
-    "blog_id": 95
+    "blog_id": "01ecd3f9"
   },
   {
-    "id": 53,
+    "id": "2d521bde",
     "name": "Sample File 53",
-    "url": "{{S3_BUCKET_URL}}/blog/96/sample_photo_53.png",
+    "url": "{{S3_BUCKET_URL}}/blog/7cae896b/sample_photo-2d521bde.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-01-14T01:07:36.996Z",
     "modified_at": "2005-01-14T01:07:36.996Z",
-    "blog_id": 96
+    "blog_id": "7cae896b"
   },
   {
-    "id": 3,
+    "id": "088eb132",
     "name": "Sample File 3",
-    "url": "{{S3_BUCKET_URL}}/blog/97/sample_photo_3.png",
+    "url": "{{S3_BUCKET_URL}}/blog/581d7454/sample_photo-088eb132.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2002-08-05T22:00:13.886Z",
     "modified_at": "2002-08-05T22:00:13.886Z",
-    "blog_id": 97
+    "blog_id": "581d7454"
   },
   {
-    "id": 39,
+    "id": "6b6ac9c4",
     "name": "Sample File 39",
-    "url": "{{S3_BUCKET_URL}}/blog/98/sample_photo_39.png",
+    "url": "{{S3_BUCKET_URL}}/blog/9cbf2e8b/sample_photo-6b6ac9c4.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2004-06-14T00:25:48.669Z",
     "modified_at": "2004-06-14T00:25:48.669Z",
-    "blog_id": 98
+    "blog_id": "9cbf2e8b"
   },
   {
-    "id": 71,
+    "id": "9ba4ac09",
     "name": "Sample File 71",
-    "url": "{{S3_BUCKET_URL}}/blog/100/sample_photo_71.png",
+    "url": "{{S3_BUCKET_URL}}/blog/09c56f36/sample_photo-9ba4ac09.png",
     "alt": "A sample photo.",
     "size": 320,
     "type": "image/png",
     "expires_at": null,
     "created_at": "2005-09-13T13:14:35.959Z",
     "modified_at": "2005-09-13T13:14:35.959Z",
-    "blog_id": 100
+    "blog_id": "09c56f36"
   }
 ]

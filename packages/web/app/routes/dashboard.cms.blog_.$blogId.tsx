@@ -18,7 +18,7 @@ export function shouldRevalidate({ nextUrl, currentUrl, defaultShouldRevalidate 
 // Define Loader Function
 //---------------------------------------------------------------------------------------------------------------------
 // Define params
-const ZLoaderParams = z.object({ blogId: z.coerce.number() });
+const ZLoaderParams = z.object({ blogId: z.string() });
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const log = logger(request);
@@ -66,7 +66,6 @@ function BlogId() {
   const onSave = React.useMemo<ToolbarProps["onSave"]>(
     () => (value, save) => {
       const data = new FormData();
-      data.set("id", blog.id.toString());
       data.set("body", value);
       save.submit(data, { method: "PATCH", action: `/blog/${blog.id}` });
     },
