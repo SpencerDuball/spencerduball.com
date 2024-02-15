@@ -10,7 +10,7 @@ async function main() {
   // migration scripts
   program
     .command("db:migrate:create <name>")
-    .description("Creates the migration, seed, and habitat files from the supplied name.")
+    .description("Creates the migration and seed files from the supplied name.")
     .action(async (name) => await migrate.create({}, name));
   program
     .command("db:migrate:status")
@@ -24,25 +24,21 @@ async function main() {
   // seed scripts
   program
     .command("db:seed")
-    .description("Runs seeds and habitat scripts up to the latest migration applied.")
+    .description("Runs seed scripts up to the latest migration applied.")
     .action(async () => await seed.seed({}));
   program
-    .command("db:seed:replant")
-    .description("Removes all seed data (not habitat data), and then reapplies the seed data.")
-    .action(async () => await seed.replant({}));
-  program
     .command("db:seed:reset")
-    .description("Removes all seed data and habitat data.")
+    .description("Removes all seed data.")
     .action(async () => await seed.reset({}));
 
   // misc scripts
   program
     .command("db:reset")
-    .description("Removes all migrations, habitat data, and seed data.")
+    .description("Removes all migrations and seed data.")
     .action(async () => await misc.reset({}));
   program
     .command("db:setup")
-    .description("Applies all migrations, runs all habitat scripts, and runs all seed scripts.")
+    .description("Applies all migrations and runs all seed scripts.")
     .action(async () => misc.setup({}));
   program
     .command("db:start")

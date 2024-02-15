@@ -9,13 +9,14 @@ import { Ddb } from "@spencerduballcom/db/ddb";
 import { Table } from "sst/node/table";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { migrate } from "./migrate";
-import { seed, replant } from "./seed";
+import { seed } from "./seed";
 import { spawn, execSync } from "child_process";
 import { createClient } from "@libsql/client";
+import fs from "fs-extra";
 
 /**
  * This function will reset the database, S3 bucket, and dynamodb to their original state. Everything will be removed
- * including migration files, habitat data, and seed data.
+ * including migration files and seed data.
  */
 export async function reset({ s3Client, ddb }: ScriptInput) {
   let spinner = ora("Connecting to the database ...").start();
@@ -59,8 +60,8 @@ export async function reset({ s3Client, ddb }: ScriptInput) {
 }
 
 /**
- * This function will apply all migrations and then run the habitat and seed functions. This should be called after a
- * reset has run or from a clearn setup.
+ * This function will apply all migrations and then run the seed functions. This should be called after a
+ * reset has run or from a clean setup.
  */
 export async function setup({ sqldb, s3Client, ddb }: ScriptInput) {
   // create the clients
@@ -74,7 +75,7 @@ export async function setup({ sqldb, s3Client, ddb }: ScriptInput) {
   // apply all migrations
   await migrate({ sqldb: db, s3Client: s3, ddb: dynamo });
 
-  // apply all habitat and seed data
+  // apply all seed data
   await seed({ sqldb: db, s3Client: s3, ddb: dynamo });
 }
 
@@ -98,23 +99,7 @@ export async function start() {
   // start the database
   const url = new URL(Config.DATABASE_URL);
   if (url.hostname === "127.0.0.1" && url.port) {
-    spawn(`turso`, ["dev", `--port=${url.port}`], { stdio: "inherit" }).on("spawn", async () => {
-      // create the clients
-      const db = new Kysely({
-        dialect: new LibsqlDialect({ url: Config.DATABASE_URL, authToken: Config.DATABASE_AUTH_TOKEN }),
-      });
-      const s3 = new S3Client({});
-      const dynamo = new Ddb({
-        tableName: Table.table.tableName,
-        client: new DynamoDBClient({ region: Config.REGION }),
-      });
-
-      // migrate and replant the database
-      await migrate({ sqldb: db, s3Client: s3, ddb: dynamo });
-      await replant({ sqldb: db, s3Client: s3, ddb: dynamo });
-
-      // destroy the database when finished
-      await db.destroy();
-    });
+    fs.ensureDirSync("local-db");
+    spawn(`turso`, ["dev", `--port=${url.port}`, `--db-file=./local-db/db.sqld`], { stdio: "inherit" });
   } else console.error("Check the DATABASE_URL, it doesn't match the localhost or is missing a port number.");
 }

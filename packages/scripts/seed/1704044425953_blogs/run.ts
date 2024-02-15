@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import mime from "mime";
 import { glob } from "glob";
-import { clearBucket, type ScriptInput } from "../../../db/lib";
+import { clearBucket, type ScriptInput } from "../../db/lib";
 import { Bucket } from "sst/node/bucket";
 import { Config } from "sst/node/config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";

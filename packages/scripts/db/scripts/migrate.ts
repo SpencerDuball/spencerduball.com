@@ -16,23 +16,6 @@ const migrationTemplate = [
   `export { up, down };`,
 ].join("\n");
 
-const habitatTemplate = [
-  `import { type ScriptInput } from "../../../db/lib";`,
-  ``,
-  `/**`,
-  ` * This procedure is meant to be called from the database scripts and will insert habitat data. Such as files and`,
-  ` * database records that should always exist in your app - or files that don't change much. For example, we don't`,
-  ` * need to reupload a large set of files evertime we replant the seed info.`,
-  ` */`,
-  `export async function up({}: ScriptInput) {}`,
-  ``,
-  `/**`,
-  ` * This procedure is meant to be called from the database scripts and will delete habitat data.`,
-  ` */`,
-  `export async function down({}: ScriptInput) {}`,
-  ``,
-].join("\n");
-
 const seedTemplate = [
   `import { type ScriptInput } from "../../../db/lib";`,
   ``,
@@ -50,12 +33,10 @@ const seedTemplate = [
 ].join("\n");
 
 /**
- * Creates a new migration file and associated habitat + seed scripts. The habitat script is used to for operations such
- * as uploading assets/records that don't change, or change very infrequently. The seed script is used for operations
- * such as uploading assets/records that do change frequently or need to be reset between tests for example.
+ * Creates a new migration file and associated seed scripts.
  */
 export async function create({}: ScriptInput, name: string) {
-  const spinner = ora("Generating the migration, habitat, seed ...").start();
+  const spinner = ora("Generating the migration and seed ...").start();
 
   // generate migration ID
   const migrationId = `${Date.now()}_${name}`;
@@ -64,19 +45,12 @@ export async function create({}: ScriptInput, name: string) {
   await fs.ensureDir("migrations");
   await fs.writeFile(path.resolve("migrations", `${migrationId}.ts`), migrationTemplate);
 
-  // create the habitat files
-  await fs.ensureDir(path.resolve("seed", migrationId, "habitat"));
-  await fs.writeFile(path.resolve("seed", migrationId, "habitat", "run.ts"), habitatTemplate);
-  await fs.ensureDir(path.resolve("seed", migrationId, "habitat", "assets"));
-  await fs.writeFile(path.resolve("seed", migrationId, "habitat", "assets", ".keep"), "");
+  await fs.ensureDir(path.resolve("seed", migrationId));
+  await fs.writeFile(path.resolve("seed", migrationId, "run.ts"), seedTemplate);
+  await fs.ensureDir(path.resolve("seed", migrationId, "assets"));
+  await fs.writeFile(path.resolve("seed", migrationId, "assets", ".keep"), "");
 
-  // create the seed files
-  await fs.ensureDir(path.resolve("seed", migrationId, "seed"));
-  await fs.writeFile(path.resolve("seed", migrationId, "seed", "run.ts"), seedTemplate);
-  await fs.ensureDir(path.resolve("seed", migrationId, "seed", "assets"));
-  await fs.writeFile(path.resolve("seed", migrationId, "seed", "assets", ".keep"), "");
-
-  spinner.succeed(`Created migration, habitat, and seed for: ${migrationId}.`);
+  spinner.succeed(`Created migration and seed for: ${migrationId}.`);
 }
 
 /**
