@@ -1,10 +1,10 @@
 import * as React from "react";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { FileUploadBox } from "~/lib/ui/file-upload-box";
 import { z } from "zod";
 import { logger, db } from "~/lib/util/globals.server";
-import { execute } from "~/lib/util/utils.server";
-import { useLoaderData } from "@remix-run/react";
+import { execute, getSessionInfo } from "~/lib/util/utils.server";
+import { useLoaderData, useFetcher } from "@remix-run/react";
 import { FileLi, DialogContent } from "~/lib/app/file-li";
 import { IBlogFile, parseBlogFile } from "~/model/blogs";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -14,6 +14,10 @@ const ZLoaderParams = z.object({ blogId: z.string() });
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const log = logger(request);
+
+  // check if user is admin
+  const session = await getSessionInfo(request);
+  if (!session?.roles.includes("admin")) throw redirect("/");
 
   const { blogId } = await ZLoaderParams.parseAsync(params).catch((e) => {
     throw new Response(null, { status: 404, statusText: "Not Found" });
@@ -30,6 +34,12 @@ export default function BlogIdFiles() {
   // control the dialog
   const [open, setOpen] = React.useState(false);
 
+  // control dialog content
+  const [selectedFile, setSelectedFile] = React.useState<IBlogFile>(null!);
+
+  // add the remove fetcher, it can't be on the dialog as it will unmount the fetcher before it finishes processing
+  const remove = useFetcher();
+
   if (files.length === 0) {
     return (
       <div className="grid h-full w-full place-items-center">
@@ -37,9 +47,6 @@ export default function BlogIdFiles() {
       </div>
     );
   }
-
-  // control dialog content
-  const [selectedFile, setSelectedFile] = React.useState<IBlogFile>(parseBlogFile(files[0]));
 
   return (
     <Dialog.Root open={open} onOpenChange={() => setOpen(!open)}>
@@ -56,7 +63,7 @@ export default function BlogIdFiles() {
               className="fixed inset-0 bg-black/40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
               onClick={() => setOpen(false)}
             />
-            <DialogContent data={selectedFile} />
+            <DialogContent data={selectedFile} remove={remove} />
           </Dialog.Portal>
         </ScrollViewport>
       </ScrollArea>

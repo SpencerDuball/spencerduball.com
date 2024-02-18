@@ -1,7 +1,7 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { logger, db } from "~/lib/util/globals.server";
 import { z } from "zod";
-import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
+import { execute, takeFirstOrThrow, getSessionInfo } from "~/lib/util/utils.server";
 import { ZBooleanString } from "~/lib/util/utils";
 import { parseBlog, compileMdx } from "~/model/blogs";
 import { deleteBlog, patchBlog } from "~/model/blogs.server";
@@ -27,6 +27,10 @@ const ZActionParams = z.object({ blogId: z.string() });
 
 export async function action({ params, request }: ActionFunctionArgs) {
   const log = logger(request);
+
+  // check if user is admin
+  const session = await getSessionInfo(request);
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403, statusText: "Not Authorized" });
 
   switch (request.method) {
     case "PATCH": {
@@ -63,7 +67,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
         throw new Response(null, { status: 500, statusText: "Server Error" });
       });
 
-      return json({}, { status: 200, statusText: "OK" });
+      return new Response(null, { status: 200, statusText: "OK" });
     }
     case "DELETE": {
       const { blogId } = ZActionParams.parse(params);

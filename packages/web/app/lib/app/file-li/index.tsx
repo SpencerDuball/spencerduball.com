@@ -1,10 +1,18 @@
 import * as React from "react";
 import { cn } from "~/lib/util/utils";
 import { IBlogFile } from "~/model/blogs";
-import { Button, IconButton } from "~/lib/ui/button";
-import { RiCheckLine, RiClipboardLine, RiCloseLine, RiEdit2Line } from "react-icons/ri";
+import { IconButton } from "~/lib/ui/button";
+import {
+  RiCheckLine,
+  RiClipboardLine,
+  RiCloseLine,
+  RiFileInfoLine,
+  RiExternalLinkFill,
+  RiDownload2Fill,
+  RiDeleteBin2Fill,
+} from "react-icons/ri";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useFetcher } from "@remix-run/react";
+import { FetcherWithComponents } from "@remix-run/react";
 
 /**
  * Input size in bytes, get a human-readable file string.
@@ -22,18 +30,11 @@ export function humanFileSize(size: number) {
 
 export interface DialogContentProps extends Dialog.DialogContentProps {
   data: IBlogFile;
+  remove: FetcherWithComponents<any>;
 }
 
 export const DialogContent = React.forwardRef<React.ElementRef<typeof Dialog.Content>, DialogContentProps>(
-  ({ data, className, ...props }, ref) => {
-    // save form
-    const saveRef = React.useRef<HTMLFormElement>(null!);
-    const save = useFetcher();
-    const [values, setValues] = React.useState({ name: "", alt: "" });
-
-    // delete button
-    const remove = useFetcher();
-
+  ({ data, remove, className, ...props }, ref) => {
     return (
       <Dialog.Content
         ref={ref}
@@ -43,71 +44,49 @@ export const DialogContent = React.forwardRef<React.ElementRef<typeof Dialog.Con
         )}
         {...props}
       >
-        <save.Form ref={saveRef} className="grid" method="PATCH" action={`/blog/${data.blog_id}/file/${data.id}`}>
-          {/* Heading */}
-          <div className="space-between grid grid-flow-col grid-cols-[1fr_max-content] border-b border-b-slate-6 bg-slate-2 p-4">
-            <h1 className="text-lg font-bold">Details</h1>
-            <Dialog.Close asChild>
-              <IconButton variant="subtle" size="xs" aria-label="Close" icon={<RiCloseLine />} />
-            </Dialog.Close>
-          </div>
-          {/* Content */}
-          <div className="grid gap-4 p-4">
+        {/* Heading */}
+        <div className="space-between grid grid-flow-col grid-cols-[1fr_max-content] border-b border-b-slate-6 bg-slate-2 p-4">
+          <h1 className="overflow-hidden overflow-ellipsis text-nowrap text-lg font-bold">{data.name}</h1>
+          <Dialog.Close asChild>
+            <IconButton variant="subtle" size="xs" aria-label="Close" icon={<RiCloseLine />} />
+          </Dialog.Close>
+        </div>
+        {/* Content */}
+        <div className="grid gap-4 p-4">
+          <div className="grid grid-flow-col gap-4">
             <div className="grid gap-1">
-              <input type="hidden" name="name" value={values.name} disabled={!values.name} />
-              <label className="px-2 text-xs font-medium text-slate-11">NAME</label>
-              <input
-                value={values.name}
-                onChange={(e) => setValues({ ...values, name: e.currentTarget.value })}
-                placeholder={data.name}
-                className="sm:text-md focus-outline overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12 placeholder:text-slate-11 hover:bg-slate-4 active:bg-slate-5"
-              />
+              <p className="px-2 text-xs font-medium text-slate-11">SIZE</p>
+              <p className="sm:text-md cursor-not-allowed overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12">
+                {humanFileSize(data.size)}
+              </p>
             </div>
             <div className="grid gap-1">
-              <input type="hidden" name="alt" value={values.alt} disabled={!values.alt} />
-              <label className="px-2 text-xs font-medium text-slate-11">ALT TEXT</label>
-              <input
-                value={values.alt}
-                onChange={(e) => setValues({ ...values, alt: e.currentTarget.value })}
-                placeholder={data.alt}
-                className="sm:text-md focus-outline overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12 placeholder:text-slate-11 hover:bg-slate-4 active:bg-slate-5"
-              />
+              <p className="px-2 text-xs font-medium text-slate-11">TYPE</p>
+              <p className="sm:text-md cursor-not-allowed overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12">
+                {data.type}
+              </p>
             </div>
-            <div className="grid grid-flow-col gap-4">
-              <div className="grid gap-1">
-                <p className="px-2 text-xs font-medium text-slate-11">SIZE</p>
-                <p className="sm:text-md cursor-not-allowed overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12">
-                  {humanFileSize(data.size)}
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <p className="px-2 text-xs font-medium text-slate-11">TYPE</p>
-                <p className="sm:text-md cursor-not-allowed overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12">
-                  {data.type}
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <p className="px-2 text-xs font-medium text-slate-11">CREATED</p>
-                <p className="sm:text-md cursor-not-allowed overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12">
-                  {data.created_at.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                </p>
-              </div>
+            <div className="grid gap-1">
+              <p className="px-2 text-xs font-medium text-slate-11">CREATED</p>
+              <p className="sm:text-md cursor-not-allowed overflow-hidden overflow-ellipsis text-nowrap rounded-md bg-slate-3 px-2 py-1 text-sm text-slate-12">
+                {data.created_at.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+              </p>
             </div>
           </div>
-        </save.Form>
-        <div className="grid grid-flow-col justify-end gap-2 p-4 pt-0 [&>button]:w-28">
-          <Button
-            variant="subtle"
-            isLoading={save.state !== "idle"}
-            isDisabled={!Boolean(values.alt || values.name)}
-            onClick={() => save.submit(saveRef.current, { method: "PATCH" })}
-          >
-            Save
-          </Button>
+        </div>
+        <div className="grid grid-flow-col gap-2 p-4 pt-0 sm:justify-end [&_button]:w-full sm:[&_button]:w-20">
+          <a target="_blank" href={data.url}>
+            <IconButton variant="subtle" aria-label="Open link in another tab." icon={<RiExternalLinkFill />} />
+          </a>
+          {/* Note that the `download` attribute will only work on origins with the same host, so on localhost this
+              will not work correcty.
+              https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download
+          */}
+          <a target="_blank" href={data.url} download>
+            <IconButton variant="subtle" aria-label="Download the file." icon={<RiDownload2Fill />} />
+          </a>
           <remove.Form method="DELETE" action={`/blog/${data.blog_id}/file/${data.id}`}>
-            <Button type="submit" colorScheme="red">
-              Delete
-            </Button>
+            <IconButton type="submit" colorScheme="red" aria-label="Delete the file." icon={<RiDeleteBin2Fill />} />
           </remove.Form>
         </div>
       </Dialog.Content>
@@ -131,7 +110,7 @@ export function FileLi({ data, className, onClickEdit, ...props }: FileLiProps) 
   const [copy, setCopy] = React.useState({ copied: false, timeoutId: -1 });
   async function onCopy() {
     if (copy.timeoutId > 0) window.clearTimeout(copy.timeoutId);
-    await navigator.clipboard.writeText(`[${data.alt}](${data.url})`);
+    await navigator.clipboard.writeText(data.url);
     const timeoutId = window.setTimeout(() => setCopy({ ...copy, copied: false }), 2000);
     setCopy({ copied: true, timeoutId });
   }
@@ -142,7 +121,11 @@ export function FileLi({ data, className, onClickEdit, ...props }: FileLiProps) 
       {...props}
     >
       {/* Background Image */}
-      <img className="col-start-1 row-start-1 h-full w-full object-cover" src={data.url} alt={data.alt} />
+      <img
+        className="col-start-1 row-start-1 h-full w-full object-cover"
+        src={data.url}
+        alt={`Upload file ${data.name}.`}
+      />
       <div className="col-start-1 row-start-1 h-full w-full bg-gradient-to-t from-black/40 to-transparent" />
       {/* Actual Content */}
       <div className="col-start-1 row-start-1 grid p-4">
@@ -152,16 +135,16 @@ export function FileLi({ data, className, onClickEdit, ...props }: FileLiProps) 
             <IconButton
               isRound
               variant="solid"
-              className="bg-slateALight-3 hover:bg-slateALight-4 active:bg-slateALight-5 text-slateLight-1 focus:outline-blueLight-6"
+              className="bg-slateALight-3 text-slateLight-1 hover:bg-slateALight-4 focus:outline-blueLight-6 active:bg-slateALight-5"
               aria-label="Edit file info."
-              icon={<RiEdit2Line />}
+              icon={<RiFileInfoLine />}
               onClick={() => onClickEdit(data)}
             />
           </Dialog.Trigger>
           <IconButton
             isRound
             variant="solid"
-            className="bg-slateALight-3 hover:bg-slateALight-4 active:bg-slateALight-5 text-slateLight-1 focus:outline-blueLight-6"
+            className="bg-slateALight-3 text-slateLight-1 hover:bg-slateALight-4 focus:outline-blueLight-6 active:bg-slateALight-5"
             aria-label="Copy markdown to clipboard."
             icon={copy.copied ? <RiCheckLine /> : <RiClipboardLine />}
             onClick={onCopy}

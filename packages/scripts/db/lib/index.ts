@@ -92,7 +92,6 @@ export async function clearDdb({ ddb, query }: ClearDdbProps) {
       else result = await ddb.table.scan({ attributes: ["pk", "sk"] });
     } else if (result && result.next) result = await result.next();
     else if (result && !result.next) result = undefined;
-    // console.log(result?.Items?.map((item) => item));
 
     // delete the batch of items
     if (result?.Items && result.Items.length > 0) {

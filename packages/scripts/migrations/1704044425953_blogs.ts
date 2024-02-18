@@ -32,7 +32,6 @@ async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "text", (col) => col.primaryKey()) // A random 16 character string.
     .addColumn("name", "text", (col) => col.notNull())
     .addColumn("url", "text", (col) => col.notNull())
-    .addColumn("alt", "text", (col) => col.notNull())
     .addColumn("size", "integer", (col) => col.notNull())
     .addColumn("type", "text", (col) => col.notNull())
     .addColumn("expires_at", "text", (col) => col.defaultTo(null))

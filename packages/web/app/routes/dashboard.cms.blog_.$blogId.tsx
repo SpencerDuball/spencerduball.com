@@ -1,9 +1,9 @@
 import * as React from "react";
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
+import { type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData, ShouldRevalidateFunctionArgs } from "@remix-run/react";
 import { type ToolbarProps, Toolbar, EditorProvider } from "~/lib/ui/editor";
 import { logger, db } from "~/lib/util/globals.server";
-import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
+import { execute, takeFirstOrThrow, getSessionInfo } from "~/lib/util/utils.server";
 import { z } from "zod";
 import { BlogProvider, parseBlog } from "~/model/blogs";
 
@@ -22,6 +22,10 @@ const ZLoaderParams = z.object({ blogId: z.string() });
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const log = logger(request);
+
+  // check if user is admin
+  const session = await getSessionInfo(request);
+  if (!session?.roles.includes("admin")) throw redirect("/");
 
   //-------------------------------------------------------------------------------------------------------------------
   // Retrieve Blog

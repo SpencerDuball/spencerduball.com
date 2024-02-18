@@ -19,7 +19,7 @@ export interface IUserRole {
     role_id: ColumnType<string, string, never>;
 }
 export interface IBlog {
-    id: ColumnType<string, never, never>;
+    id: ColumnType<string, string, never>;
     title: string;
     description: string;
     cover_img: string;
@@ -39,12 +39,11 @@ export interface IBlogTag {
     modified_at: ColumnType<string, string, string>;
 }
 export interface IBlogFile {
-    id: ColumnType<string, never, never>;
-    name: string;
-    url: string;
-    alt: string;
+    id: ColumnType<string, string, never>;
+    name: ColumnType<string, string, never>;
+    url: ColumnType<string, string, never>;
     size: ColumnType<number, number, never>;
-    type: ColumnType<number, number, never>;
+    type: ColumnType<string, string, never>;
     expires_at: string | null;
     created_at: ColumnType<string, string, never>;
     modified_at: ColumnType<string, string, string>;

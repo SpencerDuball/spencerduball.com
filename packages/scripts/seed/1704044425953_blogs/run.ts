@@ -33,7 +33,6 @@ const ZBlogFile = z.object({
   id: z.string(),
   name: z.string(),
   url: z.string(),
-  alt: z.string(),
   size: z.number(),
   type: z.string(),
   expires_at: z.string().datetime().nullable(),

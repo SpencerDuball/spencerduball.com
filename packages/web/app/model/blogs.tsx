@@ -38,7 +38,7 @@ export interface ISqlBlog extends Selectable<_IBlog> {
 
 // The type of the full Blog after raw SQL response has been transformed into appropriate objects.
 export const ZBlog = z.object({
-  id: z.number(),
+  id: z.string(),
   title: z.string(),
   description: z.string(),
   cover_img: z.object({ alt: z.string(), url: z.string() }),
@@ -71,16 +71,15 @@ export interface ISqlBlogFile extends Selectable<_IBlogFile> {}
 
 // The type of the BlogFile after raw SQL response has been transformed into appropriate objects.
 export const ZBlogFile = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   url: z.string(),
-  alt: z.string(),
   size: z.number(),
   type: z.string(),
   expires_at: z.date().nullable(),
   created_at: z.date(),
   modified_at: z.date(),
-  blog_id: z.number(),
+  blog_id: z.string(),
 });
 export type IBlogFile = z.infer<typeof ZBlogFile>;
 

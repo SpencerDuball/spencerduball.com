@@ -9,7 +9,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // check if user is admin
   const session = await getSessionInfo(request);
-  if (!session?.roles.includes("admin")) redirect("/");
+  if (!session?.roles.includes("admin")) throw redirect("/");
 
   return null;
 }

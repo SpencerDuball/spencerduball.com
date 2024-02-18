@@ -8,6 +8,7 @@ import { z } from "zod";
 import { BlogCtx, compileMdx } from "~/model/blogs";
 import { BlogView, BlogViewSkeleton } from "~/lib/app/blog-view";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
+import { getSessionInfo } from "~/lib/util/utils.server";
 
 const ZPostPayload = z.object({
   /** The MDX string of the blog. */
@@ -17,6 +18,10 @@ type IPostPayload = z.infer<typeof ZPostPayload>;
 
 export async function action({ request }: ActionFunctionArgs) {
   const log = logger(request);
+
+  // check if user is admin
+  const session = await getSessionInfo(request);
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403, statusText: "Not Authorized" });
 
   switch (request.method) {
     case "POST": {
