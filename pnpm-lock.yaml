@@ -271,8 +271,8 @@ importers:
         specifier: ^4.11.0
         version: 4.11.0(react@18.3.0-canary-971b62f47-20240129)
       react-use:
-        specifier: ^17.4.0
-        version: 17.4.0(react-dom@18.3.0-canary-971b62f47-20240129)(react@18.3.0-canary-971b62f47-20240129)
+        specifier: ^17.5.0
+        version: 17.5.0(react-dom@18.3.0-canary-971b62f47-20240129)(react@18.3.0-canary-971b62f47-20240129)
       rehype-mdx-code-props:
         specifier: ^2.0.0
         version: 2.0.0
@@ -14033,11 +14033,11 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /react-use@17.4.0(react-dom@18.3.0-canary-971b62f47-20240129)(react@18.3.0-canary-971b62f47-20240129):
-    resolution: {integrity: sha512-TgbNTCA33Wl7xzIJegn1HndB4qTS9u03QUwyNycUnXaweZkE4Kq2SB+Yoxx8qbshkZGYBDvUXbXWRUmQDcZZ/Q==}
+  /react-use@17.5.0(react-dom@18.3.0-canary-971b62f47-20240129)(react@18.3.0-canary-971b62f47-20240129):
+    resolution: {integrity: sha512-PbfwSPMwp/hoL847rLnm/qkjg3sTRCvn6YhUZiHaUa3FA6/aNoFX79ul5Xt70O1rK+9GxSVqkY0eTwMdsR/bWg==}
     peerDependencies:
-      react: ^16.8.0  || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
+      react: '*'
+      react-dom: '*'
     dependencies:
       '@types/js-cookie': 2.2.7
       '@xobotyi/scrollbar-width': 1.9.5

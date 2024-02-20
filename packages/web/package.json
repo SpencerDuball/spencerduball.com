@@ -45,7 +45,7 @@
     "react": "18.3.0-canary-971b62f47-20240129",
     "react-dom": "18.3.0-canary-971b62f47-20240129",
     "react-icons": "^4.11.0",
-    "react-use": "^17.4.0",
+    "react-use": "^17.5.0",
     "rehype-mdx-code-props": "^2.0.0",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.0",
