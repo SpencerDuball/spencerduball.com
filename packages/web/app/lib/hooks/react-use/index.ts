@@ -2,3 +2,4 @@
 // of "react-use" when this issue is resolved: https://github.com/streamich/react-use/issues/2353
 
 export { default as useMedia } from "./useMedia";
+export { default as useDropArea } from "./useDropArea";

@@ -4,7 +4,7 @@ import { FileUploadBox } from "~/lib/ui/file-upload-box";
 import { z } from "zod";
 import { logger, db } from "~/lib/util/globals.server";
 import { execute, getSessionInfo } from "~/lib/util/utils.server";
-import { useLoaderData, useFetcher } from "@remix-run/react";
+import { useLoaderData, useFetcher, useFetchers } from "@remix-run/react";
 import { FileLi, DialogContent } from "~/lib/app/file-li";
 import { IBlogFile, parseBlogFile } from "~/model/blogs";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -33,12 +33,12 @@ export default function BlogIdFiles() {
 
   // control the dialog
   const [open, setOpen] = React.useState(false);
-
-  // control dialog content
   const [selectedFile, setSelectedFile] = React.useState<IBlogFile>(null!);
-
-  // add the remove fetcher, it can't be on the dialog as it will unmount the fetcher before it finishes processing
   const remove = useFetcher();
+
+  // when a user uploads a file, we want to show the local file urls until the file is uploaded
+  const fetchers = useFetchers();
+  const [localFiles, setLocalFiles] = React.useState<File[]>([]);
 
   if (files.length === 0) {
     return (
