@@ -15,10 +15,8 @@ import { session, sessionCookie, SESSION_KEY } from "~/lib/util/sessions.server"
 import { ZSession } from "@spencerduballcom/db/ddb";
 import { getLogger } from "~/lib/util/globals.server";
 import { parseCookie } from "~/lib/util/utils.server";
-// TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
-// https://github.com/vercel/ms/pull/191
 // @ts-ignore
-import ms from "ms";
+import ms from "ms"; // TODO: This package has types that aren't defined correctly when using "Bundler" module resolution strategy.
 
 const ABORT_DELAY = 5_000;
 

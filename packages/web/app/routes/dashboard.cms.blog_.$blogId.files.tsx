@@ -1,13 +1,11 @@
-import * as React from "react";
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { FileUploadBox } from "~/lib/ui/file-upload-box";
 import { z } from "zod";
 import { logger, db } from "~/lib/util/globals.server";
 import { execute, getSessionInfo } from "~/lib/util/utils.server";
-import { useLoaderData, useFetcher, useFetchers } from "@remix-run/react";
-import { FileLi, DialogContent } from "~/lib/app/file-li";
-import { IBlogFile, parseBlogFile } from "~/model/blogs";
-import * as Dialog from "@radix-ui/react-dialog";
+import { useLoaderData } from "@remix-run/react";
+import { FileLi } from "~/lib/app/file-li";
+import { parseBlogFile } from "~/model/blogs";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 
 const ZLoaderParams = z.object({ blogId: z.string() });
@@ -30,15 +28,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export default function BlogIdFiles() {
   const { files } = useLoaderData<typeof loader>();
-
-  // control the dialog
-  const [open, setOpen] = React.useState(false);
-  const [selectedFile, setSelectedFile] = React.useState<IBlogFile>(null!);
-  const remove = useFetcher();
-
-  // when a user uploads a file, we want to show the local file urls until the file is uploaded
-  const fetchers = useFetchers();
-  const [localFiles, setLocalFiles] = React.useState<File[]>([]);
+  const parsedFiles = files.map(parseBlogFile);
 
   if (files.length === 0) {
     return (
@@ -49,24 +39,15 @@ export default function BlogIdFiles() {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={() => setOpen(!open)}>
-      <ScrollArea className="w-full">
-        <ScrollViewport>
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-            {files.map((file) => (
-              <FileLi key={file.id} data={parseBlogFile(file)} onClickEdit={(data) => setSelectedFile(data)} />
-            ))}
-            <FileUploadBox className="aspect-square" />
-          </ul>
-          <Dialog.Portal>
-            <Dialog.Overlay
-              className="fixed inset-0 bg-black/40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-              onClick={() => setOpen(false)}
-            />
-            <DialogContent data={selectedFile} remove={remove} />
-          </Dialog.Portal>
-        </ScrollViewport>
-      </ScrollArea>
-    </Dialog.Root>
+    <ScrollArea className="w-full">
+      <ScrollViewport>
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {parsedFiles.map((file) => (
+            <FileLi key={file.id} data={file} />
+          ))}
+          <FileUploadBox className="aspect-square" />
+        </ul>
+      </ScrollViewport>
+    </ScrollArea>
   );
 }

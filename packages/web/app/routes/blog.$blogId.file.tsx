@@ -20,7 +20,7 @@ const ZPostPayload = z.object({
   /** The name of the blog file including the extension. */
   name: z.string(),
   /** The size in bytes of the blog file. */
-  size: z.number(),
+  size: z.coerce.number(),
   /** The file extension of the blog file. */
   type: z.string(),
   /** The expires_at time. */

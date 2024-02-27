@@ -4,10 +4,8 @@ import { reducer, Types, ZGlobalCtxState } from "./reducer";
 import { useHydrated } from "remix-utils/use-hydrated";
 import { useMedia } from "~/lib/hooks/react-use";
 import Cookies from "js-cookie";
-// TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
-// https://github.com/vercel/ms/pull/191
 // @ts-ignore
-import ms from "ms";
+import ms from "ms"; // TODO: This package has types that aren't defined correctly when using "Bundler" module resolution strategy.
 
 export const PREFERENCES_KEY = "__preferences";
 
