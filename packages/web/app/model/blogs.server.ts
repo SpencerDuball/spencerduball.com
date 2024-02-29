@@ -262,18 +262,21 @@ export async function putBlogFile({ name, size, type, blogId, expires_at }: PutB
   const url = `${Config.BUCKET_URL}/blog/${blogId}/${name}-${blogFileId}.${ext}`;
 
   // Insert the record into SQL, by default it will expire in 30 days
-  const insertCmd = db.insertInto("blog_files").values({
-    id: blogFileId,
-    name,
-    url,
-    size,
-    type,
-    expires_at: expires_at === null ? null : new Date(Date.now() + ms("30d")).toISOString(),
-    created_at: sql<string>`CURRENT_TIMESTAMP`,
-    modified_at: sql<string>`CURRENT_TIMESTAMP`,
-    blog_id: blogId,
-  });
-  await execute(insertCmd);
+  const insertCmd = db
+    .insertInto("blog_files")
+    .values({
+      id: blogFileId,
+      name,
+      url,
+      size,
+      type,
+      expires_at: expires_at === null ? null : new Date(Date.now() + ms("30d")).toISOString(),
+      created_at: sql<string>`CURRENT_TIMESTAMP`,
+      modified_at: sql<string>`CURRENT_TIMESTAMP`,
+      blog_id: blogId,
+    })
+    .returningAll();
+  const blogFile = await execute(insertCmd).then((res) => takeFirstOrThrow(res));
 
   // generate the presigned post url
   const s3 = new S3Client({});
@@ -284,7 +287,7 @@ export async function putBlogFile({ name, size, type, blogId, expires_at }: PutB
     Fields: { "Content-Type": type },
   });
 
-  return { presignedPost };
+  return { presignedPost, blogFile };
 }
 
 // DELETE

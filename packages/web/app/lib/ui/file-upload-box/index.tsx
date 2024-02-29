@@ -3,22 +3,17 @@ import { RiImageAddFill } from "react-icons/ri";
 import { cn } from "~/lib/util/utils";
 import { useDropArea } from "~/lib/hooks/react-use";
 
-export interface FileUploadBoxProps extends React.ComponentProps<"div"> {}
+export interface FileUploadBoxProps extends React.ComponentProps<"div"> {
+  /** The file upload function. */
+  onFile: (file: File) => Promise<void>;
+}
 
-export function FileUploadBox({ className, ...props }: FileUploadBoxProps) {
+export function FileUploadBox({ className, onFile, ...props }: FileUploadBoxProps) {
   const inputRef = React.useRef<HTMLInputElement>(null!);
 
   // create the div handlers
-  const [bind] = useDropArea({
-    onFiles: async (files) => {
-      for (let file of files) {
-        // TODO: Upload the file.
-      }
-    },
-  });
-  function onClick() {
-    inputRef.current.click();
-  }
+  const [bind] = useDropArea({ onFiles: async (files) => files.map(onFile) });
+  const onClick = () => inputRef.current.click();
   const divHandlers = { onClick, ...bind };
 
   // setup the input handlers
@@ -28,9 +23,7 @@ export function FileUploadBox({ className, ...props }: FileUploadBoxProps) {
     if (!files) return;
 
     // upload the files
-    for (let file of files) {
-      // TODO: Upload the file.
-    }
+    for (let file of files) onFile(file);
 
     // clear the input
     e.target.value = "";

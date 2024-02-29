@@ -56,12 +56,12 @@ export async function action({ params, request }: ActionFunctionArgs) {
       }
 
       log.info("Creating the blog file ...");
-      const { presignedPost } = await putBlogFile({ blogId, ...data }).catch((e) => {
+      const { presignedPost, blogFile } = await putBlogFile({ blogId, ...data }).catch((e) => {
         log.error(e, "There was an error uploading the blog file.");
         throw new Response(null, { status: 500, statusText: "Server Error" });
       });
 
-      return json({ presignedPost });
+      return json({ presignedPost, blogFile });
     }
 
     default: {

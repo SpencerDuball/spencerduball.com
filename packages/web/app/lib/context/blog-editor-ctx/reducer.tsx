@@ -6,7 +6,7 @@ import { type IBlog, type IBlogFile } from "~/model/blogs";
 
 interface IBlogFileTracker {
   /** Tracks the state of a blog file in it's upload journy. */
-  state: "idle" | "uploading" | "loading";
+  state: "uploading" | "loading";
   /** Tracks the upload percent of a file. */
   percent: number | null;
   /** The optimistic UI information of a blog file. */
@@ -32,11 +32,13 @@ type ActionMap<M extends { [index: string]: any }> = {
 
 export enum Types {
   AddFile = "ADD_FILE",
+  SetFileProgress = "UPDATE_FILE_PROGRESS",
   RemoveFile = "REMOVE_FILE",
 }
 
 export type Payload = {
   [Types.AddFile]: { record: IBlogFile; file: File };
+  [Types.SetFileProgress]: { blogFileId: string; percent: number };
   [Types.RemoveFile]: { blogFileId: string };
 };
 
@@ -50,10 +52,20 @@ export const reducer = (state: IBlogEditorCtxState, action: Actions) => {
     case Types.AddFile: {
       let next = structuredClone(state);
       next.files.push({
-        state: "idle",
-        percent: null,
+        state: "uploading",
+        percent: 0,
         record: action.payload.record,
         file: action.payload.file,
+      });
+      return next;
+    }
+    case Types.SetFileProgress: {
+      let next = structuredClone(state);
+      next.files = next.files.map((file) => {
+        if (file.record.id === action.payload.blogFileId) {
+          return { ...file, percent: action.payload.percent };
+        }
+        return file;
       });
       return next;
     }
