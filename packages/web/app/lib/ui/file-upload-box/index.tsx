@@ -2,49 +2,17 @@ import * as React from "react";
 import { RiImageAddFill } from "react-icons/ri";
 import { cn } from "~/lib/util/utils";
 import { useDropArea } from "~/lib/hooks/react-use";
-import { BlogCtx } from "~/model/blogs";
-// @ts-ignore
-import ms from "ms"; // TODO: This package has types that aren't defined correctly when using "Bundler" module resolution strategy.
-
-/**
- * Uploads a file to the blog.
- *
- * @param blogId The blog id.
- * @param file The file to upload.
- */
-async function uploadFile(blogId: string, file: File) {
-  // create the SQL record and get the presigned post
-  const formData = new FormData();
-  formData.append("name", file.name);
-  formData.append("size", file.size.toString());
-  formData.append("type", file.type);
-  formData.append("expires_at", new Date(Date.now() + ms("15m")).toISOString());
-  const { presignedPost } = await fetch(`/blog/${blogId}/file`, { method: "POST", body: formData }).then((res) =>
-    res.json(),
-  );
-
-  // upload the file to S3 using the presigned post
-  const data = new FormData();
-  for (let key in presignedPost.fields) {
-    data.append(key, presignedPost.fields[key]);
-  }
-  data.append("file", file);
-  await fetch(presignedPost.url, { method: "POST", body: data });
-}
 
 export interface FileUploadBoxProps extends React.ComponentProps<"div"> {}
 
 export function FileUploadBox({ className, ...props }: FileUploadBoxProps) {
   const inputRef = React.useRef<HTMLInputElement>(null!);
 
-  const blog = React.useContext(BlogCtx);
-
   // create the div handlers
   const [bind] = useDropArea({
     onFiles: async (files) => {
-      // TODO: Upload the files
       for (let file of files) {
-        await uploadFile(blog.id, file);
+        // TODO: Upload the file.
       }
     },
   });
@@ -61,7 +29,7 @@ export function FileUploadBox({ className, ...props }: FileUploadBoxProps) {
 
     // upload the files
     for (let file of files) {
-      await uploadFile(blog.id, file);
+      // TODO: Upload the file.
     }
 
     // clear the input

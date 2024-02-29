@@ -149,19 +149,3 @@ export async function compileMdx(mdx: string) {
 
   return { frontmatter, content };
 }
-
-//---------------------------------------------------------------------------------------------------------------------
-// Blog Provider
-// -------------
-// This is used in the editing experience to share a single blog result without consistently re-quering for the same
-// info.
-//---------------------------------------------------------------------------------------------------------------------
-export const BlogCtx = React.createContext<IBlog>(null!);
-
-export interface IBlogProvider {
-  blog: IBlog;
-  children: React.ReactNode;
-}
-export function BlogProvider({ blog, children }: IBlogProvider) {
-  return <BlogCtx.Provider value={blog}>{children}</BlogCtx.Provider>;
-}

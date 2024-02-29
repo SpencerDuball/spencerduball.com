@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { FileUploadBox } from "~/lib/ui/file-upload-box";
 import { z } from "zod";
 import { logger, db } from "~/lib/util/globals.server";
@@ -9,6 +9,26 @@ import { parseBlogFile } from "~/model/blogs";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 
 const ZLoaderParams = z.object({ blogId: z.string() });
+
+export async function action({ request }: ActionFunctionArgs) {
+  const log = logger(request);
+
+  // check if user is admin
+  const session = await getSessionInfo(request);
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403, statusText: "Not Authorized" });
+
+  switch (request.method) {
+    case "POST": {
+      // for this test wait 5 seconds and then return the response
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      return json({ message: (await request.formData()).get("name") });
+    }
+    default: {
+      log.info("This method is not allowed.");
+      throw new Response(null, { status: 405, statusText: "Method Not Allowed" });
+    }
+  }
+}
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const log = logger(request);

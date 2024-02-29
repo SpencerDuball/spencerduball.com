@@ -5,7 +5,8 @@ import { type ToolbarProps, Toolbar, EditorProvider } from "~/lib/ui/editor";
 import { logger, db } from "~/lib/util/globals.server";
 import { execute, takeFirstOrThrow, getSessionInfo } from "~/lib/util/utils.server";
 import { z } from "zod";
-import { BlogProvider, parseBlog } from "~/model/blogs";
+import { parseBlog } from "~/model/blogs";
+import { BlogEditorCtxProvider } from "~/lib/context/blog-editor-ctx";
 
 export function shouldRevalidate({ nextUrl, currentUrl, defaultShouldRevalidate }: ShouldRevalidateFunctionArgs) {
   // Don't revalidate when switching between /edit, /preview, /attachments
@@ -93,10 +94,10 @@ export default function BlogIdProvider() {
   const { blog } = useLoaderData<typeof loader>();
 
   return (
-    <BlogProvider blog={parseBlog(blog)}>
+    <BlogEditorCtxProvider blog={parseBlog(blog)}>
       <EditorProvider value={blog.body}>
         <BlogId />
       </EditorProvider>
-    </BlogProvider>
+    </BlogEditorCtxProvider>
   );
 }

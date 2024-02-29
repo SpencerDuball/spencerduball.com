@@ -5,10 +5,11 @@ import { ActionFunctionArgs } from "@remix-run/node";
 import { useFetcher } from "@remix-run/react";
 import { logger } from "~/lib/util/globals.server";
 import { z } from "zod";
-import { BlogCtx, compileMdx } from "~/model/blogs";
+import { compileMdx } from "~/model/blogs";
 import { BlogView, BlogViewSkeleton } from "~/lib/app/blog-view";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 import { getSessionInfo } from "~/lib/util/utils.server";
+import { BlogEditorCtx } from "~/lib/context/blog-editor-ctx";
 
 const ZPostPayload = z.object({
   /** The MDX string of the blog. */
@@ -58,7 +59,7 @@ export async function action({ request }: ActionFunctionArgs) {
 // for EVERY layout in the app including the root. For this case, we should just use `axios` and a `useEffect` since
 // this will bypass Remix APIs for revalidation logic.
 export default function BlogIdPreview() {
-  const blog = React.useContext(BlogCtx);
+  const [{ blog }] = React.useContext(BlogEditorCtx);
   const [editor] = React.useContext(EditorCtx);
   const fetcher = useFetcher<{ content: string }>();
   const ref = React.useRef<HTMLFormElement>(null!);
