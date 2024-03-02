@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import { RiArrowRightLine } from "react-icons/ri";
+import { RiArrowRightLine } from "react-icons/ri/index.js";
 import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => [

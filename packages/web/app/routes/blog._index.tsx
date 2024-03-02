@@ -1,18 +1,19 @@
-import { LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import React from "react";
 import { z } from "zod";
 import { logger, db } from "~/lib/util/globals.server";
-import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
+import { execute, takeFirstOrThrow, getSessionInfo } from "~/lib/util/utils.server";
 import * as Popover from "@radix-ui/react-popover";
 import { InputGroup, Input, InputLeftElement, InputRightElement } from "~/lib/ui/input";
-import { RiSearchLine } from "react-icons/ri";
+import { RiSearchLine } from "react-icons/ri/index.js";
 import { Button, IconButton } from "~/lib/ui/button";
 import { TimeDescIcon, TimeAscIcon, ViewsAscIcon, ViewsDescIcon } from "~/lib/ui/icon";
 import { colorFromName, ColorList, Tag } from "~/lib/ui/tag";
 import { BlogLi } from "~/lib/app/blog-li";
 import { Pagination } from "~/lib/ui/pagination";
 import { parseBlog } from "~/model/blogs";
+import { postBlog } from "~/model/blogs.server";
 
 export const meta: MetaFunction = () => [
   { title: "Blog | Spencer Duball" },
@@ -22,6 +23,52 @@ export const meta: MetaFunction = () => [
       "Come checkout my thoughts on various topics such as web development, cloud computing, 3d printing, electronics, and more.",
   },
 ];
+
+//---------------------------------------------------------------------------------------------------------------------
+// Define Action Function
+//---------------------------------------------------------------------------------------------------------------------
+const ZPostPayload = z.object({
+  /** The body of the blog post. */
+  body: z.string(),
+});
+type IPostPayload = z.infer<typeof ZPostPayload>;
+
+export async function action({ request }: ActionFunctionArgs) {
+  const log = logger(request);
+
+  // check if user is admin
+  const session = await getSessionInfo(request);
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403, statusText: "Not Authorized" });
+
+  switch (request.method) {
+    case "POST": {
+      // Validate FormData
+      log.info("Parsing the FormData from the request ...");
+      let data: IPostPayload;
+      try {
+        data = ZPostPayload.parse(Object.fromEntries((await request.formData()).entries()));
+      } catch (e) {
+        log.info(e, "Invalid FormData was sent with the request.");
+        throw json(
+          { message: "Invalid FormData was sent with the request." },
+          { status: 400, statusText: "Bad Request" },
+        );
+      }
+
+      log.info("Creating the blog post ...");
+      const blog = await postBlog({ ...data, author_id: session.user_id }).catch((e) => {
+        log.error(e, "There was an error creating the blog post.");
+        throw new Response(null, { status: 500, statusText: "Internal Server Error" });
+      });
+
+      return json(blog, { status: 200 });
+    }
+    default: {
+      log.info("This method is not allowed.");
+      throw new Response(null, { status: 405, statusText: "Method Not Allowed" });
+    }
+  }
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 // Define Loader Function
@@ -279,18 +326,19 @@ export default function Blog() {
                   >
                     <div className="grid">
                       <Button
-                        variant={search.sort === "created-asc" ? "subtle" : "ghost"}
-                        onClick={() => setSearch({ ...search, sort: "created-asc" })}
-                      >
-                        Oldest-to-Newest
-                      </Button>
-                      <Button
                         variant={search.sort === "created-desc" || !search.sort ? "subtle" : "ghost"}
                         onClick={() => setSearch({ ...search, sort: "created-desc" })}
                       >
                         Newest-to-Oldest
                       </Button>
                       <Button
+                        variant={search.sort === "created-asc" ? "subtle" : "ghost"}
+                        onClick={() => setSearch({ ...search, sort: "created-asc" })}
+                      >
+                        Oldest-to-Newest
+                      </Button>
+                      {/* TODO: Display these items when finished setting up a view count strategy. *}
+                      {/* <Button
                         variant={search.sort === "views-desc" ? "subtle" : "ghost"}
                         onClick={() => setSearch({ ...search, sort: "views-desc" })}
                       >
@@ -301,7 +349,7 @@ export default function Blog() {
                         onClick={() => setSearch({ ...search, sort: "views-asc" })}
                       >
                         Least-to-Most Views
-                      </Button>
+                      </Button> */}
                     </div>
                     <Popover.Arrow asChild>
                       <div className="relative h-3 w-3 origin-center -translate-y-[0.375rem] rotate-45 rounded-br-sm border-b border-r border-slate-6 bg-slate-2" />

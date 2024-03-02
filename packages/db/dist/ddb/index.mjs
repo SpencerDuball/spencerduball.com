@@ -2,10 +2,8 @@ import { Table, Entity } from "dynamodb-toolbox";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { z } from "zod";
 import { randomBytes } from "crypto";
-// TODO: The @ts-ignore can be removed after the ms@3 is released. This is caused because of this bug:
-// https://github.com/vercel/ms/pull/191
 // @ts-ignore
-import ms from "ms";
+import ms from "ms"; // TODO: This package has types that aren't defined correctly when using "Bundler" module resolution strategy.
 /* ------------------------------------------------------------------------------------------------------------------
  * Session
  * ------------------------------------------------------------------------------------------------------------------ */

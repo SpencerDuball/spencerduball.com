@@ -1,4 +1,3 @@
-import * as React from "react";
 import { IBlogFile as _IBlogFile, IBlog as _IBlog } from "@spencerduballcom/db/sqldb";
 import { z } from "zod";
 import { Simplify, Selectable } from "kysely";
@@ -21,7 +20,7 @@ export const BLOG_TEMPLATE = [
   "  alt: A description of the image.",
   "  url: /images/blog/default-cover-img.png",
   "---",
-  "Ahh, the opening word of your new blog. This section should bring the reading into your story by presenting a situation or problem to be solved.",
+  "Ahh, the opening word of your new blog. This section should bring the reader into your story by presenting a situation or problem to be solved.",
 ].join("\n");
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -143,7 +142,8 @@ export async function compileMdx(mdx: string) {
   const content = String(
     await compile(mdx, {
       outputFormat: "function-body",
-      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm, rehypeMdxCodeProps],
+      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
+      rehypePlugins: [rehypeMdxCodeProps],
     }),
   );
 

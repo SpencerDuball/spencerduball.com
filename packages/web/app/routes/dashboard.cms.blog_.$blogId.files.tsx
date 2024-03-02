@@ -16,7 +16,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   // check if user is admin
   const session = await getSessionInfo(request);
-  if (!session?.roles.includes("admin")) throw redirect("/");
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403 });
 
   const { blogId } = await ZLoaderParams.parseAsync(params).catch((e) => {
     throw new Response(null, { status: 404, statusText: "Not Found" });
@@ -29,18 +29,20 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export default function BlogIdFiles() {
   const { files } = useLoaderData<typeof loader>();
-  const { onFile, files: uploading } = useBlogUploader();
+  let parsedFiles = files.map(parseBlogFile);
+
+  // setup the blog file uploader
+  const { onFile, files: uploading } = useBlogUploader(parsedFiles);
 
   // get all the files not uploading
-  const parsedFiles = files
-    .map(parseBlogFile)
+  parsedFiles = parsedFiles
     .filter((file) => !uploading.some((uploadingFile) => uploadingFile.record.id === file.id))
     .sort((curr, next) => curr.created_at.getTime() - next.created_at.getTime());
 
   // sort the uploading files by the created_at time
   uploading.sort((curr, next) => curr.record.created_at.getTime() - next.record.created_at.getTime());
 
-  if (files.length === 0) {
+  if (files.length === 0 && uploading.length === 0) {
     return (
       <div className="grid h-full w-full place-items-center">
         <FileUploadBox onFile={onFile} className="h-full max-h-[32rem] w-full max-w-[32rem]" />
@@ -56,7 +58,7 @@ export default function BlogIdFiles() {
             <FileLi key={file.id} data={file} />
           ))}
           {uploading.map((file) => (
-            <FileLi key={file.record.id} data={file.record} />
+            <FileLi key={file.record.id} data={file.record} uploadPercent={file.percent ?? undefined} />
           ))}
           <FileUploadBox onFile={onFile} className="aspect-square" />
         </ul>

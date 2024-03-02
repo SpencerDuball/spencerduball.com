@@ -3,7 +3,7 @@ import type { IToast, ToastTypes } from "./reducer";
 import { cva } from "class-variance-authority";
 import { cn } from "~/lib/util/utils";
 import { IconButton } from "~/lib/ui/button";
-import { RiCloseLine } from "react-icons/ri";
+import { RiCloseLine } from "react-icons/ri/index.js";
 import { ToasterCtx, Types } from ".";
 
 /* ------------------------------------------------------------------------------------------------------------

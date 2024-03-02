@@ -1,5 +1,5 @@
 import * as React from "react";
-import { RiImageAddFill } from "react-icons/ri";
+import { RiImageAddFill } from "react-icons/ri/index.js";
 import { cn } from "~/lib/util/utils";
 import { useDropArea } from "~/lib/hooks/react-use";
 

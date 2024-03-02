@@ -12,6 +12,7 @@ import { getSessionInfo, ZPublicSession } from "~/lib/util/utils.server";
 import { Footer } from "~/lib/app/footer";
 import { flashCookie, _flashCookie } from "~/lib/util/sessions.server";
 import { ToasterCtx } from "~/lib/context/toaster-ctx";
+import { ErrorBoundary as _ErrorBoundary } from "~/lib/app/error-boundary";
 
 // import css files
 import "~/tailwind.css";

@@ -24,16 +24,15 @@ import {
   RiTextWrap,
   RiMoonFill,
   RiSunFill,
-} from "react-icons/ri";
-import { SiPrettier } from "react-icons/si";
-import { DiVim } from "react-icons/di";
-import { RxHalf2 } from "react-icons/rx";
+} from "react-icons/ri/index.js";
+import { SiPrettier } from "react-icons/si/index.js";
+import { DiVim } from "react-icons/di/index.js";
+import { RxHalf2 } from "react-icons/rx/index.js";
 import { Types } from "./reducer";
 import { GlobalCtx } from "~/lib/context/global-ctx";
 import { FetcherWithComponents, Link, useFetcher, useHref, useLocation } from "@remix-run/react";
 import p from "prettier/plugins/markdown";
 import { formatWithCursor } from "prettier/standalone";
-import { ToasterCtx } from "~/lib/context/toaster-ctx";
 
 async function prettify(state: EditorState) {
   const beforeValue = state.doc.toString();
@@ -69,9 +68,7 @@ export function Toolbar({ onSave, className, ...props }: ToolbarProps) {
   const filesHref = useHref("files");
 
   // define the save fetcher
-  const [, dispatchToast] = useContext(ToasterCtx);
   const save = useFetcher();
-  // TODO: Implement a save toast
 
   return (
     <div

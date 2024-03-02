@@ -22,6 +22,68 @@ import ms from "ms"; // TODO: This package has types that aren't defined correct
 // All actions for the Blog items.
 //-------------------------------------------------------------------------------------------------
 
+// CREATE
+// ----------------------------------------------------------------------------
+export interface PostBlogProps {
+  /** The ID of the author of this blog. */
+  author_id: number;
+  /** The body of the blog. */
+  body: string;
+}
+
+/**
+ * Creates a blog.
+ */
+export async function postBlog({ author_id, body }: PostBlogProps) {
+  const log = getLogger();
+
+  // ensure the blog compiles correctly
+  const {
+    frontmatter: { title, description, cover_img, tags },
+  } = await compileMdx(body).catch((e) => {
+    log.error(e, "Blog could not be successfully compiled.");
+    throw e;
+  });
+
+  // generate the ID for the blog
+  let id: string = "";
+  while (!id) {
+    const _id = crypto.randomBytes(4).toString("hex");
+    const res = await execute(db.selectFrom("blogs").where("id", "=", id).where("id", "=", id).select("id"));
+    if (res.length === 0) id = _id;
+  }
+
+  // create the blog
+  const insertCmd = db
+    .insertInto("blogs")
+    .values({
+      id,
+      title,
+      description,
+      cover_img: JSON.stringify(cover_img),
+      body,
+      author_id,
+    })
+    .returning("id");
+  const blog = await execute(insertCmd).then((res) => takeFirstOrThrow(res));
+
+  // create the tags
+  if (tags.length > 0) {
+    const values = tags.map((name) => ({
+      name,
+      blog_id: id,
+      created_at: sql<string>`CURRENT_TIMESTAMP`,
+      modified_at: sql<string>`CURRENT_TIMESTAMP`,
+    }));
+    await execute(db.insertInto("blog_tags").values(values)).catch((e) => {
+      log.error(e, "There was an issue adding blogs to the database.");
+      throw e;
+    });
+  }
+
+  return blog;
+}
+
 /**
  * Gets the added and removed blog file ids from the difference of the stored and new body.
  *
@@ -54,13 +116,13 @@ function compareStoredAndNewBody(storedBody: string, newBody: string) {
 
   for (const url of addedBlogFileUrls) {
     const fileName = url.split("/").pop()!;
-    const id = fileName.match(/.+\-([0-9A-Fa-f]{8})\..+/);
+    const id = fileName.match(/.+\-([0-9A-Fa-f]{8})\..+$/);
     if (id) addedBlogFileIds.push(id[1]);
   }
 
   for (const url of removedBlogFileUrls) {
     const fileName = url.split("/").pop()!;
-    const id = fileName.match(/.+\-([0-9A-Fa-f]{8})\..+/);
+    const id = fileName.match(/.+\-([0-9A-Fa-f]{8})\..+$/);
     if (id) removedBlogFileIds.push(id[1]);
   }
 
@@ -161,7 +223,7 @@ export async function patchBlog({ id, body, views, published }: PatchBlogProps) 
     if (removedBlogFileIds.length > 0) {
       const updateCmd = db
         .updateTable("blog_files")
-        .set({ expires_at: sql<string>`CURRENT_TIMESTAMP` })
+        .set({ expires_at: new Date(Date.now() + ms("30d")).toISOString() })
         .where("blog_id", "=", id)
         .where("id", "in", removedBlogFileIds);
       await execute(updateCmd).catch((e) => {

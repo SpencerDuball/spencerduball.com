@@ -1,7 +1,12 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import * as Avatar from "@radix-ui/react-avatar";
-import { RiTwitterXFill, RiGithubFill } from "react-icons/ri";
+import { RiTwitterXFill, RiGithubFill, RiArrowRightLine } from "react-icons/ri/index.js";
 import { PrintablesIcon } from "~/lib/ui/icon";
+import { db, logger } from "~/lib/util/globals.server";
+import { execute } from "~/lib/util/utils.server";
+import { useLoaderData, Link } from "@remix-run/react";
+import { parseBlog } from "~/model/blogs";
+import { BlogLi } from "~/lib/app/blog-li";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,7 +19,40 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const log = logger(request);
+
+  // get the 5 latest blog posts
+  let blogsReq = db
+    .selectFrom("blogs")
+    .leftJoin("blog_tags", "blogs.id", "blog_tags.blog_id")
+    .select([
+      "blogs.id",
+      "blogs.title",
+      "blogs.description",
+      "blogs.cover_img",
+      "blogs.views",
+      "blogs.published",
+      "blogs.published_at",
+      "blogs.body_modified_at",
+      "blogs.created_at",
+      "blogs.modified_at",
+      "blogs.author_id",
+      db.fn.agg<string>("group_concat", ["blog_tags.name"]).as("tags"),
+    ])
+    .where("published", "=", true)
+    .groupBy("blogs.id")
+    .orderBy("published_at", "desc")
+    .limit(3);
+  const blogs = await execute(blogsReq);
+
+  return { blogs };
+}
+
 export default function Index() {
+  const { blogs } = useLoaderData<typeof loader>();
+  const parsedBlogs = blogs.map((blog) => parseBlog(blog));
+
   return (
     <main className="grid w-full justify-items-center">
       <section className="grid w-full max-w-5xl gap-10 px-4 py-6">
@@ -65,6 +103,21 @@ export default function Index() {
               </a>
             </div>
           </div>
+        </div>
+        {/* Recent Blogs */}
+        <div className="grid gap-2">
+          <h1 className="text-md px-3 font-bold uppercase text-slate-10">Latest Posts</h1>
+          <div className="grid gap-2">
+            {parsedBlogs.map((blog) => (
+              <BlogLi key={blog.id} data={blog} />
+            ))}
+          </div>
+          <Link
+            className="focus-outline flex items-center justify-self-end text-xl font-extrabold leading-relaxed text-slate-9 hover:text-slate-11"
+            to="/blog"
+          >
+            view all posts <RiArrowRightLine className="ml-2" />
+          </Link>
         </div>
       </section>
     </main>

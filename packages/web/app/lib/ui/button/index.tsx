@@ -3,7 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import { cn } from "~/lib/util/utils";
-import { RiLoader4Fill } from "react-icons/ri";
+import { RiLoader4Fill } from "react-icons/ri/index.js";
 
 /* ------------------------------------------------------------------------------------------------------------
  * Define Component Variants

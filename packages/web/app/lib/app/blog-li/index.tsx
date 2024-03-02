@@ -6,7 +6,7 @@ import { ColorList, Tag, colorFromName } from "~/lib/ui/tag";
 import { IBlog } from "~/model/blogs";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button, IconButton } from "~/lib/ui/button";
-import { RiEyeLine, RiEyeOffLine, RiEdit2Line, RiDeleteBin6Line, RiCloseLine } from "react-icons/ri";
+import { RiEyeLine, RiEyeOffLine, RiEdit2Line, RiDeleteBin6Line, RiCloseLine } from "react-icons/ri/index.js";
 
 type IBlogLiData = Omit<IBlog, "body">;
 
@@ -158,8 +158,9 @@ export function BlogLi({ hasControls, data, className, ...props }: BlogLiProps) 
             {data.title}
           </Link>
           <p className="text-sm text-slate-9" suppressHydrationWarning>
-            {data.published_at ? new Date(data.published_at).toLocaleDateString() : "Unpublished"} &#11825; {data.views}{" "}
-            Views
+            {data.published_at ? new Date(data.published_at).toLocaleDateString() : "Unpublished"}
+            {/* TODO: Display this item when finished setting up a view count stragety. */}
+            {/*&#11825; {data.views} Views*/}
           </p>
         </div>
       </div>

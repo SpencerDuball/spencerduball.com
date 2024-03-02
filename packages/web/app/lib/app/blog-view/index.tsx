@@ -2,7 +2,7 @@ import * as React from "react";
 import { IconButton } from "~/lib/ui/button";
 import { cn } from "~/lib/util/utils";
 import { IBlog } from "~/model/blogs";
-import { RiTwitterXFill, RiLinkM, RiCheckLine } from "react-icons/ri";
+import { RiTwitterXFill, RiLinkM, RiCheckLine } from "react-icons/ri/index.js";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 import { Tag, colorFromName, ColorList } from "~/lib/ui/tag";
 import { runSync } from "@mdx-js/mdx";
@@ -71,8 +71,9 @@ export function BlogView({ data, className, ...props }: BlogViewProps) {
                   icon={<RiTwitterXFill className="h-4 w-4" />}
                 />
               </a>
-              <p className="md:text-md text-sm leading-relaxed text-slate-11">&#11825;</p>
-              <p className="md:text-md text-sm leading-relaxed text-slate-11">{data.views} Views</p>
+              {/* TODO: Display these items when finished setting up a view count strategy. */}
+              {/* <p className="md:text-md text-sm leading-relaxed text-slate-11">&#11825;</p>
+              <p className="md:text-md text-sm leading-relaxed text-slate-11">{data.views} Views</p> */}
             </div>
           </div>
           {/* Image */}

@@ -1,5 +1,4 @@
 import { Link } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { getSessionInfo } from "~/lib/util/utils.server";
 import { logger } from "~/lib/util/globals.server";
@@ -9,7 +8,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // check if user is admin
   const session = await getSessionInfo(request);
-  if (!session?.roles.includes("admin")) redirect("/");
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403 });
 
   return null;
 }
@@ -51,3 +50,5 @@ export default function Electronics() {
     </div>
   );
 }
+
+export { ErrorBoundary } from "~/lib/app/error-boundary";

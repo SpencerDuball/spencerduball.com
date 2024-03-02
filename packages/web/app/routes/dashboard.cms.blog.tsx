@@ -1,18 +1,18 @@
 import * as React from "react";
 import { TimeDescIcon, TimeAscIcon, ViewsAscIcon, ViewsDescIcon } from "~/lib/ui/icon";
 import { Form, Link, useLoaderData, useFetcher, useFetchers } from "@remix-run/react";
-import { redirect, json } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { getSessionInfo } from "~/lib/util/utils.server";
 import { logger, db } from "~/lib/util/globals.server";
 import { execute, takeFirstOrThrow } from "~/lib/util/utils.server";
 import { z } from "zod";
-import { parseBlog } from "~/model/blogs";
+import { parseBlog, BLOG_TEMPLATE } from "~/model/blogs";
 import { BlogLi } from "~/lib/app/blog-li";
 import { Pagination } from "~/lib/ui/pagination";
 import * as Popover from "@radix-ui/react-popover";
 import { IconButton } from "~/lib/ui/button";
-import { RiAddLine, RiSearchLine } from "react-icons/ri";
+import { RiAddLine, RiSearchLine } from "react-icons/ri/index.js";
 import { InputGroup, InputLeftElement, Input, InputRightElement } from "~/lib/ui/input";
 import { Button } from "~/lib/ui/button";
 import { Tag, colorFromName, ColorList } from "~/lib/ui/tag";
@@ -40,7 +40,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // check if user is admin
   const session = await getSessionInfo(request);
-  if (!session?.roles.includes("admin")) throw redirect("/");
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403 });
 
   //-------------------------------------------------------------------------------------------------------------------
   // Collect Search Parameters
@@ -308,18 +308,19 @@ export default function Blog() {
                     >
                       <div className="grid">
                         <Button
-                          variant={search.sort === "created-asc" ? "subtle" : "ghost"}
-                          onClick={() => setSearch({ ...search, sort: "created-asc" })}
-                        >
-                          Oldest-to-Newest
-                        </Button>
-                        <Button
                           variant={search.sort === "created-desc" || !search.sort ? "subtle" : "ghost"}
                           onClick={() => setSearch({ ...search, sort: "created-desc" })}
                         >
                           Newest-to-Oldest
                         </Button>
                         <Button
+                          variant={search.sort === "created-asc" ? "subtle" : "ghost"}
+                          onClick={() => setSearch({ ...search, sort: "created-asc" })}
+                        >
+                          Oldest-to-Newest
+                        </Button>
+                        {/* TODO: Display these items when finished setting up a view count strategy. *}
+                        {/* <Button
                           variant={search.sort === "views-desc" ? "subtle" : "ghost"}
                           onClick={() => setSearch({ ...search, sort: "views-desc" })}
                         >
@@ -330,7 +331,7 @@ export default function Blog() {
                           onClick={() => setSearch({ ...search, sort: "views-asc" })}
                         >
                           Least-to-Most Views
-                        </Button>
+                        </Button> */}
                       </div>
                       <Popover.Arrow asChild>
                         <div className="relative h-3 w-3 origin-center -translate-y-[0.375rem] rotate-45 rounded-br-sm border-b border-r border-slate-6 bg-slate-2" />
@@ -354,8 +355,7 @@ export default function Blog() {
               </div>
             </Form>
             <create.Form method="POST" action="/blog?index">
-              <input type="hidden" name="body" value="" />
-              <input type="hidden" name="author_id" value={userId} />
+              <input type="hidden" name="body" value={BLOG_TEMPLATE} />
               <IconButton
                 type="submit"
                 aria-label="New blog."
@@ -377,3 +377,5 @@ export default function Blog() {
     </div>
   );
 }
+
+export { ErrorBoundary } from "~/lib/app/error-boundary";

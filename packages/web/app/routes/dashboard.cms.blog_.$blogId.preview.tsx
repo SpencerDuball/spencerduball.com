@@ -22,7 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // check if user is admin
   const session = await getSessionInfo(request);
-  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403, statusText: "Not Authorized" });
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403 });
 
   switch (request.method) {
     case "POST": {

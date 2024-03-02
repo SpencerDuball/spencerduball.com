@@ -1,5 +1,5 @@
 import { useRouteError, isRouteErrorResponse } from "@remix-run/react";
-import { RiAlarmWarningLine } from "react-icons/ri";
+import { RiAlarmWarningLine } from "react-icons/ri/index.js";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 import { cn } from "~/lib/util/utils";
 import { Highlight } from "prism-react-renderer";

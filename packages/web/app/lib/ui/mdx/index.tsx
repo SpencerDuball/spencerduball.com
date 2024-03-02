@@ -2,10 +2,10 @@ import * as React from "react";
 import type { MDXComponents } from "mdx/types";
 import { cn } from "~/lib/util/utils";
 import { Link } from "@remix-run/react";
-import { RiCheckLine, RiClipboardLine, RiExternalLinkLine, RiMoonLine, RiSunLine } from "react-icons/ri";
+import { RiCheckLine, RiClipboardLine, RiExternalLinkLine, RiMoonLine, RiSunLine } from "react-icons/ri/index.js";
 import { z } from "zod";
 import { GlobalCtx, Types } from "~/lib/context/global-ctx";
-import { RxHalf2 } from "react-icons/rx";
+import { RxHalf2 } from "react-icons/rx/index.js";
 import { ScrollArea, ScrollViewport } from "../scroll-box";
 import { Highlight, themes } from "prism-react-renderer";
 import { Button, IconButton } from "~/lib/ui/button";
@@ -141,8 +141,8 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           className={cn(
             "border-b p-3 font-mono text-sm",
             preferences._codeTheme === "dark"
-              ? "text-slateDark-12 border-b-slateDark-5"
-              : "text-slateLight-12 border-b-slateLight-5",
+              ? "border-b-slateDark-5 text-slateDark-12"
+              : "border-b-slateLight-5 text-slateLight-12",
           )}
         >
           {filename}
@@ -179,10 +179,10 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
             <Button
               variant="ghost"
               className={cn(
-                "absolute bottom-0 left-0 right-0 rounded-none",
+                "absolute bottom-0 left-0 right-0 rounded-none font-sans",
                 preferences._codeTheme === "dark"
-                  ? "text-slateDark-9 hover:text-slateDark-11 bg-slateDark-3 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
-                  : "text-slateLight-9 hover:text-slateLight-11 bg-slateLight-3 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
+                  ? "bg-slateDark-3 text-slateDark-9 hover:bg-slateDark-4 hover:text-slateDark-11 focus:outline-blueDark-6 active:bg-slateDark-5"
+                  : "bg-slateLight-3 text-slateLight-9 hover:bg-slateLight-4 hover:text-slateLight-11 focus:outline-blueLight-6 active:bg-slateLight-5",
               )}
               onClick={() => setIsExpanded(!isExpanded)}
             >
@@ -197,8 +197,10 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-slateDark-9 hover:text-slateDark-11 bg-slateDark-3 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
-              : "text-slateLight-9 hover:text-slateLight-11 bg-slateLight-3 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
+              ? "bg-slateDark-3 text-slateDark-9 hover:bg-slateDark-4 hover:text-slateDark-11 focus:outline-blueDark-6 active:bg-slateDark-5"
+              : "bg-slateLight-3 text-slateLight-9 hover:bg-slateLight-4 hover:text-slateLight-11 focus:outline-blueLight-6 active:bg-slateLight-5",
+            preferences._codeTheme === "dark" && !filename && "bg-slateDark-4",
+            preferences._codeTheme === "light" && !filename && "bg-slateLight-4",
           )}
           aria-label="Toggle code theme."
           onClick={() => dispatch({ type: Types.ToggleCodeTheme })}
@@ -209,8 +211,10 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           size="sm"
           className={cn(
             preferences._codeTheme === "dark"
-              ? "text-slateDark-9 hover:text-slateDark-11 bg-slateDark-3 hover:bg-slateDark-4 active:bg-slateDark-5 focus:outline-blueDark-6"
-              : "text-slateLight-9 hover:text-slateLight-11 bg-slateLight-3 hover:bg-slateLight-4 active:bg-slateLight-5 focus:outline-blueLight-6",
+              ? "bg-slateDark-3 text-slateDark-9 hover:bg-slateDark-4 hover:text-slateDark-11 focus:outline-blueDark-6 active:bg-slateDark-5"
+              : "bg-slateLight-3 text-slateLight-9 hover:bg-slateLight-4 hover:text-slateLight-11 focus:outline-blueLight-6 active:bg-slateLight-5",
+            preferences._codeTheme === "dark" && !filename && "bg-slateDark-4",
+            preferences._codeTheme === "light" && !filename && "bg-slateLight-4",
           )}
           aria-label="Copy to clipboard."
           onClick={onCopy}
@@ -230,7 +234,13 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
 }
 
 function Table({ className, ...props }: React.ComponentPropsWithoutRef<"table">) {
-  return <table className={cn("relative w-full overflow-auto", className)} {...props} />;
+  return (
+    <ScrollArea>
+      <ScrollViewport>
+        <table className={cn("relative w-full overflow-auto", className)} {...props} />
+      </ScrollViewport>
+    </ScrollArea>
+  );
 }
 
 function Tbody({ className, ...props }: React.ComponentPropsWithoutRef<"tbody">) {
@@ -258,7 +268,7 @@ function Thead({ className, ...props }: React.ComponentPropsWithoutRef<"thead">)
 }
 
 function Tr({ className, ...props }: React.ComponentPropsWithoutRef<"tr">) {
-  return <tr className={cn("border-b hover:bg-slate-2 data-[state=selected]:bg-slate-3", className)} {...props} />;
+  return <tr className={cn("border-b data-[state=selected]:bg-slate-3 hover:bg-slate-2", className)} {...props} />;
 }
 
 function Ul({ className, ...props }: React.ComponentPropsWithoutRef<"ul">) {

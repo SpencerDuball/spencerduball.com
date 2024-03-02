@@ -2,7 +2,7 @@ import React from "react";
 import { z } from "zod";
 import { cn } from "~/lib/util/utils";
 import type { IPublicSession } from "~/lib/util/utils.server";
-import { RiTwitterXFill, RiGithubFill, RiLoginCircleLine, RiCloseLine } from "react-icons/ri";
+import { RiTwitterXFill, RiGithubFill, RiLoginCircleLine, RiCloseLine } from "react-icons/ri/index.js";
 import { PrintablesIcon } from "~/lib/ui/icon";
 import { Button, IconButton } from "~/lib/ui/button";
 import { type FetcherWithComponents, Link } from "@remix-run/react";

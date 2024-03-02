@@ -3,8 +3,8 @@ import { Link, useLocation } from "@remix-run/react";
 import { GlobalCtx, Types } from "~/lib/context/global-ctx";
 import { cn } from "~/lib/util/utils";
 import { IconButton } from "~/lib/ui/button";
-import { RiMenu2Fill, RiMoonFill, RiSunFill } from "react-icons/ri";
-import { RxHalf2 } from "react-icons/rx";
+import { RiMenu2Fill, RiMoonFill, RiSunFill } from "react-icons/ri/index.js";
+import { RxHalf2 } from "react-icons/rx/index.js";
 import * as Nav from "@radix-ui/react-navigation-menu";
 import { ScrollArea, ScrollViewport } from "~/lib/ui/scroll-box";
 

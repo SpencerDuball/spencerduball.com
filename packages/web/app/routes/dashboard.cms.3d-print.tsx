@@ -9,7 +9,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // check if user is admin
   const session = await getSessionInfo(request);
-  if (!session?.roles.includes("admin")) throw redirect("/");
+  if (!session?.roles.includes("admin")) throw new Response(null, { status: 403 });
 
   return null;
 }
@@ -51,3 +51,5 @@ export default function ThreeDPrint() {
     </div>
   );
 }
+
+export { ErrorBoundary } from "~/lib/app/error-boundary";

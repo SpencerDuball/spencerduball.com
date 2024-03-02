@@ -6,7 +6,7 @@ import { sql } from "kysely";
 import { ZodError, z } from "zod";
 import * as Avatar from "@radix-ui/react-avatar";
 import { IconButton } from "~/lib/ui/button";
-import { RiLoginCircleLine } from "react-icons/ri";
+import { RiLoginCircleLine } from "react-icons/ri/index.js";
 import { ZJsonString } from "~/lib/util/utils";
 import { ZMockGhUser, ZOAuthOTC } from "@spencerduballcom/db/ddb";
 import { flash400, flash401, execute } from "~/lib/util/utils.server";
