@@ -31,7 +31,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // -------------------------
   const params = new URLSearchParams();
   params.append("client_id", Config.GITHUB_CLIENT_ID);
-  params.append("redirect_uri", "/auth/callback/github");
+  params.append(
+    "redirect_uri",
+    Config.MOCKS_ENABLED === "TRUE" ? "/auth/callback/github" : `${Config.SITE_URL}/auth/callback/github`,
+  );
   params.append("scope", "user");
   params.append("state", stateCode.code);
 
@@ -42,5 +45,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const authorizePath =
     Config.MOCKS_ENABLED === "TRUE" ? `/mock/github/login/oauth/authorize` : `https://github.com/login/oauth/authorize`;
 
+  log.info(`Redirecting to ${authorizePath}?${params.toString()}`);
   return redirect(`${authorizePath}?${params.toString()}`);
 };

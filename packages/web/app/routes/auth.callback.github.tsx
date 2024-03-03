@@ -75,7 +75,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const ZAccessTokenRes = z.object({ access_token: z.string(), scope: z.string(), token_type: z.string() });
 
   let accessTokenUrl: string;
-  if (Config.MOCKS_ENABLED) {
+  if (Config.MOCKS_ENABLED === "TRUE") {
     log.info(`Config.STAGE = ${Config.STAGE}`);
     log.info(`Config.BUCKET_URL = ${Config.BUCKET_URL}`);
     log.info(`Config.SITE_URL = ${Config.SITE_URL}`);
@@ -120,7 +120,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
 
   let userInfoUrl: string;
-  if (Config.MOCKS_ENABLED) userInfoUrl = new URL("/mock/api-github/user?_data", Config.SITE_URL).href;
+  if (Config.MOCKS_ENABLED === "TRUE") userInfoUrl = new URL("/mock/api-github/user?_data", Config.SITE_URL).href;
   else userInfoUrl = "https://api.github.com/user";
 
   // retrieve the userinfo

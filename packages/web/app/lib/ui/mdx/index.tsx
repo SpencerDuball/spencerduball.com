@@ -22,13 +22,18 @@ function A({ className, href, children, ...props }: React.ComponentPropsWithoutR
       </Link>
     );
   } else {
-    <a
-      className={cn("focus-outline grid items-center text-slate-10 hover:text-slate-12 hover:no-underline", className)}
-      href={href}
-      {...props}
-    >
-      {children} <RiExternalLinkLine className="inline text-current" />
-    </a>;
+    return (
+      <a
+        className={cn(
+          "focus-outline inline-flex items-center gap-1 text-slate-10 hover:text-slate-12 hover:no-underline",
+          className,
+        )}
+        href={href}
+        {...props}
+      >
+        {children} <RiExternalLinkLine className="inline text-current" />
+      </a>
+    );
   }
 }
 
@@ -191,7 +196,7 @@ function Pre({ children, className, ...props }: React.ComponentPropsWithoutRef<"
           )}
         </ScrollViewport>
       </ScrollArea>
-      <div className="absolute right-1.5 top-1.5 grid grid-flow-col gap-1">
+      <div className={cn("absolute right-1 top-1 grid grid-flow-col gap-1", filename && "right-1.5 top-1.5")}>
         <IconButton
           variant="ghost"
           size="sm"

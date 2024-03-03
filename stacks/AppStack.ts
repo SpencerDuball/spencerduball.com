@@ -9,6 +9,8 @@ import { UpdateLambdaEnv } from "../constructs/UpdateLambdaEnv";
 import { ConfigParameter } from "../constructs/ConfigParameter";
 import { SetCorsRules } from "../constructs/SetCorsRules";
 import { HttpMethods } from "aws-cdk-lib/aws-s3";
+import { SsrDomainProps } from "sst/constructs/SsrSite";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 
 export function AppStack({ app, stack }: StackContext) {
   // define global variables
@@ -99,9 +101,25 @@ export function AppStack({ app, stack }: StackContext) {
   //    2. "https://d111111abcdef8.cloudfront.net" - The SITE_URL in any deployed (staging) stage.
   //    3. "http://localhost:3000"                 - The SITE_URL in any local (dev) stage.
   //-----------------------------------------------------------------------------------------------
+  // create the custom domain certificate
+  let customDomain: SsrDomainProps | undefined = undefined;
+  if (app.stage === "prod") {
+    customDomain = {
+      isExternalDomain: true,
+      domainName: new URL(prodUrl).hostname,
+      cdk: {
+        certificate: Certificate.fromCertificateArn(
+          stack,
+          "Certificate",
+          "arn:aws:acm:us-east-1:561720044356:certificate/a440dd53-e46a-42e5-a347-8b69c35d3c3b",
+        ),
+      },
+    };
+  }
+
   // Deploy the site
   const site = new RemixSite(stack, "web", {
-    customDomain: app.stage === "prod" ? new URL(prodUrl).hostname : undefined,
+    customDomain,
     path: "packages/web/",
     cdk: { server: { architecture: Architecture.ARM_64 } },
     warm: app.stage === "prod" ? 10 : undefined,

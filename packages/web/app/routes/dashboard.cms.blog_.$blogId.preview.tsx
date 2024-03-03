@@ -83,3 +83,5 @@ export default function BlogIdPreview() {
     </ScrollArea>
   );
 }
+
+export { ErrorBoundary } from "~/lib/app/error-boundary";
