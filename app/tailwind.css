@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Inter Variable", system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .focus-outline {
+    @apply outline-blue-200;
+    @apply focus:outline;
+    @apply focus:outline-[3px];
+  }
+}
