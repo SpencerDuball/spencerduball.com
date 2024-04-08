@@ -51,8 +51,14 @@ You may need to destroy the app (stage or prod) and the way to create and deploy
 
 ```bash
 # create the app
-flyctl apps create spencerduballcom-stage 
+flyctl apps create spencerduballcom-stage
 
 # deploy the app
 flyctl deploy -c fly.stage.toml
+```
+
+# Environment
+
+```bash
+SITE_URL=https://spencerduballcom-stage.fly.dev
 ```

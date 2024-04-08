@@ -6,11 +6,19 @@
   html {
     font-family: "Inter Variable", system-ui, sans-serif;
   }
+
+  * {
+    @apply border-gray-200;
+    @apply dark:border-gray-800;
+    @apply text-gray-950;
+    @apply dark:text-gray-50;
+  }
 }
 
 @layer utilities {
   .focus-outline {
-    @apply outline-blue-200;
+    @apply outline-sky-200;
+    @apply dark:outline-sky-800;
     @apply focus:outline;
     @apply focus:outline-[3px];
   }
