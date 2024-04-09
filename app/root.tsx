@@ -53,7 +53,7 @@ function _Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gray-50 dark:bg-gray-950">
+      <body className="bg-slate-1 dark:bg-slatedark-1">
         {children}
         <ScrollRestoration />
         <Scripts />

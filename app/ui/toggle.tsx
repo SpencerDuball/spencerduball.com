@@ -14,11 +14,11 @@ const toggleVariants = cva("inline-flex items-center justify-center rounded-md t
     },
     variant: {
       solid:
-        "bg-slate-3 text-slate-12 hover:text-slate-11 disabled:text-slate-12 data-[state=on]:bg-slate-12 data-[state=on]:text-slate-1",
+        "bg-slate-3 dark:bg-slatedark-3 text-slate-12 dark:text-slatedark-12 hover:text-slate-11 dark:hover:text-slatedark-11 disabled:text-slate-12 dark:disabled:text-slatedark-12 data-[state=on]:bg-slate-12 dark:data-[state=on]:bg-slatedark-12 data-[state=on]:text-slate-1 dark:data-[state=on]:text-slatedark-1",
       ghost:
-        "text-slate-12 hover:bg-slate-3 hover:text-slate-11 disabled:bg-transparent disabled:text-slate-12 data-[state=on]:bg-slate-3 data-[state=on]:text-slate-12",
+        "text-slate-12 dark:text-slatedark-12 hover:bg-slate-3 dark:hover:bg-slatedark-3 hover:text-slate-11 dark:hover:text-slatedark-11 disabled:bg-transparent disabled:text-slate-12 dark:disabled:text-slatedark-12 data-[state=on]:bg-slate-3 dark:data-[state=on]:bg-slatedark-3 data-[state=on]:text-slate-12 dark:data-[state=on]:text-slatedark-12",
       outline:
-        "text-slate-12 hover:bg-slate-3 hover:text-slate-11 disabled:bg-transparent disabled:text-slate-12 data-[state=on]:bg-slate-3 data-[state=on]:text-slate-12 border border-slate-6",
+        "text-slate-12 dark:text-slatedark-12 hover:bg-slate-3 dark:hover:bg-slatedark-3 hover:text-slate-11 dark:hover:text-slatedark-11 disabled:bg-transparent disabled:text-slate-12 dark:disabled:text-slatedark-12 data-[state=on]:bg-slate-3 dark:data-[state=on]:bg-slatedark-3 data-[state=on]:text-slate-12 dark:data-[state=on]:text-slatedark-12 border border-slate-6 dark:border-slatedark-6",
     },
     disabled: {
       true: "cursor-not-allowed opacity-50",

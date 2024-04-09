@@ -25,13 +25,13 @@ const switchConfig = {
     },
     colorScheme: {
       primary:
-        "data-[state=checked]:border-slate-12 data-[state=unchecked]:border-slate-3 data-[state=checked]:bg-slate-12 data-[state=unchecked]:bg-slate-3",
+        "data-[state=checked]:border-slate-12 dark:data-[state=checked]:border-slatedark-12 data-[state=unchecked]:border-slate-3 dark:data-[state=unchecked]:border-slatedark-3 data-[state=checked]:bg-slate-12 dark:data-[state=checked]:bg-slatedark-12 data-[state=unchecked]:bg-slate-3 dark:data-[state=unchecked]:bg-slatedark-3",
     },
     disabled: {
       true: "cursor-not-allowed opacity-50",
     },
     invalid: {
-      true: "data-[state=checked]:border-red-9 data-[state=unchecked]:border-red-9",
+      true: "data-[state=checked]:border-red-9 dark:data-[state=checked]:border-reddark-9 data-[state=unchecked]:border-red-9 dark:data-[state=unchecked]:border-reddark-9",
     },
   },
   defaultVariants: {
@@ -53,7 +53,7 @@ const switchThumbConfig = {
       lg: "h-6 w-6 data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0 m-[calc(3px-1px)]",
     },
     colorScheme: {
-      primary: "bg-slate-1",
+      primary: "bg-slate-1 dark:bg-slatedark-1",
     },
   },
   defaultVariants: {

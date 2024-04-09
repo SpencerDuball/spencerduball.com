@@ -39,7 +39,7 @@ const inputOTPVariants = cva(inputOTPDefaultClasses, inputOTPConfig);
 
 // InputOTPSlot
 const inputOTPSlotDefaultClasses =
-  "relative flex items-center justify-center border-y border-r border-slate-6 transition-all first:border-l";
+  "relative flex items-center justify-center border-y border-r border-slate-6 dark:border-slatedark-6 transition-all first:border-l";
 const inputOTPSlotConfig = {
   variants: {
     size: {
@@ -49,12 +49,13 @@ const inputOTPSlotConfig = {
       lg: "h-12 w-12 text-base",
     },
     variant: {
-      outline: "border-slate-6 first:rounded-l-md last:rounded-r-md",
-      filled: "bg-slate-3 border-slate-3 border-r-slate-6 last:border-r-slate-3 first:rounded-l-md last:rounded-r-md",
-      flushed: "border-transparent border-b-slate-6 border-x-[3px]",
+      outline: "border-slate-6 dark:border-slatedark-6 first:rounded-l-md last:rounded-r-md",
+      filled:
+        "bg-slate-3 dark:bg-slatedark-3 border-slate-3 dark:border-slatedark-3 border-r-slate-6 dark:border-r-slatedark-6 last:border-r-slate-3 dark:last:border-r-slatedark-3 first:rounded-l-md last:rounded-r-md",
+      flushed: "border-transparent border-b-slate-6 dark:border-b-slatedark-6 border-x-[3px]",
     },
     isActive: {
-      true: "z-10 outline outline-[3px] outline-blue-6",
+      true: "z-10 outline outline-[3px] outline-blue-6 dark:outline-bluedark-6",
     },
     disabled: {
       true: "opacity-95 cursor-not-allowed",
@@ -67,17 +68,19 @@ const inputOTPSlotConfig = {
     {
       variant: "outline" as const,
       invalid: true,
-      className: "border-y-red-9 first:border-l-red-9 last:border-r-red-9",
+      className:
+        "border-y-red-9 dark:border-y-reddark-9 first:border-l-red-9 dark:first:border-l-reddark-9 last:border-r-red-9 dark:last:border-r-reddark-9",
     },
     {
       variant: "filled" as const,
       invalid: true,
-      className: "border-y-red-9 first:border-l-red-9 last:border-r-red-9",
+      className:
+        "border-y-red-9 dark:border-y-reddark-9 first:border-l-red-9 dark:first:border-l-reddark-9 last:border-r-red-9 dark:last:border-r-reddark-9",
     },
     {
       variant: "flushed" as const,
       invalid: true,
-      className: "border-b-red-9",
+      className: "border-b-red-9 dark:border-b-reddark-9",
     },
   ],
   defaultVariants: {
@@ -158,7 +161,7 @@ const InputOTPSlot = React.forwardRef<
       {char}
       {hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="animate-caret-blink h-4 w-px bg-slate-12 duration-1000" />
+          <div className="animate-caret-blink h-4 w-px bg-slate-12 dark:bg-slatedark-12 duration-1000" />
         </div>
       )}
     </div>

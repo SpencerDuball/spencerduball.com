@@ -18,13 +18,13 @@ const radioGroupItemConfig = {
       filled: "",
     },
     colorScheme: {
-      primary: "border-slate-12 text-slate-12",
+      primary: "border-slate-12 dark:border-slatedark-12 text-slate-12 dark:text-slatedark-12",
     },
     disabled: {
       true: "cursor-not-allowed opacity-50",
     },
     invalid: {
-      true: "border border-red-9",
+      true: "border border-red-9 dark:border-reddark-9",
     },
   },
   compoundVariants: [
@@ -73,12 +73,13 @@ const radioGroupItemConfig = {
     {
       variant: "outline" as const,
       colorScheme: "primary" as const,
-      className: "border-slate-12 text-slate-12",
+      className: "border-slate-12 dark:border-slatedark-12 text-slate-12 dark:text-slatedark-12",
     },
     {
       variant: "filled" as const,
       colorScheme: "primary" as const,
-      className: "bg-slate-3 data-[state=checked]:bg-slate-12 text-slate-1",
+      className:
+        "bg-slate-3 dark:bg-slatedark-3 data-[state=checked]:bg-slate-12 dark:data-[state=checked]:bg-slatedark-12 text-slate-1 dark:text-slatedark-1",
     },
   ],
   defaultVariants: {
@@ -108,7 +109,7 @@ const RadioGroupItem = React.forwardRef<React.ElementRef<typeof RadioGroupPrimit
         ref={ref}
         className={cn(
           radioGroupItemVariants({ size, variant, colorScheme, disabled, invalid }),
-          invalid && "border border-red-9", // Need to override for outline as CVA doesn't know which style should come first.
+          invalid && "border border-red-9 dark:border-reddark-9", // Need to override for outline as CVA doesn't know which style should come first.
           className,
         )}
         disabled={!!disabled}

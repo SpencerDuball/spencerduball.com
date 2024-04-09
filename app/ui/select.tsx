@@ -17,32 +17,35 @@ const selectConfig = {
       lg: "px-4 text-base h-12 gap-4",
     },
     variant: {
-      outline: "focus-outline rounded-md border border-slate-6 hover:border-slate-7 bg-transparent",
-      filled: "focus-outline rounded-md bg-slate-3 hover:bg-slate-4 border border-slate-3 hover:border-slate-4",
-      flushed: "focus-outline border-b border-slate-6 hover:border-slate-7 bg-transparent",
+      outline:
+        "focus-outline rounded-md border border-slate-6 dark:border-slatedark-6 hover:border-slate-7 dark:hover:border-slatedark-7 bg-transparent",
+      filled:
+        "focus-outline rounded-md bg-slate-3 dark:bg-slatedark-3 hover:bg-slate-4 dark:hover:bg-slatedark-4 border border-slate-3 dark:border-slatedark-3 hover:border-slate-4 dark:hover:border-slatedark-4",
+      flushed:
+        "focus-outline border-b border-slate-6 dark:border-slatedark-6 hover:border-slate-7 dark:hover:border-slatedark-7 bg-transparent",
     },
     disabled: {
       true: "opacity-40 cursor-not-allowed focus:outline-none",
     },
     invalid: {
-      true: "border-red-9 hover:border-red-9",
+      true: "border-red-9 dark:border-reddark-9 hover:border-red-9 dark:hover:border-reddark-9",
     },
   },
   compoundVariants: [
     {
       variant: "outline" as const,
       disabled: true,
-      className: "hover:border-slate-6",
+      className: "hover:border-slate-6 dark:hover:border-slatedark-6",
     },
     {
       variant: "filled" as const,
       disabled: true,
-      className: "hover:bg-slate-3 hover:border-slate-3",
+      className: "hover:bg-slate-3 dark:hover:bg-slatedark-3 hover:border-slate-3 dark:hover:border-slatedark-3",
     },
     {
       variant: "flushed" as const,
       disabled: true,
-      className: "hover:border-slate-6",
+      className: "hover:border-slate-6 dark:hover:border-slatedark-6",
     },
   ],
   defaultVariants: {
@@ -119,7 +122,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-slate-1 text-slate-12 shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-slate-1 dark:bg-slatedark-1 text-slate-12 dark:text-slatedark-12 shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className,
@@ -158,7 +161,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-slate-3 focus:text-slate-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-slate-3 dark:focus:bg-slatedark-3 focus:text-slate-12 dark:focus:text-slatedark-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
     )}
     {...props}
@@ -178,7 +181,11 @@ const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator ref={ref} className={cn("-mx-1 my-1 h-px bg-slate-6", className)} {...props} />
+  <SelectPrimitive.Separator
+    ref={ref}
+    className={cn("-mx-1 my-1 h-px bg-slate-6 dark:bg-slatedark-6", className)}
+    {...props}
+  />
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 

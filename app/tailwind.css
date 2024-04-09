@@ -7,18 +7,21 @@
     font-family: "Inter Variable", system-ui, sans-serif;
   }
 
+  body {
+    @apply text-slate-12;
+    @apply dark:text-slatedark-12;
+  }
+
   * {
-    @apply border-gray-200;
-    @apply dark:border-gray-800;
-    @apply text-gray-950;
-    @apply dark:text-gray-50;
+    @apply border-slate-6;
+    @apply dark:border-slatedark-6;
   }
 }
 
 @layer utilities {
   .focus-outline {
-    @apply outline-sky-200;
-    @apply dark:outline-sky-800;
+    @apply outline-blue-6;
+    @apply dark:outline-bluedark-6;
     @apply focus:outline;
     @apply focus:outline-[3px];
   }

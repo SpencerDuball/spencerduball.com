@@ -15,32 +15,35 @@ const inputConfig = {
       lg: "px-4 text-base h-12",
     },
     variant: {
-      outline: "focus-outline rounded-md border border-slate-6 hover:border-slate-7 bg-transparent",
-      filled: "focus-outline rounded-md bg-slate-3 hover:bg-slate-4 border border-slate-3 hover:border-slate-4",
-      flushed: "focus-outline border-b border-slate-6 hover:border-slate-7 bg-transparent",
+      outline:
+        "focus-outline rounded-md border border-slate-6 dark:border-slatedark-6 hover:border-slate-7 dark:hover:border-slatedark-7 bg-transparent",
+      filled:
+        "focus-outline rounded-md bg-slate-3 dark:bg-slatedark-3 hover:bg-slate-4 dark:hover:bg-slatedark-4 border border-slate-3 dark:border-slatedark-3 hover:border-slate-4 dark:hover:border-slatedark-4",
+      flushed:
+        "focus-outline border-b border-slate-6 dark:border-slatedark-6 hover:border-slate-7 dark:hover:border-slatedark-7 bg-transparent",
     },
     disabled: {
       true: "opacity-40 cursor-not-allowed",
     },
     invalid: {
-      true: "border-red-9 hover:border-red-9",
+      true: "border-red-9 dark:border-reddark-9 hover:border-red-9 dark:hover:border-reddark-9",
     },
   },
   compoundVariants: [
     {
       variant: "outline" as const,
       disabled: true,
-      className: "hover:border-slate-6",
+      className: "hover:border-slate-6 dark:hover:border-slatedark-6",
     },
     {
       variant: "filled" as const,
       disabled: true,
-      className: "hover:bg-slate-3 hover:border-slate-3",
+      className: "hover:bg-slate-3 dark:hover:bg-slatedark-3 hover:border-slate-3 dark:hover:border-slatedark-3",
     },
     {
       variant: "flushed" as const,
       disabled: true,
-      className: "hover:border-slate-6",
+      className: "hover:border-slate-6 dark:hover:border-slatedark-6",
     },
   ],
   defaultVariants: {
@@ -60,32 +63,35 @@ const inputGroupConfig = {
       lg: "px-4 text-base h-12 gap-4",
     },
     variant: {
-      outline: "rounded-md border border-slate-6 hover:border-slate-7 bg-transparent",
-      filled: "rounded-md bg-slate-3 hover:bg-slate-4 border border-slate-3 hover:border-slate-4",
-      flushed: "border-b border-slate-6 hover:border-slate-7 bg-transparent",
+      outline:
+        "rounded-md border border-slate-6 dark:border-slatedark-6 hover:border-slate-7 dark:hover:border-slatedark-7 bg-transparent",
+      filled:
+        "rounded-md bg-slate-3 dark:bg-slatedark-3 hover:bg-slate-4 dark:hover:bg-slatedark-4 border border-slate-3 dark:border-slatedark-3 hover:border-slate-4 dark:hover:border-slatedark-4",
+      flushed:
+        "border-b border-slate-6 dark:border-slatedark-6 hover:border-slate-7 dark:hover:border-slatedark-7 bg-transparent",
     },
     disabled: {
       true: "opacity-40 cursor-not-allowed focus:outline-none",
     },
     invalid: {
-      true: "border-red-9 hover:border-red-9",
+      true: "border-red-9 dark:border-reddark-9 hover:border-red-9 dark:hover:border-reddark-9",
     },
   },
   compoundVariants: [
     {
       variant: "outline" as const,
       disabled: true,
-      className: "hover:border-slate-6",
+      className: "hover:border-slate-6 dark:hover:border-slatedark-6",
     },
     {
       variant: "filled" as const,
       disabled: true,
-      className: "hover:bg-slate-3 hover:border-slate-3",
+      className: "hover:bg-slate-3 dark:hover:bg-slatedark-3 hover:border-slate-3 dark:hover:border-slatedark-3",
     },
     {
       variant: "flushed" as const,
       disabled: true,
-      className: "hover:border-slate-6",
+      className: "hover:border-slate-6 dark:hover:border-slatedark-6",
     },
   ],
   defaultVariants: {
@@ -182,7 +188,7 @@ const InputGroup = React.forwardRef<HTMLDivElement, InputGroupProps>(({ classNam
             disabled: ctx.disabled,
             invalid: ctx.invalid,
           }),
-          ctx._isFocused && "outline outline-[3px] outline-blue-6",
+          ctx._isFocused && "outline outline-[3px] outline-blue-6 dark:outline-bluedark-6",
           className,
         )}
         onPointerDown={(e) => {

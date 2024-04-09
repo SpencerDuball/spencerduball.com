@@ -24,7 +24,7 @@ const checkboxConfig = {
       true: "cursor-not-allowed opacity-50",
     },
     invalid: {
-      true: "border border-red-9",
+      true: "border border-red-9 dark:border-reddark-9",
     },
   },
   compoundVariants: [
@@ -32,12 +32,13 @@ const checkboxConfig = {
     {
       variant: "outline" as const,
       colorScheme: "primary" as const,
-      className: "border-slate-12 text-slate-12",
+      className: "border-slate-12 dark:border-slatedark-12 text-slate-12 dark:text-slatedark-12",
     },
     {
       variant: "filled" as const,
       colorScheme: "primary" as const,
-      className: "bg-slate-3 data-[state=checked]:bg-slate-12 text-slate-1",
+      className:
+        "bg-slate-3 dark:bg-slatedark-3 data-[state=checked]:bg-slate-12 dark:data-[state=checked]:bg-slatedark-12 text-slate-1 dark:text-slatedark-1",
     },
   ],
   defaultVariants: {
@@ -58,7 +59,7 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root
       ref={ref}
       className={cn(
         checkboxVariants({ size, variant, colorScheme, disabled, invalid }),
-        invalid && "border border-red-9", // Need to override for outline as CVA doesn't know which style should come first.
+        invalid && "border border-red-9 dark:border-reddark-9", // Need to override for outline as CVA doesn't know which style should come first.
         className,
       )}
       disabled={!!disabled}

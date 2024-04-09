@@ -34,49 +34,55 @@ const buttonConfig = {
     {
       variant: "solid" as const,
       colorScheme: "primary" as const,
-      className: ["bg-slate-12", "active:bg-slate-11", "text-slate-1"],
+      className:
+        "bg-slate-12 dark:bg-slatedark-12 active:bg-slate-11 dark:active:bg-slatedark-11 text-slate-1 dark:text-slatedark-1",
     },
     {
       variant: "solid" as const,
       colorScheme: "primary" as const,
       disabled: true,
-      className: ["bg-slate-9", "hover:bg-slate-9", "active:bg-slate-9"],
+      className:
+        "bg-slate-9 dark:bg-slatedark-9 hover:bg-slate-9 dark:hover:bg-slatedark-9 active:bg-slate-9 dark:active:bg-slatedark-9",
     },
     // apply styles for "subtle" variant
     {
       variant: "subtle" as const,
       colorScheme: "primary" as const,
-      className: ["bg-slate-3", "hover:bg-slate-4", "active:bg-slate-5", "text-slate-12"],
+      className:
+        "bg-slate-3 dark:bg-slatedark-3 hover:bg-slate-4 dark:hover:bg-slatedark-4 active:bg-slate-5 dark:active:bg-slatedark-5 text-slate-12 dark:text-slatedark-12",
     },
     {
       variant: "subtle" as const,
       colorScheme: "primary" as const,
       disabled: true,
-      className: ["bg-slate-3", "hover:bg-slate-3", "active:bg-slate-3"],
+      className:
+        "bg-slate-3 dark:bg-slatedark-3 hover:bg-slate-3 dark:hover:bg-slatedark-3 active:bg-slate-3 dark:active:bg-slatedark-3",
     },
     // apply styles for "ghost" variant
     {
       variant: "ghost" as const,
       colorScheme: "primary" as const,
-      className: ["hover:bg-slate-3", "active:bg-slate-4", "text-slate-12"],
+      className:
+        "hover:bg-slate-3 dark:hover:bg-slatedark-3 active:bg-slate-4 dark:active:bg-slatedark-4 text-slate-12 dark:text-slatedark-12",
     },
     {
       variant: "ghost" as const,
       colorScheme: "primary" as const,
       disabled: true,
-      className: ["hover:bg-transparent", "active:bg-transparent"],
+      className: "hover:bg-transparent active:bg-transparent",
     },
     // apply styles for "outline" variant
     {
       variant: "outline" as const,
       colorScheme: "primary" as const,
-      className: ["border", "border-slate-6", "hover:bg-slate-3", "active:bg-slate-4", "text-slate-12"],
+      className:
+        "border border-slate-6 dark:border-slatedark-6 hover:bg-slate-3 dark:hover:bg-slatedark-3 active:bg-slate-4 dark:active:bg-slatedark-4 text-slate-12 dark:text-slatedark-12",
     },
     {
       variant: "outline" as const,
       colorScheme: "primary" as const,
       disabled: true,
-      className: ["hover:bg-transparent", "active:bg-transparent"],
+      className: "hover:bg-transparent active:bg-transparent",
     },
     // copy "slate" variants to other colors ...
     //-----------------------------------------------------------------------------
@@ -86,49 +92,55 @@ const buttonConfig = {
     {
       variant: "solid" as const,
       colorScheme: "red" as const,
-      className: ["bg-red-9", "hover:bg-red-9", "active:bg-red-10", "text-red-1"],
+      className:
+        "bg-red-9 dark:bg-reddark-9 hover:bg-red-9 dark:hover:bg-reddark-9 active:bg-red-10 dark:active:bg-reddark-10 text-red-1 dark:text-reddark-1",
     },
     {
       variant: "solid" as const,
       colorScheme: "red" as const,
       disabled: true,
-      className: ["bg-red-9", "hover:bg-red-9", "active:bg-red-9"],
+      className:
+        "bg-red-9 dark:bg-reddark-9 hover:bg-red-9 dark:hover:bg-reddark-9 active:bg-red-9 dark:active:bg-reddark-9",
     },
     // apply styles for "subtle" variant
     {
       variant: "subtle" as const,
       colorScheme: "red" as const,
-      className: ["bg-red-3", "hover:bg-red-4", "active:bg-red-5", "text-red-9"],
+      className:
+        "bg-red-9 dark:bg-reddark-3 hover:bg-red-4 dark:hover:bg-reddark-4 active:bg-red-5 dark:active:bg-reddark-5 text-red-9 dark:text-reddark-9",
     },
     {
       variant: "subtle" as const,
       colorScheme: "red" as const,
       disabled: true,
-      className: ["bg-red-3", "hover:bg-red-3", "active:bg-red-3"],
+      className:
+        "bg-red-3 dark:bg-reddark-3 hover:bg-red-3 dark:hover:bg-reddark-3 active:bg-red-3 dark:active:bg-reddark-3",
     },
     // apply styles for "ghost" variant
     {
       variant: "ghost" as const,
       colorScheme: "red" as const,
-      className: ["hover:bg-red-3", "active:bg-red-4", "text-red-9"],
+      className:
+        "hover:bg-red-3 dark:hover:bg-reddark-3 active:bg-red-4 dark:active:bg-reddark-4 text-red-9 dark:text-reddark-9",
     },
     {
       variant: "ghost" as const,
       colorScheme: "red" as const,
       disabled: true,
-      className: ["hover:bg-transparent", "active:bg-transparent"],
+      className: "hover:bg-transparent active:bg-transparent",
     },
     // apply styles for "outline" variant
     {
       variant: "outline" as const,
       colorScheme: "red" as const,
-      className: ["border", "border-red-8", "hover:bg-red-3", "active:bg-red-4", "text-red-9"],
+      className:
+        "border border-red-8 dark:border-reddark-8 hover:bg-red-3 dark:hover:bg-reddark-3 active:bg-red-4 dark:active:bg-reddark-4 text-red-9 dark:text-reddark-9",
     },
     {
       variant: "outline" as const,
       colorScheme: "red" as const,
       disabled: true,
-      className: ["hover:bg-transparent", "active:bg-transparent"],
+      className: "hover:bg-transparent active:bg-transparent",
     },
   ],
   defaultVariants: {

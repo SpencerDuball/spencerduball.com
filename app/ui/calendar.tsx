@@ -26,17 +26,19 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         nav_button_next: "absolute right-1",
         table: "w-full border-collapse space-y-1",
         head_row: "flex",
-        head_cell: "text-slate-9 rounded-md w-9 font-normal text-[0.8rem]",
+        head_cell: "text-slate-9 dark:text-slatedark-9 rounded-md w-9 font-normal text-[0.8rem]",
         row: "flex w-full mt-2",
-        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-slate-3/50 [&:has([aria-selected])]:bg-slate-3 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-slate-3/50 [&:has([aria-selected])]:bg-slate-3 dark:[&:has([aria-selected])]:bg-slatedark-3 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
         day: cn(buttonVariants({ variant: "ghost" }), "h-9 w-9 p-0 font-normal aria-selected:opacity-100"),
         day_range_end: "day-range-end",
-        day_selected: "!bg-slate-12 !text-slate-2 hover:bg-slate-12 hover:text-2 focus:bg-slate-12 focus:text-slate-2",
-        day_today: "bg-slate-3 text-slate-12",
+        day_selected:
+          "!bg-slate-12 dark:!bg-slatedark-12 !text-slate-2 dark:!text-slatedark-2 hover:bg-slate-12 dark:hover:bg-slatedark-12 hover:text-2 focus:bg-slate-12 dark:focus:bg-slatedark-12 focus:text-slate-2 dark:focus:text-slatedark-2",
+        day_today: "bg-slate-3 dark:bg-slatedark-3 text-slate-12 dark:text-slatedark-12",
         day_outside:
-          "day-outside text-slate-12 opacity-50 aria-selected:bg-slate-3/50 aria-selected:text-slate-12 aria-selected:opacity-30",
-        day_disabled: "text-slate-9 opacity-50",
-        day_range_middle: "aria-selected:bg-slate-3 aria-selected:text-slate-12",
+          "day-outside text-slate-12 dark:text-slatedark-12 opacity-50 aria-selected:bg-slate-3/50 aria-selected:text-slate-12 dark:aria-selected:text-slatedark-12 aria-selected:opacity-30",
+        day_disabled: "text-slate-9 dark:text-slatedark-9 opacity-50",
+        day_range_middle:
+          "aria-selected:bg-slate-3 dark:aria-selected:bg-slatedark-3 aria-selected:text-slate-12 dark:aria-selected:text-slatedark-12",
         day_hidden: "invisible",
         ...classNames,
       }}

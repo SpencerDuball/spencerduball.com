@@ -1,8 +1,7 @@
 import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { RiArrowDownSLine } from "react-icons/ri";
-
-import { cn } from "./util";
+import { cn } from "~/util/util";
 
 const Accordion = AccordionPrimitive.Root;
 
@@ -28,7 +27,7 @@ const AccordionTrigger = React.forwardRef<
       {...props}
     >
       {children}
-      <RiArrowDownSLine className="h-4 w-4 shrink-0 text-slate-9 transition-transform duration-200" />
+      <RiArrowDownSLine className="h-4 w-4 shrink-0 text-slate-9 dark:text-slatedark-9 transition-transform duration-200" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));
