@@ -61,4 +61,5 @@ flyctl deploy -c fly.stage.toml
 
 ```bash
 SITE_URL=https://spencerduballcom-stage.fly.dev
+LOG_LEVEL=info
 ```

@@ -50,7 +50,7 @@ const ScrollBar = React.forwardRef<
       )}
       {...props}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb className='scroll-area-thumb relative h-full w-full flex-1 rounded-full bg-slateA-6 dark:bg-slatedarkA-6 before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[""]' />
+      <ScrollAreaPrimitive.ScrollAreaThumb className='scroll-area-thumb relative h-full w-full flex-1 rounded-full bg-slatea-6 before:absolute before:left-1/2 before:top-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[""] dark:bg-slatedarka-6' />
     </ScrollAreaPrimitive.ScrollAreaScrollbar>
   );
 });

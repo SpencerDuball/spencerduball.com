@@ -1,8 +1,11 @@
 import * as React from "react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs, type LinksFunction, type MetaFunction } from "@remix-run/node";
 import { GlobalCtx, GlobalCtxProvider } from "~/context/global-ctx/context";
 import { preferences } from "~/util/cookies";
+import { logger } from "~/util/util.server";
+import { Toaster } from "~/ui";
+import { Header } from "~/components/header";
 
 // import css files
 import tailwind from "~/tailwind.css?url";
@@ -24,6 +27,7 @@ export const meta: MetaFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  logger(request);
   const resHeaders: HeadersInit = [];
 
   // Handle Preferences Cookie
@@ -43,18 +47,21 @@ function _Layout({ children }: { children: React.ReactNode }) {
   const [{ preferences }] = React.useContext(GlobalCtx);
 
   // The name="theme-color" meta tag must be supplied with an actual hex value, not a class.
-  // const metaThemeColor = preferences._theme === "dark" ? slateDark.slate1 : slate.slate1;
+  const metaThemeColor = preferences._theme === "dark" ? "#111113" : "#fcfcfd";
 
   return (
     <html lang="en" className={preferences._theme}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content={metaThemeColor} />
         <Meta />
         <Links />
       </head>
-      <body className="bg-slate-1 dark:bg-slatedark-1">
-        {children}
+      <body className="grid min-h-[100dvh] grid-rows-[min-content_1fr_min-content] bg-slate-1 dark:bg-slatedark-1">
+        <Header isAdmin={true} />
+        <div className="justify-start">{children}</div>
+        <Toaster />
         <ScrollRestoration />
         <Scripts />
       </body>

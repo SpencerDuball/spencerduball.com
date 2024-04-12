@@ -150,7 +150,7 @@ const buttonConfig = {
   },
 };
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-outline",
+  "focus-outline inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium",
   buttonConfig,
 );
 

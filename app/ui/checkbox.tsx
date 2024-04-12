@@ -47,7 +47,7 @@ const checkboxConfig = {
     colorScheme: "primary" as const,
   },
 };
-const checkboxVariants = cva("focus-outline border peer shrink-0 rounded-sm [&>span>svg]:!stroke-2", checkboxConfig);
+const checkboxVariants = cva("focus-outline peer shrink-0 rounded-sm border [&>span>svg]:!stroke-2", checkboxConfig);
 
 interface CheckboxProps
   extends Omit<React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>, "disabled">,

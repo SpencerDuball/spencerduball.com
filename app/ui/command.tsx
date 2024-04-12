@@ -13,7 +13,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-md bg-slate-1 dark:bg-slatedark-1 text-slate-12 dark:text-slatedark-12",
+      "flex h-full w-full flex-col overflow-hidden rounded-md bg-slate-1 text-slate-12 dark:bg-slatedark-1 dark:text-slatedark-12",
       className,
     )}
     {...props}
@@ -44,7 +44,7 @@ const CommandInput = React.forwardRef<
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-slate-9 dark:placeholder:text-slatedark-9 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-slate-9 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-slatedark-9",
         className,
       )}
       {...props}
@@ -109,7 +109,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-slate-3 dark:aria-selected:bg-slatedark-3 aria-selected:text-slate-12 dark:aria-selected:text-slatedark-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-slate-3 aria-selected:text-slate-12 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:aria-selected:bg-slatedark-3 dark:aria-selected:text-slatedark-12",
       className,
     )}
     {...props}

@@ -5,16 +5,16 @@ import { buttonConfig } from ".";
 import { cn } from "~/util/util";
 
 const iconButtonVariants = cva(
-  "focus-outline rounded-md relative grid grid-flow-col place-items-center gap-2 auto-cols-max justify-center",
+  "focus-outline relative grid auto-cols-max grid-flow-col place-items-center justify-center gap-2 rounded-md",
   {
     ...buttonConfig,
     variants: {
       ...buttonConfig.variants,
       size: {
-        xs: "w-6 h-6 text-xs [&>svg]:h-3.5 [&>svg]:w-3.5",
-        sm: "w-8 h-8 text-sm [&>svg]:h-3.5 [&>svg]:w-3.5",
-        md: "w-10 h-10 text-base [&>svg]:h-4 [&>svg]:w-4",
-        lg: "w-12 h-12 text-lg [&>svg]:h-[1.125rem] [&>svg]:w-[1.125rem]",
+        xs: "h-6 w-6 text-xs [&>svg]:h-3.5 [&>svg]:w-3.5",
+        sm: "h-8 w-8 text-sm [&>svg]:h-3.5 [&>svg]:w-3.5",
+        md: "h-10 w-10 text-base [&>svg]:h-4 [&>svg]:w-4",
+        lg: "h-12 w-12 text-lg [&>svg]:h-[1.125rem] [&>svg]:w-[1.125rem]",
       },
     },
   },
