@@ -1,7 +1,0 @@
-node_modules
-
-./sqlite.db
-
-/.cache
-/build
-.env
