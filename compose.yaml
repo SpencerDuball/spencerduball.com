@@ -1,0 +1,51 @@
+services:
+  web:
+    container_name: spencerduballcom-web
+    build:
+      context: .
+      target: prod
+      dockerfile: ./packages/web/Dockerfile
+    environment:
+      - "ENV_VAR=${ENV_VAR}"
+      - "MINIO_ROOT_USER=${MINIO_ROOT_USER}"
+      - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}"
+      - "MINIO_URL=${MINIO_URL}"
+    image: "spencerduballcom"
+    ports:
+      - "5110:8080"
+    volumes:
+      - "./data/logs:/app/logs"
+    restart: on-failure
+    networks:
+      - spencerduballcom_net
+  libsql:
+    container_name: spencerduballcom-libsql
+    image: "ghcr.io/tursodatabase/libsql-server:latest"
+    platform: linux/amd64
+    ports:
+      - "5120:8080"
+      - "5121:5001"
+    environment:
+      - "SQLD_NODE=primary"
+    volumes:
+      - ./data/libsql:/var/lib/sqld
+    restart: on-failure
+    networks:
+      - spencerduballcom_net
+  minio:
+    container_name: spencerduballcom-minio
+    image: "minio/minio:latest"
+    ports:
+      - "5130:9000"
+      - "5131:9001"
+    environment:
+      - "MINIO_ROOT_USER=${MINIO_ROOT_USER}"
+      - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}"
+    volumes:
+      - ./data/minio:/data
+    command: "server /data --console-address ':9001'"
+    restart: on-failure
+    networks:
+      - spencerduballcom_net
+networks:
+  spencerduballcom_net:

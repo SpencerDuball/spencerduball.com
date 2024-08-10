@@ -1,0 +1,14 @@
+{
+  "name": "spencerduballcom",
+  "version": "1.0.0",
+  "type": "module",
+  "keywords": [],
+  "author": "Spencer Duball",
+  "license": "ISC",
+  "scripts": {
+    "docker-start-prod": "docker compose -f compose.yaml up -d",
+    "docker-stop-prod": "docker compose -f compose.yaml down",
+    "docker-start-dev": "docker compose -f compose.dev.yaml up -d",
+    "docker-stop-dev": "docker compose -f compose.dev.yaml down"
+  }
+}
