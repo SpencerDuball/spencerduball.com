@@ -3,6 +3,15 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+  // The package "react-use" does not properly configure the "type" field for the export and this causes a plethora of
+  // issues with Vite based projects. This is a workaround noted in this issue:
+  // https://github.com/streamich/react-use/issues/2353#issuecomment-2044683620
+  ssr: {
+    noExternal: ["react-use"],
+  },
+  optimizeDeps: {
+    include: ["react-use"],
+  },
   plugins: [
     remix({
       future: {

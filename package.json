@@ -10,5 +10,8 @@
     "docker-stop-prod": "docker compose -f compose.yaml down",
     "docker-start-dev": "docker compose -f compose.dev.yaml up -d",
     "docker-stop-dev": "docker compose -f compose.dev.yaml down"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
   }
 }
