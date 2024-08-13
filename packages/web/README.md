@@ -2,14 +2,15 @@
 
 # Production
 
-Ensure the `.env.prod` file exists with keys:
+Ensure the `/.env.prod` file exists with keys:
 
 ```bash
 ENV_VAR=prod
+SITE_URL=http://spencerduball.com
+LIBSQL_URL=http://localhost:5120
 MINIO_ROOT_USER=username
 MINIO_ROOT_PASSWORD=password
 MINIO_URL=http://localhost:5130
-LIBSQL_URL=http://localhost:5120
 ```
 
 To start the server:
@@ -26,14 +27,15 @@ docker compose -f compose.yaml down
 
 # Development
 
-Ensure the `.env.dev` file exists, can use this template:
+Ensure the `/packages/web/.env` file exists, can use this template:
 
 ```bash
-ENV_VAR=dev
+ENV_VAR=prod
+SITE_URL=http://spencerduball.com
+LIBSQL_URL=http://localhost:5120
 MINIO_ROOT_USER=username
 MINIO_ROOT_PASSWORD=password
 MINIO_URL=http://localhost:5130
-LIBSQL_URL=http://localhost:5120
 ```
 
 To start the server:

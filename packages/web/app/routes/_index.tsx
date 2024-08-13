@@ -1,8 +1,11 @@
 import * as React from "react";
 import { type MetaFunction } from "@remix-run/react";
-import { RiTwitterXFill, RiGithubFill, RiArrowRightLine } from "react-icons/ri";
+import { RiTwitterXFill, RiGithubFill } from "react-icons/ri";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { PrintablesIcon } from "~/components/icons";
+import { GlobalCtx } from "~/context/global-ctx/context";
+import { RxHalf2 } from "react-icons/rx";
+import { RiMoonFill, RiSunFill } from "react-icons/ri";
 
 export const meta: MetaFunction = () => [
   { title: "Home | Spencer Duball" },
@@ -14,6 +17,13 @@ export const meta: MetaFunction = () => [
 ];
 
 export default function Index() {
+  const [{ preferences }, dispatch] = React.useContext(GlobalCtx);
+
+  // determine theme icon
+  let ThemeIcon = RxHalf2;
+  if (preferences.theme === "dark") ThemeIcon = RiMoonFill;
+  else if (preferences.theme === "light") ThemeIcon = RiSunFill;
+
   return (
     <main className="grid w-full justify-items-center">
       <section className="grid w-full max-w-5xl gap-10 px-4 py-6">
@@ -59,6 +69,7 @@ export default function Index() {
             </div>
           </div>
         </div>
+
         {/* Recent Blogs */}
         {/* <div className="grid gap-2">
         <h1 className="text-md px-3 font-bold uppercase text-slate-10">Latest Posts</h1>

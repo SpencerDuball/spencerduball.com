@@ -20,8 +20,8 @@ services:
       - "5130:9000" # The S3 API
       - "5131:9001" # The web console
     environment:
-      - "MINIO_ROOT_USER=${MINIO_ROOT_USER}"
-      - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}"
+      - "MINIO_ROOT_USER=admin"
+      - "MINIO_ROOT_PASSWORD=password"
     volumes:
       - ./data/minio:/data
     command: "server /data --console-address ':9001'"

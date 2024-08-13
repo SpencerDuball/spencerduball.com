@@ -6,8 +6,8 @@
   "author": "Spencer Duball",
   "license": "ISC",
   "scripts": {
-    "docker-start-prod": "docker compose -f compose.yaml up -d",
-    "docker-stop-prod": "docker compose -f compose.yaml down",
+    "docker-start-prod": "docker compose -f compose.yaml --env-file .env.prod up -d",
+    "docker-stop-prod": "docker compose -f compose.yaml --env-file .env.prod down",
     "docker-start-dev": "docker compose -f compose.dev.yaml up -d",
     "docker-stop-dev": "docker compose -f compose.dev.yaml down"
   },
