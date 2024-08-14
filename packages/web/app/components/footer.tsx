@@ -18,7 +18,7 @@ export function Footer({ className, ...props }: FooterProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiTwitterXFill className="h-4 w-4 text-slate-11" />
+            <RiTwitterXFill className="h-4 w-4 text-slate-10 dark:text-slatedark-10" />
           </a>
           <a
             className="focus-outline h-min w-min p-2"
@@ -26,7 +26,7 @@ export function Footer({ className, ...props }: FooterProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <RiGithubFill className="h-4 w-4 text-slate-11" />
+            <RiGithubFill className="h-4 w-4 text-slate-10 dark:text-slatedark-10" />
           </a>
           <a
             className="focus-outline h-min w-min p-2"
@@ -40,7 +40,7 @@ export function Footer({ className, ...props }: FooterProps) {
 
         {/* Right Side Footer */}
         <div className="grid auto-cols-min grid-flow-col gap-2">
-          <IconButton aria-label="Toggle Theme" variant="subtle" className="bg-transparent text-slate-11">
+          <IconButton aria-label="Toggle Theme" variant="ghost" className="text-slate-10 dark:text-slatedark-10">
             <RiLoginCircleLine />
           </IconButton>
         </div>

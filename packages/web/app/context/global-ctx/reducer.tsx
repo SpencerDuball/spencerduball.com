@@ -32,14 +32,12 @@ export enum Types {
   ToggleTheme = "TOGGLE_THEME",
   ToggleCodeTheme = "TOGGLE_CODE_THEME",
   PatchPreferences = "PATCH_PREFERENCES",
-  SetPreferences = "SET_PREFERENCES",
 }
 
 export type Payload = {
   [Types.ToggleTheme]: undefined;
   [Types.ToggleCodeTheme]: undefined;
   [Types.PatchPreferences]: Partial<IGlobalCtxState["preferences"]>;
-  [Types.SetPreferences]: IGlobalCtxState["preferences"];
 };
 
 export type Actions = ActionMap<Payload>[keyof ActionMap<Payload>];
@@ -71,11 +69,6 @@ export const reducer = (state: IGlobalCtxState, action: Actions): IGlobalCtxStat
     case Types.PatchPreferences: {
       let next = structuredClone(state);
       next.preferences = { ...state.preferences, ...action.payload };
-      return next;
-    }
-    case Types.SetPreferences: {
-      let next = structuredClone(state);
-      next.preferences = action.payload;
       return next;
     }
     default:

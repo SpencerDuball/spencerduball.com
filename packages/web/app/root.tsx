@@ -6,6 +6,7 @@ import { GlobalCtx } from "~/context/global-ctx/context";
 import { Header } from "~/components/header";
 import { Footer } from "~/components/footer";
 import { preferences } from "~/util/cookies";
+import { context, getLogger, withContext } from "./util/logger";
 
 // import css files
 import tailwindcss from "./tailwind.css?url";
@@ -27,19 +28,21 @@ export const meta: MetaFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const resHeaders: HeadersInit = [];
+  return withContext(async () => {
+    const resHeaders: HeadersInit = [];
 
-  // Handle Preferences Cookie
-  // -------------------------
-  // Retrieves and parses the theme from the __preferences cookie. If the cookie is invalid or doesn't exist then
-  // respond with a a Set-Cookie to set the __preferences cookie. The theme will be used in SSR of the app.
-  let prefs = await preferences.parse(request.headers.get("cookie")).catch(() => null);
-  if (!prefs) {
-    prefs = { _theme: "dark", _codeTheme: "dark" };
-    resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
-  }
+    // Handle Preferences Cookie
+    // -------------------------
+    // Retrieves and parses the theme from the __preferences cookie. If the cookie is invalid or doesn't exist then
+    // respond with a a Set-Cookie to set the __preferences cookie. The theme will be used in SSR of the app.
+    let prefs = await preferences.parse(request.headers.get("cookie")).catch(() => null);
+    if (!prefs) {
+      prefs = { _theme: "dark", _codeTheme: "dark" };
+      resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
+    }
 
-  return json({ prefs }, { headers: resHeaders });
+    return json({ prefs }, { headers: resHeaders });
+  });
 }
 
 function _Layout({ children }: { children: React.ReactNode }) {

@@ -1,0 +1,10 @@
+- [kiliman-middleware-vid](https://www.youtube.com/watch?v=_dbMs9D5kdQ&t=663s)
+- [kiliman-middleware](https://github.com/kiliman/remix-express-vite-plugin)
+- [remix-serve](https://github.com/remix-run/remix/blob/7c0366fc73e513f55fe643291d1b5669d62ad13d/packages/remix-serve/cli.ts)
+- [remix-express](https://github.com/remix-run/remix/blob/7c0366fc73e513f55fe643291d1b5669d62ad13d/packages/remix-express/server.ts)
+
+- [ ] TODO: Need to break this section up with the custom server section. The logging is the first thing that will trigger wanting to have a custom server entrypoint.
+
+# Logging
+
+This document is about the design for the logging on this site

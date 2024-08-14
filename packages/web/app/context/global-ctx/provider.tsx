@@ -37,8 +37,6 @@ function useSitePreferences(dispatch: React.Dispatch<Actions>, preferences: IGlo
   // -------------------
   // This effect restores the 'preferences' from localStorage if it exists. If the 'preferences' are not stored in the
   // localStorage it will be defaulted to 'system'.
-  //
-  // [Order-Dependent 1/2]
   React.useEffect(() => {
     let prefs: Payload[Types.PatchPreferences] | null = null;
 
@@ -60,8 +58,6 @@ function useSitePreferences(dispatch: React.Dispatch<Actions>, preferences: IGlo
   // ----------------------
   // After the site preferences are restored, this effect tracks the "theme" and "codeTheme" and computes the "_theme"
   // and "_codeTheme" based on the "theme" and "codeTheme" respectively.
-  //
-  // [Order-Dependent 2/2]
   const prefersDark = useMedia("(prefers-color-scheme: dark)", true);
 
   React.useEffect(() => {
