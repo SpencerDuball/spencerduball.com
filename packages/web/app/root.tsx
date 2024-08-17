@@ -31,6 +31,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return withContext(async () => {
     const resHeaders: HeadersInit = [];
 
+    getLogger().info("Requesting preferences");
+
     // Handle Preferences Cookie
     // -------------------------
     // Retrieves and parses the theme from the __preferences cookie. If the cookie is invalid or doesn't exist then

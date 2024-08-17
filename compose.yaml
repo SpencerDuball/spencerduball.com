@@ -6,7 +6,9 @@ services:
       target: prod
       dockerfile: ./packages/web/Dockerfile
     environment:
-      - "ENV_VAR=${ENV_VAR}"
+      - "NODE_ENV=${NODE_ENV}"
+      - "SITE_URL=${SITE_URL}"
+      - "LIBSQL_URL=${LIBSQL_URL}"
       - "MINIO_ROOT_USER=${MINIO_ROOT_USER}"
       - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}"
       - "MINIO_URL=${MINIO_URL}"
