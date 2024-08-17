@@ -4,6 +4,7 @@ import express from "express";
 import pinoHttp from "pino-http";
 import path from "path";
 import { config } from "@dotenvx/dotenvx";
+import { randomUUID } from "crypto";
 // This file is build following the patterns from two files from the Remix project:
 // - Custom Express Template
 //   https://github.com/remix-run/remix/blob/7c0366fc73e513f55fe643291d1b5669d62ad13d/templates/express/server.js
@@ -15,7 +16,7 @@ import { config } from "@dotenvx/dotenvx";
 function getBuildPath() {
     const buildPathArg = process.argv[2];
     if (!buildPathArg) {
-        console.error("Usage: web-serve <server-build-path> - e.g. web-serve ./build/server/index.js");
+        console.log("Usage: web-serve <server-build-path> - e.g. web-serve ./build/server/index.js");
         process.exit(1);
     }
     return path.resolve(buildPathArg);
@@ -65,8 +66,9 @@ async function main() {
     config();
     // create the viteDevServer if not in production
     let viteDevServer = null;
-    if (process.env.NODE_ENV !== "production")
+    if (process.env.NODE_ENV !== "production") {
         viteDevServer = await getViteDevServer();
+    }
     // create the remix request handler
     const remixHandler = createRequestHandler({
         build: viteDevServer !== null
@@ -90,10 +92,10 @@ async function main() {
         app.use(express.static("build/client", { maxAge: "1h" }));
     }
     // handle SSR requests
-    // TODO: Add logging middleware and AsyncLocalStorage context.
-    app.all("*", (req, res, next) => {
-        remixHandler(req, res, next);
-        pinoHttp()(req, res, next);
+    app.all("*", async (req, res, next) => {
+        const reqId = randomUUID();
+        await remixHandler(req, res, next);
+        pinoHttp({ genReqId: () => reqId })(req, res, next);
     });
     const port = process.env.PORT || 3000;
     app.listen(port, () => console.log(`[web-serve] Listening at http://localhost:${port}`));

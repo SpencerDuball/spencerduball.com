@@ -1,4 +1,4 @@
-import { createRequestHandler, type RequestHandler } from "@remix-run/express";
+import { createRequestHandler } from "@remix-run/express";
 import { type ServerBuild } from "@remix-run/server-runtime";
 import { type ViteDevServer } from "vite";
 import compression from "compression";
@@ -6,7 +6,7 @@ import express from "express";
 import pinoHttp from "pino-http";
 import path from "path";
 import { config } from "@dotenvx/dotenvx";
-import { type IncomingMessage, type ServerResponse } from "http";
+import { randomUUID } from "crypto";
 
 // This file is build following the patterns from two files from the Remix project:
 // - Custom Express Template
@@ -21,7 +21,7 @@ function getBuildPath() {
   const buildPathArg = process.argv[2];
 
   if (!buildPathArg) {
-    console.error(
+    console.log(
       "Usage: web-serve <server-build-path> - e.g. web-serve ./build/server/index.js"
     );
     process.exit(1);
@@ -70,30 +70,6 @@ async function getViteBuild(viteDevServer: ViteDevServer) {
 }
 
 /**
- * This function accepts a remixHandler and returns a callback to be handled by an express server.
- *
- * This function is necessasry so we can wrap the remixHandler with AsyncLocalStorage to provide a logger and request
- * context for each request. We also log the request using the logger passed to AsyncLocalStorage.
- *
- * @param remixHandler The remixHandler to be wrapped.
- * @returns
- */
-function remixHandlerWithContext(remixHandler: RequestHandler) {
-  return function allRequestHandler(
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) {
-    remixHandler(req, res, next);
-    pinoHttp()(
-      req as IncomingMessage,
-      res as ServerResponse<IncomingMessage>,
-      next as any
-    );
-  };
-}
-
-/**
  * The main function that starts the server.
  *
  * @example
@@ -106,8 +82,9 @@ async function main() {
 
   // create the viteDevServer if not in production
   let viteDevServer: ViteDevServer | null = null;
-  if (process.env.NODE_ENV !== "production")
+  if (process.env.NODE_ENV !== "production") {
     viteDevServer = await getViteDevServer();
+  }
 
   // create the remix request handler
   const remixHandler = createRequestHandler({
@@ -141,7 +118,11 @@ async function main() {
   }
 
   // handle SSR requests
-  app.all("*", remixHandlerWithContext(remixHandler));
+  app.all("*", async (req, res, next) => {
+    const reqId = randomUUID();
+    await remixHandler(req, res, next);
+    pinoHttp({ genReqId: () => reqId })(req, res, next);
+  });
 
   const port = process.env.PORT || 3000;
   app.listen(port, () =>

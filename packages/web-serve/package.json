@@ -3,6 +3,9 @@
   "name": "web-serve",
   "version": "0.0.0",
   "type": "module",
+  "bin": {
+    "web-serve": "./dist/web-serve.js"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -11,8 +14,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "watch": "tsc --watch"
+    "build": "tsc -p ./src/tsconfig.json",
+    "watch": "tsc -p ./src/tsconfig.json --watch"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.7.0",
