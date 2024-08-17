@@ -1,20 +1,22 @@
-import { AsyncLocalStorage } from "async_hooks";
 import { pino, type Logger } from "pino";
-import { randomUUID } from "crypto";
+import { context, IRequestContext } from "web-serve";
 
-export interface IRequestContext {
+export interface IReqContext extends IRequestContext {
   logger: Logger;
 }
 
-export const context = new AsyncLocalStorage<IRequestContext>();
-
-export function withContext<R>(callback: () => R): R {
-  const logger = pino().child({ requestId: randomUUID() });
-  return context.run({ logger }, callback);
-}
-
+/**
+ * Gets the logger from the AsyncLocalStorage context.
+ *
+ * @returns
+ */
 export function getLogger(): Logger {
-  const logger = context.getStore()?.logger;
-  if (!logger) throw new Error("Logger not found in context");
-  return logger;
+  const store = context.getStore() as IReqContext | undefined;
+  if (store?.logger) return store.logger;
+  else if (store?.reqId) {
+    store.logger = pino().child({ reqId: store.reqId });
+    return store.logger;
+  } else {
+    throw new Error("Could not find AsyncLocalStorage context.");
+  }
 }

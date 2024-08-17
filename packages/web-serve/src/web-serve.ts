@@ -3,10 +3,12 @@ import { type ServerBuild } from "@remix-run/server-runtime";
 import { type ViteDevServer } from "vite";
 import compression from "compression";
 import express from "express";
-import pinoHttp from "pino-http";
+import { stdSerializers } from "pino-http";
+import pino from "pino";
 import path from "path";
 import { config } from "@dotenvx/dotenvx";
 import { randomUUID } from "crypto";
+import { context } from "./async-local-storage.js";
 
 // This file is build following the patterns from two files from the Remix project:
 // - Custom Express Template
@@ -73,7 +75,10 @@ async function getViteBuild(viteDevServer: ViteDevServer) {
  * The main function that starts the server.
  *
  * @example
- * node --enable-source-maps web-serve ./build/server/index.js
+ * NODE_ENV=development node --enable-source-maps web-serve ./build/server/index.js
+ *
+ * @example
+ * NODE_ENV=production node --enable-source-maps web-serve ./build/server/index.js
  *
  */
 async function main() {
@@ -119,9 +124,14 @@ async function main() {
 
   // handle SSR requests
   app.all("*", async (req, res, next) => {
+    // create reqId and logger
     const reqId = randomUUID();
-    await remixHandler(req, res, next);
-    pinoHttp({ genReqId: () => reqId })(req, res, next);
+    const logger = pino().child({ reqId });
+
+    // handle the request
+    logger.info(stdSerializers.req(req), "Request received");
+    await context.run({ reqId }, () => remixHandler(req, res, next));
+    logger.info(stdSerializers.res(res), "Request completed");
   });
 
   const port = process.env.PORT || 3000;

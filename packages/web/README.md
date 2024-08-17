@@ -5,7 +5,6 @@
 Ensure the `/.env.prod` file exists with keys:
 
 ```bash
-ENV_VAR=prod
 SITE_URL=http://spencerduball.com
 LIBSQL_URL=http://localhost:5120
 MINIO_ROOT_USER=username
@@ -30,7 +29,6 @@ docker compose -f compose.yaml down
 Ensure the `/packages/web/.env` file exists, can use this template:
 
 ```bash
-ENV_VAR=prod
 SITE_URL=http://spencerduball.com
 LIBSQL_URL=http://localhost:5120
 MINIO_ROOT_USER=username
