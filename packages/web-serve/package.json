@@ -13,7 +13,6 @@
     }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsx ./scripts/build.ts ./src/tsconfig.json",
     "watch": "tsx ./scripts/watch.ts ./src/tsconfig.json"
   },

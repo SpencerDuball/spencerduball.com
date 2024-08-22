@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "name": "kyselyx",
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "kyselyx": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsx ./scripts/build.ts ./src/tsconfig.json",
+    "watch": "tsx ./scripts/watch.ts ./src/tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.2.0",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.7.0",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "kysely": "^0.27.4",
+    "ora": "^8.0.1",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "kysely": "^0.27.4"
+  }
+}

@@ -6,7 +6,6 @@ import { GlobalCtx } from "~/context/global-ctx/context";
 import { Header } from "~/components/header";
 import { Footer } from "~/components/footer";
 import { preferences } from "~/util/cookies";
-import { getLogger } from "./util/logger";
 
 // import css files
 import tailwindcss from "./tailwind.css?url";
@@ -29,8 +28,6 @@ export const meta: MetaFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const resHeaders: HeadersInit = [];
-
-  getLogger().info("Loading preferences ...");
 
   // Handle Preferences Cookie
   // -------------------------
