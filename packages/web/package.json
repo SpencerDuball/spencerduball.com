@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "remix vite:build",
-    "dev": "tsx scripts/dev.ts",
+    "dev": "NODE_OPTIONS='--enable-source-maps' dotenvx run -f ../../.env.development -- web-serve | pino-pretty",
     "start": "NODE_OPTIONS='--enable-source-maps' web-serve ./build/server/index.js",
-    "kyselyx": "kyselyx"
+    "kyselyx-dev": "dotenvx run -f ../../.env.development -- kyselyx",
+    "kyselyx-prod": "dotenvx run -f ../../.env.production -- kyselyx"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.7.0",
@@ -69,6 +70,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.11.1",
+    "@types/fs-extra": "^11.0.4",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^22.2.0",
     "@types/react": "^18.3.1",
@@ -76,12 +78,14 @@
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "autoprefixer": "^10.4.20",
+    "commander": "^12.1.0",
     "eslint": "^8.38.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "fs-extra": "^11.2.0",
     "kyselyx": "workspace:^",
     "pino-pretty": "^11.2.2",
     "postcss": "^8.4.41",

@@ -7,7 +7,7 @@ import { loadKyselyxConfig } from "./utilities/config.js";
 
 async function main() {
   // read the .env file
-  config();
+  config({ quiet: true });
 
   // define the program
   const program = new Command();
