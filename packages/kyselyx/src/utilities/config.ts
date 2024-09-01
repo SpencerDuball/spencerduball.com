@@ -2,31 +2,27 @@ import { Kysely } from "kysely";
 import fs from "fs-extra";
 import { z } from "zod";
 
-/**
- * The configuration interface for Kyselyx.
- */
-export interface IConfigFile {
-  /**
-   * The Kysely instance.
-   */
-  db: Kysely<any>;
-  /**
-   * The path to the migrations folder.
-   */
-  migrationFolder?: string;
-  /**
-   * The path to the seeds folder.
-   */
-  seedFolder?: string;
-}
 const ZConfigFile = z.object({
-  db: z.instanceof(Kysely<any>),
+  sources: z
+    .object({
+      db: z.instanceof(Kysely<any>),
+    })
+    .passthrough(),
   migrationFolder: z.string().optional(),
   seedFolder: z.string().optional(),
 });
+type DefaultStores = { db: Kysely<any> };
+export interface IConfigFile<T extends DefaultStores = DefaultStores> extends z.infer<typeof ZConfigFile> {
+  sources: T;
+}
 
 const ZConfig = z.object({
-  db: z.instanceof(Kysely<any>),
+  configFile: z.string(),
+  sources: z
+    .object({
+      db: z.instanceof(Kysely<any>),
+    })
+    .passthrough(),
   migrationFolder: z.string(),
   seedFolder: z.string(),
 });
@@ -75,11 +71,16 @@ export async function loadKyselyxConfig(cli: ICliOptions) {
   }
 
   // load and validate the config file
-  const { default: _cfg } = await import(configFile);
-  const cfg = ZConfigFile.catch(({ error }) => {
-    if (error instanceof z.ZodError) console.error(`There are errors in your kyselyx config file: ${error.message}`);
-    process.exit(1);
-  }).parse(_cfg);
+  const { config: _cfg } = await import(configFile);
+  const cfg = ZConfigFile.passthrough()
+    .catch(({ error }) => {
+      if (error instanceof z.ZodError) console.error(`There are errors in your kyselyx config file: ${error.message}`);
+      process.exit(1);
+    })
+    .parse(_cfg);
+
+  // set the config file path
+  cfg.configFile = configFile;
 
   // set and validate the migrationFolder folder
   if (cli.migrationFolder && fs.existsSync(cli.migrationFolder)) cfg.migrationFolder = cli.migrationFolder;

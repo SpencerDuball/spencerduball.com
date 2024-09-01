@@ -20,11 +20,11 @@ async function main() {
     program.command("db:migrate:status").description("List the status of all migrations.").action(migrate.status);
     program.command("db:migrate:undo [name]").description("Reverts a single migration.").action(migrate.undo);
     program.command("db:migrate:undo:all").description("Revert all migrations ran").action(migrate.undoAll);
-    program.command("db:seed").description("Run specified seeder.").action(seed.seed);
-    program.command("db:seed:undo [name]").description("Deletes data from the database.").action(seed.undo);
-    program.command("db:seed:all").description("Run every seeder.").action(seed.seedAll);
-    program.command("db:seed:undo:all").description("Deletes all data from the database.").action(seed.undoAll);
     program.command("db:migrate:generate <name>").description("Generate a new migration file.").action(migrate.generate);
+    program.command("db:seed").description("Run specified seeder.").action(seed.seed);
+    program.command("db:seed:status").description("List the status of all seeders.").action(seed.status);
+    program.command("db:seed:undo [name]").description("Deletes data from the database.").action(seed.undo);
+    program.command("db:seed:undo:all").description("Deletes all data from the database.").action(seed.undoAll);
     program.command("db:seed:generate <name>").description("Generate a new seed file.").action(seed.generate);
     program.parse();
 }

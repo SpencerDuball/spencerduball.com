@@ -4,8 +4,10 @@ import { LibsqlDialect } from "@libsql/kysely-libsql";
 
 if (!process.env.LIBSQL_URL) throw new Error("LIBSQL_URL environment variable is required.");
 
-const config: IConfigFile = {
-  db: new Kysely({ dialect: new LibsqlDialect({ url: process.env.LIBSQL_URL }) }),
-};
+export interface IKyselyxSources {
+  db: Kysely<any>;
+}
 
-export default config;
+export const config: IConfigFile<IKyselyxSources> = {
+  sources: { db: new Kysely({ dialect: new LibsqlDialect({ url: process.env.LIBSQL_URL }) }) },
+};

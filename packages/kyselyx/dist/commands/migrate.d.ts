@@ -13,6 +13,9 @@ export declare function status(): Promise<void>;
  * @param name The name of the migration to undo.
  */
 export declare function undo(name?: string): Promise<void>;
+/**
+ * Undoes all migrations that have been applied.
+ */
 export declare function undoAll(): Promise<void>;
 /**
  * Creates a new migration file with the specified name.

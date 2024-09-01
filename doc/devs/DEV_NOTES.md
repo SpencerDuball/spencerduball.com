@@ -8,6 +8,8 @@ Note that in `/package.json` we have installed `prettier@^3.x.x`, this is necess
 
 - https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode#prettier-version-3
 
+Additionally, any updates to the `prettier.config.js` will require a window reload in VSCode! The extenion must be reloaded for any changes to take effect.
+
 ## Vite HMR - Context API (`context.tsx`, `provider.tsx`, `reducer.tsx`)
 
 For some reason Vite has an issue doing HMR when you export both a `React.Context` object and context provider from the same file. You will get this error:

@@ -3,7 +3,7 @@ import { createTypedCookie } from "remix-utils/typed-cookie";
 import { z } from "zod";
 // @ts-ignore
 import ms from "ms";
-import { ENV } from "~/util/env";
+import { ZEnv } from "~/util";
 
 const PortPattern = /\:d+$/;
 
@@ -34,7 +34,7 @@ const preferences = createTypedCookie({
     // The 'path' attribute should be set to '/' so that all paths of the site can access this cookie.
     // The 'sameSite' attribute should be set to 'lax' as we want the cookies to be sent when navigating to our site
     // from other sites or else we will have flash issues.
-    domain: new URL(ENV.SITE_URL).hostname.replace(PortPattern, ""),
+    domain: new URL(ZEnv.parse(process.env).SITE_URL).hostname.replace(PortPattern, ""),
     path: "/",
     sameSite: "lax",
   }),

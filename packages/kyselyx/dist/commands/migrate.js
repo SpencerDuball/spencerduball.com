@@ -3,6 +3,12 @@ import path from "path";
 import ora from "ora";
 import { Migrator, FileMigrationProvider } from "kysely";
 import { getConfig } from "../utilities/config.js";
+const MIGRATION_TABLE_NAME = "kyselyx_migration";
+const MIGRATION_LOCK_TABLE_NAME = "kyselyx_migration_locks";
+const kyselyxTableNames = {
+    migrationTableName: MIGRATION_TABLE_NAME,
+    migrationLockTableName: MIGRATION_LOCK_TABLE_NAME,
+};
 const template = [
     `import { Kysely, sql } from "kysely";`,
     ``,
@@ -12,26 +18,27 @@ const template = [
     ``,
     `export { up, down };`,
 ].join("\n");
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
 // Define Script Functions
-// -----------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
 /**
  * Applies all migrations up to the latest migration.
  */
 export async function migrate() {
     const spinner = ora("Connecting to the database ...").start();
-    const { db, migrationFolder: fld } = getConfig();
+    const { sources: { db }, migrationFolder: fld, } = getConfig();
+    spinner.stopAndPersist({ text: "" });
     // apply the migrations
     const migrationFolder = path.resolve(fld);
-    const migrator = new Migrator({
-        db,
-        provider: new FileMigrationProvider({ fs, path, migrationFolder }),
-    });
+    if (!fs.existsSync(migrationFolder)) {
+        spinner.fail(`Migration folder not found: ${migrationFolder}`);
+        process.exit(1);
+    }
+    const provider = new FileMigrationProvider({ fs, path, migrationFolder });
+    const migrator = new Migrator({ db, provider, ...kyselyxTableNames });
     const { error, results } = await migrator.migrateToLatest();
-    spinner.stop();
     // process the results
     results?.forEach((it) => {
-        spinner.text = `Applying migration ${it.migrationName} ...`;
         if (it.status === "Success")
             spinner.succeed(`Applied migration ${it.migrationName} successfully!`);
         else if (it.status === "Error")
@@ -56,13 +63,15 @@ export async function migrate() {
  */
 export async function status() {
     const spinner = ora("Connecting to the database ...").start();
-    const { db, migrationFolder: fld } = getConfig();
-    // apply the migrations
+    const { sources: { db }, migrationFolder: fld, } = getConfig();
+    // get the migrations
     const migrationFolder = path.resolve(fld);
-    const migrator = new Migrator({
-        db,
-        provider: new FileMigrationProvider({ fs, path, migrationFolder }),
-    });
+    if (!fs.existsSync(migrationFolder)) {
+        spinner.fail(`Migration folder not found: ${migrationFolder}`);
+        process.exit(1);
+    }
+    const provider = new FileMigrationProvider({ fs, path, migrationFolder });
+    const migrator = new Migrator({ db, provider, ...kyselyxTableNames });
     const migrations = await migrator.getMigrations();
     spinner.stop();
     // collect a snapshot of the migration info
@@ -71,7 +80,7 @@ export async function status() {
     for (let migration of migrations) {
         if (migration.executedAt !== undefined) {
             lastAppliedMigration = migration;
-            totalAppliedMigrations = totalAppliedMigrations + 1;
+            totalAppliedMigrations++;
         }
     }
     // display the information
@@ -89,7 +98,7 @@ export async function status() {
             spinner.fail(`Migration ${migration.name} not applied.`);
     }
     // close the database connection
-    db.destroy();
+    await db.destroy();
 }
 /**
  * Undoes the last migration or a specific migration if a name is provided.
@@ -98,12 +107,14 @@ export async function status() {
  */
 export async function undo(name) {
     const spinner = ora("Connecting to the database ...").start();
-    const { db, migrationFolder: fld } = getConfig();
+    const { sources: { db }, migrationFolder: fld, } = getConfig();
     const migrationFolder = path.resolve(fld);
-    const migrator = new Migrator({
-        db,
-        provider: new FileMigrationProvider({ fs, path, migrationFolder }),
-    });
+    if (!fs.existsSync(migrationFolder)) {
+        spinner.fail(`Migration folder not found: ${migrationFolder}`);
+        process.exit(1);
+    }
+    const provider = new FileMigrationProvider({ fs, path, migrationFolder });
+    const migrator = new Migrator({ db, provider, ...kyselyxTableNames });
     const migrations = await migrator.getMigrations();
     spinner.stop();
     // Get the total applied migrations
@@ -169,14 +180,19 @@ export async function undo(name) {
     // close the database connection
     await db.destroy();
 }
+/**
+ * Undoes all migrations that have been applied.
+ */
 export async function undoAll() {
     const spinner = ora("Connecting to the database ...").start();
-    const { db, migrationFolder: fld } = getConfig();
+    const { sources: { db }, migrationFolder: fld, } = getConfig();
     const migrationFolder = path.resolve(fld);
-    const migrator = new Migrator({
-        db,
-        provider: new FileMigrationProvider({ fs, path, migrationFolder }),
-    });
+    if (!fs.existsSync(migrationFolder)) {
+        spinner.fail(`Migration folder not found: ${migrationFolder}`);
+        process.exit(1);
+    }
+    const provider = new FileMigrationProvider({ fs, path, migrationFolder });
+    const migrator = new Migrator({ db, provider, ...kyselyxTableNames });
     const migrations = await migrator.getMigrations();
     spinner.stop();
     // get the migration executed first
@@ -226,10 +242,11 @@ export async function undoAll() {
  * Creates a new migration file with the specified name.
  */
 export async function generate(name) {
+    const { migrationFolder } = getConfig();
     // Generate the migration file
     const spinner = ora(`Generating migration file ...`).start();
     const migrationId = `${Date.now()}_${name}`;
-    await fs.ensureDir("migrations");
-    await fs.writeFile(path.resolve("migrations", `${migrationId}.ts`), template);
-    spinner.succeed(`Generated migration file: ${migrationId}.ts`);
+    await fs.ensureDir(migrationFolder);
+    await fs.writeFile(path.resolve(migrationFolder, `${migrationId}.ts`), template);
+    spinner.succeed(`Generated migration file: "${migrationId}.ts"`);
 }
