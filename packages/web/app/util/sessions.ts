@@ -65,3 +65,7 @@ export const session = createSessionStorage({
   async updateData(id, data, expires) {},
   async deleteData(id) {},
 });
+
+// -------------------------------------------------------------------------------------
+// Create Functions for Session Secrets
+// -------------------------------------------------------------------------------------

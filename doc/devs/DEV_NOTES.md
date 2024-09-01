@@ -67,4 +67,27 @@ export const links: LinksFunction = () => [
 
 # Todo
 
+- [ ] Finish setting up the sessions, rolling sessions, etc.
+  - [ ] Have a function that retrieves the secrets and inspects the expires-at time of the last secret. It should not make a request to the database until this expires at time is past due. These secrets should be stored in a variable in memory.
+- [ ] Finish adding in the flash cookie, and update routes to use flash cookie for notifications to users
+- [ ] Add in mocks for the auth
+- [ ] Add the seed data
+
+## Misc
+
 - [ ] Create an issue to update the `@vercel/ms` when they fix the https://github.com/vercel/ms/issues/184.
+
+## Kyselyx
+
+- [ ] Only apply seeds that have a timestamp after the migration
+- [ ] When going down a migration, determine which seeds need to be dropped based upon timestamps
+- [ ] When going down all migrations, drop all seeds
+- [ ] Maybe can create a "reset" command that runs all "drop" commands regardless of state, it should also have a statement that drops the "kyselyx\_\*" tables for a full reset. Need to advise in docs that all "drop" commands should be resiliant to failures if a database doesn't exist for example.
+- [ ] Add a silent option to all commands, maybe as cli flag?
+
+## Docs
+
+- [ ] Create a desing doc that explains the (so far) 4 images used in this app. Structure the docs in subfolders for each image too (and futher as necessary). In the MINIO section, ensure to explain about the CloudFlare caching strategy to reduce bandwidth concerns.
+- [ ] Update and add the `auth.md` design doc from the trunk. This was very good, but should also add information about rotating session secrets and other points.
+- [ ] Add a design doc about creating a `cron` image that calls a webhook. This is nice because all application logic still resides in the remix app.
+- [ ] Add a design doc explaining about logging (include context `reqId`, include `traceId`, include `pino-http`). Do this after setting up a strategy for maintaining and deleting log files on the filesystem. Maybe discuss about pino transports a litte too.

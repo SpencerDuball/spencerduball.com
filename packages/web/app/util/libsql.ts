@@ -40,6 +40,12 @@ export interface SessionsTable {
   created_at: ColumnType<string, never, never>;
   modified_at: ColumnType<string, never, string>;
 }
+export interface SessionSecretsTable {
+  id: ColumnType<string, string, never>;
+  expires_at: ColumnType<string, never, never>;
+  created_at: ColumnType<string, never, never>;
+  modified_at: ColumnType<string, never, never>;
+}
 
 export interface Database {
   users: UsersTable;
@@ -47,6 +53,7 @@ export interface Database {
   user_roles: UserRolesTable;
   oauth_state_codes: OAuthStateCodesTable;
   sessions: SessionsTable;
+  session_secrets: SessionSecretsTable;
 }
 
 // -------------------------------------------------------------------------------------

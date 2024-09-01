@@ -51,12 +51,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // then we will redirect the user to the home page.
   let search: z.infer<typeof ZSearch>;
   try {
-    logger.info("Validating the search parameters ...");
+    logger.info({ traceId: "8ab714de" }, "Validating the search parameters ...");
     const url = new URL(request.url);
     search = ZSearch.parse(Object.fromEntries(url.searchParams));
-    logger.info("Success: Validated the search parameters.");
+    logger.info({ traceId: "43d2b669" }, "Success: Validated the search parameters.");
   } catch (e) {
-    logger.info(e, "Failure: Required search params are not present.");
+    logger.info({ traceId: "0655622f", error: e }, "Failure: Required search params are not present.");
     throw redirect("/");
     // TODO: Add a flash message cookie on redirect.
   }
@@ -67,23 +67,26 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // code that was sent to Github matches the state code that we have stored in our database.
 
   // retrieve the oauth_state_code from the database
-  logger.info("Retrieving the oauth_state_code from the database ...");
+  logger.info({ traceId: "a7a18b53" }, "Retrieving the oauth_state_code from the database ...");
   const stateCode = await db
     .selectFrom("oauth_state_codes")
     .select(["id", "redirect_uri"])
     .where("id", "=", search.state)
     .executeTakeFirstOrThrow()
     .catch((e) => {
-      logger.info(e, "Failure: Unable to retrieve the oauth_state_code from the database.");
+      logger.info(
+        { traceId: "5a1124f6", error: e },
+        "Failure: Unable to retrieve the oauth_state_code from the database.",
+      );
       throw redirect("/");
       // TODO: Add a flash message cookie on redirect.
     });
-  logger.info("Success: Retrieved the oauth_state_code from the database.");
+  logger.info({ traceId: "1f705526" }, "Success: Retrieved the oauth_state_code from the database.");
 
   // ensure that the state code matches
-  logger.info("Comparing the state code ...");
+  logger.info({ traceId: "9d396151" }, "Comparing the state code ...");
   if (stateCode.id !== search.state) {
-    logger.info("Failure: The state code does not match.");
+    logger.info({ traceId: "44c40c44" }, "Failure: The state code does not match.");
     throw redirect(stateCode.redirect_uri);
   }
 
@@ -102,23 +105,23 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   accessTokenFormData.append("code", search.code);
 
   // retrieve the access token
-  logger.info("Requesting the access token from Github ...");
+  logger.info({ traceId: "aabd56cc" }, "Requesting the access token from Github ...");
   const { access_token, token_type } = await fetch(accessTokenUrl.toString(), {
     method: "POST",
     body: accessTokenFormData,
     headers: { Accept: "application/json" },
   })
     .catch(async (e) => {
-      logger.info(e, "Failure: Unable to request the access token from Github.");
+      logger.info({ traceId: "44788db2", error: e }, "Failure: Unable to request the access token from Github.");
       throw redirect(stateCode.redirect_uri);
       // TODO: Add a flash message cookie on redirect.
     })
     .then(async (res) => ZAccessTokenRes.parse(await res.json()))
     .catch(async (e) => {
-      logger.info(e, "Failure: Unable to parse the access token response from Github.");
+      logger.info({ traceId: "b5e41215", error: e }, "Failure: Unable to parse the access token response from Github.");
       throw redirect(stateCode.redirect_uri);
     });
-  logger.info("Success: Retrieved the access token from Github.");
+  logger.info({ traceId: "cafac002" }, "Success: Retrieved the access token from Github.");
 
   // Get User Info from Github
   // -----------------------------------------------------------------------------------
@@ -128,22 +131,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   let userInfoUrl = new URL("https://api.github.com/user");
 
   // retrieve the user info
-  logger.info("Requesting the user info from Github ...");
+  logger.info({ traceId: "5630973b" }, "Requesting the user info from Github ...");
   const userInfo = await fetch(userInfoUrl.toString(), {
     headers: { Authorization: `${token_type} ${access_token}` },
   })
     .catch(async (e) => {
-      logger.info(e, "Failure: Unable to request the user info from Github.");
+      logger.info({ traceId: "58925011", error: e }, "Failure: Unable to request the user info from Github.");
       throw redirect(stateCode.redirect_uri);
       // TODO: Add a flash message cookie on redirect.
     })
     .then(async (res) => parseGithubUserInfo(await res.json()))
     .catch(async (e) => {
-      logger.info(e, "Failure: Unable to parse the user info response from Github.");
+      logger.info({ traceId: "a248df6e", error: e }, "Failure: Unable to parse the user info response from Github.");
       throw redirect(stateCode.redirect_uri);
       // TODO: Add a flash message cookie on redirect.
     });
-  logger.info("Success: Retrieved the user info from Github.");
+  logger.info({ traceId: "cb1f3f84" }, "Success: Retrieved the user info from Github.");
 
   // Create or Update the User
   // -----------------------------------------------------------------------------------
@@ -151,22 +154,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // does not exist, we will create a new user.
 
   // retrieve the user
-  logger.info("Retrieving the user from the database ...");
+  logger.info({ traceId: "e9599102" }, "Retrieving the user from the database ...");
   let user = await db
     .selectFrom("users")
     .select(["id"])
     .where("github_id", "=", userInfo.github_id)
     .executeTakeFirst()
     .catch((e) => {
-      logger.info(e, "Failure: Unable to retrieve the user from the database.");
+      logger.info({ traceId: "e6545e9a", error: e }, "Failure: Unable to retrieve the user from the database.");
       throw redirect(stateCode.redirect_uri);
       // TODO: Add a flash message cookie on redirect.
     });
 
   // if the user was found, update the user
   if (user !== undefined) {
-    logger.info("Success: Retrieved the user from the database.");
-    logger.info("Updating the user in the database ...");
+    logger.info({ traceId: "db4b369e" }, "Success: Retrieved the user from the database.");
+    logger.info({ traceId: "9a883097" }, "Updating the user in the database ...");
     const { github_id, ...toUpdate } = userInfo;
     await db
       .updateTable("users")
@@ -174,25 +177,25 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       .where("id", "=", user.id)
       .executeTakeFirstOrThrow()
       .catch((e) => {
-        logger.error(e, "Failure: Unable to update the user in the database.");
+        logger.error({ traceId: "23d1713b", error: e }, "Failure: Unable to update the user in the database.");
         throw redirect(stateCode.redirect_uri);
         // TODO: Add a flash message cookie on redirect.
       });
-    logger.info("Success: Updated the user in the database.");
+    logger.info({ traceId: "700fa7dd" }, "Success: Updated the user in the database.");
   } else {
-    logger.info("Failure: Unable to retrieve the user from the database.");
-    logger.info("Creating the user in the database ...");
+    logger.info({ traceId: "b6f071ed" }, "Failure: Unable to retrieve the user from the database.");
+    logger.info({ traceId: "1c3a66f5" }, "Creating the user in the database ...");
     user = await db
       .insertInto("users")
       .values({ id: randomUUID(), ...userInfo })
       .returning("id")
       .executeTakeFirstOrThrow()
       .catch((e) => {
-        logger.error(e, "Failure: Unable to create the user in the database.");
+        logger.error({ traceId: "eb7b695b", error: e }, "Failure: Unable to create the user in the database.");
         throw redirect(stateCode.redirect_uri);
         // TODO: Add a flash message cookie on redirect.
       });
-    logger.info("Success: Created the user in the database.");
+    logger.info({ traceId: "76c05211" }, "Success: Created the user in the database.");
   }
 
   // Retrieve User Roles
@@ -206,21 +209,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .where("user_id", "=", user.id)
     .execute()
     .catch((e) => {
-      logger.error(e, "Failure: Unable to retrieve the user's roles from the database.");
+      logger.error(
+        { traceId: "129caa7a", error: e },
+        "Failure: Unable to retrieve the user's roles from the database.",
+      );
       throw redirect(stateCode.redirect_uri);
       // TODO: Add a flash message cookie on redirect.
     });
 
   // Create User Session
   // -----------------------------------------------------------------------------------
-  logger.info("Creating the user session in the database ...");
+  logger.info({ traceId: "b1aa51da" }, "Creating the user session in the database ...");
   const session = await db
     .insertInto("sessions")
     .values({ id: randomUUID(), user_id: user.id, roles: JSON.stringify(roles.map((r) => r.role_id)) })
     .returningAll()
     .executeTakeFirstOrThrow()
     .catch((e) => {
-      logger.error(e, "Failure: Unable to create the user session in the database.");
+      logger.error({ traceId: "ed4f0a6a", error: e }, "Failure: Unable to create the user session in the database.");
       throw redirect(stateCode.redirect_uri);
       // TODO: Add a flash message cookie on redirect.
     });

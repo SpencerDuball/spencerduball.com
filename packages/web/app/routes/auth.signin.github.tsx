@@ -12,13 +12,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const redirect_uri = search.get("redirect_uri") ?? "/";
 
   // create a state code
-  logger.info("Creating the oauth_state_code in the database ...");
+  logger.info({ traceId: "7561cb47" }, "Creating the oauth_state_code in the database ...");
   const stateCode = await db
     .insertInto("oauth_state_codes")
     .values({ id: randomUUID(), redirect_uri })
     .returningAll()
     .executeTakeFirstOrThrow();
-  logger.info("Success: Created the oauth_state_code in the database.");
+  logger.info({ traceId: "202de58e" }, "Success: Created the oauth_state_code in the database.");
 
   // build the Github OAuth URL
   const githubUrl = new URL("https://github.com/login/oauth/authorize");

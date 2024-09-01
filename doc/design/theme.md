@@ -69,7 +69,7 @@ flowchart TD
             ClientE --> ClientG
             ClientF --> ClientG
         end
-        ClientH{"Have any have changed:<br/>- preferences.isRestored<br/>- preferences.theme<br/>- mediaQuery(prefersDark)"}
+        ClientH{"Have any changed:<br/>- preferences.isRestored<br/>- preferences.theme<br/>- mediaQuery(prefersDark)"}
         subgraph ResolvedThemeEffect
             %% Nodes
             ClientY{"GlobalCtx.isRestored<br/>is True?"}

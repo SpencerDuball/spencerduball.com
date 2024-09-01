@@ -43,13 +43,22 @@ async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("user_id", "text", (col) => col.references("users.id").onDelete("cascade").notNull())
     .addColumn("roles", "text")
-    .addColumn("expires_at", "text", (col) => col.defaultTo(sql`(datetime('now', '+3 months'))`).notNull())
+    .addColumn("expires_at", "text", (col) => col.defaultTo(sql`(datetime('now', '+90 days'))`).notNull())
+    .addColumn("created_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
+    .addColumn("modified_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
+    .execute();
+  await db.schema
+    .createTable("session_secrets")
+    .ifNotExists()
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("expires_at", "text", (col) => col.defaultTo(sql`(datetime('now', '+91 days'))`).notNull())
     .addColumn("created_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
     .addColumn("modified_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
     .execute();
 }
 
 async function down(db: Kysely<any>): Promise<void> {
+  await db.schema.dropTable("session_secrets").ifExists().execute();
   await db.schema.dropTable("sessions").ifExists().execute();
   await db.schema.dropTable("oauth_state_codes").ifExists().execute();
   await db.schema.dropTable("user_roles").ifExists().execute();
