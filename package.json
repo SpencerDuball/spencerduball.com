@@ -7,7 +7,7 @@
   "license": "ISC",
   "scripts": {
     "--PROD--": "",
-    "docker-build-prod": "docker compse -f compose.yaml --env-file .env.production build",
+    "docker-build-prod": "docker compose -f compose.yaml --env-file .env.production build",
     "docker-start-prod": "docker compose -f compose.yaml --env-file .env.production up -d",
     "docker-stop-prod": "docker compose -f compose.yaml --env-file .env.production down",
     "--DEV--": "",

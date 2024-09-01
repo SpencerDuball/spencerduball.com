@@ -8,7 +8,8 @@
 FROM node:22.6.0-bookworm AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable pnpm 
+RUN corepack enable pnpm && corepack install --global pnpm
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 # Install the linux packages necessary for sqlite
 RUN apt-get update -y

@@ -10,7 +10,10 @@ const Env = z.object({
  * This function will ping the `/cron/daily` endpoint on the site.
  */
 async function pingDailyCronHook() {
-  const env = Env.parse(process.env);
+  const env = await Env.parseAsync(process.env).catch((e) => {
+    console.error("Invalid environment variables:", e);
+    process.exit(1);
+  });
 
   // build the URL to ping
   const url = new URL(env.SITE_URL);
@@ -23,11 +26,11 @@ async function pingDailyCronHook() {
   await fetch(new URL("/cron/daily", url.toString()), {
     headers: { Authorization: `Bearer ${env.CRON_CLIENT_SECRET}` },
   })
-    .catch((e) => {
-      console.log(e);
-    })
     .then((res) => {
       console.log(res);
+    })
+    .catch((e) => {
+      console.log(e);
     });
 }
 
