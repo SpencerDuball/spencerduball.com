@@ -6,10 +6,14 @@
   "author": "Spencer Duball",
   "license": "ISC",
   "scripts": {
-    "docker-start-prod": "docker compose -f compose.yaml --env-file .env.prod up -d",
-    "docker-stop-prod": "docker compose -f compose.yaml --env-file .env.prod down",
-    "docker-start-dev": "docker compose -f compose.dev.yaml up -d",
-    "docker-stop-dev": "docker compose -f compose.dev.yaml down"
+    "--PROD--": "",
+    "docker-build-prod": "docker compse -f compose.yaml --env-file .env.production build",
+    "docker-start-prod": "docker compose -f compose.yaml --env-file .env.production up -d",
+    "docker-stop-prod": "docker compose -f compose.yaml --env-file .env.production down",
+    "--DEV--": "",
+    "docker-build-dev": "docker compose -f compose.dev.yaml --env-file .env.development build",
+    "docker-start-dev": "docker compose -f compose.dev.yaml --env-file .env.development up -d",
+    "docker-stop-dev": "docker compose -f compose.dev.yaml --env-file .env.development down"
   },
   "devDependencies": {
     "prettier": "^3.3.3"

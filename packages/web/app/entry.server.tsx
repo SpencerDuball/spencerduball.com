@@ -36,7 +36,6 @@ function handleBotRequest(
   remixContext: EntryContext,
 ) {
   return new Promise((resolve, reject) => {
-    console.log("sup");
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
       <RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />,

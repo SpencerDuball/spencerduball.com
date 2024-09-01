@@ -42,25 +42,19 @@ WORKDIR /app
 # Build all projects in the monorepo
 RUN pnpm run -r build
 
-# Deploy the remix application
-RUN pnpm deploy --filter=web --prod /web
+# Deploy the cron application
+RUN pnpm deploy --filter=cron --prod /cron
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Part 4 (PROD): Copy minimal files, install only production dependencies, and start the app.
 # ---------------------------------------------------------------------------------------------------------------------
 
-# First copy over the pnpm "web" deployment. This will add all dependencies into a node_modules/ folder including
-# packaging up any monorepo dependencies. Next copy over the built remix application into the web/ directory as this is
-# the entrypoint for the web sever.
+# First copy over the pnpm "cron" deployment. This will add all dependencies into a node_modules/ folder including
+# packaging up any monorepo dependencies. Next copy over the built cron application into the cron/ directory as this is
+# the entrypoint for the cron sever.
 FROM base as prod
-COPY --from=build /web /web
-COPY --from=build /app/packages/web/build/ /web/build
+COPY --from=build /cron /cron
+COPY --from=build /app/packages/cron/dist/ /cron/dist
 
-# Expose the port 8080. Note the Remix application will use the PORT environment variable when the CLI is used to start
-# the application.
-ENV PORT="8080"
-EXPOSE 8080
-
-# Change to the /web directory and start the app
-WORKDIR /web
-ENTRYPOINT ["pnpm", "run", "start"]
+# Start the cron application
+CMD ["pnpm", "run", "start"]

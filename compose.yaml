@@ -1,4 +1,17 @@
 services:
+  cron:
+    container_name: spencerduballcom-cron
+    build:
+      context: .
+      target: prod
+      dockerfile: ./packages/cron/Dockerfile
+    environment:
+      - "SITE_URL=${SITE_URL}"
+      - "CRON_CLIENT_SECRET=${CRON_CLIENT_SECRET}"
+    image: "spencerduballcom-cron"
+    restart: "on-failure"
+    networks:
+      - spencerduballcom_net
   web:
     container_name: spencerduballcom-web
     build:
@@ -6,12 +19,15 @@ services:
       target: prod
       dockerfile: ./packages/web/Dockerfile
     environment:
-      - "NODE_ENV=production"
+      - "NODE_ENV=${NODE_ENV}"
       - "SITE_URL=${SITE_URL}"
       - "LIBSQL_URL=${LIBSQL_URL}"
       - "MINIO_ROOT_USER=${MINIO_ROOT_USER}"
       - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}"
       - "MINIO_URL=${MINIO_URL}"
+      - "GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}"
+      - "GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}"
+      - "CRON_CLIENT_SECRET=${CRON_CLIENT_SECRET}"
     image: "spencerduballcom"
     ports:
       - "5110:8080"

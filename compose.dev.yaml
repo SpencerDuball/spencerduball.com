@@ -1,4 +1,18 @@
 services:
+  cron:
+    container_name: spencerduballcom-cron
+    build:
+      context: .
+      target: prod
+      dockerfile: ./packages/cron/Dockerfile
+    environment:
+      - "NODE_ENV=${NODE_ENV}"
+      - "SITE_URL=${SITE_URL}"
+      - "CRON_CLIENT_SECRET=${CRON_CLIENT_SECRET}"
+    image: "spencerduballcom-cron"
+    restart: "on-failure"
+    networks:
+      - spencerduballcom_net
   libsql:
     container_name: spencerduballcom-libsql
     image: "ghcr.io/tursodatabase/libsql-server:latest"
@@ -20,8 +34,8 @@ services:
       - "5130:9000" # The S3 API
       - "5131:9001" # The web console
     environment:
-      - "MINIO_ROOT_USER=admin"
-      - "MINIO_ROOT_PASSWORD=password"
+      - "MINIO_ROOT_USER=${MINIO_ROOT_USER}"
+      - "MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}"
     volumes:
       - ./data/minio:/data
     command: "server /data --console-address ':9001'"
