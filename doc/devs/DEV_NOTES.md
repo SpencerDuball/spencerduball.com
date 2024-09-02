@@ -108,6 +108,9 @@ export const links: LinksFunction = () => [
 - [ ] Finish adding in the flash cookie, and update routes to use flash cookie for notifications to users
 - [ ] Add in mocks for the auth
 - [ ] Add the seed data
+- [ ] Create tests for all of the auth, sessions, cookie, github signin, preferences cookie, flash cookie.
+- [ ] Create & publish Kyselyx package
+- [ ] Create & publish web-serve package (name appropriately)
 
 ## Misc
 
@@ -120,6 +123,10 @@ export const links: LinksFunction = () => [
 - [ ] When going down all migrations, drop all seeds
 - [ ] Maybe can create a "reset" command that runs all "drop" commands regardless of state, it should also have a statement that drops the "kyselyx\_\*" tables for a full reset. Need to advise in docs that all "drop" commands should be resiliant to failures if a database doesn't exist for example.
 - [ ] Add a silent option to all commands, maybe as cli flag?
+
+## Web-Serve
+
+- [ ] Publish this package and respond to the discussion: https://github.com/remix-run/remix/discussions/2935#discussioncomment-10485073
 
 ## Docs
 
