@@ -5,35 +5,51 @@ import { z } from "zod";
 import ms from "ms";
 import { ZEnv } from "~/util";
 
-const PortPattern = /\:d+$/;
+// -------------------------------------------------------------------------------------
+// Create Custom Cookie Factory
+// -------------------------------------------------------------------------------------
+// This section will create a custom `createCookie` function which will support signing
+// cookies with secrets. The current API does not support supplying custom secrets that
+// rotate.
+// -------------------------------------------------------------------------------------
 
+// -------------------------------------------------------------------------------------
+// Create Cookies
+// -------------------------------------------------------------------------------------
+// This function defines the cookies used in the application.
+// -------------------------------------------------------------------------------------
+const PortPattern = /\:d+$/;
 const preferences = createTypedCookie({
   cookie: createCookie("__preferences", {
     // Lifetime
     // --------
-    // Ideally this would be infinite, however Chrome has a limit on the duration that a cookie can last. This limit is
-    // 400 days. This limit applies to 'maxAge' as well as 'expires'. If we used 'expires' we would need to specify the
-    // limit each time the cookie is created. It's just easier to define the 'maxAge' once in this configuration and
-    // not worry about the lifetime when using this module.
+    // Ideally this would be infinite, however Chrome has a limit on the duration that a
+    // cookie can last. This limit is 400 days. This limit applies to 'maxAge' as well
+    // as 'expires'. If we used 'expires' we would need to specify the limit each time
+    // the cookie is created. It's just easier to define the 'maxAge' once in this
+    // configuration and not worry about the lifetime when using this module.
+    //
     // See the limits blog post: https://developer.chrome.com/blog/cookie-max-age-expires/
     maxAge: ms("400d"),
 
     // Restrict Access
     // ---------------
-    // The 'secure' attribute should be true as there is no instance where a user should access this site without https
-    // protocol, however Safari will not allow javascript to set cookies with 'secure'. For consistency set this value
-    // to 'false'. The 'httpOnly' should be false as we want the client to be able to access this cookie to read the
-    // user's preferences.
+    // The 'secure' attribute should be true as there is no instance where a user should
+    // access this site without https protocol, however Safari will not allow javascript
+    // to set cookies with 'secure'. For consistency set this value to 'false'. The
+    // 'httpOnly' should be false as we want the client to be able to access this cookie
+    // to read the user's preferences.
     secure: false,
     httpOnly: false,
 
     // Where/When Cookies are Sent
     // ---------------------------
-    // Leaving the 'domain' attribute blank will default the cookie to being accessed by the same domain that set it,
-    // but it will exclude subdomains. For this reason the 'domain' attribute should be explicitly specified.
-    // The 'path' attribute should be set to '/' so that all paths of the site can access this cookie.
-    // The 'sameSite' attribute should be set to 'lax' as we want the cookies to be sent when navigating to our site
-    // from other sites or else we will have flash issues.
+    // Leaving the 'domain' attribute blank will default the cookie to being accessed by
+    // the same domain that set it, but it will exclude subdomains. For this reason the
+    // 'domain' attribute should be explicitly specified. The 'path' attribute should be
+    // set to '/' so that all paths of the site can access this cookie. The 'sameSite'
+    // attribute should be set to 'lax' as we want the cookies to be sent when navigating
+    // to our site from other sites or else we will have flash issues.
     domain: new URL(ZEnv.parse(process.env).SITE_URL).hostname.replace(PortPattern, ""),
     path: "/",
     sameSite: "lax",

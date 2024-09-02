@@ -1,10 +1,11 @@
-import { createCookie, createSession, createSessionStorage } from "@remix-run/node";
+import { createCookie } from "@remix-run/node";
 import { ZEnv } from "~/util/env";
 // @ts-ignore
 import ms from "ms";
 import { createTypedCookie } from "remix-utils/typed-cookie";
 import { z } from "zod";
-import { db } from "~/util/server";
+import { db, SessionsTable } from "~/util/server";
+import { Insertable } from "kysely";
 
 // -------------------------------------------------------------------------------------
 // Create the User Session
@@ -13,8 +14,8 @@ import { db } from "~/util/server";
 // -------------------------------------------------------------------------------------
 
 // define constants
-export const MAX_SESSION_AGE = "90d";
-export const SESSION_KEY = "__session";
+const MAX_SESSION_AGE = "90d";
+const SESSION_KEY = "__session";
 
 const _sessionCookie = createCookie(SESSION_KEY, {
   // Lifetime
@@ -46,26 +47,30 @@ const _sessionCookie = createCookie(SESSION_KEY, {
 const ZSessionCookie = z.string().nullable();
 export const sessionCookie = createTypedCookie({ cookie: _sessionCookie, schema: ZSessionCookie });
 
-export const ZCreateSession = z.object({
-  id: z.string(),
-  user_id: z.string(),
-  roles: z.array(z.string()).nullable(),
-  expires_at: z.string(),
-  created_at: z.string(),
-  modified_at: z.string(),
-});
-export const session = createSessionStorage({
-  cookie: sessionCookie,
-  async createData(data, expires) {
-    return "yo";
-  },
-  async readData(id) {
-    return ZCreateSession.parse(id);
-  },
-  async updateData(id, data, expires) {},
-  async deleteData(id) {},
-});
-
 // -------------------------------------------------------------------------------------
 // Create Functions for Session Secrets
 // -------------------------------------------------------------------------------------
+
+export class UserSession {
+  /**
+   * Creates a new session for the user and returns a "Set-Cookie" header.
+   */
+  async create(userId: Insertable<SessionsTable>["user_id"]) {}
+  /**
+   * Refreshes the session expiration for the user and returns a "Set-Cookie" header.
+   */
+  async refresh(id: Insertable<SessionsTable>["id"]) {}
+  /**
+   * Deletes the session for the user and returns a "Set-Cookie" header.
+   */
+  async delete(id: Insertable<SessionsTable>["id"]) {}
+  /**
+   * Retrieves the session for the user.
+   *
+   * This function will parse the cookie header, extract the session id from the cookie,
+   * query the database for the session, and return the session.
+   *
+   * @param cookie The cookie header from the request.
+   */
+  async get(cookie: string | null) {}
+}

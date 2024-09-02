@@ -69,6 +69,15 @@ export const links: LinksFunction = () => [
 
 - [ ] Finish setting up the sessions, rolling sessions, etc.
   - [ ] Have a function that retrieves the secrets and inspects the expires-at time of the last secret. It should not make a request to the database until this expires at time is past due. These secrets should be stored in a variable in memory.
+  - [ ] Need to completely redo the Remix cookie and session APIs. These don't work well for a few different reasons:
+    - If trying to use a function to rotate the secrets this won't work, we must pass the secrets array into the CookieFactory upon [initialization of the factory](https://github.com/remix-run/remix/blob/8f38118e44298d609224c6074ae6519d385196f1/packages/remix-server-runtime/cookies.ts#L70). The might possibly be a way to remedy this by wrapping this in another function and creating a new factory each time, but will probably just be better to get rid of this concept and create new Cookie api.
+    - Actually, if we look here at [the node `createCookie` implementation](https://github.com/remix-run/remix/blob/8f38118e44298d609224c6074ae6519d385196f1/packages/remix-node/implementations.ts#L10) we might be able to supply custom `sign` and `unsign` function instead. This would alleviate the signature problem.
+    - Meh, looked again and the [`sign` and `unsign`](https://github.com/remix-run/remix/blob/8f38118e44298d609224c6074ae6519d385196f1/packages/remix-node/crypto.ts#L4) funciton still expect to be passed the secret. Technically, I could just discard the secret value they provide but this is pretty dirty. I would also need to pass some dummy secrets in the factory or else the cookie wouldn't know to sign or not.
+    - If we could create a PR that would modify the Cookie to allow for an async function to retrieve the secrets that would be great.
+    - Still we will need to create a custom Session API, there are more issues here:
+      - I don't want to support flash messages on this session cookie. This would need to be stored in the database, and it would just be easier to have a separate cookie for this instead.
+      - I don't like that I can't tell the cookie what it's expires/maxAge will be. For example, I want to create the session in the database and **then** tell the cookie this limit - I don't want the cookie creation to dictate what the expires will be in the database.
+      - The session API is actually pretty light, the cookie API is much more heavy.u
 - [ ] Finish adding in the flash cookie, and update routes to use flash cookie for notifications to users
 - [ ] Add in mocks for the auth
 - [ ] Add the seed data
