@@ -42,7 +42,7 @@ To fix this we can instead explicitly add the CSS modules to our `links` export:
 
 // import css files
 import tailwindcss from "./tailwind.css?url";
-import inter from "@fontsource-variable/inter/index.css?url";
+import "@fontsource-variable/inter/index.css"; // <-- For some reason need to import the without "?url" and don't add to "links"????
 
 export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
@@ -60,8 +60,35 @@ export const links: LinksFunction = () => [
   },
   { rel: "manifest", href: "/site.webmanifest" },
   { rel: "mask-icon", href: "/safari-pinned-tab.svg", color: "#5bbad5" },
-  { rel: "stylesheet", href: inter }, // <-- Add this line.
   { rel: "stylesheet", href: tailwindcss }, // <-- Add this line.
+];
+```
+
+Now doing further reading, if there is a modification to only the root route we will have HMR issues, if we do this instead but don't modify root route - no HMR issues will persist:
+
+```tsx
+// File: root.tsx
+
+// import css files
+import "./tailwind.css";
+import "@fontsource-variable/inter/index.css";
+
+export const links: LinksFunction = () => [
+  { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "32x32",
+    href: "/favicon-32x32.png",
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "16x16",
+    href: "/favicon-16x16.png",
+  },
+  { rel: "manifest", href: "/site.webmanifest" },
+  { rel: "mask-icon", href: "/safari-pinned-tab.svg", color: "#5bbad5" },
 ];
 ```
 

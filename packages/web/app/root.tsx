@@ -9,7 +9,7 @@ import { preferences } from "~/util/cookies";
 
 // import css files
 import tailwindcss from "./tailwind.css?url";
-import inter from "@fontsource-variable/inter/index.css?url";
+import "@fontsource-variable/inter/index.css?url";
 
 export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
@@ -17,7 +17,6 @@ export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
   { rel: "manifest", href: "/site.webmanifest" },
   { rel: "mask-icon", href: "/safari-pinned-tab.svg", color: "#5bbad5" },
-  { rel: "stylesheet", href: inter },
   { rel: "stylesheet", href: tailwindcss },
 ];
 
@@ -38,6 +37,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     prefs = { _theme: "dark", _codeTheme: "dark" };
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
+
+  console.log("heloo?");
 
   return json({ prefs }, { headers: resHeaders });
 }
