@@ -35,13 +35,13 @@ export interface OAuthStateCodesTable {
 export interface SessionsTable {
   id: ColumnType<string, string, never>;
   user_id: ColumnType<string, string, never>;
-  roles: Nullable<ColumnType<string, string, string>>; // A JSON array of role IDs.
   expires_at: ColumnType<string, never, string>;
   created_at: ColumnType<string, never, never>;
   modified_at: ColumnType<string, never, string>;
 }
 export interface SessionSecretsTable {
   id: ColumnType<string, string, never>;
+  inactive_at: ColumnType<string, never, never>;
   expires_at: ColumnType<string, never, never>;
   created_at: ColumnType<string, never, never>;
   modified_at: ColumnType<string, never, never>;

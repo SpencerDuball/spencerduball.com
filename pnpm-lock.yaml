@@ -169,6 +169,9 @@ importers:
       '@remix-run/serve':
         specifier: ^2.11.1
         version: 2.11.1(typescript@5.5.4)
+      '@remix-run/server-runtime':
+        specifier: ^2.11.2
+        version: 2.11.2(typescript@5.5.4)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -178,6 +181,12 @@ importers:
       cmdk:
         specifier: ^1.0.0
         version: 1.0.0(@types/react-dom@18.3.0)(@types/react@18.3.1)(react-dom@18.3.1)(react@18.3.1)
+      cookie:
+        specifier: ^0.6.0
+        version: 0.6.0
+      cookie-signature:
+        specifier: ^1.2.1
+        version: 1.2.1
       embla-carousel:
         specifier: ^8.1.8
         version: 8.1.8
@@ -248,6 +257,12 @@ importers:
       '@remix-run/dev':
         specifier: ^2.11.1
         version: 2.11.1(@remix-run/react@2.11.1)(@remix-run/serve@2.11.1)(@types/node@22.2.0)(typescript@5.5.4)(vite@5.4.0)
+      '@types/cookie':
+        specifier: ^0.6.0
+        version: 0.6.0
+      '@types/cookie-signature':
+        specifier: ^1.1.2
+        version: 1.1.2
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -3540,6 +3555,12 @@ packages:
 
   /@types/connect@3.4.38:
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
+    dependencies:
+      '@types/node': 22.2.0
+    dev: true
+
+  /@types/cookie-signature@1.1.2:
+    resolution: {integrity: sha512-2OhrZV2LVnUAXklUFwuYUTokalh/dUb8rqt70OW6ByMSxYpauPZ+kfNLknX3aJyjY5iu8i3cUyoLZP9Fn37tTg==}
     dependencies:
       '@types/node': 22.2.0
     dev: true

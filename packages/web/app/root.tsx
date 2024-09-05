@@ -38,8 +38,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
 
-  console.log("heloo?");
-
   return json({ prefs }, { headers: resHeaders });
 }
 

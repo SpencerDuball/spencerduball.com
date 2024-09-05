@@ -4,6 +4,7 @@ import { ZEnv } from "~/util";
 import { z } from "zod";
 import { sql } from "kysely";
 import { randomUUID } from "crypto";
+import { UserSession } from "~/util/sessions";
 
 /**
  * This function validates and reshapes the data returned from the Github API when
@@ -89,6 +90,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     logger.info({ traceId: "44c40c44" }, "Failure: The state code does not match.");
     throw redirect(stateCode.redirect_uri);
   }
+  logger.info({ traceId: "f3b3b3b4" }, "Success: The state code matches.");
 
   // Request Access Token from Github on Behalf of User
   // -----------------------------------------------------------------------------------
@@ -198,36 +200,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     logger.info({ traceId: "76c05211" }, "Success: Created the user in the database.");
   }
 
-  // Retrieve User Roles
-  // -----------------------------------------------------------------------------------
-  // We will now retrieve the roles that are associated with the user. Each session will
-  // have an array of the user's roles associated with it.
-  logger.info("Retrieving the user's roles from the database ...");
-  const roles = await db
-    .selectFrom("user_roles")
-    .select(["role_id"])
-    .where("user_id", "=", user.id)
-    .execute()
-    .catch((e) => {
-      logger.error(
-        { traceId: "129caa7a", error: e },
-        "Failure: Unable to retrieve the user's roles from the database.",
-      );
-      throw redirect(stateCode.redirect_uri);
-      // TODO: Add a flash message cookie on redirect.
-    });
-
   // Create User Session
   // -----------------------------------------------------------------------------------
   logger.info({ traceId: "b1aa51da" }, "Creating the user session in the database ...");
-  const session = await db
-    .insertInto("sessions")
-    .values({ id: randomUUID(), user_id: user.id, roles: JSON.stringify(roles.map((r) => r.role_id)) })
-    .returningAll()
-    .executeTakeFirstOrThrow()
-    .catch((e) => {
-      logger.error({ traceId: "ed4f0a6a", error: e }, "Failure: Unable to create the user session in the database.");
-      throw redirect(stateCode.redirect_uri);
-      // TODO: Add a flash message cookie on redirect.
-    });
+  const session = await UserSession.new({ user_id: user.id });
+  logger.info({ traceId: "ea5a6b99" }, "Success: Created the user session in the database.");
+
+  return redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", session]] });
 };

@@ -101,49 +101,6 @@ async function removeExpiredSessionSecrets(): Promise<TaskStatus> {
   return status;
 }
 
-/**
- * Create new session secret in the database.
- *
- * This function will inspect the last session secret in the database and create a new
- * secret if the last secret was created more than 30 days ago or if there aren't any
- * session secrets in th database.. This will ensure that at any given time, there will
- * be three non-expired session secrets in the database.
- */
-async function createNewSessionSecret() {
-  const logger = getLogger();
-
-  logger.info({ traceId: "e686736b" }, "Retrieving last session secret ...");
-  const lastSecret = await db
-    .selectFrom("session_secrets")
-    .selectAll()
-    .orderBy("created_at", "desc")
-    .limit(1)
-    .executeTakeFirst();
-  logger.info({ traceId: "dc63e4d2" }, "Retrieved last session secret.");
-
-  logger.info({ traceId: "86b37093" }, "Checking if a new session secret should be created ...");
-  const oneMonthAgo = new Date(Date.now() - ms("30d")).toISOString();
-  if (lastSecret === undefined || lastSecret.created_at < oneMonthAgo) {
-    logger.info({ traceId: "2991c748" }, "Creating a new session secret ...");
-    const status = await db
-      .insertInto("session_secrets")
-      .values({ id: randomBytes(16).toString("hex") })
-      .executeTakeFirstOrThrow()
-      .then(() => {
-        logger.info({ traceId: "6b9ec9ad" }, "Success: Created a new session secret.");
-        return { task: "CreateNewSessionSecret", status: "success" };
-      })
-      .catch((e) => {
-        logger.error({ traceId: "df8f0fef", error: e }, "Failed to create a new session secret.");
-        return { task: "CreateNewSessionSecret", status: "failure" };
-      });
-    return status;
-  } else {
-    logger.info({ traceId: "141cac38" }, "A new session secret is not needed at this time.");
-    return { task: "CreateNewSessionSecret", status: "success" };
-  }
-}
-
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await checkIfAuthorized(request);
 
@@ -151,7 +108,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     removeExpiredOauthStateCodes(),
     removeExpiredSessions(),
     removeExpiredSessionSecrets(),
-    createNewSessionSecret(),
   ]);
 
   return json({ tasks });

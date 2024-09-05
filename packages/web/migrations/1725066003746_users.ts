@@ -42,7 +42,6 @@ async function up(db: Kysely<any>): Promise<void> {
     .ifNotExists()
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("user_id", "text", (col) => col.references("users.id").onDelete("cascade").notNull())
-    .addColumn("roles", "text")
     .addColumn("expires_at", "text", (col) => col.defaultTo(sql`(datetime('now', '+90 days'))`).notNull())
     .addColumn("created_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
     .addColumn("modified_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
@@ -51,7 +50,8 @@ async function up(db: Kysely<any>): Promise<void> {
     .createTable("session_secrets")
     .ifNotExists()
     .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("expires_at", "text", (col) => col.defaultTo(sql`(datetime('now', '+91 days'))`).notNull())
+    .addColumn("inactive_at", "text", (col) => col.defaultTo(sql`(datetime('now', '+90 days'))`).notNull())
+    .addColumn("expires_at", "text", (col) => col.defaultTo(sql`(datetime('now', '+181 days'))`).notNull())
     .addColumn("created_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
     .addColumn("modified_at", "text", (col) => col.defaultTo(sql`(datetime('now'))`).notNull())
     .execute();
