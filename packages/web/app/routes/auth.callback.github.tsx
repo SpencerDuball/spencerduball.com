@@ -5,6 +5,7 @@ import { z } from "zod";
 import { sql } from "kysely";
 import { randomUUID } from "crypto";
 import { UserSession } from "~/util/sessions";
+import { flash } from "~/util/cookies";
 
 /**
  * This function validates and reshapes the data returned from the Github API when
@@ -42,6 +43,15 @@ const ZSearch = z.object({
   code: z.string(),
 });
 
+function errorFlashMessage(id: string) {
+  return {
+    type: "error",
+    title: "Signin Failed",
+    message: "Hmm, the request doesn't look to be formed correctly.",
+    id,
+  };
+}
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const logger = getLogger();
   const env = ZEnv.parse(process.env);
@@ -57,9 +67,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     search = ZSearch.parse(Object.fromEntries(url.searchParams));
     logger.info({ traceId: "43d2b669" }, "Success: Validated the search parameters.");
   } catch (e) {
-    logger.info({ traceId: "0655622f", error: e }, "Failure: Required search params are not present.");
-    throw redirect("/");
-    // TODO: Add a flash message cookie on redirect.
+    logger.warn({ traceId: "0655622f", error: e }, "Failure: Required search params are not present.");
+    const globalMessage = errorFlashMessage("a1b2c3d4");
+    throw redirect("/", { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
   }
 
   // Confirm OAuth State Code Matches
@@ -74,13 +84,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .select(["id", "redirect_uri"])
     .where("id", "=", search.state)
     .executeTakeFirstOrThrow()
-    .catch((e) => {
+    .catch(async (e) => {
       logger.info(
         { traceId: "5a1124f6", error: e },
         "Failure: Unable to retrieve the oauth_state_code from the database.",
       );
-      throw redirect("/");
-      // TODO: Add a flash message cookie on redirect.
+      const globalMessage = errorFlashMessage("b1c2d3e4");
+      throw redirect("/", { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
     });
   logger.info({ traceId: "1f705526" }, "Success: Retrieved the oauth_state_code from the database.");
 
@@ -88,7 +98,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   logger.info({ traceId: "9d396151" }, "Comparing the state code ...");
   if (stateCode.id !== search.state) {
     logger.info({ traceId: "44c40c44" }, "Failure: The state code does not match.");
-    throw redirect(stateCode.redirect_uri);
+    const globalMessage = errorFlashMessage("c3d4e5f6");
+    throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
   }
   logger.info({ traceId: "f3b3b3b4" }, "Success: The state code matches.");
 
@@ -115,13 +126,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   })
     .catch(async (e) => {
       logger.info({ traceId: "44788db2", error: e }, "Failure: Unable to request the access token from Github.");
-      throw redirect(stateCode.redirect_uri);
-      // TODO: Add a flash message cookie on redirect.
+      const globalMessage = errorFlashMessage("d5e6f7g8");
+      throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
     })
     .then(async (res) => ZAccessTokenRes.parse(await res.json()))
     .catch(async (e) => {
       logger.info({ traceId: "b5e41215", error: e }, "Failure: Unable to parse the access token response from Github.");
-      throw redirect(stateCode.redirect_uri);
+      const globalMessage = errorFlashMessage("e6f7g8h9");
+      throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
     });
   logger.info({ traceId: "cafac002" }, "Success: Retrieved the access token from Github.");
 
@@ -139,14 +151,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   })
     .catch(async (e) => {
       logger.info({ traceId: "58925011", error: e }, "Failure: Unable to request the user info from Github.");
-      throw redirect(stateCode.redirect_uri);
-      // TODO: Add a flash message cookie on redirect.
+      const globalMessage = errorFlashMessage("f7g8h9i0");
+      throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
     })
     .then(async (res) => parseGithubUserInfo(await res.json()))
     .catch(async (e) => {
       logger.info({ traceId: "a248df6e", error: e }, "Failure: Unable to parse the user info response from Github.");
-      throw redirect(stateCode.redirect_uri);
-      // TODO: Add a flash message cookie on redirect.
+      const globalMessage = errorFlashMessage("g8h9i0j1");
+      throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
     });
   logger.info({ traceId: "cb1f3f84" }, "Success: Retrieved the user info from Github.");
 
@@ -159,13 +171,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   logger.info({ traceId: "e9599102" }, "Retrieving the user from the database ...");
   let user = await db
     .selectFrom("users")
-    .select(["id"])
+    .select(["id", "name"])
     .where("github_id", "=", userInfo.github_id)
     .executeTakeFirst()
-    .catch((e) => {
+    .catch(async (e) => {
       logger.info({ traceId: "e6545e9a", error: e }, "Failure: Unable to retrieve the user from the database.");
-      throw redirect(stateCode.redirect_uri);
-      // TODO: Add a flash message cookie on redirect.
+      const globalMessage = errorFlashMessage("h9i0j1k2");
+      throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
     });
 
   // if the user was found, update the user
@@ -178,10 +190,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       .set({ ...toUpdate, modified_at: sql`(datetime('now'))` })
       .where("id", "=", user.id)
       .executeTakeFirstOrThrow()
-      .catch((e) => {
+      .catch(async (e) => {
         logger.error({ traceId: "23d1713b", error: e }, "Failure: Unable to update the user in the database.");
-        throw redirect(stateCode.redirect_uri);
-        // TODO: Add a flash message cookie on redirect.
+        const globalMessage = errorFlashMessage("i0j1k2l3");
+        throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
       });
     logger.info({ traceId: "700fa7dd" }, "Success: Updated the user in the database.");
   } else {
@@ -190,12 +202,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     user = await db
       .insertInto("users")
       .values({ id: randomUUID(), ...userInfo })
-      .returning("id")
+      .returning(["id", "name"])
       .executeTakeFirstOrThrow()
-      .catch((e) => {
+      .catch(async (e) => {
         logger.error({ traceId: "eb7b695b", error: e }, "Failure: Unable to create the user in the database.");
-        throw redirect(stateCode.redirect_uri);
-        // TODO: Add a flash message cookie on redirect.
+        const globalMessage = errorFlashMessage("j1k2l3m4");
+        throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
       });
     logger.info({ traceId: "76c05211" }, "Success: Created the user in the database.");
   }
@@ -203,8 +215,21 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Create User Session
   // -----------------------------------------------------------------------------------
   logger.info({ traceId: "b1aa51da" }, "Creating the user session in the database ...");
-  const session = await UserSession.new({ user_id: user.id });
+  const sessionCookie = await UserSession.new({ user_id: user.id });
+  const flashCookie = await flash.serialize({
+    globalMessage: {
+      type: "success",
+      title: `Hello ${user.name}`,
+      message: "You have been signed in successfully.",
+      id: "k2l3m4n5",
+    },
+  });
   logger.info({ traceId: "ea5a6b99" }, "Success: Created the user session in the database.");
 
-  return redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", session]] });
+  return redirect(stateCode.redirect_uri, {
+    headers: [
+      ["Set-Cookie", sessionCookie],
+      ["Set-Cookie", flashCookie],
+    ],
+  });
 };

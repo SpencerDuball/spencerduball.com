@@ -93,6 +93,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "fs-extra": "^11.2.0",
     "kyselyx": "workspace:^",
+    "msw": "^2.4.2",
     "pino-pretty": "^11.2.2",
     "postcss": "^8.4.41",
     "prettier": "^3.3.3",

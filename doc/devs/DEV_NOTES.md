@@ -95,8 +95,8 @@ export const links: LinksFunction = () => [
 # Todo
 
 - [ ] Finish setting up the sessions, rolling sessions, etc.
-  - [ ] Have a function that retrieves the secrets and inspects the expires-at time of the last secret. It should not make a request to the database until this expires at time is past due. These secrets should be stored in a variable in memory.
-  - [ ] Need to completely redo the Remix cookie and session APIs. These don't work well for a few different reasons:
+  - [x] Have a function that retrieves the secrets and inspects the expires-at time of the last secret. It should not make a request to the database until this expires at time is past due. These secrets should be stored in a variable in memory.
+  - [x] Need to completely redo the Remix cookie and session APIs. These don't work well for a few different reasons:
     - If trying to use a function to rotate the secrets this won't work, we must pass the secrets array into the CookieFactory upon [initialization of the factory](https://github.com/remix-run/remix/blob/8f38118e44298d609224c6074ae6519d385196f1/packages/remix-server-runtime/cookies.ts#L70). The might possibly be a way to remedy this by wrapping this in another function and creating a new factory each time, but will probably just be better to get rid of this concept and create new Cookie api.
     - Actually, if we look here at [the node `createCookie` implementation](https://github.com/remix-run/remix/blob/8f38118e44298d609224c6074ae6519d385196f1/packages/remix-node/implementations.ts#L10) we might be able to supply custom `sign` and `unsign` function instead. This would alleviate the signature problem.
     - Meh, looked again and the [`sign` and `unsign`](https://github.com/remix-run/remix/blob/8f38118e44298d609224c6074ae6519d385196f1/packages/remix-node/crypto.ts#L4) funciton still expect to be passed the secret. Technically, I could just discard the secret value they provide but this is pretty dirty. I would also need to pass some dummy secrets in the factory or else the cookie wouldn't know to sign or not.

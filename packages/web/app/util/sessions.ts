@@ -1,11 +1,26 @@
-import { session as sessionCookie } from "./cookies";
+import { session as sessionCookie, flash as flashCookie } from "./cookies";
 import { Selectable, sql } from "kysely";
 import { db, SessionsTable } from "./libsql";
 import { randomBytes } from "crypto";
+import { createCookieSessionStorage } from "@remix-run/node";
+import { createTypedSessionStorage } from "remix-utils/typed-session";
+import { z } from "zod";
 
+/**
+ * The UserSession class provides methods for creating, retrieving, refreshing, and
+ * destroying user sessions.
+ */
 export class UserSession {
   /**
    * Creates a new session for the user.
+   *
+   * @return The session cookie to be sent to the user.
+   *
+   * @example
+   * ```ts
+   *   const sessionCookie = await UserSession.new({ user_id: user.id });
+   *   return redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", sessionCookie]] });
+   * ```
    */
   static async new({ user_id }: Pick<Selectable<SessionsTable>, "user_id">) {
     const session = await db
@@ -37,6 +52,16 @@ export class UserSession {
 
   /**
    * Extends the expiration of the user's session.
+   *
+   * @param id The session id.
+   * @returns The session cookie to be sent to the user.
+   *
+   * @example
+   * ```ts
+   *   const session = await UserSession.get(request.headers.get("Cookie"));
+   *   const sessionCookie = await UserSession.refresh(session.session_id);
+   *   return redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", sessionCookie]] });
+   * ```
    */
   static async refresh(id: string) {
     const session = await db
@@ -54,6 +79,16 @@ export class UserSession {
    *
    * This function will delete the session from the database and return an empty cookie.
    * This cookie should be sent back as a header so the browser can clear the session.
+   *
+   * @param id The session id.
+   * @returns The session cookie to be sent to the user.
+   *
+   * @example
+   * ```ts
+   *   const session = await UserSession.get(request.headers.get("Cookie"));
+   *   const sessionCookie = await UserSession.delete(session.session_id);
+   *   return redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", sessionCookie]] });
+   * ```
    */
   static async destroy(id: string) {
     await db.deleteFrom("sessions").where("id", "=", id).execute();
