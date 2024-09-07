@@ -41,7 +41,7 @@ export class Seeder {
      */
     async getSeeds() {
         const executedSeeds = (await this.#doesTableExists(this.#seedTable))
-            ? await this.#props.db
+            ? await this.#props.sources.db
                 .withPlugin(this.#schemaPlugin)
                 .selectFrom(this.#seedTable)
                 .select(["name", "timestamp"])
@@ -226,7 +226,7 @@ export class Seeder {
         }
         if (!(await this.#doesSchemaExists())) {
             try {
-                await this.#createIfNotExists(this.#props.db.schema.createSchema(this.#seedTableSchema));
+                await this.#createIfNotExists(this.#props.sources.db.schema.createSchema(this.#seedTableSchema));
             }
             catch (error) {
                 // At least on PostgreSQL, `if not exists` doesn't guarantee the `create schema`
@@ -242,9 +242,9 @@ export class Seeder {
         if (!(await this.#doesTableExists(this.#seedTable))) {
             try {
                 if (this.#seedTableSchema) {
-                    await this.#createIfNotExists(this.#props.db.schema.createSchema(this.#seedTableSchema));
+                    await this.#createIfNotExists(this.#props.sources.db.schema.createSchema(this.#seedTableSchema));
                 }
-                await this.#createIfNotExists(this.#props.db.schema
+                await this.#createIfNotExists(this.#props.sources.db.schema
                     .withPlugin(this.#schemaPlugin)
                     .createTable(this.#seedTable)
                     .addColumn("name", "varchar(255)", (col) => col.notNull().primaryKey())
@@ -263,18 +263,18 @@ export class Seeder {
         }
     }
     async #doesSchemaExists() {
-        const schemas = await this.#props.db.introspection.getSchemas();
+        const schemas = await this.#props.sources.db.introspection.getSchemas();
         return schemas.some((it) => it.name === this.#seedTableSchema);
     }
     async #doesTableExists(tableName) {
         const schema = this.#seedTableSchema;
-        const tables = await this.#props.db.introspection.getTables({
+        const tables = await this.#props.sources.db.introspection.getTables({
             withInternalKyselyTables: true,
         });
         return tables.some((it) => it.name === tableName && (!schema || it.schema === schema));
     }
     async #runSeeds(getSeedDirectionAndStep) {
-        const adapter = this.#props.db.getExecutor().adapter;
+        const adapter = this.#props.sources.db.getExecutor().adapter;
         const run = async (db) => {
             const state = await this.#getState(db);
             if (state.seeds.length === 0) {
@@ -293,10 +293,10 @@ export class Seeder {
             return { results: [] };
         };
         if (adapter.supportsTransactionalDdl) {
-            return this.#props.db.transaction().execute(run);
+            return this.#props.sources.db.transaction().execute(run);
         }
         else {
-            return this.#props.db.connection().execute(run);
+            return this.#props.sources.db.connection().execute(run);
         }
     }
     async #getState(db) {
@@ -372,7 +372,7 @@ export class Seeder {
             const seed = seedsToRollback[i];
             try {
                 if (seed.down) {
-                    await seed.down(db);
+                    await seed.down(this.#props.sources);
                     await db.withPlugin(this.#schemaPlugin).deleteFrom(this.#seedTable).where("name", "=", seed.name).execute();
                     results[i] = {
                         seedName: seed.name,
@@ -407,7 +407,7 @@ export class Seeder {
         for (let i = 0; i < results.length; i++) {
             const seed = state.pendingSeeds[i];
             try {
-                await seed.up(db);
+                await seed.up(this.#props.sources);
                 await db
                     .withPlugin(this.#schemaPlugin)
                     .insertInto(this.#seedTable)
@@ -437,7 +437,7 @@ export class Seeder {
         return { results };
     }
     async #createIfNotExists(qb) {
-        if (this.#props.db.getExecutor().adapter.supportsCreateIfNotExists) {
+        if (this.#props.sources.db.getExecutor().adapter.supportsCreateIfNotExists) {
             qb = qb.ifNotExists();
         }
         await qb.execute();

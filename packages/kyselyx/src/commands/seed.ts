@@ -28,10 +28,7 @@ function template(configFile: string, seedFile: string) {
  */
 export async function seed() {
   const spinner = ora("Connecting to the database ...").start();
-  const {
-    sources: { db },
-    seedFolder: fld,
-  } = getConfig();
+  const { sources, seedFolder: fld } = getConfig();
   spinner.stopAndPersist({ text: "" });
 
   // apply the seeds
@@ -41,7 +38,7 @@ export async function seed() {
     process.exit(1);
   }
   const provider = new FileSeedProvider({ fs, path, seedFolder });
-  const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+  const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
   const { error, results } = await seeder.seedToLatest();
 
   // process the results
@@ -52,7 +49,7 @@ export async function seed() {
   });
 
   // close the database connection
-  await db.destroy();
+  await sources.db.destroy();
 
   if (error) {
     spinner.fail(`Failed to seed.`);
@@ -69,10 +66,7 @@ export async function seed() {
  */
 export async function status() {
   const spinner = ora("Connecting to the database ...").start();
-  const {
-    sources: { db },
-    seedFolder: fld,
-  } = getConfig();
+  const { sources, seedFolder: fld } = getConfig();
 
   // get the seeds
   const seedFolder = path.resolve(fld);
@@ -81,7 +75,7 @@ export async function status() {
     process.exit(1);
   }
   const provider = new FileSeedProvider({ fs, path, seedFolder });
-  const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+  const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
   const seeds = await seeder.getSeeds();
   spinner.stop();
 
@@ -110,7 +104,7 @@ export async function status() {
   }
 
   // cloase the database connection
-  await db.destroy();
+  await sources.db.destroy();
 }
 
 /**
@@ -120,10 +114,7 @@ export async function status() {
  */
 export async function undo(name?: string) {
   const spinner = ora("Connecting to the database ...").start();
-  const {
-    sources: { db },
-    seedFolder: fld,
-  } = getConfig();
+  const { sources, seedFolder: fld } = getConfig();
 
   const seedFolder = path.resolve(fld);
   if (!fs.existsSync(seedFolder)) {
@@ -131,7 +122,7 @@ export async function undo(name?: string) {
     process.exit(1);
   }
   const provider = new FileSeedProvider({ fs, path, seedFolder });
-  const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+  const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
   const seeds = await seeder.getSeeds();
   spinner.stop();
 
@@ -197,7 +188,7 @@ export async function undo(name?: string) {
   }
 
   // close the database connection
-  await db.destroy();
+  await sources.db.destroy();
 }
 
 /**
@@ -205,10 +196,7 @@ export async function undo(name?: string) {
  */
 export async function undoAll() {
   const spinner = ora("Connecting to the database ...").start();
-  const {
-    sources: { db },
-    seedFolder: fld,
-  } = getConfig();
+  const { sources, seedFolder: fld } = getConfig();
 
   const seedFolder = path.resolve(fld);
   if (!fs.existsSync(seedFolder)) {
@@ -216,7 +204,7 @@ export async function undoAll() {
     process.exit(1);
   }
   const provider = new FileSeedProvider({ fs, path, seedFolder });
-  const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+  const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
   const seeds = await seeder.getSeeds();
   spinner.stop();
 
@@ -265,7 +253,7 @@ export async function undoAll() {
   spinner.succeed(`All seeds undone successfully.`);
 
   // close the database connection
-  await db.destroy();
+  await sources.db.destroy();
 }
 
 /**

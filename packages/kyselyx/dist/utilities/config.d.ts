@@ -27,7 +27,7 @@ declare const ZConfigFile: z.ZodObject<{
     migrationFolder?: string | undefined;
     seedFolder?: string | undefined;
 }>;
-type DefaultStores = {
+export type DefaultStores = {
     db: Kysely<any>;
 };
 export interface IConfigFile<T extends DefaultStores = DefaultStores> extends z.infer<typeof ZConfigFile> {

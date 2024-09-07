@@ -72,6 +72,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.0.0",
     "@remix-run/dev": "^2.11.1",
     "@types/cookie": "^0.6.0",
     "@types/cookie-signature": "^1.1.2",

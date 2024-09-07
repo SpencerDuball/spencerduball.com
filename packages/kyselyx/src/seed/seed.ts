@@ -2,14 +2,15 @@ import { Kysely, KyselyPlugin, WithSchemaPlugin, CreateTableBuilder, CreateSchem
 import { FileSeedProvider } from "./file-seed-provider.js";
 import { NoopPlugin } from "./noop-plugin.js";
 import { freeze, getLast } from "./utils.js";
+import { DefaultStores } from "../utilities/config.js";
 
 export const DEFAULT_SEED_TABLE = "kyselyx_seed";
 export const DEFAULT_ALLOW_UNORDERED_SEEDS = false;
 export const NO_SEEDS: NoSeeds = freeze({ __noSeeds__: true });
 
-export interface Seed {
-  up(db: Kysely<any>): Promise<void>;
-  down(db: Kysely<any>): Promise<void>;
+export interface Seed<T extends DefaultStores = DefaultStores> {
+  up(sources: T): Promise<void>;
+  down(sources: T): Promise<void>;
 }
 
 /**
@@ -51,7 +52,7 @@ export class Seeder {
    */
   async getSeeds(): Promise<ReadonlyArray<SeedInfo>> {
     const executedSeeds = (await this.#doesTableExists(this.#seedTable))
-      ? await this.#props.db
+      ? await this.#props.sources.db
           .withPlugin(this.#schemaPlugin)
           .selectFrom(this.#seedTable)
           .select(["name", "timestamp"])
@@ -258,7 +259,7 @@ export class Seeder {
 
     if (!(await this.#doesSchemaExists())) {
       try {
-        await this.#createIfNotExists(this.#props.db.schema.createSchema(this.#seedTableSchema));
+        await this.#createIfNotExists(this.#props.sources.db.schema.createSchema(this.#seedTableSchema));
       } catch (error) {
         // At least on PostgreSQL, `if not exists` doesn't guarantee the `create schema`
         // query doesn't throw if the schema already exits. That's why we check if
@@ -274,11 +275,11 @@ export class Seeder {
     if (!(await this.#doesTableExists(this.#seedTable))) {
       try {
         if (this.#seedTableSchema) {
-          await this.#createIfNotExists(this.#props.db.schema.createSchema(this.#seedTableSchema));
+          await this.#createIfNotExists(this.#props.sources.db.schema.createSchema(this.#seedTableSchema));
         }
 
         await this.#createIfNotExists(
-          this.#props.db.schema
+          this.#props.sources.db.schema
             .withPlugin(this.#schemaPlugin)
             .createTable(this.#seedTable)
             .addColumn("name", "varchar(255)", (col) => col.notNull().primaryKey())
@@ -298,7 +299,7 @@ export class Seeder {
   }
 
   async #doesSchemaExists(): Promise<boolean> {
-    const schemas = await this.#props.db.introspection.getSchemas();
+    const schemas = await this.#props.sources.db.introspection.getSchemas();
 
     return schemas.some((it) => it.name === this.#seedTableSchema);
   }
@@ -306,7 +307,7 @@ export class Seeder {
   async #doesTableExists(tableName: string): Promise<boolean> {
     const schema = this.#seedTableSchema;
 
-    const tables = await this.#props.db.introspection.getTables({
+    const tables = await this.#props.sources.db.introspection.getTables({
       withInternalKyselyTables: true,
     });
 
@@ -319,7 +320,7 @@ export class Seeder {
       step: number;
     },
   ): Promise<SeedResultSet> {
-    const adapter = this.#props.db.getExecutor().adapter;
+    const adapter = this.#props.sources.db.getExecutor().adapter;
 
     const run = async (db: Kysely<any>): Promise<SeedResultSet> => {
       const state = await this.#getState(db);
@@ -344,9 +345,9 @@ export class Seeder {
     };
 
     if (adapter.supportsTransactionalDdl) {
-      return this.#props.db.transaction().execute(run);
+      return this.#props.sources.db.transaction().execute(run);
     } else {
-      return this.#props.db.connection().execute(run);
+      return this.#props.sources.db.connection().execute(run);
     }
   }
 
@@ -439,7 +440,7 @@ export class Seeder {
 
       try {
         if (seed.down) {
-          await seed.down(db);
+          await seed.down(this.#props.sources);
           await db.withPlugin(this.#schemaPlugin).deleteFrom(this.#seedTable).where("name", "=", seed.name).execute();
 
           results[i] = {
@@ -480,7 +481,7 @@ export class Seeder {
       const seed = state.pendingSeeds[i];
 
       try {
-        await seed.up(db);
+        await seed.up(this.#props.sources);
         await db
           .withPlugin(this.#schemaPlugin)
           .insertInto(this.#seedTable)
@@ -513,7 +514,7 @@ export class Seeder {
   }
 
   async #createIfNotExists(qb: CreateTableBuilder<any, any> | CreateSchemaBuilder): Promise<void> {
-    if (this.#props.db.getExecutor().adapter.supportsCreateIfNotExists) {
+    if (this.#props.sources.db.getExecutor().adapter.supportsCreateIfNotExists) {
       qb = qb.ifNotExists();
     }
 
@@ -521,8 +522,8 @@ export class Seeder {
   }
 }
 
-export interface SeederProps {
-  readonly db: Kysely<any>;
+export interface SeederProps<T extends DefaultStores = DefaultStores> {
+  readonly sources: T;
   readonly provider: SeedProvider;
 
   /**

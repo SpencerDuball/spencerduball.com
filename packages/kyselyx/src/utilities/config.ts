@@ -11,7 +11,7 @@ const ZConfigFile = z.object({
   migrationFolder: z.string().optional(),
   seedFolder: z.string().optional(),
 });
-type DefaultStores = { db: Kysely<any> };
+export type DefaultStores = { db: Kysely<any> };
 export interface IConfigFile<T extends DefaultStores = DefaultStores> extends z.infer<typeof ZConfigFile> {
   sources: T;
 }

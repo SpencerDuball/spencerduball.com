@@ -24,7 +24,7 @@ function template(configFile, seedFile) {
  */
 export async function seed() {
     const spinner = ora("Connecting to the database ...").start();
-    const { sources: { db }, seedFolder: fld, } = getConfig();
+    const { sources, seedFolder: fld } = getConfig();
     spinner.stopAndPersist({ text: "" });
     // apply the seeds
     const seedFolder = path.resolve(fld);
@@ -33,7 +33,7 @@ export async function seed() {
         process.exit(1);
     }
     const provider = new FileSeedProvider({ fs, path, seedFolder });
-    const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+    const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
     const { error, results } = await seeder.seedToLatest();
     // process the results
     results?.forEach((it) => {
@@ -45,7 +45,7 @@ export async function seed() {
             spinner.fail(`Seeds not executed due to prior error ${it.seedName}.`);
     });
     // close the database connection
-    await db.destroy();
+    await sources.db.destroy();
     if (error) {
         spinner.fail(`Failed to seed.`);
         console.error(error);
@@ -61,7 +61,7 @@ export async function seed() {
  */
 export async function status() {
     const spinner = ora("Connecting to the database ...").start();
-    const { sources: { db }, seedFolder: fld, } = getConfig();
+    const { sources, seedFolder: fld } = getConfig();
     // get the seeds
     const seedFolder = path.resolve(fld);
     if (!fs.existsSync(seedFolder)) {
@@ -69,7 +69,7 @@ export async function status() {
         process.exit(1);
     }
     const provider = new FileSeedProvider({ fs, path, seedFolder });
-    const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+    const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
     const seeds = await seeder.getSeeds();
     spinner.stop();
     // collect a snapshot of the seed info
@@ -96,7 +96,7 @@ export async function status() {
             spinner.fail(`Seed ${seed.name} not applied.`);
     }
     // cloase the database connection
-    await db.destroy();
+    await sources.db.destroy();
 }
 /**
  * Undos the last seed or a specific seed if a name is provided.
@@ -105,14 +105,14 @@ export async function status() {
  */
 export async function undo(name) {
     const spinner = ora("Connecting to the database ...").start();
-    const { sources: { db }, seedFolder: fld, } = getConfig();
+    const { sources, seedFolder: fld } = getConfig();
     const seedFolder = path.resolve(fld);
     if (!fs.existsSync(seedFolder)) {
         spinner.fail(`Seed folder not found: ${seedFolder}`);
         process.exit(1);
     }
     const provider = new FileSeedProvider({ fs, path, seedFolder });
-    const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+    const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
     const seeds = await seeder.getSeeds();
     spinner.stop();
     // Get the total applied seeds
@@ -176,21 +176,21 @@ export async function undo(name) {
         }
     }
     // close the database connection
-    await db.destroy();
+    await sources.db.destroy();
 }
 /**
  * Undos all seeds that have been applied.
  */
 export async function undoAll() {
     const spinner = ora("Connecting to the database ...").start();
-    const { sources: { db }, seedFolder: fld, } = getConfig();
+    const { sources, seedFolder: fld } = getConfig();
     const seedFolder = path.resolve(fld);
     if (!fs.existsSync(seedFolder)) {
         spinner.fail(`Seed folder not found: ${seedFolder}`);
         process.exit(1);
     }
     const provider = new FileSeedProvider({ fs, path, seedFolder });
-    const seeder = new Seeder({ db, provider, seedTableName: SEED_TABLE_NAME });
+    const seeder = new Seeder({ sources, provider, seedTableName: SEED_TABLE_NAME });
     const seeds = await seeder.getSeeds();
     spinner.stop();
     // get the seed executed first
@@ -234,7 +234,7 @@ export async function undoAll() {
     }
     spinner.succeed(`All seeds undone successfully.`);
     // close the database connection
-    await db.destroy();
+    await sources.db.destroy();
 }
 /**
  * Generates a new seed file with the specified name.

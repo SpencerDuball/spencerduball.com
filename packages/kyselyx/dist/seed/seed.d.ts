@@ -1,10 +1,10 @@
-import { Kysely } from "kysely";
+import { DefaultStores } from "../utilities/config.js";
 export declare const DEFAULT_SEED_TABLE = "kyselyx_seed";
 export declare const DEFAULT_ALLOW_UNORDERED_SEEDS = false;
 export declare const NO_SEEDS: NoSeeds;
-export interface Seed {
-    up(db: Kysely<any>): Promise<void>;
-    down(db: Kysely<any>): Promise<void>;
+export interface Seed<T extends DefaultStores = DefaultStores> {
+    up(sources: T): Promise<void>;
+    down(sources: T): Promise<void>;
 }
 /**
  * A class for running seeds.
@@ -143,8 +143,8 @@ export declare class Seeder {
      */
     seedDown(): Promise<SeedResultSet>;
 }
-export interface SeederProps {
-    readonly db: Kysely<any>;
+export interface SeederProps<T extends DefaultStores = DefaultStores> {
+    readonly sources: T;
     readonly provider: SeedProvider;
     /**
      * The name of the internal seed table. Defaults to `kysely_seed`.
