@@ -111,6 +111,9 @@ export const links: LinksFunction = () => [
 - [ ] Create tests for all of the auth, sessions, cookie, github signin, preferences cookie, flash cookie.
 - [ ] Create & publish Kyselyx package
 - [ ] Create & publish web-serve package (name appropriately)
+- [ ] Blog about the common CSS tricks:
+  - https://css-tricks.com/almanac/properties/l/line-clamp/
+  - https://lechihuy.dev/en/blog/how-to-use-calc-in-tailwind-css
 
 ## Misc
 
@@ -121,7 +124,8 @@ export const links: LinksFunction = () => [
 - [ ] Only apply seeds that have a timestamp after the migration
 - [ ] When going down a migration, determine which seeds need to be dropped based upon timestamps
 - [ ] When going down all migrations, drop all seeds
-- [ ] Maybe can create a "reset" command that runs all "drop" commands regardless of state, it should also have a statement that drops the "kyselyx\_\*" tables for a full reset. Need to advise in docs that all "drop" commands should be resiliant to failures if a database doesn't exist for example.
+- [ ] Maybe can create a "clear" command that runs all "drop" commands regardless of state, it should also have a statement that drops the "kyselyx\_\*" tables for a full reset. Need to advise in docs that all "drop" commands should be resiliant to failures if a database doesn't exist for example.
+- [ ] Maybe can create a "reset" command that runs a "clear", and then runs "migrate" + "seed". This is really just a convenience method.
 - [ ] Add a silent option to all commands, maybe as cli flag?
 
 ## Web-Serve
@@ -130,7 +134,7 @@ export const links: LinksFunction = () => [
 
 ## Docs
 
-- [ ] Create a desing doc that explains the (so far) 4 images used in this app. Structure the docs in subfolders for each image too (and futher as necessary). In the MINIO section, ensure to explain about the CloudFlare caching strategy to reduce bandwidth concerns.
+- [ ] Create a desing doc that explains the (so far) 4 docker images used in this app. Structure the docs in subfolders for each image too (and futher as necessary). In the MINIO section, ensure to explain about the CloudFlare caching strategy to reduce bandwidth concerns.
 - [ ] Update and add the `auth.md` design doc from the trunk. This was very good, but should also add information about rotating session secrets and other points.
 - [ ] Add a design doc about creating a `cron` image that calls a webhook. This is nice because all application logic still resides in the remix app.
 - [ ] Add a design doc explaining about logging (include context `reqId`, include `traceId`, include `pino-http`). Do this after setting up a strategy for maintaining and deleting log files on the filesystem. Maybe discuss about pino transports a litte too.

@@ -21,7 +21,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   logger.info({ traceId: "202de58e" }, "Success: Created the oauth_state_code in the database.");
 
   // build the Github OAuth URL
-  const githubUrl = new URL("https://github.com/login/oauth/authorize");
+  const githubUrl = env.MOCKS_ENABLED
+    ? new URL("/mock/github/login/oauth/authorize", env.SITE_URL)
+    : new URL("https://github.com/login/oauth/authorize");
   githubUrl.searchParams.append("client_id", env.GITHUB_CLIENT_ID);
   githubUrl.searchParams.append("redirect_uri", new URL("/auth/callback/github", env.SITE_URL).toString());
   githubUrl.searchParams.append("scope", "user");

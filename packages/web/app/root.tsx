@@ -30,8 +30,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // Handle Preferences Cookie
   // -------------------------
-  // Retrieves and parses the theme from the __preferences cookie. If the cookie is invalid or doesn't exist then
-  // respond with a a Set-Cookie to set the __preferences cookie. The theme will be used in SSR of the app.
+  // Retrieves and parses the theme from the __preferences cookie. If the cookie is
+  // invalid or doesn't exist then respond with a a Set-Cookie to set the __preferences
+  // cookie. The theme will be used in SSR of the app.
   let prefs = await preferences.parse(request.headers.get("cookie")).catch(() => null);
   if (!prefs) {
     prefs = { _theme: "dark", _codeTheme: "dark" };

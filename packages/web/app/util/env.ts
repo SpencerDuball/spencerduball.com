@@ -10,6 +10,7 @@ const ZEnv = z.object({
   GITHUB_CLIENT_SECRET: z.string(),
   GITHUB_CLIENT_ID: z.string(),
   CRON_CLIENT_SECRET: z.string(),
+  MOCKS_ENABLED: z.string().transform((val) => val.toUpperCase() === "TRUE"),
 });
 
 export { ZEnv };

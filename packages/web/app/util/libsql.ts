@@ -47,6 +47,26 @@ export interface SessionSecretsTable {
   modified_at: ColumnType<string, never, never>;
 }
 
+// Note this is a mock table for testing purposes.
+export interface MockGhOtcsTable {
+  id: ColumnType<string, string, never>;
+  scope: ColumnType<string, string, never>;
+  github_id: ColumnType<number, number, never>;
+  expires_at: ColumnType<string, never, never>;
+  created_at: ColumnType<string, never, never>;
+  modified_at: ColumnType<string, never, never>;
+}
+
+// Note this is a mock table for testing purposes.
+export interface MockGhAccessTokensTable {
+  id: ColumnType<string, string, never>;
+  scope: ColumnType<string, string, never>;
+  user_id: ColumnType<number, number, never>;
+  expires_at: ColumnType<string, never, never>;
+  created_at: ColumnType<string, never, never>;
+  modified_at: ColumnType<string, never, never>;
+}
+
 export interface Database {
   users: UsersTable;
   roles: RolesTable;
@@ -54,6 +74,8 @@ export interface Database {
   oauth_state_codes: OAuthStateCodesTable;
   sessions: SessionsTable;
   session_secrets: SessionSecretsTable;
+  mock_gh_otcs: MockGhOtcsTable;
+  mock_gh_access_tokens: MockGhAccessTokensTable;
 }
 
 // -------------------------------------------------------------------------------------

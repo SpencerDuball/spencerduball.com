@@ -6,21 +6,14 @@ import { sql } from "kysely";
 import { randomUUID } from "crypto";
 import { UserSession } from "~/util/sessions";
 import { flash } from "~/util/cookies";
+import { ZGithubUserInfo } from "~/models/github";
 
 /**
  * This function validates and reshapes the data returned from the Github API when
  * requesting the user's information.
  */
 function parseGithubUserInfo(data: any) {
-  const userInfo = z
-    .object({
-      login: z.string(),
-      id: z.number(),
-      name: z.string(),
-      avatar_url: z.string(),
-      html_url: z.string(),
-    })
-    .parse(data);
+  const userInfo = ZGithubUserInfo.parse(data);
   return {
     github_id: userInfo.id,
     username: userInfo.login,
@@ -64,7 +57,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   try {
     logger.info({ traceId: "8ab714de" }, "Validating the search parameters ...");
     const url = new URL(request.url);
-    search = ZSearch.parse(Object.fromEntries(url.searchParams));
+    search = ZSearch.parse(Object.fromEntries(url.searchParams.entries()));
     logger.info({ traceId: "43d2b669" }, "Success: Validated the search parameters.");
   } catch (e) {
     logger.warn({ traceId: "0655622f", error: e }, "Failure: Required search params are not present.");

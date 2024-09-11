@@ -23,11 +23,11 @@ async function up(db: Kysely<any>): Promise<void> {
 }
 
 async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.dropIndex("session_secrets_expires_at_idx").execute();
-  await db.schema.dropIndex("sessions_user_id_idx").execute();
-  await db.schema.dropIndex("sessions_expires_at_idx").execute();
-  await db.schema.dropIndex("oauth_state_codes_expires_at_idx").execute();
-  await db.schema.dropIndex("users_github_id_idx").execute();
+  await db.schema.dropIndex("session_secrets_expires_at_idx").ifExists().execute();
+  await db.schema.dropIndex("sessions_user_id_idx").ifExists().execute();
+  await db.schema.dropIndex("sessions_expires_at_idx").ifExists().execute();
+  await db.schema.dropIndex("oauth_state_codes_expires_at_idx").ifExists().execute();
+  await db.schema.dropIndex("users_github_id_idx").ifExists().execute();
 }
 
 export { up, down };

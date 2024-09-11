@@ -11,8 +11,15 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import { ZEnv } from "./util";
 
 const ABORT_DELAY = 5_000;
+
+// Dynamically import the mock server if it's enabled.
+if (ZEnv.parse(process.env).MOCKS_ENABLED) {
+  const { server } = await import("./mocks/node");
+  server.listen({ onUnhandledRequest: "bypass" });
+}
 
 export default function handleRequest(
   request: Request,

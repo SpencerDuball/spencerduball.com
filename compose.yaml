@@ -28,6 +28,7 @@ services:
       - "GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}"
       - "GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}"
       - "CRON_CLIENT_SECRET=${CRON_CLIENT_SECRET}"
+      - "MOCKS_ENABLED=${MOCKS_ENABLED}"
     image: "spencerduballcom"
     ports:
       - "5110:8080"
