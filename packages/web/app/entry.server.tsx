@@ -6,12 +6,15 @@
 
 import { PassThrough } from "node:stream";
 
-import type { AppLoadContext, EntryContext } from "@remix-run/node";
+import type { AppLoadContext, EntryContext, HandleDataRequestFunction } from "@remix-run/node";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { ZEnv } from "./util";
+import { getLogger, UserSession, session } from "./util/server";
+// @ts-ignore
+import ms from "ms";
 
 const ABORT_DELAY = 5_000;
 
@@ -21,7 +24,7 @@ if (ZEnv.parse(process.env).MOCKS_ENABLED) {
   server.listen({ onUnhandledRequest: "bypass" });
 }
 
-export default function handleRequest(
+export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
@@ -31,6 +34,8 @@ export default function handleRequest(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: AppLoadContext,
 ) {
+  await refreshSession(request.headers, responseHeaders);
+
   return isbot(request.headers.get("user-agent") || "")
     ? handleBotRequest(request, responseStatusCode, responseHeaders, remixContext)
     : handleBrowserRequest(request, responseStatusCode, responseHeaders, remixContext);
@@ -126,4 +131,42 @@ function handleBrowserRequest(
 
     setTimeout(abort, ABORT_DELAY);
   });
+}
+
+export const handleDataRequest: HandleDataRequestFunction = async (response, { request }) => {
+  await refreshSession(request.headers, response.headers);
+  return response;
+};
+
+/**
+ * This function will destroy or refresh the user's session based upon the cookie info.
+ *
+ * This function will check if the "__session" cookie is being set in the response, and
+ * if it is - do nothing. If the session is expired, it will destroy the session. If the
+ * session is stale (older than 24h), it will refresh the session.
+ */
+async function refreshSession(requestHeaders: Request["headers"], responseHeaders: Response["headers"]) {
+  const logger = getLogger();
+
+  const reqSession = await UserSession.get(requestHeaders.get("Cookie"));
+
+  if (reqSession) {
+    const isSettingSession = false;
+    for (let cookie of responseHeaders) {
+      if (cookie[0] === "Set-Cookie") {
+        const isSettingCookie = session.parse(cookie[1]) !== null;
+        if (isSettingCookie) break;
+      }
+    }
+    const isExpiredSession = new Date(reqSession.session_expires_at) < new Date();
+    const shouldRefreshSession = new Date(reqSession.session_modified_at) < new Date(Date.now() - ms("1d"));
+
+    if (!isSettingSession && isExpiredSession) {
+      logger.info("Session is expired, destroying it.");
+      responseHeaders.append("Set-Cookie", await UserSession.destroy(reqSession.session_id));
+    } else if (!isSettingSession && shouldRefreshSession) {
+      logger.info("Session is stale, refreshing it.");
+      responseHeaders.append("Set-Cookie", await UserSession.refresh(reqSession.session_id));
+    }
+  }
 }

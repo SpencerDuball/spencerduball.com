@@ -162,7 +162,7 @@ async function getSecrets() {
 
   const cacheHasActiveSecret = __cachedSecrets.some((secret) => secret.expires_at > new Date().toISOString());
   if (cacheHasActiveSecret) {
-    logger.info({ traceId: "91442e08" }, "Cache has active secrets, returning them.");
+    logger.debug({ traceId: "91442e08" }, "Cache has active secrets, returning them.");
     return __cachedSecrets.map((secret) => secret.id);
   } else {
     logger.info({ traceId: "40e1384f" }, "Retrieving unexpired secrets from the database ...");

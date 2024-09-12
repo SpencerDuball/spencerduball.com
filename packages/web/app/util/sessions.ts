@@ -43,7 +43,12 @@ export class UserSession {
     return await db
       .selectFrom("sessions")
       .innerJoin("users", "sessions.user_id", "users.id")
-      .select("sessions.id as session_id")
+      .select([
+        "sessions.id as session_id",
+        "sessions.expires_at as session_expires_at",
+        "sessions.created_at as session_created_at",
+        "sessions.modified_at as session_modified_at",
+      ])
       .selectAll("users")
       .where("sessions.id", "=", sessionId)
       .executeTakeFirstOrThrow()
@@ -69,8 +74,7 @@ export class UserSession {
       .set({ expires_at: sql`(datetime('now'))` })
       .where("id", "=", id)
       .returning(["id", "expires_at"])
-      .executeTakeFirst();
-    if (!session) return null;
+      .executeTakeFirstOrThrow();
     return sessionCookie.serialize(session.id, { expires: new Date(session.expires_at) });
   }
 
