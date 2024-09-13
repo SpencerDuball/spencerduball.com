@@ -12,9 +12,10 @@ import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import { ZEnv } from "./util";
-import { getLogger, UserSession, session } from "./util/server";
+import { getLogger, UserSession, SessionError } from "./util/server";
 // @ts-ignore
 import ms from "ms";
+import { i } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 
 const ABORT_DELAY = 5_000;
 
@@ -148,25 +149,26 @@ export const handleDataRequest: HandleDataRequestFunction = async (response, { r
 async function refreshSession(requestHeaders: Request["headers"], responseHeaders: Response["headers"]) {
   const logger = getLogger();
 
-  const reqSession = await UserSession.get(requestHeaders.get("Cookie"));
+  const reqSession = await UserSession.parse(requestHeaders.get("Cookie")).catch(async (e) => {
+    if (e instanceof SessionError) {
+      logger.info({ traceId: "b141bdf5" }, "Session was bad, destroying it.");
+      responseHeaders.append("Set-Cookie", e.sessionCookie);
+    }
+  });
 
   if (reqSession) {
-    const isSettingSession = false;
-    for (let cookie of responseHeaders) {
-      if (cookie[0] === "Set-Cookie") {
-        const isSettingCookie = session.parse(cookie[1]) !== null;
-        if (isSettingCookie) break;
-      }
-    }
-    const isExpiredSession = new Date(reqSession.session_expires_at) < new Date();
-    const shouldRefreshSession = new Date(reqSession.session_modified_at) < new Date(Date.now() - ms("1d"));
+    const isSettingSession = await UserSession.parse(responseHeaders.get("Set-Cookie")).then((val) => val !== null);
+    const isExpiredSession = new Date(reqSession.expires_at) < new Date();
+    const shouldRefreshSession = new Date(reqSession.modified_at) < new Date(Date.now() - ms("1d"));
 
-    if (!isSettingSession && isExpiredSession) {
-      logger.info("Session is expired, destroying it.");
-      responseHeaders.append("Set-Cookie", await UserSession.destroy(reqSession.session_id));
-    } else if (!isSettingSession && shouldRefreshSession) {
-      logger.info("Session is stale, refreshing it.");
-      responseHeaders.append("Set-Cookie", await UserSession.refresh(reqSession.session_id));
+    if (!isSettingSession) {
+      if (isExpiredSession) {
+        logger.info({ traceId: "3427a0a8" }, "Session is expired, destroying it.");
+        responseHeaders.append("Set-Cookie", await UserSession.destroy(reqSession.id));
+      } else if (shouldRefreshSession) {
+        logger.info({ traceId: "27f3452d" }, "Session is stale, refreshing it.");
+        responseHeaders.append("Set-Cookie", await UserSession.refresh(reqSession.id));
+      }
     }
   }
 }

@@ -94,7 +94,7 @@ export const links: LinksFunction = () => [
 
 # Todo
 
-- [ ] Finish setting up the sessions, rolling sessions, etc.
+- [x] Finish setting up the sessions, rolling sessions, etc.
   - [x] Have a function that retrieves the secrets and inspects the expires-at time of the last secret. It should not make a request to the database until this expires at time is past due. These secrets should be stored in a variable in memory.
   - [x] Need to completely redo the Remix cookie and session APIs. These don't work well for a few different reasons:
     - If trying to use a function to rotate the secrets this won't work, we must pass the secrets array into the CookieFactory upon [initialization of the factory](https://github.com/remix-run/remix/blob/8f38118e44298d609224c6074ae6519d385196f1/packages/remix-server-runtime/cookies.ts#L70). The might possibly be a way to remedy this by wrapping this in another function and creating a new factory each time, but will probably just be better to get rid of this concept and create new Cookie api.
@@ -105,7 +105,7 @@ export const links: LinksFunction = () => [
       - I don't want to support flash messages on this session cookie. This would need to be stored in the database, and it would just be easier to have a separate cookie for this instead.
       - I don't like that I can't tell the cookie what it's expires/maxAge will be. For example, I want to create the session in the database and **then** tell the cookie this limit - I don't want the cookie creation to dictate what the expires will be in the database.
       - The session API is actually pretty light, the cookie API is much more heavy.u
-- [ ] Update the session cookie to hold the session cookie info. This includes the `id`, `user_id`, `expires_at`, `modified_at`, `created_at`. This way when doing the session check (on each request) we don't need to make a second request to the database. This would add an additional network roundtrip on every request for session information.
+- [x] Update the session cookie to hold the session cookie info. This includes the `id`, `user_id`, `expires_at`, `modified_at`, `created_at`. This way when doing the session check (on each request) we don't need to make a second request to the database. This would add an additional network roundtrip on every request for session information.
 - [ ] Finish adding in the flash cookie, and update routes to use flash cookie for notifications to users
 - [x] Add in mocks for the auth
 - [x] Add the seed data

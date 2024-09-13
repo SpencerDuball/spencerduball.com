@@ -96,7 +96,15 @@ export const session = createTypedCookie({
     // actor might spam the server with fake session cookies.
     secrets: getSecrets,
   }),
-  schema: z.string().nullable(),
+  schema: z
+    .object({
+      id: z.string(),
+      user_id: z.string(),
+      expires_at: z.string(),
+      modified_at: z.string(),
+      created_at: z.string(),
+    })
+    .nullable(),
 });
 
 export const ZFlashMessage = z.object({

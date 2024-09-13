@@ -1,10 +1,21 @@
-import { session as sessionCookie, flash as flashCookie } from "./cookies";
+import { session as sessionCookie, flash as flashCookie, flash } from "./cookies";
 import { Selectable, sql } from "kysely";
 import { db, SessionsTable } from "./libsql";
 import { randomBytes } from "crypto";
-import { createCookieSessionStorage } from "@remix-run/node";
-import { createTypedSessionStorage } from "remix-utils/typed-session";
-import { z } from "zod";
+import { getLogger } from "./logger";
+
+export class SessionError extends Error {
+  sessionCookie: string;
+
+  constructor(sessionCookie: string) {
+    super("There was an error retrieving the session.");
+    this.sessionCookie = sessionCookie;
+  }
+
+  static async new() {
+    return new SessionError(await sessionCookie.serialize(null, { expires: new Date(0) }));
+  }
+}
 
 /**
  * The UserSession class provides methods for creating, retrieving, refreshing, and
@@ -14,8 +25,7 @@ export class UserSession {
   /**
    * Creates a new session for the user.
    *
-   * @return The session cookie to be sent to the user.
-   *
+   * @throws {SessionError} If the session could not be created.
    * @example
    * ```ts
    *   const sessionCookie = await UserSession.new({ user_id: user.id });
@@ -26,9 +36,13 @@ export class UserSession {
     const session = await db
       .insertInto("sessions")
       .values({ id: randomBytes(16).toString("hex"), user_id })
-      .returning(["id", "expires_at"])
-      .executeTakeFirstOrThrow();
-    return sessionCookie.serialize(session.id, { expires: new Date(session.expires_at) });
+      .returningAll()
+      .executeTakeFirstOrThrow()
+      .catch((e) => {
+        getLogger().error({ traceId: "7c555595", error: e }, "Failed to create session in database.");
+        throw SessionError.new();
+      });
+    return sessionCookie.serialize(session, { expires: new Date(session.expires_at) });
   }
 
   /**
@@ -36,23 +50,45 @@ export class UserSession {
    *
    * This function accepts the "Cookie" header as a string, parses it for the session
    * cookie, and retrieves the session from the database.
+   *
+   * @throws {SessionError} If the session could not be created.
+   * @example
+   * ```ts
+   *   const user = await UserSession.user({ user_id: user.id });
+   * ```
    */
-  static async get(cookeHeader: string | null) {
-    const sessionId = await sessionCookie.parse(cookeHeader);
-    if (!sessionId) return null;
+  static async user(cookieHeader: string | null) {
+    const session = await sessionCookie.parse(cookieHeader).catch((e) => {
+      getLogger().info({ traceId: "8f0f2373", error: e }, "The session was invalid.");
+      throw SessionError.new();
+    });
+
+    // if there was no session cookie, return null
+    if (!session) return null;
+
     return await db
       .selectFrom("sessions")
       .innerJoin("users", "sessions.user_id", "users.id")
-      .select([
-        "sessions.id as session_id",
-        "sessions.expires_at as session_expires_at",
-        "sessions.created_at as session_created_at",
-        "sessions.modified_at as session_modified_at",
-      ])
       .selectAll("users")
-      .where("sessions.id", "=", sessionId)
+      .where("sessions.id", "=", session.id)
       .executeTakeFirstOrThrow()
-      .catch(() => null);
+      .catch((e) => {
+        getLogger().info({ traceId: "308a2f23", error: e }, "The session was missing or expired.");
+        throw SessionError.new();
+      });
+  }
+
+  /**
+   * Returns the session info.
+   *
+   * This function will throw an error if the session is not parsed correctly.
+   */
+  static async parse(cookieHeader: string | null) {
+    return sessionCookie.parse(cookieHeader).catch((e) => {
+      const logger = getLogger();
+      logger.info({ traceId: "8f0f2373", error: e }, "The session was invalid.");
+      throw SessionError.new();
+    });
   }
 
   /**
@@ -71,11 +107,15 @@ export class UserSession {
   static async refresh(id: string) {
     const session = await db
       .updateTable("sessions")
-      .set({ expires_at: sql`(datetime('now'))` })
+      .set({ expires_at: sql`(datetime('now'))`, modified_at: sql`(datetime('now'))` })
       .where("id", "=", id)
-      .returning(["id", "expires_at"])
-      .executeTakeFirstOrThrow();
-    return sessionCookie.serialize(session.id, { expires: new Date(session.expires_at) });
+      .returningAll()
+      .executeTakeFirstOrThrow()
+      .catch((e) => {
+        getLogger().error({ traceId: "ecc8f525", error: e }, "Failed to refresh session in database.");
+        throw SessionError.new();
+      });
+    return sessionCookie.serialize(session, { expires: new Date(session.expires_at) });
   }
 
   /**
@@ -96,6 +136,6 @@ export class UserSession {
    */
   static async destroy(id: string) {
     await db.deleteFrom("sessions").where("id", "=", id).execute();
-    return sessionCookie.serialize("", { expires: new Date(0) });
+    return sessionCookie.serialize(null, { expires: new Date(0) });
   }
 }
