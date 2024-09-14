@@ -1,5 +1,5 @@
-import { type LinksFunction, type LoaderFunctionArgs, type MetaFunction, json } from "@remix-run/node";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
+import { type LinksFunction, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteLoaderData } from "@remix-run/react";
 import React from "react";
 import { Footer } from "~/components/footer";
 import { Header } from "~/components/header";
@@ -41,12 +41,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
 
-  return json({ prefs, isAdmin: user?.roles.includes("admin") || false }, { headers: resHeaders });
+  return { prefs, user: user ?? undefined, headers: resHeaders };
 }
 
 function _Layout({ children }: { children: React.ReactNode }) {
   const [{ preferences }] = React.useContext(GlobalCtx);
-  const { isAdmin } = useLoaderData<typeof loader>();
+  const data = useRouteLoaderData<typeof loader>("root");
+
+  const isAdmin = data?.user?.roles.includes("admin") || false;
 
   return (
     <html lang="en" className={preferences._theme}>
@@ -59,7 +61,7 @@ function _Layout({ children }: { children: React.ReactNode }) {
       <body className="grid min-h-[100dvh] grid-rows-[min-content_1fr_min-content] bg-slate-1 dark:bg-slatedark-1">
         <Header isAdmin={isAdmin} />
         <div className="justify-start">{children}</div>
-        <Footer />
+        <Footer user={data?.user} />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -68,10 +70,10 @@ function _Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { prefs } = useLoaderData<typeof loader>();
+  const data = useRouteLoaderData<typeof loader>("root");
 
   return (
-    <GlobalCtxProvider _theme={prefs._theme} _codeTheme={prefs._codeTheme}>
+    <GlobalCtxProvider _theme={data?.prefs?._theme || "dark"} _codeTheme={data?.prefs?._codeTheme || "dark"}>
       <_Layout children={children} />
     </GlobalCtxProvider>
   );
