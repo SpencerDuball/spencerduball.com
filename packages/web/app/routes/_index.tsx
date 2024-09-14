@@ -1,11 +1,10 @@
-import * as React from "react";
 import { type MetaFunction } from "@remix-run/react";
-import { RiTwitterXFill, RiGithubFill } from "react-icons/ri";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { PrintablesIcon } from "~/components/icons";
-import { GlobalCtx } from "~/context/global-ctx/context";
+import * as React from "react";
+import { RiGithubFill, RiMoonFill, RiSunFill, RiTwitterXFill } from "react-icons/ri";
 import { RxHalf2 } from "react-icons/rx";
-import { RiMoonFill, RiSunFill } from "react-icons/ri";
+import { PrintablesIcon } from "~/components/icons";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { GlobalCtx } from "~/context/global-ctx/context";
 
 export const meta: MetaFunction = () => [
   { title: "Home | Spencer Duball" },

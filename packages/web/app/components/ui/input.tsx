@@ -1,5 +1,5 @@
-import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 import { cn } from "~/util";
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -202,4 +202,4 @@ const InputGroup = React.forwardRef<HTMLDivElement, InputGroupProps>(({ classNam
   );
 });
 
-export { Input, InputGroup, type InputProps, type InputGroupProps };
+export { Input, InputGroup, type InputGroupProps, type InputProps };

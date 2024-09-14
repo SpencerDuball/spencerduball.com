@@ -1,5 +1,5 @@
-import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 const badgeVariants = cva("inline-grid w-max place-items-center rounded-full border font-semibold", {
   variants: {

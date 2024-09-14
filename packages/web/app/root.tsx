@@ -1,15 +1,15 @@
-import React from "react";
+import { type LinksFunction, type LoaderFunctionArgs, type MetaFunction, json } from "@remix-run/node";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
-import { type LinksFunction, type MetaFunction, type LoaderFunctionArgs, json } from "@remix-run/node";
-import { GlobalCtxProvider } from "~/context/global-ctx/provider";
-import { GlobalCtx } from "~/context/global-ctx/context";
-import { Header } from "~/components/header";
+import React from "react";
 import { Footer } from "~/components/footer";
-import { preferences } from "~/util/cookies";
+import { Header } from "~/components/header";
+import { GlobalCtx } from "~/context/global-ctx/context";
+import { GlobalCtxProvider } from "~/context/global-ctx/provider";
+import { preferences, UserSession } from "~/util/server";
 
 // import css files
-import tailwindcss from "./tailwind.css?url";
 import "@fontsource-variable/inter/index.css?url";
+import tailwindcss from "./tailwind.css?url";
 
 export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
@@ -28,6 +28,8 @@ export const meta: MetaFunction = () => [
 export async function loader({ request }: LoaderFunctionArgs) {
   const resHeaders: HeadersInit = [];
 
+  const user = await UserSession.user(request.headers.get("cookie")).catch(() => null);
+
   // Handle Preferences Cookie
   // -------------------------
   // Retrieves and parses the theme from the __preferences cookie. If the cookie is
@@ -39,11 +41,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
 
-  return json({ prefs }, { headers: resHeaders });
+  return json({ prefs, isAdmin: user?.roles.includes("admin") || false }, { headers: resHeaders });
 }
 
 function _Layout({ children }: { children: React.ReactNode }) {
   const [{ preferences }] = React.useContext(GlobalCtx);
+  const { isAdmin } = useLoaderData<typeof loader>();
 
   return (
     <html lang="en" className={preferences._theme}>
@@ -54,7 +57,7 @@ function _Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="grid min-h-[100dvh] grid-rows-[min-content_1fr_min-content] bg-slate-1 dark:bg-slatedark-1">
-        <Header isAdmin={true} />
+        <Header isAdmin={isAdmin} />
         <div className="justify-start">{children}</div>
         <Footer />
         <ScrollRestoration />

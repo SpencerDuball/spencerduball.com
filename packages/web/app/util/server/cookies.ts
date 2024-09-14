@@ -1,13 +1,13 @@
-import { createCookie } from "~/lib/custom-cookie";
+import { randomBytes } from "crypto";
+import { Selectable, sql } from "kysely";
 import { createTypedCookie } from "remix-utils/typed-cookie";
 import { z } from "zod";
+import { createCookie } from "~/lib/custom-cookie";
 // @ts-ignore
 import ms from "ms";
-import { ZEnv } from "~/util";
-import { getLogger } from "./logger";
+import { ZEnv } from "./env";
 import { db, SessionSecretsTable } from "./libsql";
-import { Selectable, sql } from "kysely";
-import { randomBytes } from "crypto";
+import { getLogger } from "./logger";
 
 // -------------------------------------------------------------------------------------
 // Define Application Cookies
@@ -100,9 +100,9 @@ export const session = createTypedCookie({
     .object({
       id: z.string(),
       user_id: z.string(),
-      expires_at: z.string(),
-      modified_at: z.string(),
-      created_at: z.string(),
+      expires_at: z.coerce.date(),
+      modified_at: z.coerce.date(),
+      created_at: z.coerce.date(),
     })
     .nullable(),
 });

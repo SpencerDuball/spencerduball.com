@@ -1,8 +1,8 @@
 import React from "react";
-import { RiTwitterXFill, RiGithubFill, RiLoginCircleLine } from "react-icons/ri";
+import { RiGithubFill, RiLoginCircleLine, RiTwitterXFill } from "react-icons/ri";
 import { PrintablesIcon } from "~/components/icons";
-import { cn } from "~/util";
 import { IconButton } from "~/components/ui/icon-button";
+import { cn } from "~/util";
 
 export interface FooterProps extends React.HTMLProps<HTMLDivElement> {}
 

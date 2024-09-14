@@ -137,5 +137,12 @@ export const links: LinksFunction = () => [
 
 - [ ] Create a desing doc that explains the (so far) 4 docker images used in this app. Structure the docs in subfolders for each image too (and futher as necessary). In the MINIO section, ensure to explain about the CloudFlare caching strategy to reduce bandwidth concerns.
 - [ ] Update and add the `auth.md` design doc from the trunk. This was very good, but should also add information about rotating session secrets and other points.
+  - [ ] Add info about custom sessions object
+  - [ ] Add info about sending multiple cookies in a request
+  - [ ] So another perplexing thing where cookies don't even notify when they are invalid. If invalid it will always return NULL, even when failing signature checks. Might be another thing that could use a custom package for Remix.
 - [ ] Add a design doc about creating a `cron` image that calls a webhook. This is nice because all application logic still resides in the remix app.
 - [ ] Add a design doc explaining about logging (include context `reqId`, include `traceId`, include `pino-http`). Do this after setting up a strategy for maintaining and deleting log files on the filesystem. Maybe discuss about pino transports a litte too.
+
+## Blogs
+
+- [ ] Create a writeup on how to transform Kysely results of queries. Should do individually at each query.

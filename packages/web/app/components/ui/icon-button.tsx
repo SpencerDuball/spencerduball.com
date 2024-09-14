@@ -1,8 +1,8 @@
-import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { buttonConfig } from "./button";
+import * as React from "react";
 import { cn } from "~/util";
+import { buttonConfig } from "./button";
 
 const iconButtonVariants = cva(
   "focus-outline relative grid auto-cols-max grid-flow-col place-items-center justify-center gap-2 rounded-md",

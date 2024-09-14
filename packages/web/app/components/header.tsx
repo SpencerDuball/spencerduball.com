@@ -1,13 +1,13 @@
-import * as React from "react";
+import * as Nav from "@radix-ui/react-navigation-menu";
 import { Link, useLocation } from "@remix-run/react";
+import * as React from "react";
+import { RiMenu2Fill, RiMoonFill, RiSunFill } from "react-icons/ri";
+import { RxHalf2 } from "react-icons/rx";
+import { IconButton } from "~/components/ui/icon-button";
+import { ScrollArea, ScrollViewport } from "~/components/ui/scroll-area";
 import { GlobalCtx } from "~/context/global-ctx/context";
 import { Types } from "~/context/global-ctx/reducer";
 import { cn } from "~/util";
-import { IconButton } from "~/components/ui/icon-button";
-import { ScrollArea, ScrollViewport } from "~/components/ui/scroll-area";
-import { RiMenu2Fill, RiMoonFill, RiSunFill } from "react-icons/ri";
-import { RxHalf2 } from "react-icons/rx";
-import * as Nav from "@radix-ui/react-navigation-menu";
 
 const DesktopLinkClasses =
   "focus-outline font-semibold leading-relaxed text-slate-10 dark:text-slatedark-10 hover:text-slate-12 dark:hover:text-slatedark-12 hover:no-underline px-2";
@@ -248,9 +248,9 @@ function Header({ isAdmin, className, ...props }: HeaderProps) {
             )}
           </Nav.List>
           <Nav.Indicator className="group z-[11]">
-            <div className="group-data-[state='hidden']:animate-arrow-out group-data-[state='visible']:animate-arrow-in relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-l border-t border-slate-6 bg-slate-3 dark:border-slatedark-6 dark:bg-slatedark-3" />
+            <div className="relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-l border-t border-slate-6 bg-slate-3 group-data-[state='hidden']:animate-arrow-out group-data-[state='visible']:animate-arrow-in dark:border-slatedark-6 dark:bg-slatedark-3" />
           </Nav.Indicator>
-          <Nav.Viewport className="data-[state='close']:animate-slide-down data-[state='open']:animate-slide-up absolute top-full z-10 mt-[calc(0.75rem/2+0.5rem)] w-[40rem] max-w-[calc(100vw-1rem*2)]" />
+          <Nav.Viewport className="absolute top-full z-10 mt-[calc(0.75rem/2+0.5rem)] w-[40rem] max-w-[calc(100vw-1rem*2)] data-[state='close']:animate-slide-down data-[state='open']:animate-slide-up" />
         </Nav.Root>
 
         {/* Mobile Nav List */}
@@ -406,9 +406,9 @@ function Header({ isAdmin, className, ...props }: HeaderProps) {
             </Nav.Item>
           </Nav.List>
           <Nav.Indicator className="group z-[11]">
-            <div className="group-data-[state='hidden']:animate-arrow-out group-data-[state='visible']:animate-arrow-in relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-l border-t border-slate-6 bg-slate-3 dark:border-slatedark-6 dark:bg-slatedark-3" />
+            <div className="relative left-1/2 top-[calc(0.75rem/2+0.5rem-1px)] h-3 w-3 origin-center rounded-t-sm border-l border-t border-slate-6 bg-slate-3 group-data-[state='hidden']:animate-arrow-out group-data-[state='visible']:animate-arrow-in dark:border-slatedark-6 dark:bg-slatedark-3" />
           </Nav.Indicator>
-          <Nav.Viewport className="data-[state='close']:animate-slide-down data-[state='open']:animate-slide-up absolute top-full z-10 mt-[calc(0.75rem/2+0.5rem)] w-[40rem] max-w-[calc(100vw-1rem*2)]" />
+          <Nav.Viewport className="absolute top-full z-10 mt-[calc(0.75rem/2+0.5rem)] w-[40rem] max-w-[calc(100vw-1rem*2)] data-[state='close']:animate-slide-down data-[state='open']:animate-slide-up" />
         </Nav.Root>
 
         {/* Right Side Controls */}

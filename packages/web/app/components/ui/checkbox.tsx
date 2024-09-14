@@ -1,9 +1,9 @@
-import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import * as React from "react";
 import { RiCheckFill } from "react-icons/ri";
 
-import { cn } from "~/util";
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "~/util";
 
 const checkboxConfig = {
   variants: {

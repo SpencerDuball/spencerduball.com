@@ -1,7 +1,6 @@
 import { type LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { db, getLogger } from "~/util/server";
 import { randomUUID } from "crypto";
-import { ZEnv } from "~/util";
+import { db, getLogger, ZEnv } from "~/util/server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const logger = getLogger();

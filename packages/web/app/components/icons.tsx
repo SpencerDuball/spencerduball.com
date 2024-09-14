@@ -86,4 +86,4 @@ const BackgroundShape1Icon = React.forwardRef<SVGSVGElement, React.ComponentProp
   </svg>
 ));
 
-export { PrintablesIcon, TimeAscIcon, TimeDescIcon, ViewsDescIcon, ViewsAscIcon, BackgroundShape1Icon };
+export { BackgroundShape1Icon, PrintablesIcon, TimeAscIcon, TimeDescIcon, ViewsAscIcon, ViewsDescIcon };

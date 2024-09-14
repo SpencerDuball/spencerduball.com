@@ -1,11 +1,11 @@
-import * as React from "react";
-import useEmblaCarousel from "embla-carousel-react";
 import type {
   EmblaCarouselType as CarouselApi,
   EmblaOptionsType as CarouselOptions,
   EmblaPluginType as CarouselPlugin,
 } from "embla-carousel";
-import { RiArrowRightLine, RiArrowLeftLine } from "react-icons/ri";
+import useEmblaCarousel from "embla-carousel-react";
+import * as React from "react";
+import { RiArrowLeftLine, RiArrowRightLine } from "react-icons/ri";
 
 import { cn } from "~/util";
 import { IconButton } from "./icon-button";
@@ -221,4 +221,4 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<ty
 );
 CarouselNext.displayName = "CarouselNext";
 
-export { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
+export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi };

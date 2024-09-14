@@ -1,6 +1,7 @@
-import { ColumnType, Nullable, Kysely } from "kysely";
-import { ZEnv } from "./env";
 import { LibsqlDialect } from "@libsql/kysely-libsql";
+import { ColumnType, Kysely, Nullable, type LogEvent } from "kysely";
+import { ZEnv } from "./env";
+import { getLogger } from "./logger";
 
 // -------------------------------------------------------------------------------------
 // Define the Database Types
@@ -81,4 +82,24 @@ export interface Database {
 // -------------------------------------------------------------------------------------
 // Create the Kysely Instance
 // -------------------------------------------------------------------------------------
-export const db = new Kysely<Database>({ dialect: new LibsqlDialect({ url: ZEnv.parse(process.env).LIBSQL_URL }) });
+
+function log(event: LogEvent) {
+  const {
+    level,
+    queryDurationMillis,
+    query: { sql, parameters },
+  } = event;
+  if (level === "error") {
+    getLogger().info(
+      { traceId: "1c597327", level, durationMs: queryDurationMillis, sql, parameters },
+      "Query error event.",
+    );
+  } else {
+    getLogger().info({ traceId: "1c597327", level, durationMs: queryDurationMillis }, "Query info event.");
+  }
+}
+
+export const db = new Kysely<Database>({
+  dialect: new LibsqlDialect({ url: ZEnv.parse(process.env).LIBSQL_URL }),
+  log,
+});

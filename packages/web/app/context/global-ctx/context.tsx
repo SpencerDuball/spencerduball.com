@@ -1,5 +1,5 @@
 import React from "react";
-import { type IGlobalCtxState, type Actions } from "./reducer";
+import { type Actions, type IGlobalCtxState } from "./reducer";
 
 // define initial GlobalCtxState
 const InitialGlobalCtxState: IGlobalCtxState = {
@@ -9,4 +9,4 @@ const InitialGlobalCtxState: IGlobalCtxState = {
 // create GlobalCtx
 const GlobalCtx = React.createContext<[IGlobalCtxState, React.Dispatch<Actions>]>([InitialGlobalCtxState, () => null]);
 
-export { InitialGlobalCtxState, GlobalCtx };
+export { GlobalCtx, InitialGlobalCtxState };

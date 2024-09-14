@@ -1,7 +1,7 @@
-import { session as sessionCookie, flash as flashCookie, flash } from "./cookies";
-import { Selectable, sql } from "kysely";
-import { db, SessionsTable } from "./libsql";
 import { randomBytes } from "crypto";
+import { Selectable, sql } from "kysely";
+import { session as sessionCookie } from "./cookies";
+import { db, SessionsTable } from "./libsql";
 import { getLogger } from "./logger";
 
 export class SessionError extends Error {
@@ -38,6 +38,12 @@ export class UserSession {
       .values({ id: randomBytes(16).toString("hex"), user_id })
       .returningAll()
       .executeTakeFirstOrThrow()
+      .then((session) => ({
+        ...session,
+        expires_at: new Date(session.expires_at),
+        modified_at: new Date(session.modified_at),
+        created_at: new Date(session.created_at),
+      }))
       .catch((e) => {
         getLogger().error({ traceId: "7c555595", error: e }, "Failed to create session in database.");
         throw SessionError.new();
@@ -69,9 +75,18 @@ export class UserSession {
     return await db
       .selectFrom("sessions")
       .innerJoin("users", "sessions.user_id", "users.id")
-      .selectAll("users")
       .where("sessions.id", "=", session.id)
+      .innerJoin("user_roles", "users.id", "user_roles.user_id")
+      .groupBy("users.id")
+      .selectAll("users")
+      .select((eb) => eb.fn<string>("json_group_array", ["user_roles.role_id"]).as("roles"))
       .executeTakeFirstOrThrow()
+      .then((session) => ({
+        ...session,
+        modified_at: new Date(session.modified_at),
+        created_at: new Date(session.created_at),
+        roles: JSON.parse(session.roles) as string[],
+      }))
       .catch((e) => {
         getLogger().info({ traceId: "308a2f23", error: e }, "The session was missing or expired.");
         throw SessionError.new();
@@ -111,6 +126,12 @@ export class UserSession {
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirstOrThrow()
+      .then((session) => ({
+        ...session,
+        expires_at: new Date(session.expires_at),
+        modified_at: new Date(session.modified_at),
+        created_at: new Date(session.created_at),
+      }))
       .catch((e) => {
         getLogger().error({ traceId: "ecc8f525", error: e }, "Failed to refresh session in database.");
         throw SessionError.new();

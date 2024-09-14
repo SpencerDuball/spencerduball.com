@@ -1,8 +1,8 @@
-import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { OTPInput, OTPInputContext } from "input-otp";
+import * as React from "react";
 import { RiCircleFill } from "react-icons/ri";
 import { cn } from "~/util";
-import { cva, type VariantProps } from "class-variance-authority";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Define Component Variants
@@ -178,4 +178,5 @@ const InputOTPSeparator = React.forwardRef<React.ElementRef<"div">, React.Compon
 );
 InputOTPSeparator.displayName = "InputOTPSeparator";
 
-export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator };
+export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot };
+

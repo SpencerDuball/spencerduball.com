@@ -1,6 +1,6 @@
 import * as React from "react";
-import { RiArrowLeftSLine } from "react-icons/ri";
 import { DayPicker } from "react-day-picker";
+import { RiArrowLeftSLine } from "react-icons/ri";
 
 import { cn } from "~/util";
 import { buttonVariants } from "./button";

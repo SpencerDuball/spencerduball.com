@@ -1,5 +1,5 @@
-import { BackgroundShape1Icon } from "~/components/icons";
 import type { MetaFunction } from "@remix-run/node";
+import { BackgroundShape1Icon } from "~/components/icons";
 
 export const meta: MetaFunction = () => [
   { title: "Electronics | Spencer Duball" },

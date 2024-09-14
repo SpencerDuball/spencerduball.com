@@ -1,12 +1,9 @@
 import { type LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { db, getLogger } from "~/util/server";
-import { ZEnv } from "~/util";
-import { z } from "zod";
-import { sql } from "kysely";
 import { randomUUID } from "crypto";
-import { UserSession } from "~/util/sessions";
-import { flash } from "~/util/cookies";
+import { sql } from "kysely";
+import { z } from "zod";
 import { ZGithubUserInfo } from "~/models/github";
+import { db, flash, getLogger, UserSession, ZEnv } from "~/util/server";
 
 /**
  * This function validates and reshapes the data returned from the Github API when

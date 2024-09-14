@@ -1,8 +1,8 @@
-import React from "react";
-import { type Payload, type Actions, Types, ZGlobalCtxState, reducer, IGlobalCtxState } from "./reducer";
-import { InitialGlobalCtxState, GlobalCtx } from "./context";
 import Cookies from "js-cookie";
+import React from "react";
 import { useMedia } from "react-use";
+import { GlobalCtx, InitialGlobalCtxState } from "./context";
+import { type Actions, IGlobalCtxState, type Payload, Types, ZGlobalCtxState, reducer } from "./reducer";
 // @ts-ignore
 import ms from "ms";
 

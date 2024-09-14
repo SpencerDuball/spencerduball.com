@@ -1,8 +1,8 @@
-import { useRouteError, isRouteErrorResponse } from "@remix-run/react";
+import { isRouteErrorResponse, useRouteError } from "@remix-run/react";
+import { Highlight } from "prism-react-renderer";
 import { RiAlarmWarningLine } from "react-icons/ri";
 import { ScrollArea, ScrollViewport } from "~/components/ui/scroll-area";
 import { cn } from "~/util";
-import { Highlight } from "prism-react-renderer";
 
 export function ErrorBoundary() {
   const error = useRouteError();

@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Popover, PopoverTrigger, PopoverContent } from "./popover";
-import { Button } from "./button";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandSeparator } from "./command";
+import { RiCheckLine, RiExpandUpDownLine } from "react-icons/ri";
 import { cn } from "~/util";
-import { RiExpandUpDownLine, RiCheckLine } from "react-icons/ri";
+import { Button } from "./button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandSeparator } from "./command";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 //---------------------------------------------------------------------------------------------------------------------
 // Define ComboBoxCtx, InitialState
@@ -172,13 +172,11 @@ const ComboBoxItem = React.forwardRef<
 const ComboBoxSeparator = CommandSeparator;
 
 export {
-  ComboBox,
-  ComboBoxTrigger,
-  ComboBoxValue,
-  ComboBoxContent,
+  ComboBox, ComboBoxContent,
   ComboBoxGroup,
   ComboBoxItem,
-  ComboBoxSeparator,
-  type ComboBoxProps,
-  type ComboBoxValueProps,
+  ComboBoxSeparator, ComboBoxTrigger,
+  ComboBoxValue, type ComboBoxProps,
+  type ComboBoxValueProps
 };
+
