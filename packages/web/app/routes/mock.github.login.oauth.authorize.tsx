@@ -60,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs) {
     throw new Response(null, { status: 404 });
   }
 
-  switch (request.method) {
+  switch (request.method.toUpperCase()) {
     case "POST": {
       // parse the form data
       let data: z.infer<typeof ZFormData>;
@@ -215,12 +215,12 @@ export default function Authorize() {
                 value={user.github_id}
                 className="grid w-full grid-cols-[max-content_1fr] gap-2 rounded-md border border-slate-4 bg-slate-2 p-2 dark:border-slatedark-4 dark:bg-slatedark-2 sm:w-[calc(50%-theme(spacing.4)/2)] md:w-[calc(33.3%-theme(spacing.8)/3)]"
               >
-                <Avatar size="md">
+                <Avatar className="h-12 w-12">
                   <AvatarImage src={user.avatar_url} alt={user.name} />
                 </Avatar>
                 <div className="grid justify-start justify-items-start self-center">
                   <p className="text-md self-end overflow-hidden text-ellipsis whitespace-nowrap">{user.name}</p>
-                  <p className="self-start overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-11">
+                  <p className="self-start overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-11 dark:text-slatedark-11">
                     {user.username} &bull; Admin
                   </p>
                 </div>
@@ -236,12 +236,12 @@ export default function Authorize() {
                 value={user.github_id}
                 className="grid w-full grid-cols-[max-content_1fr] gap-2 rounded-md border border-slate-4 bg-slate-2 p-2 dark:border-slatedark-4 dark:bg-slatedark-2 sm:w-[calc(50%-theme(spacing.4)/2)] md:w-[calc(33.3%-theme(spacing.8)/3)]"
               >
-                <Avatar size="md">
+                <Avatar className="h-12 w-12">
                   <AvatarImage src={user.avatar_url} alt={user.name} />
                 </Avatar>
                 <div className="grid justify-start justify-items-start self-center">
                   <p className="text-md self-end overflow-hidden text-ellipsis whitespace-nowrap">{user.name}</p>
-                  <p className="self-start overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-11">
+                  <p className="self-start overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-11 dark:text-slatedark-11">
                     {user.username}
                   </p>
                 </div>
@@ -257,12 +257,12 @@ export default function Authorize() {
                 value={user.id}
                 className="grid w-full grid-cols-[max-content_1fr] gap-2 rounded-md border border-slate-4 bg-slate-2 p-2 dark:border-slatedark-4 dark:bg-slatedark-2 sm:w-[calc(50%-theme(spacing.4)/2)] md:w-[calc(33.3%-theme(spacing.8)/3)]"
               >
-                <Avatar size="md">
+                <Avatar className="h-12 w-12">
                   <AvatarImage src={user.avatar_url} alt={user.name} />
                 </Avatar>
                 <div className="grid justify-start justify-items-start self-center">
                   <p className="text-md self-end overflow-hidden text-ellipsis whitespace-nowrap">{user.name}</p>
-                  <p className="self-start overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-11">
+                  <p className="self-start overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-11 dark:text-slatedark-11">
                     {user.login}
                   </p>
                 </div>

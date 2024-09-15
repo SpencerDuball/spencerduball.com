@@ -1,4 +1,4 @@
-import { type LinksFunction, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
+import { type LinksFunction, type LoaderFunctionArgs, type MetaFunction, unstable_data as data } from "@remix-run/node";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteLoaderData } from "@remix-run/react";
 import React from "react";
 import { Footer } from "~/components/footer";
@@ -41,7 +41,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
 
-  return { prefs, user: user ?? undefined, headers: resHeaders };
+  return data({ prefs, user: user ?? undefined }, { headers: resHeaders });
 }
 
 function _Layout({ children }: { children: React.ReactNode }) {

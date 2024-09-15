@@ -155,8 +155,16 @@ export class UserSession {
    *   return redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", sessionCookie]] });
    * ```
    */
-  static async destroy(id: string) {
-    await db.deleteFrom("sessions").where("id", "=", id).execute();
-    return sessionCookie.serialize(null, { expires: new Date(0) });
+  static async destroy(id?: string) {
+    if (id) {
+      await db
+        .deleteFrom("sessions")
+        .where("id", "=", id)
+        .execute()
+        .catch((e) => {
+          getLogger().error({ traceId: "57ad5173", error: e }, "Failed to delete session in database.");
+        });
+    }
+    return sessionCookie.serialize(null, { expires: new Date(0) })!;
   }
 }
