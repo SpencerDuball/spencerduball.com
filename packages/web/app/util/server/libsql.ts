@@ -91,11 +91,11 @@ function log(event: LogEvent) {
   } = event;
   if (level === "error") {
     getLogger().info(
-      { traceId: "1c597327", level, durationMs: queryDurationMillis, sql, parameters },
+      { traceId: "40595738", type: level, durationMs: queryDurationMillis, sql, parameters },
       "Query error event.",
     );
   } else {
-    getLogger().info({ traceId: "1c597327", level, durationMs: queryDurationMillis }, "Query info event.");
+    getLogger().info({ traceId: "1c597327", type: level, durationMs: queryDurationMillis }, "Query info event.");
   }
 }
 

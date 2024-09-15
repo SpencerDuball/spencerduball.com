@@ -71,11 +71,11 @@ export async function action({ request }: ActionFunctionArgs) {
       } catch (e) {
         if (e instanceof z.ZodError) {
           logger.info({ traceId: "caed7069", error: e }, "Failure: Form data is invalid.");
-          const flashCookie = await flash.serialize({ globalMessage: errorFlashMessage("ce8cdc86") });
+          const flashCookie = await flash.serialize(errorFlashMessage("ce8cdc86"));
           throw new Response(null, { status: 400, headers: [["Set-Cookie", flashCookie]] });
         } else {
           logger.error({ traceId: "41dec2d0", error: e }, "Failure: There was an issue processing the request.");
-          const flashCookie = await flash.serialize({ globalMessage: errorFlashMessage("e12a9b7a") });
+          const flashCookie = await flash.serialize(errorFlashMessage("e12a9b7a"));
           throw new Response(null, { status: 500, headers: [["Set-Cookie", flashCookie]] });
         }
       }
@@ -87,7 +87,7 @@ export async function action({ request }: ActionFunctionArgs) {
       logger.info({ traceId: "0cf68b4a" }, "Validating the client ID ...");
       if (data.search.client_id !== env.GITHUB_CLIENT_ID) {
         logger.warn({ traceId: "36b0484b" }, "Failure: The client ID does not match.");
-        const flashCookie = await flash.serialize({ globalMessage: errorFlashMessage("ce8cdc86") });
+        const flashCookie = await flash.serialize(errorFlashMessage("ce8cdc86"));
         throw new Response(null, { status: 400, headers: [["Set-Cookie", flashCookie]] });
       }
 
@@ -153,7 +153,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   } catch (e) {
     logger.warn({ traceId: "735f9578", error: e }, "Failure: Required search params are not present.");
     const globalMessage = errorFlashMessage("527a0056");
-    throw redirect("/", { headers: [["Set-Cookie", await flash.serialize({ globalMessage })]] });
+    throw redirect("/", { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
   }
 
   // Collect the Possible Users

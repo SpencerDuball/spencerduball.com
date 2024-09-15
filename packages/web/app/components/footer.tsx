@@ -33,7 +33,7 @@ import { cn } from "~/util";
 interface SignedInModalProps {
   user: IUserWithRoles;
 }
-function SingedInModal({ user }: SignedInModalProps) {
+function SignedInModal({ user }: SignedInModalProps) {
   const nameParts = user.name.split(" ");
   const [firstChar, lastChar] = [
     nameParts.at(0)?.at(0)?.toUpperCase() || "",
@@ -167,7 +167,7 @@ export function Footer({ user, className, ...props }: FooterProps) {
 
         {/* Right Side Footer */}
         <div className="grid auto-cols-min grid-flow-col gap-2">
-          {user ? <SingedInModal user={user} /> : <SignedOutModal />}
+          {user ? <SignedInModal user={user} /> : <SignedOutModal />}
         </div>
       </div>
     </footer>

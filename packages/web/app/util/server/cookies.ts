@@ -145,7 +145,7 @@ export const flash = createTypedCookie({
     path: "/",
     sameSite: "lax",
   }),
-  schema: z.object({ globalMessage: ZFlashMessage.optional() }).nullable(),
+  schema: ZFlashMessage.nullable(),
 });
 
 // -------------------------------------------------------------------------------------

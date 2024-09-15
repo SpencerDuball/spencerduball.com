@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, unstable_data as data } from "@remix-run/node";
+import { ActionFunctionArgs } from "@remix-run/node";
 import { getLogger, UserSession } from "~/util/server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -11,11 +11,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const setCookieHeader = await UserSession.destroy(session?.id);
       logger.info({ traceId: "d82ae21e" }, "Success: Deleted user session.");
 
-      return data(null, { headers: [["Set-Cookie", setCookieHeader]] });
+      return new Response(null, { headers: [["Set-Cookie", setCookieHeader]] });
     }
     default: {
       logger.info({ traceId: "cdcf6861" }, "This method is not allowed, only DELETE is defined.");
-      return data(null);
+      return new Response(null, { status: 405 });
     }
   }
 };

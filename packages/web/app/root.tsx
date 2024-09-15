@@ -3,9 +3,10 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteLoaderData } f
 import React from "react";
 import { Footer } from "~/components/footer";
 import { Header } from "~/components/header";
+import { Toaster } from "~/components/toaster";
 import { GlobalCtx } from "~/context/global-ctx/context";
 import { GlobalCtxProvider } from "~/context/global-ctx/provider";
-import { preferences, UserSession } from "~/util/server";
+import { flash, preferences, UserSession } from "~/util/server";
 
 // import css files
 import "@fontsource-variable/inter/index.css?url";
@@ -31,7 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const user = await UserSession.user(request.headers.get("cookie")).catch(() => null);
 
   // Handle Preferences Cookie
-  // -------------------------
+  // -----------------------------------------------------------------------------------
   // Retrieves and parses the theme from the __preferences cookie. If the cookie is
   // invalid or doesn't exist then respond with a a Set-Cookie to set the __preferences
   // cookie. The theme will be used in SSR of the app.
@@ -40,6 +41,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
     prefs = { _theme: "dark", _codeTheme: "dark" };
     resHeaders.push(["Set-Cookie", await preferences.serialize(prefs)]);
   }
+
+  // Handle Flash Cookie
+  // -----------------------------------------------------------------------------------
+  // Because we only set flash cookies in response to server actions other than GET, we
+  // can be sure that the root loader will be invalidated (due to an action) and we will
+  // be able to send the flash down in this loader.
+  const flashCookie = await flash.parse(request.headers.get("cookie")).catch(() => null);
 
   return data({ prefs, user: user ?? undefined }, { headers: resHeaders });
 }
@@ -62,6 +70,7 @@ function _Layout({ children }: { children: React.ReactNode }) {
         <Header isAdmin={isAdmin} />
         <div className="justify-start">{children}</div>
         <Footer user={data?.user} />
+        <Toaster />
         <ScrollRestoration />
         <Scripts />
       </body>
