@@ -45,7 +45,7 @@ export class UserSession {
         created_at: new Date(session.created_at),
       }))
       .catch((e) => {
-        getLogger().error({ traceId: "7c555595", error: e }, "Failed to create session in database.");
+        getLogger().error({ traceId: "7c555595", err: e }, "Failed to create session in database.");
         throw SessionError.new();
       });
     return sessionCookie.serialize(session, { expires: new Date(session.expires_at) });
@@ -65,7 +65,7 @@ export class UserSession {
    */
   static async user(cookieHeader: string | null) {
     const session = await sessionCookie.parse(cookieHeader).catch((e) => {
-      getLogger().info({ traceId: "8f0f2373", error: e }, "The session was invalid.");
+      getLogger().info({ traceId: "8f0f2373", err: e }, "The session was invalid.");
       throw SessionError.new();
     });
 
@@ -88,7 +88,7 @@ export class UserSession {
         roles: JSON.parse(session.roles) as string[],
       }))
       .catch((e) => {
-        getLogger().info({ traceId: "308a2f23", error: e }, "The session was missing or expired.");
+        getLogger().info({ traceId: "308a2f23", err: e }, "The session was missing or expired.");
         throw SessionError.new();
       });
   }
@@ -101,7 +101,7 @@ export class UserSession {
   static async parse(cookieHeader: string | null) {
     return sessionCookie.parse(cookieHeader).catch((e) => {
       const logger = getLogger();
-      logger.info({ traceId: "8f0f2373", error: e }, "The session was invalid.");
+      logger.info({ traceId: "8f0f2373", err: e }, "The session was invalid.");
       throw SessionError.new();
     });
   }
@@ -133,7 +133,7 @@ export class UserSession {
         created_at: new Date(session.created_at),
       }))
       .catch((e) => {
-        getLogger().error({ traceId: "ecc8f525", error: e }, "Failed to refresh session in database.");
+        getLogger().error({ traceId: "ecc8f525", err: e }, "Failed to refresh session in database.");
         throw SessionError.new();
       });
     return sessionCookie.serialize(session, { expires: new Date(session.expires_at) });
@@ -162,7 +162,7 @@ export class UserSession {
         .where("id", "=", id)
         .execute()
         .catch((e) => {
-          getLogger().error({ traceId: "57ad5173", error: e }, "Failed to delete session in database.");
+          getLogger().error({ traceId: "57ad5173", err: e }, "Failed to delete session in database.");
         });
     }
     return sessionCookie.serialize(null, { expires: new Date(0) })!;

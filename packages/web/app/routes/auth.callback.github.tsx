@@ -57,7 +57,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     search = ZSearch.parse(Object.fromEntries(url.searchParams.entries()));
     logger.info({ traceId: "43d2b669" }, "Success: Validated the search parameters.");
   } catch (e) {
-    logger.warn({ traceId: "0655622f", error: e }, "Failure: Required search params are not present.");
+    logger.warn({ traceId: "0655622f", err: e }, "Failure: Required search params are not present.");
     const globalMessage = errorFlashMessage("a1b2c3d4");
     throw redirect("/", { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
   }
@@ -76,7 +76,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .executeTakeFirstOrThrow()
     .catch(async (e) => {
       logger.info(
-        { traceId: "5a1124f6", error: e },
+        { traceId: "5a1124f6", err: e },
         "Failure: Unable to retrieve the oauth_state_code from the database.",
       );
       const globalMessage = errorFlashMessage("b1c2d3e4");
@@ -115,13 +115,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     headers: { Accept: "application/json" },
   })
     .catch(async (e) => {
-      logger.info({ traceId: "44788db2", error: e }, "Failure: Unable to request the access token from Github.");
+      logger.info({ traceId: "44788db2", err: e }, "Failure: Unable to request the access token from Github.");
       const globalMessage = errorFlashMessage("d5e6f7g8");
       throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
     })
     .then(async (res) => ZAccessTokenRes.parse(await res.json()))
     .catch(async (e) => {
-      logger.info({ traceId: "b5e41215", error: e }, "Failure: Unable to parse the access token response from Github.");
+      logger.info({ traceId: "b5e41215", err: e }, "Failure: Unable to parse the access token response from Github.");
       const globalMessage = errorFlashMessage("e6f7g8h9");
       throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
     });
@@ -140,13 +140,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     headers: { Authorization: `${token_type} ${access_token}` },
   })
     .catch(async (e) => {
-      logger.info({ traceId: "58925011", error: e }, "Failure: Unable to request the user info from Github.");
+      logger.info({ traceId: "58925011", err: e }, "Failure: Unable to request the user info from Github.");
       const globalMessage = errorFlashMessage("f7g8h9i0");
       throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
     })
     .then(async (res) => parseGithubUserInfo(await res.json()))
     .catch(async (e) => {
-      logger.info({ traceId: "a248df6e", error: e }, "Failure: Unable to parse the user info response from Github.");
+      logger.info({ traceId: "a248df6e", err: e }, "Failure: Unable to parse the user info response from Github.");
       const globalMessage = errorFlashMessage("g8h9i0j1");
       throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
     });
@@ -165,7 +165,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .where("github_id", "=", userInfo.github_id)
     .executeTakeFirst()
     .catch(async (e) => {
-      logger.info({ traceId: "e6545e9a", error: e }, "Failure: Unable to retrieve the user from the database.");
+      logger.info({ traceId: "e6545e9a", err: e }, "Failure: Unable to retrieve the user from the database.");
       const globalMessage = errorFlashMessage("h9i0j1k2");
       throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
     });
@@ -181,7 +181,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       .where("id", "=", user.id)
       .executeTakeFirstOrThrow()
       .catch(async (e) => {
-        logger.error({ traceId: "23d1713b", error: e }, "Failure: Unable to update the user in the database.");
+        logger.error({ traceId: "23d1713b", err: e }, "Failure: Unable to update the user in the database.");
         const globalMessage = errorFlashMessage("i0j1k2l3");
         throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
       });
@@ -195,7 +195,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       .returning(["id", "name"])
       .executeTakeFirstOrThrow()
       .catch(async (e) => {
-        logger.error({ traceId: "eb7b695b", error: e }, "Failure: Unable to create the user in the database.");
+        logger.error({ traceId: "eb7b695b", err: e }, "Failure: Unable to create the user in the database.");
         const globalMessage = errorFlashMessage("j1k2l3m4");
         throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
       });

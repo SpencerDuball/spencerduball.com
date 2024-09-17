@@ -69,12 +69,12 @@ export async function action({ request }: ActionFunctionArgs) {
         data = ZFormData.parse(Object.fromEntries((await request.formData()).entries()));
         logger.info({ traceId: "5e319581" }, "Success: Parsed the form data.");
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          logger.info({ traceId: "caed7069", error: e }, "Failure: Form data is invalid.");
+        if (e instanceof z.ZodError || e instanceof TypeError) {
+          logger.info({ traceId: "caed7069", err: e }, "Failure: Form data is invalid.");
           const flashCookie = await flash.serialize(errorFlashMessage("ce8cdc86"));
           throw new Response(null, { status: 400, headers: [["Set-Cookie", flashCookie]] });
         } else {
-          logger.error({ traceId: "41dec2d0", error: e }, "Failure: There was an issue processing the request.");
+          logger.error({ traceId: "41dec2d0", err: e }, "Failure: There was an issue processing the request.");
           const flashCookie = await flash.serialize(errorFlashMessage("e12a9b7a"));
           throw new Response(null, { status: 500, headers: [["Set-Cookie", flashCookie]] });
         }
@@ -103,7 +103,7 @@ export async function action({ request }: ActionFunctionArgs) {
         .returning("id")
         .executeTakeFirstOrThrow()
         .catch((e) => {
-          logger.error({ traceId: "b8194c99", error: e }, "Failed to create the OTC in the database.");
+          logger.error({ traceId: "b8194c99", err: e }, "Failed to create the OTC in the database.");
           throw new Response(null, { status: 500 });
         });
       logger.info("Success: Created the OTC in the database.");
@@ -151,7 +151,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     search = ZSearch.parse(Object.fromEntries(url.searchParams.entries()));
     logger.info({ traceId: "dbf8a6d7" }, "Success: Parsed the search parameters.");
   } catch (e) {
-    logger.warn({ traceId: "735f9578", error: e }, "Failure: Required search params are not present.");
+    logger.warn({ traceId: "735f9578", err: e }, "Failure: Required search params are not present.");
     const globalMessage = errorFlashMessage("527a0056");
     throw redirect("/", { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
   }

@@ -92,6 +92,18 @@ export const links: LinksFunction = () => [
 ];
 ```
 
+## Pino Logger
+
+Note that to serialize errors, the error must be supplied with the key `err` on the first parameter (merging object) of the log. See [the pino docs](https://getpino.io/#/docs/api?id=errors) for more info:
+
+```ts
+logger.info(new Error("test"));
+// {"level":30,"time":1531257618044,"msg":"test","stack":"...","type":"Error","pid":55956,"hostname":"x"}
+
+logger.info({ err: new Error("test"), otherkey: 123 }, "some text");
+// {"level":30,"time":1531257618044,"err":{"msg": "test", "stack":"...","type":"Error"},"msg":"some text","pid":55956,"hostname":"x","otherkey":123}
+```
+
 # Todo
 
 - [x] Finish setting up the sessions, rolling sessions, etc.

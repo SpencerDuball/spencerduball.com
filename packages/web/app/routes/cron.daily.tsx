@@ -48,7 +48,7 @@ async function removeExpiredOauthStateCodes(): Promise<TaskStatus> {
       return { task: "RemoveExpiredOAuthStateCodes", status: "success" };
     })
     .catch((e) => {
-      logger.error({ traceId: "60054632", error: e }, "Failed to remove expired OAuth state codes.");
+      logger.error({ traceId: "60054632", err: e }, "Failed to remove expired OAuth state codes.");
       return { task: "RemoveExpiredOAuthStateCodes", status: "failure" };
     });
 
@@ -71,7 +71,7 @@ async function removeExpiredSessions(): Promise<TaskStatus> {
       return { task: "RemoveExpiredSessions", status: "success" };
     })
     .catch((e) => {
-      logger.error({ traceId: "4d800431", error: e }, "Failed to remove expired sessions.");
+      logger.error({ traceId: "4d800431", err: e }, "Failed to remove expired sessions.");
       return { task: "RemoveExpiredSessions", status: "failure" };
     });
 
@@ -94,7 +94,7 @@ async function removeExpiredSessionSecrets(): Promise<TaskStatus> {
       return { task: "RemoveExpiredSessionSecrets", status: "success" };
     })
     .catch((e) => {
-      logger.error({ traceId: "0d2b3f6e", error: e }, "Failed to remove expired session secrets.");
+      logger.error({ traceId: "0d2b3f6e", err: e }, "Failed to remove expired session secrets.");
       return { task: "RemoveExpiredSessionSecrets", status: "failure" };
     });
 
@@ -117,7 +117,7 @@ async function removeExpiredMockGhOtcs(): Promise<TaskStatus> {
       return { task: "RemoveExpiredMockGhOtcs", status: "success" };
     })
     .catch((e) => {
-      logger.error({ traceId: "390c4718", error: e }, "Failed to remove expired mock Github OAuth tokens.");
+      logger.error({ traceId: "390c4718", err: e }, "Failed to remove expired mock Github OAuth tokens.");
       return { task: "RemoveExpiredMockGhOtcs", status: "failure" };
     });
 
@@ -140,7 +140,7 @@ async function removeExpiredMockGhAccessTokens(): Promise<TaskStatus> {
       return { task: "RemoveExpiredMockGhAccessTokens", status: "success" };
     })
     .catch((e) => {
-      logger.error({ traceId: "33f85926", error: e }, "Failed to remove expired mock Github access tokens.");
+      logger.error({ traceId: "33f85926", err: e }, "Failed to remove expired mock Github access tokens.");
       return { task: "RemoveExpiredMockGhAccessTokens", status: "failure" };
     });
 

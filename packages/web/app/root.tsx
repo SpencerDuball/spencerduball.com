@@ -48,8 +48,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // can be sure that the root loader will be invalidated (due to an action) and we will
   // be able to send the flash down in this loader.
   const flashCookie = await flash.parse(request.headers.get("cookie")).catch(() => null);
+  if (flashCookie) {
+    resHeaders.push(["Set-Cookie", await flash.serialize(null, { maxAge: 0 })]);
+  }
 
-  return data({ prefs, user: user ?? undefined }, { headers: resHeaders });
+  return data({ prefs, user: user ?? undefined, flash: flashCookie ?? undefined }, { headers: resHeaders });
 }
 
 function _Layout({ children }: { children: React.ReactNode }) {
