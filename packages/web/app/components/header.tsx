@@ -23,9 +23,9 @@ function Header({ isAdmin, className, ...props }: HeaderProps) {
   const { pathname } = useLocation();
 
   // determine theme icon
-  let ThemeIcon = RxHalf2;
-  if (preferences.theme === "dark") ThemeIcon = RiMoonFill;
-  else if (preferences.theme === "light") ThemeIcon = RiSunFill;
+  let [ThemeIcon, themeAriaLabel] = [RxHalf2, "Toggle to light theme"];
+  if (preferences.theme === "dark") [ThemeIcon, themeAriaLabel] = [RiMoonFill, "Toggle to system theme"];
+  else if (preferences.theme === "light") [ThemeIcon, themeAriaLabel] = [RiSunFill, "Toggle to dark theme"];
 
   return (
     <header className={cn(`grid h-20 w-full justify-items-center`)} {...props}>
@@ -414,7 +414,8 @@ function Header({ isAdmin, className, ...props }: HeaderProps) {
         {/* Right Side Controls */}
         <div className="grid grid-flow-col gap-2">
           <IconButton
-            aria-label="Toggle theme"
+            data-testid="99bb47fc"
+            aria-label={themeAriaLabel}
             variant="subtle"
             className="md:bg-transparent dark:md:bg-transparent"
             onClick={() => dispatch({ type: Types.ToggleTheme })}
