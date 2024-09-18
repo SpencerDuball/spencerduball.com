@@ -41,7 +41,7 @@ function SignedInModal({ user }: SignedInModalProps) {
   ];
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger aria-label="Open logout modal">
         <Avatar className="h-8 w-8">
           <AvatarImage src={user.avatar_url} />
           <AvatarFallback>{`${firstChar}${lastChar}`}</AvatarFallback>
@@ -93,7 +93,7 @@ function SignedOutModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <IconButton aria-label="Toggle Theme" variant="ghost" className="text-slate-10 dark:text-slatedark-10">
+        <IconButton aria-label="Open login modal" variant="ghost" className="text-slate-10 dark:text-slatedark-10">
           <RiLoginCircleLine />
         </IconButton>
       </DialogTrigger>

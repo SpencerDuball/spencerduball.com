@@ -5,3 +5,7 @@ node_modules
 /data
 .env
 .env.*
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

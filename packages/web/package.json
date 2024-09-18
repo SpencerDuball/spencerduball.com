@@ -7,8 +7,10 @@
     "build": "remix vite:build",
     "dev": "NODE_OPTIONS='--enable-source-maps' dotenvx run -f ../../.env.development -- web-serve | pino-pretty",
     "start": "NODE_OPTIONS='--enable-source-maps' web-serve ./build/server/index.js",
-    "kyselyx-dev": "dotenvx run -f ../../.env.development -- kyselyx",
-    "kyselyx-prod": "dotenvx run -f ../../.env.production -- kyselyx"
+    "kyselyx:dev": "dotenvx run -f ../../.env.development -- kyselyx",
+    "kyselyx:prod": "dotenvx run -f ../../.env.production -- kyselyx",
+    "playwright:dev": "dotenvx run -f ../../.env.development -- playwright",
+    "playwright:prod": "dotenvx run -f ../../.env.production -- playwright"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^1.7.0",
@@ -74,6 +76,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
+    "@playwright/test": "^1.47.1",
     "@remix-run/dev": "^2.12.0",
     "@types/cookie": "^0.6.0",
     "@types/cookie-signature": "^1.1.2",
