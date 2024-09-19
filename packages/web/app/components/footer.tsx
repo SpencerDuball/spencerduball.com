@@ -1,4 +1,4 @@
-import { Form } from "@remix-run/react";
+import { Form, useLocation } from "@remix-run/react";
 import React from "react";
 import {
   RiCloseLine,
@@ -41,7 +41,7 @@ function SignedInModal({ user }: SignedInModalProps) {
   ];
   return (
     <Dialog>
-      <DialogTrigger aria-label="Open logout modal">
+      <DialogTrigger data-testid="081d7c19" aria-label="Open logout modal">
         <Avatar className="h-8 w-8">
           <AvatarImage src={user.avatar_url} />
           <AvatarFallback>{`${firstChar}${lastChar}`}</AvatarFallback>
@@ -90,10 +90,19 @@ function SignedInModal({ user }: SignedInModalProps) {
 function SignedOutModal() {
   const [open, setOpen] = React.useState(false);
 
+  const location = useLocation();
+
+  const redirect_uri = /^\/mock\/github\/login\/oauth\/authorize/.test(location.pathname) ? "/" : location.pathname;
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <IconButton aria-label="Open login modal" variant="ghost" className="text-slate-10 dark:text-slatedark-10">
+        <IconButton
+          data-testid="9e011d5f"
+          aria-label="Open login modal"
+          variant="ghost"
+          className="text-slate-10 dark:text-slatedark-10"
+        >
           <RiLoginCircleLine />
         </IconButton>
       </DialogTrigger>
@@ -115,7 +124,8 @@ function SignedOutModal() {
             <DialogDescription>Sign in to comment on posts and provide your feedback.</DialogDescription>
           </DialogHeader>
           <Form method="GET" action="/auth/signin/github" className="gap grid gap-2" onSubmit={() => setOpen(false)}>
-            <Button type="submit" variant="solid" colorScheme="primary">
+            <input type="hidden" name="redirect_uri" value={redirect_uri} />
+            <Button type="submit" variant="solid" colorScheme="primary" data-testid="a3f6c3bb">
               <RiGithubLine className="mr-2 h-4 w-4" />
               Sign in with Github
             </Button>

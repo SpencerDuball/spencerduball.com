@@ -84,15 +84,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     });
   logger.info({ traceId: "1f705526" }, "Success: Retrieved the oauth_state_code from the database.");
 
-  // ensure that the state code matches
-  logger.info({ traceId: "9d396151" }, "Comparing the state code ...");
-  if (stateCode.id !== search.state) {
-    logger.info({ traceId: "44c40c44" }, "Failure: The state code does not match.");
-    const globalMessage = errorFlashMessage("c3d4e5f6");
-    throw redirect(stateCode.redirect_uri, { headers: [["Set-Cookie", await flash.serialize(globalMessage)]] });
-  }
-  logger.info({ traceId: "f3b3b3b4" }, "Success: The state code matches.");
-
   // Request Access Token from Github on Behalf of User
   // -----------------------------------------------------------------------------------
   // We will now request an access token from Github using the "code" from the search

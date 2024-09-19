@@ -76,7 +76,7 @@ export class UserSession {
       .selectFrom("sessions")
       .innerJoin("users", "sessions.user_id", "users.id")
       .where("sessions.id", "=", session.id)
-      .innerJoin("user_roles", "users.id", "user_roles.user_id")
+      .leftJoin("user_roles", "users.id", "user_roles.user_id")
       .groupBy("users.id")
       .selectAll("users")
       .select((eb) => eb.fn<string>("json_group_array", ["user_roles.role_id"]).as("roles"))

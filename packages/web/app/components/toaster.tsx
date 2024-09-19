@@ -14,11 +14,11 @@ function useGlobalFlash() {
 
   React.useEffect(() => {
     if (flash) {
-      const { title, type, message } = flash;
-      if (type === "success") toast.success(title, { description: message });
-      else if (type === "error") toast.error(title, { description: message });
-      else if (type === "warning") toast.warning(title, { description: message });
-      else if (type === "info") toast.info(title, { description: message });
+      const { id, title, type, message } = flash;
+      if (type === "success") toast.success(title, { id, description: message });
+      else if (type === "error") toast.error(title, { id, description: message });
+      else if (type === "warning") toast.warning(title, { id, description: message });
+      else if (type === "info") toast.info(title, { id, description: message });
     }
   }, [flash]);
 }

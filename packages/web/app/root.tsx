@@ -6,7 +6,7 @@ import { Header } from "~/components/header";
 import { Toaster } from "~/components/toaster";
 import { GlobalCtx } from "~/context/global-ctx/context";
 import { GlobalCtxProvider } from "~/context/global-ctx/provider";
-import { flash, preferences, UserSession } from "~/util/server";
+import { flash, getLogger, preferences, UserSession } from "~/util/server";
 
 // import css files
 import "@fontsource-variable/inter/index.css?url";
@@ -51,6 +51,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (flashCookie) {
     resHeaders.push(["Set-Cookie", await flash.serialize(null, { maxAge: 0 })]);
   }
+  getLogger().info({ traceId: "1", user });
 
   return data({ prefs, user: user ?? undefined, flash: flashCookie ?? undefined }, { headers: resHeaders });
 }
