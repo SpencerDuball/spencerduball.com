@@ -1,7 +1,7 @@
 import fs from "fs-extra";
-import path from "path";
+import { FileMigrationProvider, MigrationInfo, Migrator } from "kysely";
 import ora from "ora";
-import { Migrator, MigrationInfo, FileMigrationProvider } from "kysely";
+import path from "path";
 import { getConfig } from "../utilities/config.js";
 
 const MIGRATION_TABLE_NAME = "kyselyx_migration";

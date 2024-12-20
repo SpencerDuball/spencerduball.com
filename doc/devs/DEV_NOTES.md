@@ -118,10 +118,10 @@ logger.info({ err: new Error("test"), otherkey: 123 }, "some text");
       - I don't like that I can't tell the cookie what it's expires/maxAge will be. For example, I want to create the session in the database and **then** tell the cookie this limit - I don't want the cookie creation to dictate what the expires will be in the database.
       - The session API is actually pretty light, the cookie API is much more heavy.u
 - [x] Update the session cookie to hold the session cookie info. This includes the `id`, `user_id`, `expires_at`, `modified_at`, `created_at`. This way when doing the session check (on each request) we don't need to make a second request to the database. This would add an additional network roundtrip on every request for session information.
-- [ ] Finish adding in the flash cookie, and update routes to use flash cookie for notifications to users
+- [x] Finish adding in the flash cookie, and update routes to use flash cookie for notifications to users
 - [x] Add in mocks for the auth
 - [x] Add the seed data
-- [ ] Create tests for all of the auth, sessions, cookie, github signin, preferences cookie, flash cookie.
+- [x] Create tests for all of the auth, sessions, cookie, github signin, preferences cookie, flash cookie.
 - [ ] Create & publish Kyselyx package
 - [ ] Create & publish web-serve package (name appropriately)
 - [ ] Blog about the common CSS tricks:
