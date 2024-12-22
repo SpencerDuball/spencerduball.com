@@ -21,6 +21,7 @@
   "devDependencies": {
     "@pandabox/prettier-plugin": "^0.1.3",
     "@pandacss/dev": "^0.49.0",
+    "@pandacss/preset-panda": "^0.49.0",
     "@radix-ui/colors": "^3.0.0",
     "@react-router/dev": "^7.1.0",
     "@types/node": "^20",

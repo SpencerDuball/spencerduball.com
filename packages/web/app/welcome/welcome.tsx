@@ -11,8 +11,8 @@ export function Welcome() {
         alignItems: "center",
         pt: "16",
         pb: "4",
-        bg: "green.4",
-        _dark: { bg: "red.dark.5" },
+        bg: "red.400",
+        _dark: { bg: "red.500" },
       })}
     >
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
