@@ -69,9 +69,6 @@ importers:
       eslint-plugin-react-compiler:
         specifier: 19.0.0-beta-201e55d-20241215
         version: 19.0.0-beta-201e55d-20241215(eslint@8.57.0)
-      pandacss-preset-radix-colors:
-        specifier: ^0.2.0
-        version: 0.2.0(@pandacss/dev@0.49.0)(@radix-ui/colors@3.0.0)
       postcss:
         specifier: ^8.4.49
         version: 8.4.49
@@ -4041,16 +4038,6 @@ packages:
 
   /pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
-    dev: true
-
-  /pandacss-preset-radix-colors@0.2.0(@pandacss/dev@0.49.0)(@radix-ui/colors@3.0.0):
-    resolution: {integrity: sha512-I2HIibzgKvgub6ckriHJDXwehwIOOfnPEeN1wNlcfAodA9a1CzSe6A+eMuZC7XrxXKia5vV0UTomPKsLcC3P6Q==}
-    peerDependencies:
-      '@pandacss/dev': '>=0.0.1'
-      '@radix-ui/colors': '>=0.1.0'
-    dependencies:
-      '@pandacss/dev': 0.49.0(typescript@5.7.2)
-      '@radix-ui/colors': 3.0.0
     dev: true
 
   /parent-module@1.0.1:
