@@ -1,5 +1,7 @@
 import { css } from "styled-system/css";
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Header } from "~/components/app/header";
+import { Footer } from "~/components/app/footer";
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 import "@fontsource-variable/inter";
@@ -34,7 +36,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           gridTemplateRows: "min-content 1fr min-content",
         })}
       >
+        <Header />
         <div className={css({ justifyItems: "start" })}>{children}</div>
+        <Footer />
         <ScrollRestoration />
         <Scripts />
       </body>
