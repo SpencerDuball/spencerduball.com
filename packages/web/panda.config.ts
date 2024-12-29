@@ -1,5 +1,6 @@
 import { defineConfig } from "@pandacss/dev";
 import { createPreset } from "@park-ui/panda-preset";
+
 import amber from "@park-ui/panda-preset/colors/amber";
 import blue from "@park-ui/panda-preset/colors/blue";
 import bronze from "@park-ui/panda-preset/colors/bronze";
@@ -65,14 +66,27 @@ const colors = [
   violet,
   yellow,
 ];
-
 const semanticColorTokens = colors
   .map((color) => ({ [color.name]: color.semanticTokens }))
   .reduce((acc, val) => ({ ...acc, ...val }), {});
-
 const colorTokens = colors
   .map((color) => ({ [color.name]: color.tokens }))
   .reduce((acc, val) => ({ ...acc, ...val }), {});
+
+export const containerSizes = {
+  xs: "320px",
+  sm: "384px",
+  md: "448px",
+  lg: "512px",
+  xl: "576px",
+  "2xl": "672px",
+  "3xl": "768px",
+  "4xl": "896px",
+  "5xl": "1024px",
+  "6xl": "1152px",
+  "7xl": "1280px",
+  "8xl": "1440px",
+};
 
 export default defineConfig({
   preflight: true,
@@ -80,12 +94,17 @@ export default defineConfig({
   include: ["./app/**/*.{js,jsx,ts,tsx,vue}"],
   jsxFramework: "react", // or 'solid' or 'vue'
   outdir: "styled-system",
+  globalCss: { html: { fontFamily: "inter" } },
   theme: {
     extend: {
+      containerSizes,
       semanticTokens: {
         colors: semanticColorTokens,
       },
       tokens: {
+        fonts: {
+          inter: { value: ["'Inter Variable'", "sans-serif"] },
+        },
         colors: colorTokens,
       },
     },

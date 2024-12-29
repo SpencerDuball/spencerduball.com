@@ -17,6 +17,9 @@ importers:
       '@ark-ui/react':
         specifier: ^4.5.0
         version: 4.5.0(react-dom@19.0.0)(react@19.0.0)
+      '@fontsource-variable/inter':
+        specifier: ^5.1.1
+        version: 5.1.1
       '@react-router/node':
         specifier: ^7.1.0
         version: 7.1.0(react-router@7.1.0)(typescript@5.7.2)
@@ -1045,6 +1048,10 @@ packages:
 
   /@floating-ui/utils@0.2.8:
     resolution: {integrity: sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==}
+
+  /@fontsource-variable/inter@5.1.1:
+    resolution: {integrity: sha512-OpXFTmiH6tHkYijMvQTycFKBLK4X+SRV6tet1m4YOUH7SzIIlMqDja+ocDtiCA72UthBH/vF+3ZtlMr2rN/wIw==}
+    dev: false
 
   /@humanwhocodes/config-array@0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
