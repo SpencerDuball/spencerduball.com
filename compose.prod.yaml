@@ -1,0 +1,34 @@
+services:
+  cron:
+    container_name: spencerduballcom-cron
+    build:
+      context: .
+      target: prod
+      dockerfile: ./packages/cron/Dockerfile
+    environment:
+      - "SITE_URL=${SITE_URL}"
+      - "CRON_CLIENT_SECRET=${CRON_CLIENT_SECRET}"
+    image: "spencerduballcom-cron"
+    restart: "on-failure"
+    networks:
+      - spencerduballcom-net
+  web:
+    container_name: spencerduballcom-web
+    build:
+      context: .
+      target: prod
+      dockerfile: ./packages/web/Dockerfile
+    environment:
+      - "SITE_URL=${SITE_URL}"
+      - "CRON_CLIENT_SECRET=${CRON_CLIENT_SECRET}"
+    image: "spencerduballcom-web"
+    ports:
+      - "5110:8080"
+    volumes:
+      - "./data/sqlite.db:/app/sqlite.db"
+      - "./data/logs:/app/logs"
+    restart: on-failure
+    networks:
+      - spencerduballcom-net
+networks:
+  spencerduballcom-net:
