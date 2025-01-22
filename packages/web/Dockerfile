@@ -23,20 +23,24 @@ RUN apt-get update -y
 # small change could trigger a cache miss and cause docker to reinstall all packages again.
 FROM base AS deps
 
-# copy the whole monorepo to the /app directory
-COPY ../.. /app
+# copy the workspace root files
+COPY package*.json pnpm-*.yaml /app/
+
+# copy each package's files
+COPY packages/web/package*.json /app/packages/web/
+COPY packages/cron/package*.json /app/packages/cron/
 
 # Setup a mounted volume to be used as a cache, with id=pnpm, at the location /pnpm/store. Finally install the pnpm
-# packages.
+# packages. The `--ignore-scripts` is needed so @pandacss doesn't try to run postinstall scripts.
 WORKDIR /app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile --ignore-scripts
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Part 3: Build the application.
 # ---------------------------------------------------------------------------------------------------------------------
 
 # Copy over the application & move to that directory
-FROM deps as build
+FROM deps AS build
 COPY ../.. /app
 WORKDIR /app
 
@@ -53,7 +57,7 @@ RUN pnpm deploy --filter=web --prod /web
 # First copy over the pnpm "web" deployment. This will add all dependencies into a node_modules/ folder including
 # packaging up any monorepo dependencies. Next copy over the built remix application into the web/ directory as this is
 # the entrypoint for the web sever.
-FROM base as prod
+FROM base AS prod
 COPY --from=build /web /web
 COPY --from=build /app/packages/web/build/ /web/build
 
