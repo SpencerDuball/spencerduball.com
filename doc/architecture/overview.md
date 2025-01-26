@@ -95,10 +95,8 @@ Realtime connections between the web server and clients will be facilitated via 
 
 Each SSE connection will consume ~1kb - 4kb of memory at idle. Some rough estimates assuming 1GB of RAM available for connections and each connection consumes 4KB of memory:
 
-```latex
-\[
+```math
 \text{Max Connections} = \frac{\text{Available RAM}}{\text{Memory per Connection}} = \frac{1 \, \text{GB}}{4 \, \text{KB}} = \frac{1,024 \times 1,024 \, \text{KB}}{4 \, \text{KB}} = 262,144
-\]
 ```
 
 Each TCP connection on Linux consumes a file descriptor and the limits on linux can be configured up to hundreds of thousands of file descriptors available per process, however outgoing TCP connections use ephemeral ports. By default (on Linux) the ephemeral port range is commonly **32,768 - 65,535** providing **~28,000** outgoing ports. After tuning the host system on a single box this application could probably handle **up to 1 million** concurrent idle SSE connections, however the likelyhood of coming anywhere close to 28,000 concurrent connections for a blog is next to 0 - so the default configuration will be well past sufficient for any workload this server would need to handle.
