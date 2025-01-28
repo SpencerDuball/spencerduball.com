@@ -1,0 +1,14 @@
+{
+  "name": "minio-init",
+  "dockerComposeFile": ["docker-compose.yaml"],
+  "service": "minio-init",
+  "workspaceFolder": "/workspace/spencerduball.com",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": ["esbenp.prettier-vscode"]
+    }
+  }
+}

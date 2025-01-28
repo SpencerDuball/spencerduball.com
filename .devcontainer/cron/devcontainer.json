@@ -1,0 +1,6 @@
+{
+  "name": "cron",
+  "build": {
+    "dockerfile": "Dockerfile"
+  }
+}

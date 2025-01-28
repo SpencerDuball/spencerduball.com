@@ -1,7 +1,7 @@
 # Overview
 
-![Architecture Overview](./images/overview.md/sdc.architecture_overview.dark.svg#gh-dark-mode-only)
-![Architecture Overview](./images/overview.md/sdc.architecture_overview.light.svg#gh-light-mode-only)
+![Architecture Overview](./files/overview.md/sdc.architecture_overview.dark.svg#gh-dark-mode-only)
+![Architecture Overview](./files/overview.md/sdc.architecture_overview.light.svg#gh-light-mode-only)
 
 The goals for this site's architecture are:
 
@@ -42,8 +42,8 @@ The cron image is a node process bundled together [with the Litestream process](
 - Trigger weekly incremental backups of the `s3/daily` bucket to `s3/1-week` bucket in AWS S3.
 - Trigger biweekly incremental backups of the `s3/1-week` bucket to `s3/1-week` bucket in AWS S3.
 
-![S3 Backups](./images/overview.md/sdc.s3_backup.light.svg#gh-light-mode-only)
-![S3 Backups](./images/overview.md/sdc.s3_backup.dark.svg#gh-dark-mode-only)
+![S3 Backups](./files/overview.md/sdc.s3_backup.light.svg#gh-light-mode-only)
+![S3 Backups](./files/overview.md/sdc.s3_backup.dark.svg#gh-dark-mode-only)
 
 ## nats
 

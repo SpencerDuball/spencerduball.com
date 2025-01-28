@@ -1,0 +1,11 @@
+services:
+  minio-init:
+    container_name: "dev.sdc.minio.init"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ../..:/workspace/spencerduball.com:cached
+    command: sleep infinity
+networks:
+  sdc.net:

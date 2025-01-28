@@ -1,0 +1,16 @@
+{
+  "name": "minio-init",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "ini": "node ./src/bin.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "prettier": "^3.3.3",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  }
+}
