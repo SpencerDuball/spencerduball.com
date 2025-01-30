@@ -1,7 +1,7 @@
 {
-  "name": "minio-init",
+  "name": "minio.init",
   "dockerComposeFile": ["docker-compose.yaml"],
-  "service": "minio-init",
+  "service": "minio.init",
   "workspaceFolder": "/workspace/spencerduball.com",
   "customizations": {
     "vscode": {

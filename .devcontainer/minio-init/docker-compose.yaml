@@ -1,11 +1,49 @@
 services:
-  minio-init:
-    container_name: "dev.sdc.minio.init"
+  minio:
+    container_name: sdc.minio.dev
+    image: minio/minio:latest
+    secrets:
+      - minio_root_user
+      - minio_root_password
+    environment:
+      - MINIO_ROOT_USER_FILE=/run/secrets/minio_root_user
+      - MINIO_ROOT_PASSWORD_FILE=/run/secrets/minio_root_password
+    volumes:
+      - /data/minio
+    networks:
+      - sdc.net
+    ports:
+      - "5101:9001" # web console
+    command: server /data/minio --console-address ":9001"
+  minio.init:
+    container_name: "sdc.minio.init.dev"
     build:
       context: .
       dockerfile: ./Dockerfile
+    secrets:
+      - minio_root_user
+      - minio_root_password
+    configs:
+      - source: minio_api_url
+        target: /configs/minio_api_url
+    environment:
+      - MINIO_ROOT_USER_FILE=/run/secrets/minio_root_user
+      - MINIO_ROOT_PASSWORD_FILE=/run/secrets/minio_root_password
     volumes:
       - ../..:/workspace/spencerduball.com:cached
+    networks:
+      - sdc.net
     command: sleep infinity
+
+configs:
+  minio_api_url:
+    content: http://sdc.minio.dev:9000
+
+secrets:
+  minio_root_user:
+    file: ./secrets/minio_root_user.txt
+  minio_root_password:
+    file: ./secrets/minio_root_password.txt
+
 networks:
   sdc.net:
