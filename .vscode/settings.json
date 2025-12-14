@@ -1,0 +1,14 @@
+{
+  "files.watcherExclude": {
+    // This is excluded for the "web" package using tanstack-router.
+    "**/routeTree.gen.ts": true
+  },
+  "search.exclude": {
+    // This is excluded for the "web" package using tanstack-router.
+    "**/routeTree.gen.ts": true
+  },
+  "files.readonlyInclude": {
+    // This is excluded for the "web" package using tanstack-router.
+    "**/routeTree.gen.ts": true
+  }
+}
