@@ -1,0 +1,28 @@
+gantt
+    title Page Load (SSR)
+    dateFormat SSS
+    axisFormat %L
+    tickInterval 15millisecond
+
+    section Network
+    Initial HTML Request                       :a1, 000, 080
+    Request index.css (Preload)                :a2, 040, 120
+    Request index.js (Preload)                 :a3, 040, 180
+    Request hero.png                           :a4, 050, 150
+
+    section Parsing & Building
+    Parsing HTML / Building DOM Tree           :a5, 080, 130
+    Preload Scanner                            :a6, 090, 110
+    Building CSSOM Tree                        :a7, 120, 140
+
+    section First Render
+    Build Render Tree                          :a8, 140, 150
+    Layout                                     :a9, 150, 160
+    Paint                                      :a10, 160, 170
+
+    Visible Content (Full Page - No JS)       :milestone, a11, 170, 170
+
+    section JavaScript (Hydration)
+    React VDOM Hydrate                         :a12, 180, 250
+
+    Interactive                                :milestone, a13, 250, 250
