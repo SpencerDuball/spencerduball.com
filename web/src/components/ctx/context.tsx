@@ -1,7 +1,7 @@
 import React from "react";
 import { reducer, ZPrefs, type Actions, type IPrefs, type IResolvedTheme } from "./reducer";
 import { ZJsonString } from "@/lib/utils";
-import { useMediaQuery } from "@/lib/hooks/use-media";
+import { useMediaQuery } from "@/hooks/use-media";
 
 const PREFERENCES_KEY = "preferences-f01f6ffd";
 
@@ -11,15 +11,14 @@ const PrefsDispatchCtx = React.createContext<React.Dispatch<Actions>>(() => null
 
 // create the provider
 interface PrefsProviderProps {
-  prefs: IPrefs;
   children: React.ProviderProps<IPrefs>["children"];
 }
 
 /**
  * The preferences context provider.
  */
-export function PrefsProvider({ prefs, children }: PrefsProviderProps) {
-  const [state, dispatch] = React.useReducer(reducer, prefs);
+export function PrefsProvider({ children }: PrefsProviderProps) {
+  const [state, dispatch] = React.useReducer(reducer, useInitialPrefs());
 
   useTrackSystemTheme(state, dispatch);
   useSyncAppTheme(state.theme.app.resolved);
@@ -48,6 +47,38 @@ function getInitialPrefs(theme?: { app: IResolvedTheme; code: IResolvedTheme }):
       code: { actual: "system", resolved: theme?.code || "dark" },
     },
   };
+}
+
+/**
+ * A utility hook which reads the preferences from localStorage and ensures the HTML
+ * element is in sync.
+ *
+ * @note This is used in conjunction with the `clientThemeScript`. This hook runs before
+ * the second paint upon hyrdation, the `clientThemeScript` runs before the first paint
+ * when FCP is sent to client.
+ */
+function useInitialPrefs(): IPrefs {
+  const [prefs] = React.useState(() => {
+    if (typeof window === "undefined") return getInitialPrefs();
+
+    // retrieve the preferences, base64 decode them, and parse for valid JSON
+    const prefs = ZJsonString.pipe(ZPrefs)
+      .catch(() => getInitialPrefs())
+      .parse(atob(localStorage.getItem(PREFERENCES_KEY) || ""));
+
+    // determine the resolved themes
+    if (prefs.theme.app.actual === "system")
+      prefs.theme.app.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    else prefs.theme.app.resolved = prefs.theme.app.actual;
+
+    if (prefs.theme.code.actual === "system")
+      prefs.theme.code.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    else prefs.theme.code.resolved = prefs.theme.code.actual;
+
+    return prefs;
+  });
+
+  return prefs;
 }
 
 /**
@@ -118,6 +149,8 @@ export function usePrefsDispatch() {
  * before initial paint.
  */
 export function getThemeInLoader(): IPrefs {
+  if (typeof window === "undefined") return getInitialPrefs();
+
   // retrieve the preferences, base64 decode them, and parse for valid JSON
   const prefs = ZJsonString.pipe(ZPrefs)
     .catch(() => getInitialPrefs())
@@ -132,16 +165,73 @@ export function getThemeInLoader(): IPrefs {
     prefs.theme.code.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   else prefs.theme.code.resolved = prefs.theme.code.actual;
 
-  // initially set the HTML element with the resolved app theme, this is *critical* as
-  // setting this here will run before paint!
-  const html = window.document.documentElement;
-  if (prefs.theme.app.resolved === "light") {
-    html.classList.remove("dark");
-    if (!html.classList.contains("light")) html.classList.add("light");
-  } else if (prefs.theme.app.resolved === "dark") {
-    html.classList.remove("light");
-    if (!html.classList.contains("dark")) html.classList.add("dark");
-  }
-
   return prefs;
 }
+
+/**
+ * The blocking script that is run *before* the first paint of the browser.
+ *
+ * This script ensures that the HTML has the appropriate 'light' or 'dark' class based
+ * upon the stored preferences in localStorage. Without this users would get a FOUC. This
+ * script runs ONLY on the client and blocks a render pass until it completes.
+ *
+ * @example
+ * ```tsx
+ * function RootDocument({ children }: { children: React.ReactNode }) {
+ *   return (
+ *     <html lang="en" suppressHydrationWarning>
+ *       <head>
+ *         <HeadContent />
+ *         <script dangerouslySetInnerHTML={{ __html: clientThemeScript }} />
+ *       </head>
+ *       <body>
+ *         {children}
+ *          <TanStackDevtools
+ *            config={{ position: "bottom-right" }}
+ *            plugins={[{ name: "Tanstack Router", render: <TanStackRouterDevtoolsPanel /> }]}
+ *          />
+ *         <Scripts />
+ *       </body>
+ *     </html>
+ *   );
+ * }
+ * ```
+ */
+export const clientThemeScript = `
+let prefs = { theme: { app: { actual: "system", resolved: "dark" }, code: { actual: "system", resolved: "dark" } } };
+try {
+  const stored = JSON.parse(atob(localStorage.getItem("${PREFERENCES_KEY}") || ""));
+
+  // initialize the app theme
+  if (stored && stored.theme && stored.theme.app) {
+    const app = stored.theme.app;
+    if (["system", "dark", "light"].includes(app.actual)) prefs.theme.app.actual = app.actual;
+  }
+
+  // initialize the code theme
+  if (stored && stored.theme && stored.theme.code) {
+    const code = stored.theme.code;
+    if (["system", "dark", "light"].includes(code.actual)) prefs.theme.code.actual = code.actual;
+  }
+} catch (e) {}
+
+// determine the resolved themes
+if (prefs.theme.app.actual === "system")
+  prefs.theme.app.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+else prefs.theme.app.resolved = prefs.theme.app.actual;
+
+if (prefs.theme.code.actual === "system")
+  prefs.theme.code.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+else prefs.theme.code.resolved = prefs.theme.code.actual;
+
+// initially set the HTML elementn with the resolved app theme, this is *critical* as
+// setting this here will run before paint!
+const html = window.document.documentElement;
+if (prefs.theme.app.resolved === "light") {
+  html.classList.remove("dark");
+  if (!html.classList.contains("light")) html.classList.add("light");
+} else if (prefs.theme.app.resolved === "dark") {
+  html.classList.remove("light");
+  if (!html.classList.contains("dark")) html.classList.add("dark");
+}
+`;

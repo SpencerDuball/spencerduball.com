@@ -1,16 +1,28 @@
 import { defineConfig } from "vite";
 import { devtools } from "@tanstack/devtools-vite";
 import react from "@vitejs/plugin-react";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import { fileURLToPath, URL } from "node:url";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
+import { nitro } from "nitro/vite";
+import { fileURLToPath } from "node:url";
 
-// https://vitejs.dev/config/
-export default defineConfig({
+const config = defineConfig({
   plugins: [
-    tailwindcss(),
     devtools(),
-    tanstackRouter({ target: "react", autoCodeSplitting: true }),
+    nitro(),
+    tailwindcss(),
+    tanstackStart({
+      prerender: {
+        // enabled prerendering
+        enabled: true,
+        // if disabled, only the root path or the paths defined in the pages config will be prerendered
+        autoStaticPathsDiscovery: true,
+        // whether to extract links from the HTML and prerender them also
+        crawlLinks: true,
+        // fail if an error occurs during prerendering
+        failOnError: true,
+      },
+    }),
     react(),
   ],
   resolve: {
@@ -19,3 +31,5 @@ export default defineConfig({
     },
   },
 });
+
+export default config;
