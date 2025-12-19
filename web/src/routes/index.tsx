@@ -50,7 +50,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function App() {
+function ThemeToggle() {
   const { theme } = usePrefs();
   const dispatch = usePrefsDispatch();
 
@@ -60,18 +60,23 @@ export function App() {
     else if (theme.app.actual === "dark") setIcon(Moon01Icon);
     else if (theme.app.actual === "light") setIcon(Sun03Icon);
   }, [theme.app.actual]);
+  return (
+    <Button
+      className="absolute right-4 top-4"
+      variant="outline"
+      size="lg"
+      onClick={() => dispatch({ type: "theme.app.toggle" })}
+    >
+      Toggle Theme
+      <HugeiconsIcon icon={icon} />
+    </Button>
+  );
+}
 
+export function App() {
   return (
     <div className="grid place-content-center h-dvh">
-      <Button
-        className="absolute right-4 top-4"
-        variant="outline"
-        size="lg"
-        onClick={() => dispatch({ type: "theme.app.toggle" })}
-      >
-        Toggle Theme
-        <HugeiconsIcon icon={icon} />
-      </Button>
+      <ThemeToggle />
       <Card className="flex flex-col max-w-prose">
         <CardHeader className="items-center pb-0">
           <CardTitle>Pie Chart - Label</CardTitle>
