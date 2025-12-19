@@ -10,7 +10,7 @@ const PrefsCtx = React.createContext<IPrefs>(getInitialPrefs());
 const PrefsDispatchCtx = React.createContext<React.Dispatch<Actions>>(() => null);
 
 // create the provider
-interface PrefsCtxProviderProps {
+interface PrefsProviderProps {
   prefs: IPrefs;
   children: React.ProviderProps<IPrefs>["children"];
 }
@@ -18,7 +18,7 @@ interface PrefsCtxProviderProps {
 /**
  * The preferences context provider.
  */
-export function PrefsCtxProvider({ prefs, children }: PrefsCtxProviderProps) {
+export function PrefsProvider({ prefs, children }: PrefsProviderProps) {
   const [state, dispatch] = React.useReducer(reducer, prefs);
 
   useTrackSystemTheme(state, dispatch);

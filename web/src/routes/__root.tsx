@@ -1,7 +1,7 @@
 import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { getThemeInLoader, PrefsCtxProvider } from "@/components/ctx/preferences/context";
+import { getThemeInLoader, PrefsProvider } from "@/components/ctx/preferences/context";
 
 export const Route = createRootRoute({
   loader: getThemeInLoader,
@@ -14,9 +14,9 @@ function RootRoute() {
   return (
     <>
       <HeadContent />
-      <PrefsCtxProvider prefs={prefs}>
+      <PrefsProvider prefs={prefs}>
         <Outlet />
-      </PrefsCtxProvider>
+      </PrefsProvider>
       <TanStackDevtools
         config={{ position: "bottom-right" }}
         plugins={[
