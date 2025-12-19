@@ -1,0 +1,76 @@
+gantt
+    title Page Load SPA v SSR v SSG
+    dateFormat SSS
+    axisFormat %L
+    tickInterval 50millisecond
+
+    section SPA: Network
+    Request index.html (TTFB)                        :spa-n1, 000, 040
+    Request index.css (preload)                      :spa-n3, 045, 105
+    Request index.js (preload)                       :spa-n4, 050, 250
+    Request hero.png (preload)                       :spa-n5, 055, 225
+
+    section SPA: Browser
+    Preload Scanner                                  :spa-r1-1, 040, 045
+    Build DOM Tree                                   :spa-r1-2, 040, 050
+    Build CSSOM Tree                                 :spa-r1-3, 105, 130
+    Render (Build Render Tree -> Layout -> Paint)    :spa-r1-4, 130, 135
+    Visible (Empty Shell)                            :milestone, spa-v1, 135, 135
+    Update DOM Tree                                  :spa-r2-1, 325, 355
+    Update CSSOM Tree                                :spa-r2-2, 325, 330
+    Render (Build Render Tree -> Reflow -> Paint)    :spa-r2-3, 355, 365
+    Visible (Full Page - w/ Img)                     :milestone, spa-v2, 365, 365
+    Interactive                                      :milestone, spa-i1, 365, 365   
+
+    section SPA: JS & React
+    JS Parse & Execute                               :spa-j1, 250, 300
+    React Mount & Update DOM                         :spa-j2, 300, 325
+
+    section SSR: Server
+    Build HTML                                      :ssr-n1, 000, 040
+
+    section SSR: Network
+    Request index.html (TTFB)                        :ssr-n1, 040, 080
+    Streaming index.html                             :ssr-n2, 080, 180
+    Request index.css (preload)                      :ssr-n3, 085, 145
+    Request index.js (preload)                       :ssr-n4, 090, 290
+    Request hero.png (preload)                       :ssr-n5, 095, 265
+
+    section SSR: Browser
+    Preload Scanner                                  :ssr-r1-1, 080, 180
+    Build DOM Tree                                   :ssr-r2-2, 080, 180
+    Build CSSOM Tree                                 :ssr-r3-3, 145, 170
+    Render (Build Render Tree -> Layout -> Paint)    :ssr-r4-4, 180, 190
+    Visible (Full Page - No Img)                     :milestone, ssr-v1, 190, 190
+    Update DOM Tree                                  :ssr-r2-1, 265, 270
+    Update CSSOM Tree                                :ssr-r2-2, 270, 275
+    Render (Build Render Tree -> Reflow -> Paint)    :ssr-r3-3, 275, 280
+    Visible (Full Page - w/ Img)                     :milestone, ssr-v2, 280, 280
+
+    section SSR: JS & React
+    JS Parse & Execute                               :ssr-j1, 290, 340
+    React Mount (No DOM Update)                      :ssr-j2, 340, 355
+    Interactive                                      :milestone, ssr-i1, 355, 355
+
+    section SSG: Network
+    Request index.html (TTFB)                        :ssg-n1, 000, 040
+    Streaming index.html                             :ssg-n2, 040, 140
+    Request index.css (preload)                      :ssg-n3, 045, 105 
+    Request index.js (preload)                       :ssg-n4, 050, 250
+    Request hero.png (preload)                       :ssg-n5, 055, 225
+
+    section SSG: Browser
+    Preload Scanner                                  :ssg-r1-1, 040, 140
+    Build DOM Tree                                   :ssg-r2-2, 040, 140
+    Build CSSOM Tree                                 :ssg-r3-3, 105, 130
+    Render (Build Render Tree -> Layout -> Paint)    :ssg-r4-4, 140, 150
+    Visible (Full Page - No Img)                     :milestone, ssg-v1, 150, 150
+    Update DOM Tree                                  :ssg-r2-1, 225, 230
+    Update CSSOM Tree                                :ssg-r2-2, 230, 235
+    Render (Build Render Tree -> Reflow -> Paint)    :ssg-r3-3, 235, 240
+    Visible (Full Page - w/ Img)                     :milestone, ssg-v2, 240, 240    
+
+    section SSG: JS & React
+    JS Parse & Execute                               :ssg-j1, 250, 300
+    React Mount (No DOM Update)                      :ssg-j2, 300, 315
+    Interactive                                      :milestone, ssg-i1, 315, 315
