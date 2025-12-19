@@ -2,7 +2,7 @@ import React from "react";
 import { type ITheme, type Actions, reducer, ZTheme } from "./reducer";
 import { z } from "zod/v4";
 
-const THEME_KEY = "preferences-26915f4f";
+const THEME_KEY = "preferences-0f932ead";
 
 // -------------------------------------------------------------------------------------
 // Create Context
@@ -12,12 +12,11 @@ const ThemeCtx = React.createContext<ITheme>({ actual: "system", resolved: "dark
 const ThemeDispatchCtx = React.createContext<React.Dispatch<Actions>>(() => null);
 
 interface ThemeProviderProps {
-  theme: ITheme;
   children: React.ProviderProps<any>["children"];
 }
 
-export function ThemeProvider({ theme, children }: ThemeProviderProps) {
-  const [state, dispatch] = React.useReducer(reducer, theme);
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const [state, dispatch] = React.useReducer(reducer, useInitialTheme());
 
   useTrackSystemTheme(state, dispatch);
   useSyncToHtml(state.resolved);
@@ -33,6 +32,33 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps) {
 // -------------------------------------------------------------------------------------
 // Hooks
 // -------------------------------------------------------------------------------------
+
+/**
+ * A utility hook which reads the theme from localStorage.
+ *
+ * @note This is used in conjunction with the `clientThemeScript`. This hook runs before
+ * the second paint upon hyrdation, the `clientThemeScript` runs before the first paint
+ * when FCP is sent to client.
+ */
+function useInitialTheme(): ITheme {
+  const [theme] = React.useState(() => {
+    if (typeof window === "undefined") return { actual: "system", resolved: "dark" } as const;
+
+    // retrieve the preferences, base64 decode them, and parse for valid JSON
+    const theme = ZJsonString.pipe(ZTheme)
+      .catch(() => ({ actual: "system", resolved: "dark" }) as const)
+      .parse(atob(localStorage.getItem(THEME_KEY) || ""));
+
+    // determine the resolved themes
+    if (theme.actual === "system")
+      theme.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    else theme.resolved = theme.actual;
+
+    return theme;
+  });
+
+  return theme;
+}
 
 /**
  * Tracks the state of a CSS media query.
@@ -150,32 +176,54 @@ export function useThemeDispatch() {
   return React.useContext(ThemeDispatchCtx);
 }
 
-export function setThemeInLoader(): ITheme {
-  // retrive the theme, base64 decode it, and parse for valid JSON
-  const theme = ZJsonString.pipe(ZTheme)
-    .catch(() => ({ actual: "system", resolved: "dark" }) as const)
-    .parse(atob(localStorage.getItem(THEME_KEY) || ""));
+/**
+ * The blocking script that is run *before* the first paint of the browser.
+ *
+ * This script ensures that the HTML has the appropriate 'light' or 'dark' class based
+ * upon the stored theme in localStorage. Without this users would get a FOUC. This
+ * script runs ONLY on the client and blocks a render pass until it completes.
+ *
+ * @example
+ * ```tsx
+ * function RootDocument({ children }: { children: React.ReactNode }) {
+ *   return (
+ *     <html lang="en" suppressHydrationWarning>
+ *       <head>
+ *         <HeadContent />
+ *         <script dangerouslySetInnerHTML={{ __html: clientThemeScript }} />
+ *       </head>
+ *       <body>
+ *         {children}
+ *          <TanStackDevtools
+ *            config={{ position: "bottom-right" }}
+ *            plugins={[{ name: "Tanstack Router", render: <TanStackRouterDevtoolsPanel /> }]}
+ *          />
+ *         <Scripts />
+ *       </body>
+ *     </html>
+ *   );
+ * }
+ * ```
+ */
+export const clientThemeScript = `
+let theme = { actual: "system", resolved: "dark" };
+try {
+  const stored = JSON.parse(atob(localStorage.getItem("${THEME_KEY}") || ""));
+  if (stored && stored.actual && ["system", "dark", "light"].includes(stored.actual)) theme.actual = stored.actual;
+} catch (e) {}
 
-  // determine the resolved theme
-  if (theme.actual === "system")
-    theme.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  else theme.resolved = theme.actual;
+// determine the resolved theme
+if (theme.actual === "system") theme.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+else theme.resolved = theme.actual;
 
-  // set the bg-background class on the body element, we removed this to prevent the
-  // incorrect theme appearing on the shell load
-  const body = window.document.body;
-  if (!body.classList.contains("bg-background")) body.classList.add("bg-background");
-
-  // initially set the HTML element with the resolved app theme, this is _critical_ as
-  // setting this here will run before paint!
-  const html = window.document.documentElement;
-  if (theme.resolved === "light") {
-    html.classList.remove("dark");
-    if (!html.classList.contains("light")) html.classList.add("light");
-  } else if (theme.resolved === "dark") {
-    html.classList.remove("light");
-    if (!html.classList.contains("dark")) html.classList.add("dark");
-  }
-
-  return theme;
+// initially set the HTML element with the resolved theme, this is *critical* as
+// setting this here will run before paint!
+const html = window.document.documentElement;
+if (theme.resolved === "light") {
+  html.classList.remove("dark");
+  if (!html.classList.contains("light")) html.classList.add("light");
+} else if (theme.resolved === "dark") {
+  html.classList.remove("light");
+  if (!html.classList.contains("dark")) html.classList.add("dark");
 }
+`;

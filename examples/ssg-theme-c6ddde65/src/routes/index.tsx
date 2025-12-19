@@ -1,16 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import React from "react";
 
 export const Route = createFileRoute("/")({
   component: App,
 });
 
-import { ArrowUpRight01Icon, SolarSystem01Icon } from "@hugeicons/core-free-icons";
+import { ArrowUpRight01Icon, Moon01Icon, Sun03Icon, SolarSystem01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Pie, PieChart } from "recharts";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { useTheme, useThemeDispatch } from "@/components/ctx/theme/context";
 
 export const description = "A pie chart with a label";
 
@@ -48,13 +50,35 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+/**
+ * @note If we try to use the `useTheme()` and `useThemeDispatch()` in the `App`
+ * component directly, it will trigger a re-render immediately before the animations
+ * for the pie chart finish. This is a caveat of having the server state differ from
+ * the client state in React. This applies whenever there are hydration mismatches
+ * regardless of method (SPA v SSR v SSG).
+ */
+function ThemeToggle() {
+  const { actual } = useTheme();
+  const dispatch = useThemeDispatch();
+
+  const [icon, setIcon] = React.useState(SolarSystem01Icon);
+  React.useEffect(() => {
+    if (actual === "system") setIcon(SolarSystem01Icon);
+    else if (actual === "dark") setIcon(Moon01Icon);
+    else if (actual === "light") setIcon(Sun03Icon);
+  }, [actual]);
+  return (
+    <Button className="absolute right-4 top-4" variant="outline" size="lg" onClick={() => dispatch({ type: "toggle" })}>
+      Toggle Theme
+      <HugeiconsIcon icon={icon} />
+    </Button>
+  );
+}
+
 export function App() {
   return (
     <div className="grid place-content-center h-dvh">
-      <Button className="absolute right-4 top-4" variant="outline" size="lg">
-        Toggle Theme
-        <HugeiconsIcon icon={SolarSystem01Icon} />
-      </Button>
+      <ThemeToggle />
       <Card className="flex flex-col max-w-prose">
         <CardHeader className="items-center pb-0">
           <CardTitle>Pie Chart - Label</CardTitle>

@@ -12,7 +12,7 @@ import { Pie, PieChart } from "recharts";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import { usePrefs, usePrefsDispatch } from "@/components/ctx/context";
+import { usePrefs, usePrefsDispatch } from "@/components/ctx/prefs/context";
 
 export const description = "A pie chart with a label";
 

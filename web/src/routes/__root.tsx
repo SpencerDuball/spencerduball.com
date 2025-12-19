@@ -3,7 +3,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import appCss from "../styles.css?url";
-import { clientThemeScript, PrefsProvider } from "@/components/ctx/context";
+import { clientThemeScript, PrefsProvider } from "@/components/ctx/prefs/context";
 import React from "react";
 
 export const Route = createRootRoute({
