@@ -15,6 +15,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cn } from "@/lib/utils";
 import { PrintablesIcon } from "@/components/icons";
+import { Dialog } from "@base-ui/react/dialog";
 
 export const Route = createFileRoute("/")({
   component: Component,
@@ -42,7 +43,13 @@ function ThemeButton({ ...props }: React.ComponentProps<typeof Button>) {
   );
 }
 
-function Header({ className, ...props }: React.ComponentProps<"header">) {
+function Header({
+  gridRef,
+  className,
+  ...props
+}: React.ComponentProps<"header"> & { gridRef: React.RefObject<HTMLDivElement> }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
     <header className={cn("@container grid h-20 w-full justify-items-center", className)} {...props}>
       {/* Tablet & Desktop Nav */}
@@ -96,9 +103,28 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
         </Link>
 
         {/* Right Side Header */}
-        <Button size="icon-lg" variant="outline">
-          <HugeiconsIcon icon={Menu11Icon} />
-        </Button>
+        <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+          <Dialog.Trigger render={<Button size="icon-lg" variant="outline" />}>
+            <HugeiconsIcon icon={Menu11Icon} />
+          </Dialog.Trigger>
+
+          <Dialog.Portal container={gridRef} className="relative row-start-3 row-end-4 h-full w-full">
+            <Dialog.Viewport className="fade-in animate-in relative h-full w-full">
+              <Dialog.Popup className="animate-in slide-in-from-top-4 h-full w-full p-6 duration-200">
+                <nav className="flex flex-col gap-6 text-2xl font-semibold">
+                  <Link to="/posts">Posts</Link>
+                  <Link to="/projects">Projects</Link>
+                  <Link to="/series">Series</Link>
+
+                  <div className="mt-auto flex flex-col gap-4 pb-10">
+                    <p className="text-muted-foreground text-sm">Settings</p>
+                    <ThemeButton className="w-full justify-start gap-3" />
+                  </div>
+                </nav>
+              </Dialog.Popup>
+            </Dialog.Viewport>
+          </Dialog.Portal>
+        </Dialog.Root>
       </div>
     </header>
   );
@@ -177,9 +203,15 @@ function Divider({ className, ...props }: React.ComponentProps<"div">) {
 // -------------------------------------------------------------------------------------
 
 export function Component() {
+  const gridRef = React.useRef<HTMLDivElement>(null!);
+
   return (
-    <div className="grid h-full min-h-dvh grid-rows-[min-content_min-content_1fr_min-content_min-content]">
-      <Header />
+    <div
+      ref={gridRef}
+      className="grid h-full min-h-dvh grid-rows-[min-content_min-content_1fr_min-content_min-content]"
+    >
+      {/* Standard Layout */}
+      <Header gridRef={gridRef} />
       <Divider />
       <div className="justify-start">
         <Outlet />
