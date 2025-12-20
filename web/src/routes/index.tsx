@@ -1,56 +1,30 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { usePrefs, usePrefsDispatch } from "@/components/ctx/prefs/context";
+import {
+  Moon01Icon,
+  Sun03Icon,
+  SolarSystem01Icon,
+  NewTwitterIcon,
+  GithubIcon,
+  CopyrightIcon,
+  Search01Icon,
+  Menu11Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { cn } from "@/lib/utils";
+import { PrintablesIcon } from "@/components/icons";
 
 export const Route = createFileRoute("/")({
-  component: App,
+  component: Component,
 });
 
-import { ArrowUpRight01Icon, Moon01Icon, Sun03Icon, SolarSystem01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Pie, PieChart } from "recharts";
+// -------------------------------------------------------------------------------------
+// Header
+// -------------------------------------------------------------------------------------
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import { usePrefs, usePrefsDispatch } from "@/components/ctx/prefs/context";
-
-export const description = "A pie chart with a label";
-
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
-];
-
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
-    color: "var(--chart-1)",
-  },
-  safari: {
-    label: "Safari",
-    color: "var(--chart-2)",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "var(--chart-3)",
-  },
-  edge: {
-    label: "Edge",
-    color: "var(--chart-4)",
-  },
-  other: {
-    label: "Other",
-    color: "var(--chart-5)",
-  },
-} satisfies ChartConfig;
-
-function ThemeToggle() {
+function ThemeButton({ ...props }: React.ComponentProps<typeof Button>) {
   const { theme } = usePrefs();
   const dispatch = usePrefsDispatch();
 
@@ -60,46 +34,158 @@ function ThemeToggle() {
     else if (theme.app.actual === "dark") setIcon(Moon01Icon);
     else if (theme.app.actual === "light") setIcon(Sun03Icon);
   }, [theme.app.actual]);
+
   return (
-    <Button
-      className="absolute right-4 top-4"
-      variant="outline"
-      size="lg"
-      onClick={() => dispatch({ type: "theme.app.toggle" })}
-    >
-      Toggle Theme
+    <Button variant="outline" size="icon-lg" onClick={() => dispatch({ type: "theme.app.toggle" })} {...props}>
       <HugeiconsIcon icon={icon} />
     </Button>
   );
 }
 
-export function App() {
+function Header({ className, ...props }: React.ComponentProps<"header">) {
   return (
-    <div className="grid place-content-center h-dvh">
-      <ThemeToggle />
-      <Card className="flex flex-col max-w-prose">
-        <CardHeader className="items-center pb-0">
-          <CardTitle>Pie Chart - Label</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 pb-0">
-          <ChartContainer
-            config={chartConfig}
-            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-62.5 pb-0"
+    <header className={cn("@container grid h-20 w-full justify-items-center", className)} {...props}>
+      {/* Tablet & Desktop Nav */}
+      <div className="hidden h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4 @2xl:grid">
+        {/* Left Side Header */}
+        <div className="grid grid-flow-col items-center gap-4">
+          <Link to="/" className="py-3">
+            <p className="text-xl font-bold tracking-tighter @3xl:text-2xl">Spencer Duball</p>
+          </Link>
+          <nav className="grid grid-flow-col gap-1">
+            <Link
+              to="/posts"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-4 font-medium @3xl:px-3.5"
+            >
+              Posts
+            </Link>
+            <Link
+              to="/posts"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-4 font-medium @3xl:px-3.5"
+            >
+              Projects
+            </Link>
+            <Link
+              to="/series"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-4 font-medium @3xl:px-3.5"
+            >
+              Series
+            </Link>
+          </nav>
+        </div>
+
+        {/* Right Side Header */}
+        <div className="grid auto-cols-min grid-flow-col gap-2">
+          <Button
+            size="lg"
+            variant="outline"
+            className="hover:text-foreground text-muted-foreground grid w-40 grid-flow-col justify-start"
           >
-            <PieChart>
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie data={chartData} dataKey="visitors" label nameKey="browser" />
-            </PieChart>
-          </ChartContainer>
-        </CardContent>
-        <CardFooter className="flex-col gap-2 text-sm">
-          <div className="flex items-center gap-2 leading-none font-medium">
-            Trending up by 5.2% this month <HugeiconsIcon icon={ArrowUpRight01Icon} className="h-4 w-4" />
-          </div>
-          <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
-        </CardFooter>
-      </Card>
+            <HugeiconsIcon icon={Search01Icon} />
+            Search ...
+          </Button>
+          <ThemeButton />
+        </div>
+      </div>
+
+      {/* Mobile Nav */}
+      <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4 @2xl:hidden">
+        {/* Left Side Header */}
+        <Link to="/" className="py-3">
+          <p className="text-xl font-bold tracking-tighter @3xl:text-2xl">Spencer Duball</p>
+        </Link>
+
+        {/* Right Side Header */}
+        <Button size="icon-lg" variant="outline">
+          <HugeiconsIcon icon={Menu11Icon} />
+        </Button>
+      </div>
+    </header>
+  );
+}
+
+// -------------------------------------------------------------------------------------
+// Footer
+// -------------------------------------------------------------------------------------
+function Footer({ className, ...props }: React.ComponentProps<"footer">) {
+  return (
+    <footer className={cn("grid h-20 w-full justify-items-center", className)} {...props}>
+      <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4">
+        {/* Left Side Footer */}
+        <div className="grid auto-cols-min grid-flow-col gap-1">
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+            render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+            nativeButton={false}
+          >
+            <HugeiconsIcon icon={NewTwitterIcon} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+            render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+            nativeButton={false}
+          >
+            <HugeiconsIcon icon={GithubIcon} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon-lg"
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+            render={
+              <a
+                href="https://www.printables.com/social/212303-spencer_duball/about"
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+            nativeButton={false}
+          >
+            <PrintablesIcon />
+          </Button>
+        </div>
+
+        {/* Right Side Footer */}
+        <div className="flex items-center gap-1 text-sm">
+          Copyright
+          <HugeiconsIcon className="h-4 w-4" icon={CopyrightIcon} />
+          2026
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// -------------------------------------------------------------------------------------
+// Divider
+// -------------------------------------------------------------------------------------
+function Divider({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div className={cn("grid w-full justify-items-center", className)} {...props}>
+      <div className="w-full max-w-5xl px-4">
+        <div className="w-full border-b" />
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------------------------------
+// Component
+// -------------------------------------------------------------------------------------
+
+export function Component() {
+  return (
+    <div className="grid h-full min-h-dvh grid-rows-[min-content_min-content_1fr_min-content_min-content]">
+      <Header />
+      <Divider />
+      <div className="justify-start">
+        <Outlet />
+      </div>
+      <Divider />
+      <Footer />
     </div>
   );
 }
