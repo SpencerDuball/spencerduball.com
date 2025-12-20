@@ -198,40 +198,42 @@ export function getThemeInLoader(): IPrefs {
  * ```
  */
 export const clientThemeScript = `
-let prefs = { theme: { app: { actual: "system", resolved: "dark" }, code: { actual: "system", resolved: "dark" } } };
-try {
-  const stored = JSON.parse(atob(localStorage.getItem("${PREFERENCES_KEY}") || ""));
+(function () {
+  let prefs = { theme: { app: { actual: "system", resolved: "dark" }, code: { actual: "system", resolved: "dark" } } };
+  try {
+    const stored = JSON.parse(atob(localStorage.getItem("${PREFERENCES_KEY}") || ""));
 
-  // initialize the app theme
-  if (stored && stored.theme && stored.theme.app) {
-    const app = stored.theme.app;
-    if (["system", "dark", "light"].includes(app.actual)) prefs.theme.app.actual = app.actual;
+    // initialize the app theme
+    if (stored && stored.theme && stored.theme.app) {
+      const app = stored.theme.app;
+      if (["system", "dark", "light"].includes(app.actual)) prefs.theme.app.actual = app.actual;
+    }
+
+    // initialize the code theme
+    if (stored && stored.theme && stored.theme.code) {
+      const code = stored.theme.code;
+      if (["system", "dark", "light"].includes(code.actual)) prefs.theme.code.actual = code.actual;
+    }
+  } catch (e) {}
+
+  // determine the resolved themes
+  if (prefs.theme.app.actual === "system")
+    prefs.theme.app.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  else prefs.theme.app.resolved = prefs.theme.app.actual;
+
+  if (prefs.theme.code.actual === "system")
+    prefs.theme.code.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  else prefs.theme.code.resolved = prefs.theme.code.actual;
+
+  // initially set the HTML elementn with the resolved app theme, this is *critical* as
+  // setting this here will run before paint!
+  const html = window.document.documentElement;
+  if (prefs.theme.app.resolved === "light") {
+    html.classList.remove("dark");
+    if (!html.classList.contains("light")) html.classList.add("light");
+  } else if (prefs.theme.app.resolved === "dark") {
+    html.classList.remove("light");
+    if (!html.classList.contains("dark")) html.classList.add("dark");
   }
-
-  // initialize the code theme
-  if (stored && stored.theme && stored.theme.code) {
-    const code = stored.theme.code;
-    if (["system", "dark", "light"].includes(code.actual)) prefs.theme.code.actual = code.actual;
-  }
-} catch (e) {}
-
-// determine the resolved themes
-if (prefs.theme.app.actual === "system")
-  prefs.theme.app.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-else prefs.theme.app.resolved = prefs.theme.app.actual;
-
-if (prefs.theme.code.actual === "system")
-  prefs.theme.code.resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-else prefs.theme.code.resolved = prefs.theme.code.actual;
-
-// initially set the HTML elementn with the resolved app theme, this is *critical* as
-// setting this here will run before paint!
-const html = window.document.documentElement;
-if (prefs.theme.app.resolved === "light") {
-  html.classList.remove("dark");
-  if (!html.classList.contains("light")) html.classList.add("light");
-} else if (prefs.theme.app.resolved === "dark") {
-  html.classList.remove("light");
-  if (!html.classList.contains("dark")) html.classList.add("dark");
-}
+})();
 `;
