@@ -152,25 +152,25 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
       <div className="hidden h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4 @2xl:grid">
         {/* Left Side Header */}
         <div className="grid grid-flow-col items-center gap-4">
-          <Link to="/" className="py-3">
+          <Link to="/" className="py-0.5">
             <p className="text-xl font-bold tracking-tighter @3xl:text-2xl">Spencer Duball</p>
           </Link>
           <nav className="grid grid-flow-col gap-1">
             <Link
               to="/posts"
-              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-4 font-medium @3xl:px-3.5"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
             >
               Posts
             </Link>
             <Link
               to="/posts"
-              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-4 font-medium @3xl:px-3.5"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
             >
               Projects
             </Link>
             <Link
               to="/series"
-              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-4 font-medium @3xl:px-3.5"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
             >
               Series
             </Link>
@@ -210,36 +210,38 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
               {/* This dialog re-implements the mobile header, dividers, and footer of */}
               {/* the main layout. This is the simplest way to get all benefits of the */}
               {/* dialog component, and clickability on the header/footers. */}
-              <Dialog.Popup className="bg-background relative grid h-full min-h-dvh grid-rows-[min-content_min-content_1fr_min-content_min-content]">
-                {/* Header */}
-                <div className="grid h-20 w-full justify-items-center">
-                  <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4">
-                    <Link to="/" className="py-3">
-                      <p className="text-xl font-bold tracking-tighter">Spencer Duball</p>
-                    </Link>
-                    <Dialog.Close render={<Button size="icon-lg" variant="outline" />}>
-                      <HugeiconsIcon icon={Cancel01Icon} />
-                    </Dialog.Close>
+              <Dialog.Popup className="relative grid justify-items-center">
+                <div className="bg-background grid h-full min-h-dvh w-full max-w-5xl grid-rows-[min-content_min-content_1fr_min-content_min-content]">
+                  {/* Header */}
+                  <div className="grid h-20 w-full justify-items-center">
+                    <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4">
+                      <Link to="/" className="py-1">
+                        <p className="text-xl font-bold tracking-tighter">Spencer Duball</p>
+                      </Link>
+                      <Dialog.Close render={<Button size="icon-lg" variant="outline" />}>
+                        <HugeiconsIcon icon={Cancel01Icon} />
+                      </Dialog.Close>
+                    </div>
                   </div>
-                </div>
-                <Divider />
-                {/* Navigation Menu */}
-                <div className="fade-in animate-in">
-                  <div className="animate-in slide-in-from-top-4 px-4 py-4 duration-200">
-                    <nav className="grid auto-rows-max gap-6 text-2xl font-semibold">
-                      <Link to="/posts">Posts</Link>
-                      <Link to="/projects">Projects</Link>
-                      <Link to="/series">Series</Link>
+                  <Divider />
+                  {/* Navigation Menu */}
+                  <div className="fade-in animate-in">
+                    <div className="animate-in slide-in-from-top-4 px-4 py-4 duration-200">
+                      <nav className="grid auto-rows-max gap-6 text-2xl font-semibold">
+                        <Link to="/posts">Posts</Link>
+                        <Link to="/projects">Projects</Link>
+                        <Link to="/series">Series</Link>
 
-                      <div className="grid auto-rows-max justify-start gap-4">
-                        <p className="text-muted-foreground text-sm">Settings</p>
-                        <ThemeButton />
-                      </div>
-                    </nav>
+                        <div className="grid auto-rows-max justify-start gap-4">
+                          <p className="text-muted-foreground text-sm">Settings</p>
+                          <ThemeButton />
+                        </div>
+                      </nav>
+                    </div>
                   </div>
+                  <Divider />
+                  <Footer />
                 </div>
-                <Divider />
-                <Footer />
               </Dialog.Popup>
             </Dialog.Viewport>
           </Dialog.Portal>
