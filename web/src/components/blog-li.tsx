@@ -17,16 +17,16 @@ export function BlogLi({ data, className, ...props }: BlogLiProps) {
   const time = new Intl.DateTimeFormat("en-US", { timeStyle: "short" });
 
   return (
-    <li className={cn("grid w-full auto-rows-max", className)} {...props}>
+    <li className={cn("grid w-full auto-rows-max gap-1", className)} {...props}>
       <Link
         to="."
-        className="text-primary text-lg font-medium decoration-dashed decoration-2 underline-offset-4 hover:underline active:underline"
+        className="text-primary w-fit text-xl font-medium decoration-dashed decoration-2 underline-offset-4 hover:underline active:underline"
       >
         {data.title}
       </Link>
       <div className="text-muted-foreground grid auto-cols-max grid-flow-col items-center gap-2">
         <HugeiconsIcon className="h-5 w-5" icon={Calendar01Icon} />
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-sm italic">
           {data.updated ? "Updated: " : ""}
           {date.format(data.updated || data.created)} ▪ {time.format(data.updated || data.created)}
         </p>

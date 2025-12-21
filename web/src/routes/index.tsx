@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
 import { PrintablesIcon } from "@/components/icons";
 import { BlogLi } from "@/components/blog-li";
 
@@ -12,16 +12,61 @@ export const Route = createFileRoute("/")({
 export function Component() {
   return (
     <div className="grid justify-items-center">
-      <div className="grid w-full max-w-5xl gap-10 px-4 py-12">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        <section className="grid gap-4 md:hidden">
+          <div className="bg-secondary float-right h-48 w-48 border"></div>
+          <h1 className="text-5xl font-bold">Welcome</h1>
+          <p>
+            Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+            Check out some projects I have worked on, or curated series of posts breaking down complex topics. I hope
+            you find something that sparks your curiosity.
+          </p>
+          <div className="inline-grid w-max grid-flow-col items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon-lg"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+              render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+              nativeButton={false}
+            >
+              <HugeiconsIcon icon={NewTwitterIcon} />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-lg"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+              render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+              nativeButton={false}
+            >
+              <HugeiconsIcon icon={GithubIcon} />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-lg"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+              render={
+                <a
+                  href="https://www.printables.com/social/212303-spencer_duball/about"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+              nativeButton={false}
+            >
+              <PrintablesIcon />
+            </Button>
+          </div>
+        </section>
+
         {/* Welcome */}
-        <section className="grid grid-flow-col grid-cols-[max-content_1fr] gap-4">
-          <div className="bg-secondary h-56 w-56"></div>
+        <section className="hidden grid-flow-col grid-cols-[max-content_1fr] gap-4 md:grid">
+          <div className="bg-secondary w-52 border"></div>
           <div className="grid auto-rows-max gap-4">
             <h1 className="text-5xl font-bold">Welcome</h1>
             <p>
               Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
-              Check out some projects I have worked on, or curated series of posts breaking down complex topics. I hope
-              you find something that sparks your curiosity.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
             </p>
             <div className="inline-grid w-max grid-flow-col items-center gap-2">
               <Button
@@ -64,10 +109,10 @@ export function Component() {
         {/* Divider */}
         <div className="border-b" />
 
-        {/* Featured */}
-        <section className="grid auto-rows-max gap-6">
-          <h1 className="text-2xl font-bold">Featured</h1>
-          <div className="grid max-w-[80ch] auto-rows-max gap-6">
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
             <BlogLi
               data={{
                 title: "Aenean luctus a dolor ut ultrices.",
@@ -93,6 +138,17 @@ export function Component() {
               }}
             />
           </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: "1" }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts{" "}
+            <HugeiconsIcon
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
         </section>
       </div>
     </div>

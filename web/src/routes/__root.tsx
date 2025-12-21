@@ -59,7 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 function Divider({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn("grid w-full justify-items-center", className)} {...props}>
-      <div className="w-full max-w-5xl px-4">
+      <div className="w-full max-w-4xl px-4">
         <div className="w-full border-b" />
       </div>
     </div>
@@ -72,7 +72,7 @@ function Divider({ className, ...props }: React.ComponentProps<"div">) {
 function Footer({ className, ...props }: React.ComponentProps<"footer">) {
   return (
     <footer className={cn("grid h-20 w-full justify-items-center", className)} {...props}>
-      <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4">
+      <div className="grid h-full w-full max-w-4xl grid-flow-col items-center justify-between px-4">
         {/* Left Side Footer */}
         <div className="grid auto-cols-min grid-flow-col gap-1">
           <Button
@@ -149,7 +149,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header className={cn("@container grid h-20 w-full justify-items-center", className)} {...props}>
       {/* Tablet & Desktop Nav */}
-      <div className="hidden h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4 @2xl:grid">
+      <div className="hidden h-full w-full max-w-4xl grid-flow-col items-center justify-between px-4 @2xl:grid">
         {/* Left Side Header */}
         <div className="grid grid-flow-col items-center gap-4">
           <Link to="/" className="py-0.5">
@@ -157,13 +157,15 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
           </Link>
           <nav className="grid grid-flow-col gap-1">
             <Link
-              to="/posts"
+              to="/posts/$page"
+              params={{ page: "1" }}
               className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
             >
               Posts
             </Link>
             <Link
-              to="/posts"
+              to="/projects/$page"
+              params={{ page: "1" }}
               className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
             >
               Projects
@@ -192,7 +194,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
       </div>
 
       {/* Mobile Nav */}
-      <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4 @2xl:hidden">
+      <div className="grid h-full w-full max-w-4xl grid-flow-col items-center justify-between px-4 @2xl:hidden">
         {/* Left Side Header */}
         <Link to="/" className="py-3">
           <p className="text-xl font-bold tracking-tighter @3xl:text-2xl">Spencer Duball</p>
@@ -211,10 +213,10 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
               {/* the main layout. This is the simplest way to get all benefits of the */}
               {/* dialog component, and clickability on the header/footers. */}
               <Dialog.Popup className="relative grid justify-items-center">
-                <div className="bg-background grid h-full min-h-dvh w-full max-w-5xl grid-rows-[min-content_min-content_1fr_min-content_min-content]">
+                <div className="bg-background grid h-full min-h-screen w-full max-w-4xl grid-rows-[min-content_min-content_1fr_min-content_min-content]">
                   {/* Header */}
                   <div className="grid h-20 w-full justify-items-center">
-                    <div className="grid h-full w-full max-w-5xl grid-flow-col items-center justify-between px-4">
+                    <div className="grid h-full w-full max-w-4xl grid-flow-col items-center justify-between px-4">
                       <Link to="/" className="py-1">
                         <p className="text-xl font-bold tracking-tighter">Spencer Duball</p>
                       </Link>
@@ -228,7 +230,9 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
                   <div className="fade-in animate-in">
                     <div className="animate-in slide-in-from-top-4 px-4 py-4 duration-200">
                       <nav className="grid auto-rows-max gap-6 text-2xl font-semibold">
-                        <Link to="/posts">Posts</Link>
+                        <Link to="/posts/$page" params={{ page: "1" }}>
+                          Posts
+                        </Link>
                         <Link to="/projects">Projects</Link>
                         <Link to="/series">Series</Link>
 
@@ -254,7 +258,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
 function RootComponent() {
   return (
     <PrefsProvider>
-      <div className="grid h-full min-h-dvh grid-rows-[min-content_min-content_1fr_min-content_min-content]">
+      <div className="grid h-full min-h-screen grid-rows-[min-content_min-content_1fr_min-content_min-content]">
         {/* Standard Layout */}
         <Header />
         <Divider />
