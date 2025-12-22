@@ -24,11 +24,19 @@ import { PrintablesIcon } from "@/components/icons";
 export const Route = createRootRoute({
   head: () => ({
     meta: [
+      { name: "apple-mobile-web-app-title", contents: "Spencer Duball" },
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Spencer Duball" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "icon", type: "image/png", href: "/favicon-96x96.png", sizes: "96x96" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "shortcut icon", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "stylesheet", href: appCss },
+    ],
     scripts: [{ children: clientThemeScript }],
   }),
   shellComponent: RootDocument,

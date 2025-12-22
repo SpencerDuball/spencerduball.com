@@ -20,6 +20,7 @@ const config = defineConfig({
         // fail if an error occurs during prerendering
         failOnError: true,
       },
+      sitemap: { host: "https://spencerduball.com" },
     }),
     react(),
   ],

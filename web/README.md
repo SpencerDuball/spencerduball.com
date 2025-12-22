@@ -10,9 +10,10 @@ https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&ic
 
 - [x] Consolidate the "Welcome" from the index page
 - [x] Create a file & schema for paginated posts & pagination on the posts page
+- [ ] Build a script to generate lorem ipsum
 - [ ] Create the mdx component for the actual posts
 - [ ] Create a global 404 route
-- [ ] Generate all metadata (head, favicon, etc) for publishing, use `realfavicongenerator.net` for this
+- [x] Generate all metadata (head, favicon, etc) for publishing, use `realfavicongenerator.net` for this
 - [ ] Add better error handling and `errorComponent` to the routes with path parameters.
 - [ ] Add in the "moving ants" underline animation to the BlogLi elements
 - [ ] Add in the "moving wavy" underline animation to the top-level navigation
