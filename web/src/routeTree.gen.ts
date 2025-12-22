@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PostsPageRouteImport } from './routes/posts.$page'
+import { Route as PostsPSlugRouteImport } from './routes/posts.p.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const PostsPageRoute = PostsPageRouteImport.update({
   path: '/posts/$page',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PostsPSlugRoute = PostsPSlugRouteImport.update({
+  id: '/posts/p/$slug',
+  path: '/posts/p/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/posts/$page': typeof PostsPageRoute
+  '/posts/p/$slug': typeof PostsPSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/posts/$page': typeof PostsPageRoute
+  '/posts/p/$slug': typeof PostsPSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/posts/$page': typeof PostsPageRoute
+  '/posts/p/$slug': typeof PostsPSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/posts/$page'
+  fullPaths: '/' | '/posts/$page' | '/posts/p/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/posts/$page'
-  id: '__root__' | '/' | '/posts/$page'
+  to: '/' | '/posts/$page' | '/posts/p/$slug'
+  id: '__root__' | '/' | '/posts/$page' | '/posts/p/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PostsPageRoute: typeof PostsPageRoute
+  PostsPSlugRoute: typeof PostsPSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostsPageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/posts/p/$slug': {
+      id: '/posts/p/$slug'
+      path: '/posts/p/$slug'
+      fullPath: '/posts/p/$slug'
+      preLoaderRoute: typeof PostsPSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PostsPageRoute: PostsPageRoute,
+  PostsPSlugRoute: PostsPSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRoute, Outlet, Link } from "@tanstack/react-router";
+import { HeadContent, Scripts, createRootRoute, Outlet, Link, useLocation } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import appCss from "../styles.css?url";
@@ -26,7 +26,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TanStack Start Starter" },
+      { title: "Spencer Duball" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
     scripts: [{ children: clientThemeScript }],
@@ -146,6 +146,15 @@ function ThemeButton({ ...props }: React.ComponentProps<typeof Button>) {
 function Header({ className, ...props }: React.ComponentProps<"header">) {
   const [isOpen, setIsOpen] = React.useState(false);
 
+  // close the dialog box when a navigation occurs
+  const location = useLocation();
+  React.useEffect(() => setIsOpen(false), [location]);
+
+  // determine active route
+  const isPosts = /^\/posts?.*/.test(location.pathname);
+  const isProjects = /^\/projects?.*/.test(location.pathname);
+  const isSeries = /^\/series/.test(location.pathname);
+
   return (
     <header className={cn("@container grid h-20 w-full justify-items-center", className)} {...props}>
       {/* Tablet & Desktop Nav */}
@@ -158,21 +167,30 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
           <nav className="grid grid-flow-col gap-1">
             <Link
               to="/posts/$page"
-              params={{ page: "1" }}
-              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
+              params={{ page: 1 }}
+              className={cn(
+                "hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5",
+                isPosts && "underline decoration-wavy decoration-2 underline-offset-4",
+              )}
             >
               Posts
             </Link>
             <Link
               to="/projects/$page"
               params={{ page: "1" }}
-              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
+              className={cn(
+                "hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5",
+                isProjects && "underline decoration-wavy decoration-2 underline-offset-4",
+              )}
             >
               Projects
             </Link>
             <Link
               to="/series"
-              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5"
+              className={cn(
+                "hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5",
+                isSeries && "underline decoration-wavy decoration-2 underline-offset-4",
+              )}
             >
               Series
             </Link>
@@ -230,7 +248,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
                   <div className="fade-in animate-in">
                     <div className="animate-in slide-in-from-top-4 px-4 py-4 duration-200">
                       <nav className="grid auto-rows-max gap-6 text-2xl font-semibold">
-                        <Link to="/posts/$page" params={{ page: "1" }}>
+                        <Link to="/posts/$page" params={{ page: 1 }}>
                           Posts
                         </Link>
                         <Link to="/projects">Projects</Link>
@@ -247,6 +265,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
                   <Footer />
                 </div>
               </Dialog.Popup>
+              <Dialog.Backdrop className="bg-background h-[200vh] w-full border" />{" "}
             </Dialog.Viewport>
           </Dialog.Portal>
         </Dialog.Root>

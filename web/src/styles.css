@@ -132,7 +132,7 @@
   }
 }
 
-@layer theme {
+@theme {
   --breakpoint-2xs: 24rem; /* 384px */
   --breakpoint-xs: 30rem; /* 480px */
 }
