@@ -10,6 +10,7 @@ https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&ic
 
 - [x] Consolidate the "Welcome" from the index page
 - [x] Create a file & schema for paginated posts & pagination on the posts page
+- [ ] Change the pagination numbers to not be divisible by 5, check that this works correctly
 - [ ] Build a script to generate lorem ipsum
 - [ ] Correct the favicons to use correct dark favicon
 - [ ] Create the mdx component for the actual posts

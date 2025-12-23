@@ -100,19 +100,19 @@ export function Pagination<TTo extends LinkOptions["to"]>({
     // if less than 9 items, add all to list (no ellipsis needed)
     for (let idx = 1; idx <= max; idx++) desktop.push(pgLink(idx));
   } else {
-    if (page.current <= 5) {
+    if (page.current < 5) {
       [1, 2, 3, 4, 5].forEach((idx) => desktop.push(pgLink(idx)));
       desktop.push(<P.PaginationEllipsis />);
       [-1, 0].forEach((offset) => desktop.push(pgLink(max + offset)));
-    } else if (page.current > max - 5) {
+    } else if (page.current > max - 5 + 1) {
       [1, 2].forEach((idx) => desktop.push(pgLink(idx)));
       desktop.push(<P.PaginationEllipsis />);
       [-4, -3, -2, -1, -0].forEach((offset) => desktop.push(pgLink(max + offset)));
     } else {
       [1, 2].forEach((idx) => desktop.push(pgLink(idx)));
-      desktop.push(<P.PaginationEllipsis />);
+      if (page.current !== 5) desktop.push(<P.PaginationEllipsis />);
       [-2, -1, 0, 1, 2].forEach((offset) => desktop.push(pgLink(page.current + offset)));
-      desktop.push(<P.PaginationEllipsis />);
+      if (page.current !== max - 5 + 1) desktop.push(<P.PaginationEllipsis />);
       [-1, 0].forEach((offset) => desktop.push(pgLink(max + offset)));
     }
   }

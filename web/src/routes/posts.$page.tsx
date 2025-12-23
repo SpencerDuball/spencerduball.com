@@ -17,8 +17,9 @@ export const Route = createFileRoute("/posts/$page")({
     parse: (params) => z.object({ page: z.coerce.number().int().positive() }).parse(params),
     stringify: (params) => ({ page: params.page.toString() }),
   },
-  loader: async () => {
-    const items = await getPostItems({ data: { start: 0, end: 5 } });
+  loader: async ({ params: { page } }) => {
+    const [start, end] = [5 * (page - 1), 5 * page];
+    const items = await getPostItems({ data: { start, end } });
     const total = await getTotalPostItems();
     return { posts: { items, total } };
   },
