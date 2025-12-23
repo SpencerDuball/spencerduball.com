@@ -185,7 +185,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
             </Link>
             <Link
               to="/projects/$page"
-              params={{ page: "1" }}
+              params={{ page: 1 }}
               className={cn(
                 "hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5",
                 isProjects && "underline decoration-wavy decoration-2 underline-offset-4",
@@ -194,7 +194,8 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
               Projects
             </Link>
             <Link
-              to="/series"
+              to="/series/$page"
+              params={{ page: 1 }}
               className={cn(
                 "hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary px-2 py-1.5 font-medium @3xl:px-3.5",
                 isSeries && "underline decoration-wavy decoration-2 underline-offset-4",
@@ -259,8 +260,12 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
                         <Link to="/posts/$page" params={{ page: 1 }}>
                           Posts
                         </Link>
-                        <Link to="/projects">Projects</Link>
-                        <Link to="/series">Series</Link>
+                        <Link to="/projects/$page" params={{ page: 1 }}>
+                          Projects
+                        </Link>
+                        <Link to="/series/$page" params={{ page: 1 }}>
+                          Series
+                        </Link>
 
                         <div className="grid auto-rows-max justify-start gap-4">
                           <p className="text-muted-foreground text-sm">Settings</p>

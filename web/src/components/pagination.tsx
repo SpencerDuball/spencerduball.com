@@ -123,7 +123,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
         <li>
           <Button
             variant="ghost"
-            render={<Link to={to} params={params(page.current - 1)}></Link>}
+            render={page.current === 1 ? undefined : <Link to={to} params={params(page.current - 1)} />}
             nativeButton={false}
             disabled={page.current === 1}
             className={cn(
@@ -140,7 +140,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
         <li>
           <Button
             variant="ghost"
-            render={<Link to={to} params={params(page.current + 1)}></Link>}
+            render={page.current === max ? undefined : <Link to={to} params={params(page.current + 1)} />}
             nativeButton={false}
             disabled={page.current === max}
             className={cn(
@@ -155,7 +155,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
       <ol className={cn("hidden auto-cols-max grid-flow-col justify-center gap-1 md:grid", className)} {...props}>
         <Button
           variant="ghost"
-          render={<Link to={to} params={params(page.current - 1)}></Link>}
+          render={page.current === 1 ? undefined : <Link to={to} params={params(page.current - 1)} />}
           nativeButton={false}
           disabled={page.current === 1}
           className={cn(page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent")}
@@ -168,7 +168,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
         ))}
         <Button
           variant="ghost"
-          render={<Link to={to} params={params(page.current + 1)}></Link>}
+          render={page.current === max ? undefined : <Link to={to} params={params(page.current + 1)} />}
           nativeButton={false}
           disabled={page.current === max}
           className={cn(

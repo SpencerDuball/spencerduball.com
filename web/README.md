@@ -11,6 +11,7 @@ https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&ic
 - [x] Consolidate the "Welcome" from the index page
 - [x] Create a file & schema for paginated posts & pagination on the posts page
 - [ ] Build a script to generate lorem ipsum
+- [ ] Correct the favicons to use correct dark favicon
 - [ ] Create the mdx component for the actual posts
 - [ ] Create a global 404 route
 - [x] Generate all metadata (head, favicon, etc) for publishing, use `realfavicongenerator.net` for this

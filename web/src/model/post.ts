@@ -1,13 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod/v4";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { ZYamlString } from "@/lib/utils";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import process from "node:process";
 
 export const ZPostLi = z.object({
   id: z.string().regex(/^[0-9a-fA-F]{8}$/),
@@ -30,7 +27,7 @@ export const getPostItems = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .inputValidator((data: { start: number; end: number }) => data)
   .handler(async ({ data: { start, end } }) => {
-    const data = await fs.readFile(path.resolve(__dirname, "..", "data", "posts.yaml"), { encoding: "utf-8" });
+    const data = await fs.readFile(path.resolve(process.cwd(), "src", "data", "posts.yaml"), { encoding: "utf-8" });
     const posts = ZYamlString.pipe(ZPostLi.array()).parse(data);
     return posts.slice(start, end);
   });
@@ -45,7 +42,7 @@ export const getPostItems = createServerFn({ method: "GET" })
 export const getTotalPostItems = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
-    const data = await fs.readFile(path.resolve(__dirname, "..", "data", "posts.yaml"), { encoding: "utf-8" });
+    const data = await fs.readFile(path.resolve(process.cwd(), "src", "data", "posts.yaml"), { encoding: "utf-8" });
     const posts = ZYamlString.pipe(ZPostLi.array()).parse(data);
     return posts.length;
   });
