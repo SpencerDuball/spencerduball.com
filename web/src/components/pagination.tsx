@@ -128,7 +128,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           <Button
             variant="ghost"
             render={page.current === 1 ? undefined : <Link to={to} params={params(page.current - 1)} />}
-            nativeButton={false}
+            nativeButton={page.current === 1}
             disabled={page.current === 1}
             className={cn(
               page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent",
@@ -145,7 +145,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           <Button
             variant="ghost"
             render={page.current === max ? undefined : <Link to={to} params={params(page.current + 1)} />}
-            nativeButton={false}
+            nativeButton={page.current === max}
             disabled={page.current === max}
             className={cn(
               page.current === max && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent",
@@ -160,7 +160,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
         <Button
           variant="ghost"
           render={page.current === 1 ? undefined : <Link to={to} params={params(page.current - 1)} />}
-          nativeButton={false}
+          nativeButton={page.current === 1}
           disabled={page.current === 1}
           className={cn(page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent")}
         >
@@ -173,7 +173,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
         <Button
           variant="ghost"
           render={page.current === max ? undefined : <Link to={to} params={params(page.current + 1)} />}
-          nativeButton={false}
+          nativeButton={page.current === max}
           disabled={page.current === max}
           className={cn(
             page.current === max && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent",
