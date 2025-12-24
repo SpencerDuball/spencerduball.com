@@ -39,7 +39,7 @@ async function main() {
   const __dirname = path.dirname(__filename);
 
   const items: IPost[] = [];
-  const numItems = 80;
+  const numItems = 73;
   for (let i = 0; i < numItems; i++) {
     let temp: IPost;
     if (i % 3) temp = { ...templates[0] };

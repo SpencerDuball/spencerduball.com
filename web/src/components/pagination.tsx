@@ -72,48 +72,52 @@ export function Pagination<TTo extends LinkOptions["to"]>({
   );
   let mobile: React.ReactElement[] = [];
   if (max < 5) {
-    // if less than 5 items, add all to list (no ellipsis needed)
+    // [<prev][1][2][3][4][5][next>]
     for (let idx = 1; idx <= max; idx++) mobile.push(pgLink(idx));
   } else {
-    if (page.current <= 3) {
-      // display the first 3 links, ellipsis, and max
+    if (page.current < 3) {
+      // [<prev][1][2][3][...][max][next>]
       [1, 2, 3].forEach((idx) => mobile.push(pgLink(idx)));
       mobile.push(<P.PaginationEllipsis />);
       mobile.push(pgLink(max));
-    } else if (page.current > max - 3) {
-      // display the first link, ellipsis, and the last 3 links
+    } else if (page.current > max - 3 + 1) {
+      // [<prev][1][...][max-2][max-1][max][next>]
       mobile.push(pgLink(1));
       mobile.push(<P.PaginationEllipsis />);
       [-2, -1, 0].forEach((offset) => mobile.push(pgLink(max + offset)));
     } else {
+      // [<prev][1][...][curr-1][curr][curr+1][...][next>]
       mobile.push(pgLink(1));
-      mobile.push(<P.PaginationEllipsis />);
+      if (page.current !== 3) mobile.push(<P.PaginationEllipsis />);
       [-1, 0, 1].forEach((offset) => mobile.push(pgLink(page.current + offset)));
-      mobile.push(<P.PaginationEllipsis />);
+      if (page.current !== max - 3 + 1) mobile.push(<P.PaginationEllipsis />);
       mobile.push(pgLink(max));
     }
   }
 
   // build the links for desktop
   let desktop: React.ReactElement[] = [];
-  if (max <= 9) {
-    // if less than 9 items, add all to list (no ellipsis needed)
+  if (max <= 7) {
+    // [<prev][1][2][3][4][5][6][7][next>]
     for (let idx = 1; idx <= max; idx++) desktop.push(pgLink(idx));
   } else {
     if (page.current < 5) {
+      // [<prev][1][2][3][4][5][...][max][next>]
       [1, 2, 3, 4, 5].forEach((idx) => desktop.push(pgLink(idx)));
       desktop.push(<P.PaginationEllipsis />);
-      [-1, 0].forEach((offset) => desktop.push(pgLink(max + offset)));
+      desktop.push(pgLink(max));
     } else if (page.current > max - 5 + 1) {
-      [1, 2].forEach((idx) => desktop.push(pgLink(idx)));
+      // [<prev][1][...][max-4][max-3][max-2][max-1][max][next>]
+      desktop.push(pgLink(1));
       desktop.push(<P.PaginationEllipsis />);
-      [-4, -3, -2, -1, -0].forEach((offset) => desktop.push(pgLink(max + offset)));
+      [-4, -3, -2, -1, 0].forEach((offset) => desktop.push(pgLink(max + offset)));
     } else {
-      [1, 2].forEach((idx) => desktop.push(pgLink(idx)));
+      // [<prev][1][...][curr-2][curr-1][curr][curr+1][curr+2][...][max][next>]
+      [1].forEach((idx) => desktop.push(pgLink(idx)));
       if (page.current !== 5) desktop.push(<P.PaginationEllipsis />);
       [-2, -1, 0, 1, 2].forEach((offset) => desktop.push(pgLink(page.current + offset)));
       if (page.current !== max - 5 + 1) desktop.push(<P.PaginationEllipsis />);
-      [-1, 0].forEach((offset) => desktop.push(pgLink(max + offset)));
+      [0].forEach((offset) => desktop.push(pgLink(max + offset)));
     }
   }
 
