@@ -134,7 +134,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
               page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent",
             )}
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} />
+            <HugeiconsIcon strokeWidth={2} icon={ArrowLeft01Icon} />
             Prev
           </Button>
         </li>
@@ -152,7 +152,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
             )}
           >
             Next
-            <HugeiconsIcon icon={ArrowRight01Icon} />
+            <HugeiconsIcon strokeWidth={2} icon={ArrowRight01Icon} />
           </Button>
         </li>
       </ol>
@@ -164,7 +164,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           disabled={page.current === 1}
           className={cn(page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent")}
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} />
+          <HugeiconsIcon strokeWidth={2} icon={ArrowLeft01Icon} />
           Prev
         </Button>
         {desktop.map((item, idx) => (
@@ -180,7 +180,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           )}
         >
           Next
-          <HugeiconsIcon icon={ArrowRight01Icon} />
+          <HugeiconsIcon strokeWidth={2} icon={ArrowRight01Icon} />
         </Button>
       </ol>
     </>

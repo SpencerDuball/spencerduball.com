@@ -30,7 +30,7 @@ export function PostLi({ data, className, ...props }: PostLiProps) {
         {data.title}
       </Link>
       <div className="text-muted-foreground grid auto-cols-max grid-flow-col items-center gap-2">
-        <HugeiconsIcon className="h-5 w-5" icon={Calendar01Icon} />
+        <HugeiconsIcon strokeWidth={2} className="h-5 w-5" icon={Calendar01Icon} />
         <p className="text-muted-foreground text-sm italic">
           {data.modifiedAt ? "Updated: " : ""}
           {date.format(data.modifiedAt || data.createdAt)} ▪ {time.format(data.modifiedAt || data.createdAt)}

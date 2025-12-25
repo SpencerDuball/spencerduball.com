@@ -38,7 +38,7 @@ export function Component() {
                 render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
                 nativeButton={false}
               >
-                <HugeiconsIcon icon={NewTwitterIcon} />
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
               </Button>
               <Button
                 variant="outline"
@@ -47,7 +47,7 @@ export function Component() {
                 render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
                 nativeButton={false}
               >
-                <HugeiconsIcon icon={GithubIcon} />
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
               </Button>
               <Button
                 variant="outline"
@@ -86,6 +86,7 @@ export function Component() {
           >
             All Posts
             <HugeiconsIcon
+              strokeWidth={2}
               className="transition-transform duration-200 ease-out group-hover:translate-x-1"
               icon={ArrowRight02Icon}
             />

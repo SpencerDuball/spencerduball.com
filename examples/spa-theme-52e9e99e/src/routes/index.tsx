@@ -66,7 +66,7 @@ export function App() {
         onClick={() => dispatch({ type: "toggle" })}
       >
         Toggle Theme
-        <HugeiconsIcon icon={icon} />
+        <HugeiconsIcon strokeWidth={2} icon={icon} />
       </Button>
       <Card className="flex flex-col max-w-prose">
         <CardHeader className="items-center pb-0">
@@ -86,7 +86,8 @@ export function App() {
         </CardContent>
         <CardFooter className="flex-col gap-2 text-sm">
           <div className="flex items-center gap-2 leading-none font-medium">
-            Trending up by 5.2% this month <HugeiconsIcon icon={ArrowUpRight01Icon} className="h-4 w-4" />
+            Trending up by 5.2% this month{" "}
+            <HugeiconsIcon strokeWidth={2} icon={ArrowUpRight01Icon} className="h-4 w-4" />
           </div>
           <div className="text-muted-foreground leading-none">Showing total visitors for the last 6 months</div>
         </CardFooter>

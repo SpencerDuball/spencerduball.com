@@ -90,7 +90,7 @@ function Footer({ className, ...props }: React.ComponentProps<"footer">) {
             render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
             nativeButton={false}
           >
-            <HugeiconsIcon icon={NewTwitterIcon} />
+            <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
           </Button>
           <Button
             variant="ghost"
@@ -99,7 +99,7 @@ function Footer({ className, ...props }: React.ComponentProps<"footer">) {
             render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
             nativeButton={false}
           >
-            <HugeiconsIcon icon={GithubIcon} />
+            <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
           </Button>
           <Button
             variant="ghost"
@@ -121,7 +121,7 @@ function Footer({ className, ...props }: React.ComponentProps<"footer">) {
         {/* Right Side Footer */}
         <div className="flex items-center gap-1 text-sm">
           Copyright
-          <HugeiconsIcon className="h-4 w-4" icon={CopyrightIcon} />
+          <HugeiconsIcon strokeWidth={2} className="h-4 w-4" icon={CopyrightIcon} />
           2026
         </div>
       </div>
@@ -146,7 +146,7 @@ function ThemeButton({ ...props }: React.ComponentProps<typeof Button>) {
 
   return (
     <Button variant="outline" size="icon-lg" onClick={() => dispatch({ type: "theme.app.toggle" })} {...props}>
-      <HugeiconsIcon icon={icon} />
+      <HugeiconsIcon strokeWidth={2} icon={icon} />
     </Button>
   );
 }
@@ -213,7 +213,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
             variant="outline"
             className="hover:text-foreground text-muted-foreground grid w-40 grid-flow-col justify-start"
           >
-            <HugeiconsIcon icon={Search01Icon} />
+            <HugeiconsIcon strokeWidth={2} icon={Search01Icon} />
             Search ...
           </Button>
           <ThemeButton />
@@ -230,7 +230,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
         {/* Right Side Header */}
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
           <Dialog.Trigger render={<Button size="icon-lg" variant="outline" />}>
-            <HugeiconsIcon icon={Menu11Icon} />
+            <HugeiconsIcon strokeWidth={2} icon={Menu11Icon} />
           </Dialog.Trigger>
 
           <Dialog.Portal className="absolute top-0 left-0 h-full w-full">
@@ -248,7 +248,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
                         <p className="text-xl font-bold tracking-tighter">Spencer Duball</p>
                       </Link>
                       <Dialog.Close render={<Button size="icon-lg" variant="outline" />}>
-                        <HugeiconsIcon icon={Cancel01Icon} />
+                        <HugeiconsIcon strokeWidth={2} icon={Cancel01Icon} />
                       </Dialog.Close>
                     </div>
                   </div>
