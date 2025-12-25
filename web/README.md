@@ -12,6 +12,7 @@ https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&ic
 - [x] Create a file & schema for paginated posts & pagination on the posts page
 - [x] Change the pagination numbers to not be divisible by 5, check that this works correctly
 - [x] Build a script to generate lorem ipsum
+- [ ] Use Figma to correctly build the favicon. This has metadata from excalidraw
 - [ ] Correct the favicons to use correct dark favicon
 - [ ] Create the mdx component for the actual posts
 - [ ] Create a global 404 route
