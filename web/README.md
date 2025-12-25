@@ -15,9 +15,10 @@ https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&ic
 - [x] Use Figma to correctly build the favicon. This has metadata from excalidraw
 - [x] Correct the favicons to use correct dark favicon
 - [x] Generate all metadata (head, favicon, etc) for publishing, use `realfavicongenerator.net` for this
-- [ ] Create a global 404 route
+- [x] Create a global 404 route
 - [ ] Add better error handling and `errorComponent` to the routes with path parameters.
 - [ ] Create the mdx component for the actual posts
 - [ ] Add in the "moving ants" underline animation to the BlogLi elements
 - [ ] Add in the "moving wavy" underline animation to the top-level navigation
 - [ ] (maybe) Add an icon animation to the title for "Posts", "Projects", "Series" headers. Could be a quill moving, construction hammer, lights in series or train?
+- [ ] Add in snake animation to the 404 page

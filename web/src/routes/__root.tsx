@@ -41,6 +41,7 @@ export const Route = createRootRoute({
   }),
   shellComponent: RootDocument,
   component: RootComponent,
+  notFoundComponent: NotFoundComponent,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -58,6 +59,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  );
+}
+
+// -------------------------------------------------------------------------------------
+// ErrorComponent
+// -------------------------------------------------------------------------------------
+function NotFoundComponent() {
+  return (
+    <div className="grid h-full w-full place-items-center">
+      <div className="grid gap-4">
+        <h1 className="text text-8xl font-bold">404</h1>
+        <Button size="lg" variant="link" nativeButton={false} render={<Link to="/" />}>
+          Back To Home
+        </Button>
+      </div>
+    </div>
   );
 }
 

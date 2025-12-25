@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -47,7 +46,7 @@ function PaginationLink({ className, isActive, size = "icon", ...props }: Pagina
 function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink aria-label="Go to previous page" size="default" className={cn("pl-1.5!", className)} {...props}>
-      <HugeiconsIcon strokeWidth={2} icon={ArrowLeft01Icon} strokeWidth={2} data-icon="inline-start" />
+      <HugeiconsIcon strokeWidth={2} icon={ArrowLeft01Icon} data-icon="inline-start" />
       <span className="hidden sm:block">Previous</span>
     </PaginationLink>
   );
@@ -57,7 +56,7 @@ function PaginationNext({ className, ...props }: React.ComponentProps<typeof Pag
   return (
     <PaginationLink aria-label="Go to next page" size="default" className={cn("pr-1.5!", className)} {...props}>
       <span className="hidden sm:block">Next</span>
-      <HugeiconsIcon strokeWidth={2} icon={ArrowRight01Icon} strokeWidth={2} data-icon="inline-end" />
+      <HugeiconsIcon strokeWidth={2} icon={ArrowRight01Icon} data-icon="inline-end" />
     </PaginationLink>
   );
 }
@@ -70,7 +69,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span"
       className={cn("flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4", className)}
       {...props}
     >
-      <HugeiconsIcon strokeWidth={2} icon={MoreHorizontalCircle01Icon} strokeWidth={2} />
+      <HugeiconsIcon strokeWidth={2} icon={MoreHorizontalCircle01Icon} />
       <span className="sr-only">More pages</span>
     </span>
   );
