@@ -54,6 +54,17 @@ async function main() {
 
   const content = "# yaml-language-server: $schema=./schemas/posts.schema.json\n" + yaml.dump(items, { lineWidth: 88 });
   await fs.writeFile(path.join(__dirname, "posts.yaml"), content);
+
+  for (const item of items) {
+    const lines: string[] = [];
+    lines.push(`---`);
+    lines.push(`${yaml.dump(item, { lineWidth: 88 })}---`);
+    lines.push(``);
+    lines.push(`# ${item.title}`);
+    lines.push(``);
+    lines.push(`${item.summary}`);
+    await fs.writeFile(path.join(__dirname, "posts", `${item.slug}-${item.id}.mdx`), lines.join("\n"));
+  }
 }
 
 main();
