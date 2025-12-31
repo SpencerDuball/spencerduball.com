@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { notFound } from "@tanstack/react-router";
 import { z } from "zod/v4";
 import { staticFunctionMiddleware } from "@tanstack/start-static-server-functions";
 import path from "node:path";
@@ -8,6 +9,7 @@ import { difference, intersection } from "@/lib/set";
 import fs from "node:fs/promises";
 import matter from "gray-matter";
 import { serverEnv } from "@/lib/utils.server";
+import { compile } from "@mdx-js/mdx";
 
 // -------------------------------------------------------------------------------------
 // Validation
@@ -84,7 +86,7 @@ export const getPostItems = createServerFn({ method: "GET" })
     }
 
     // create an array sorted by createdAt time
-    const sortDesc = (curr: TPostLi, next: TPostLi) => curr.createdAt.getTime() - next.createdAt.getTime();
+    const sortDesc = (curr: TPostLi, next: TPostLi) => next.createdAt.getTime() - curr.createdAt.getTime();
     const posts = Array.from(cache.values())
       .map(({ post }) => post)
       .sort(sortDesc);
@@ -100,4 +102,26 @@ export const getTotalPostItems = createServerFn({ method: "GET" })
   .handler(async () => {
     const posts = await fg.glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", "*.mdx"));
     return posts.length;
+  });
+
+export const getPost = createServerFn({ method: "GET" })
+  .middleware([staticFunctionMiddleware])
+  .inputValidator((data: { slug: string }) => data)
+  .handler(async ({ data: { slug } }) => {
+    // extract the ID
+    const id = slug.match(/.*-(?<id>[0-9a-zA-Z]{8})$/)?.groups?.id;
+    if (!id) throw notFound();
+
+    // find the file path
+    const fpath = await fg
+      .glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", `*-${id}.mdx`))
+      .then((res) => res.pop());
+    if (!fpath) throw notFound();
+
+    // read in the file
+    const file = await fs.readFile(fpath, { encoding: "utf-8" }).then(matter);
+    const compiled = await compile(file.content, { outputFormat: "function-body" }).then((v) => v.toString());
+    const frontmatter = ZPostLi.parse(file.data);
+
+    return { compiled, frontmatter };
   });
