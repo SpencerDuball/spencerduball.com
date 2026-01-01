@@ -7,15 +7,16 @@ import process from "node:process";
 import fg, { type Entry } from "fast-glob";
 import { difference, intersection } from "@/lib/set";
 import fs from "node:fs/promises";
-import matter from "gray-matter";
 import { serverEnv } from "@/lib/utils.server";
-import { compile } from "@mdx-js/mdx";
+import Markdoc from "@markdoc/markdoc";
+import { ZYamlString } from "@/lib/utils";
+import { MarkdocConfig } from "@/components/mdoc";
 
 // -------------------------------------------------------------------------------------
 // Validation
 // -------------------------------------------------------------------------------------
 
-export const ZPostLi = z.object({
+export const ZPost = z.object({
   id: z.string().regex(/^[0-9a-fA-F]{8}$/),
   slug: z.string(),
   title: z.string(),
@@ -23,7 +24,7 @@ export const ZPostLi = z.object({
   createdAt: z.coerce.date(),
   modifiedAt: z.coerce.date().optional(),
 });
-export type TPostLi = z.infer<typeof ZPostLi>;
+export type TPostLi = z.infer<typeof ZPost>;
 
 // -------------------------------------------------------------------------------------
 // Local Methods
@@ -72,7 +73,7 @@ export const getPostItems = createServerFn({ method: "GET" })
   .inputValidator((data: { start: number; end: number }) => data)
   .handler(async ({ data: { start, end } }) => {
     // collect all posts and determine which need updated
-    const postEntries = await fg.glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", "*.mdx"), {
+    const postEntries = await fg.glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", "*.mdoc"), {
       stats: true,
     });
     const { toDelete, toUpdate, toCreate } = getPostActions(postEntries);
@@ -81,8 +82,9 @@ export const getPostItems = createServerFn({ method: "GET" })
     for (const post of toDelete) cache.delete(post);
     for (const post of [...toUpdate, ...toCreate]) {
       const { mtime } = await fs.stat(post);
-      const data = await fs.readFile(post, { encoding: "utf-8" }).then((d) => ZPostLi.parse(matter(d).data));
-      cache.set(post, { mtime, post: data });
+      const ast = await fs.readFile(post, { encoding: "utf-8" }).then((src) => Markdoc.parse(src));
+      const frontmatter = ZYamlString.pipe(ZPost).parse(ast.attributes?.frontmatter);
+      cache.set(post, { mtime, post: frontmatter });
     }
 
     // create an array sorted by createdAt time
@@ -100,7 +102,7 @@ export const getPostItems = createServerFn({ method: "GET" })
 export const getTotalPostItems = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
-    const posts = await fg.glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", "*.mdx"));
+    const posts = await fg.glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", "*.mdoc"));
     return posts.length;
   });
 
@@ -114,14 +116,16 @@ export const getPost = createServerFn({ method: "GET" })
 
     // find the file path
     const fpath = await fg
-      .glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", `*-${id}.mdx`))
+      .glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", `*-${id}.mdoc`))
       .then((res) => res.pop());
     if (!fpath) throw notFound();
 
-    // read in the file
-    const file = await fs.readFile(fpath, { encoding: "utf-8" }).then(matter);
-    const compiled = await compile(file.content, { outputFormat: "function-body" }).then((v) => v.toString());
-    const frontmatter = ZPostLi.parse(file.data);
+    // read in the file & extract ast
+    const ast = await fs.readFile(fpath, { encoding: "utf-8" }).then((src) => Markdoc.parse(src));
 
-    return { compiled, frontmatter };
+    // extract the content & frontmatter
+    const content = z.string().parse(JSON.stringify(Markdoc.transform(ast, MarkdocConfig)));
+    const frontmatter = ZYamlString.pipe(ZPost).parse(ast.attributes?.frontmatter);
+
+    return { content: JSON.parse(content), frontmatter };
   });

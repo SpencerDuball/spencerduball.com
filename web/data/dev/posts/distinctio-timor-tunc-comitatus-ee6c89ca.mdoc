@@ -1,0 +1,139 @@
+---
+id: ee6c89ca
+slug: distinctio-timor-tunc-comitatus
+title: 'Distinctio timor tunc comitatus vita '
+summary: >-
+  Cenaculum alioqui voluptates laudantium illum callide ver ancilla vir civitas. Voro
+  temporibus delinquo volva atque tergo utique. Somnus quidem ante ambulo ustulo quaerat
+  iure cupressus. Porro delibero virga clam.
+createdAt: '2025-08-17T23:31:01.466Z'
+---
+# Distinctio timor tunc comitatus vita 
+
+Voluptatem cenaculum addo voluptates officia decimus aspernatur amet venia. Reprehenderit canis ascit ceno veritatis cimentarius. Utrimque necessitatibus suppellex ambulo alter sonitus asper adficio audentia sono.
+
+**bestia conatus** Audentia tenetur beatae vomica accusator acsi abbas. *villa corrumpo thema* Allatus..
+
+**clibanus denique** Conturbo assentator vilitas numquam contabesco tandem dolorum copiose depromo vinum. *anser adipiscor sui* Demonstro..
+
+## ulciscor summisse venio
+Corona advoco voluntarius. Molestiae arcus urbs sopor succedo. Sopor sumo tero.
+
+-Fuga decumbo administratio tepesco cupressus claudeo nostrum curtus testimonium suppono.
+  -Crudelis adamo apparatus altus sufficio ullam turpis.
+  -Cogo recusandae vinculum maxime suadeo.
+  -Tamen pax cupressus.
+-Suffoco defero caelum valde.
+  1.Contra vinum arbitro virgo pel inflammatio victus.
+  2.Bene amissio validus decipio cuius.
+  3.Surgo arceo caelum vester architecto vesco curriculum demitto.
+
+## contabesco sed certe
+Cattus temperantia pecto. Triumphus validus vulariter socius tego adinventitias. Bibo abundans ascit crux.
+Cariosus cras quisquam quidem suggero curatio solio. Caterva strues sequi crastinus crebro vacuus vergo cernuus valens. Confugo summopere vester magnam stipes harum triumphus aperiam.
+Sublime sperno comptus atrox tubineus. Pauci aeger depraedor advoco tametsi. Vinum nihil acies creator ducimus arceo abutor.
+![demonstro](https://picsum.photos/seed/GVbH4IGbi/2152/1029 'exercitationem abstergo')
+
+```javascript
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { PrintablesIcon } from "@/components/icons";
+import { PostLi } from "@/components/post-li";
+import { getPostItems } from "@/model/post";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const posts = await getPostItems({ data: { start: 0, end: 3 } });
+    return { posts };
+  },
+  component: Component,
+});
+
+export function Component() {
+  const { posts } = Route.useLoaderData();
+
+  return (
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        {/* Welcome */}
+        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
+          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
+          <div className="grid auto-rows-max gap-4">
+            <h1 className="text-5xl font-bold">Welcome</h1>
+            <p>
+              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
+            </p>
+            <div className="inline-grid w-max grid-flow-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+                render={
+                  <a
+                    href="https://www.printables.com/social/212303-spencer_duball/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                nativeButton={false}
+              >
+                <PrintablesIcon />
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-b" />
+
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
+            {posts.map((post) => (
+              <PostLi key={post.id} data={post} />
+            ))}
+          </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: 1 }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts
+            <HugeiconsIcon
+              strokeWidth={2}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
+```
+
+> Super aperio versus arcus color.
+> — *Elaine Glover*

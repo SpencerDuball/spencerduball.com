@@ -2,8 +2,7 @@ import React from "react";
 import { getPost } from "@/model/post";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod/v4";
-import { runSync } from "@mdx-js/mdx";
-import * as runtime from "react/jsx-runtime";
+import Markdoc from "@markdoc/markdoc";
 
 export const Route = createFileRoute("/posts/p/$slug")({
   params: {
@@ -11,23 +10,22 @@ export const Route = createFileRoute("/posts/p/$slug")({
     stringify: (params) => ({ slug: params.slug.toString() }),
   },
   loader: async ({ params: { slug } }) => {
-    const { compiled, frontmatter } = await getPost({ data: { slug } });
-    return { compiled, frontmatter };
+    const { content, frontmatter } = await getPost({ data: { slug } });
+    return { content, frontmatter };
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { compiled, frontmatter } = Route.useLoaderData();
-
-  const Content = React.useMemo(() => runSync(compiled, runtime).default, [compiled]);
+  const { content, frontmatter } = Route.useLoaderData();
+  const Content = React.useMemo(() => Markdoc.renderers.react(content, React), [content]);
 
   return (
-    <div>
-      <div>Hello "/posts/p/$slug"! {frontmatter.id}</div>
-      <article>
-        <Content />
-      </article>
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        <div>Hello "/posts/p/$slug"! {frontmatter.id}</div>
+        <article className="grid w-full max-w-none">{Content}</article>
+      </div>
     </div>
   );
 }

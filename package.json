@@ -3,8 +3,5 @@
   "workspaces": [
     "web",
     "packages/*"
-  ],
-  "dependencies": {
-    "@mdx-js/rollup": "^3.1.1"
-  }
+  ]
 }
