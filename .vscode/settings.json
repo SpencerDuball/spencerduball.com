@@ -10,5 +10,6 @@
   "files.readonlyInclude": {
     // This is excluded for the "web" package using tanstack-router.
     "**/routeTree.gen.ts": true
-  }
+  },
+  "tailwindCSS.classFunctions": ["tv"]
 }

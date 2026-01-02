@@ -13,7 +13,7 @@
   "iconLibrary": "hugeicons",
   "aliases": {
     "components": "@/components",
-    "utils": "@/lib/utils",
+    "utils": "tailwind-variants",
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"

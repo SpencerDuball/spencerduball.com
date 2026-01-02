@@ -3,6 +3,7 @@ import { getPost } from "@/model/post";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod/v4";
 import Markdoc from "@markdoc/markdoc";
+import { components } from "@/components/mdoc";
 
 export const Route = createFileRoute("/posts/p/$slug")({
   params: {
@@ -18,13 +19,13 @@ export const Route = createFileRoute("/posts/p/$slug")({
 
 function RouteComponent() {
   const { content, frontmatter } = Route.useLoaderData();
-  const Content = React.useMemo(() => Markdoc.renderers.react(content, React), [content]);
+  const Content = React.useMemo(() => Markdoc.renderers.react(content, React, { components }), [content]);
 
   return (
     <div className="grid justify-items-center">
       <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
         <div>Hello "/posts/p/$slug"! {frontmatter.id}</div>
-        <div className="prose prose-stone dark:prose-invert grid w-full max-w-none">{Content}</div>
+        <div className="grid w-full max-w-none">{Content}</div>
       </div>
     </div>
   );

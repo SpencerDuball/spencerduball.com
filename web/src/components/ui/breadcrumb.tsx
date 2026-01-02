@@ -2,7 +2,7 @@ import * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 
-import { cn } from "@/lib/utils";
+import { cn } from "tailwind-variants";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon, MoreHorizontalCircle01Icon } from "@hugeicons/core-free-icons";
 
@@ -14,7 +14,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   return (
     <ol
       data-slot="breadcrumb-list"
-      className={cn("text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs break-words", className)}
+      className={cn("text-muted-foreground flex flex-wrap items-center gap-1.5 text-xs wrap-break-word", className)}
       {...props}
     />
   );
