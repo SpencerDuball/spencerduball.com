@@ -1,0 +1,140 @@
+---
+id: 3f10f2ca
+slug: creber-acceptus-accedo-cornu
+title: 'Creber acceptus accedo cornu dedico pariatur '
+summary: >-
+  Vitium vinculum amaritudo. Approbo utrimque sollers pauci subseco summisse tepidus
+  deleo contigo. Ver sumptus laborum amplexus varietas adamo averto ater. Quas vilicus
+  aeneus coniuratio perspiciatis vinculum vito. Chirographum tepesco bellicus
+  consectetur clarus vobis desparatus. Totidem thymbra esse vehemens speculum explicabo
+  decumbo textilis ambulo. Balbus aurum ater maiores mollitia vita curo bos credo. Ter
+  valens vere.
+createdAt: '2025-08-22T01:28:37.666Z'
+modifiedAt: '2025-12-01T12:13:38.707Z'
+---
+# Creber acceptus accedo cornu dedico pariatur 
+
+Adopto usitas aveho coerceo curto contabesco apparatus. Incidunt delicate accusator summisse a. Atqui attero repudiandae vulariter via comitatus.
+
+---
+![pecus](https://picsum.photos/seed/UdH67DMFZ/57/933 'speculum deduco territo')
+
+```python
+from typing import Union
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: Union[str, None] = None):
+    return {"item_id": item_id, "q": q}
+```
+![una](https://picsum.photos/seed/9EYgH1I9kW/1803/755 'spargo deorsum')
+
+```javascript
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { PrintablesIcon } from "@/components/icons";
+import { PostLi } from "@/components/post-li";
+import { getPostItems } from "@/model/post";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const posts = await getPostItems({ data: { start: 0, end: 3 } });
+    return { posts };
+  },
+  component: Component,
+});
+
+export function Component() {
+  const { posts } = Route.useLoaderData();
+
+  return (
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        {/* Welcome */}
+        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
+          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
+          <div className="grid auto-rows-max gap-4">
+            <h1 className="text-5xl font-bold">Welcome</h1>
+            <p>
+              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
+            </p>
+            <div className="inline-grid w-max grid-flow-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+                render={
+                  <a
+                    href="https://www.printables.com/social/212303-spencer_duball/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                nativeButton={false}
+              >
+                <PrintablesIcon />
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-b" />
+
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
+            {posts.map((post) => (
+              <PostLi key={post.id} data={post} />
+            ))}
+          </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: 1 }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts
+            <HugeiconsIcon
+              strokeWidth={2}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
+```

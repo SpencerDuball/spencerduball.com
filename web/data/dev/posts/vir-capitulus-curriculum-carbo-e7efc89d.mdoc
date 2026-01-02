@@ -1,0 +1,163 @@
+---
+id: e7efc89d
+slug: vir-capitulus-curriculum-carbo
+title: 'Vir capitulus curriculum carbo rem abscido omnis clamo '
+summary: >-
+  Articulus careo ex sperno saepe acies tutamen nisi vespillo. Adipisci ulciscor debeo
+  atrox ullam qui talis. Recusandae basium tui tot consectetur usque utilis. Asperiores
+  adsum conscendo textilis natus vinitor vestigium depopulo comparo.
+createdAt: '2025-12-10T09:32:11.722Z'
+modifiedAt: '2025-12-21T15:27:13.562Z'
+---
+# Vir capitulus curriculum carbo rem abscido omnis clamo 
+
+Depraedor utrum vox volva eius desino reprehenderit admitto. Creta tabella inflammatio nihil tactus suffoco communis. Est rerum tertius thesaurus sum cruciamentum valens suscipio constans.
+
+1. Ager eos argumentum.
+  1. Sponte tenus sol vindico audentia.
+    1. Debeo apud una adulescens amplus decimus celebrer.
+      - Studio valetudo textus clamo contigo vallum.
+      - Fugiat adulatio attero.
+      - Carpo aedificium animi usitas ducimus animus cribro cupio animi.
+    2. Sulum vigilo totam vulgaris.
+      - Magni eligendi trucido defleo subseco adflicto auditor ambitus blanditiis angelus.
+      - Totam vallum alo.
+      - Cunabula adipiscor taedium thesaurus vomica tactus compello pectus beatus.
+    3. Videlicet addo amoveo coepi callide.
+      - Pecco tutamen subvenio rem ventito.
+      - Aptus peccatus truculenter.
+      - Ulciscor cresco utrimque cimentarius denego vitiosus adeptio cavus deinde tibi.
+  2. Vinco triduana apto succurro deduco.
+    - Chirographum amiculum candidus comedo molestias alter.
+    - Possimus amoveo celebrer.
+    - Velit cogo amaritudo spero.
+  3. Caste decretum tamisium autem.
+    1. Creo antepono totus decipio curtus.
+    2. Quisquam villa adulescens quaerat.
+    3. Suspendo ulterius vomer spoliatio ulterius.
+2. Conspergo aptus solum.
+  1. Vehemens voluntarius aggero crudelis terror.
+  2. Placeat adopto uxor cinis pecus aeneus cuppedia.
+  3. Saepe thalassinus virgo cultura timidus.
+3. Error labore fugit.
+  1. Labore toties sint creber debilito.
+  2. Atavus adversus adnuo sub vulpes vilicus ex timidus coma tamen.
+  3. Cernuus vicissitudo quod sortitus debitis comprehendo textor.
+
+---
+
+**bellum cibus** Tabesco tero tabernus uberrime arcesso summisse stillicidium. *sed causa basium* Aufero..
+
+```javascript
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { PrintablesIcon } from "@/components/icons";
+import { PostLi } from "@/components/post-li";
+import { getPostItems } from "@/model/post";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const posts = await getPostItems({ data: { start: 0, end: 3 } });
+    return { posts };
+  },
+  component: Component,
+});
+
+export function Component() {
+  const { posts } = Route.useLoaderData();
+
+  return (
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        {/* Welcome */}
+        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
+          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
+          <div className="grid auto-rows-max gap-4">
+            <h1 className="text-5xl font-bold">Welcome</h1>
+            <p>
+              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
+            </p>
+            <div className="inline-grid w-max grid-flow-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+                render={
+                  <a
+                    href="https://www.printables.com/social/212303-spencer_duball/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                nativeButton={false}
+              >
+                <PrintablesIcon />
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-b" />
+
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
+            {posts.map((post) => (
+              <PostLi key={post.id} data={post} />
+            ))}
+          </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: 1 }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts
+            <HugeiconsIcon
+              strokeWidth={2}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
+```
+
+- Umbra attonbitus solutio suscipit convoco tergiversatio studio ambitus.
+  - Cubicularis concido atrocitas occaecati alias fugit vobis cum odio corrigo.
+  - Video placeat occaecati sonitus.
+  - Coma ciminatio patior ipsa benigne.
+- Arcus adeptio amplitudo ait absum adicio.
+  1. Sufficio video admitto stips.
+  2. Stips benigne laudantium cursim strues.
+  3. Coepi cognatus statua crudelis demo vehemens argumentum tamen bibo.
+
+> Cupio tamquam tepidus acer.
+> — *Ignacio Predovic*
+![depulso antea](https://picsum.photos/seed/3RSTqz7Z/2347/607 'aetas')

@@ -1,0 +1,132 @@
+---
+id: 75a441cd
+slug: textilis-ab-credo-conqueror
+title: 'Textilis ab credo conqueror capto truculenter tot '
+summary: >-
+  Blanditiis ascit ipsam cursim vinco crapula validus. Administratio approbo demens
+  adhaero. Inflammatio vergo creator maiores. Adduco abscido sulum conventus tandem
+  cuppedia sumo stella.
+createdAt: '2025-08-07T07:44:20.164Z'
+modifiedAt: '2025-11-07T14:35:42.244Z'
+---
+# Textilis ab credo conqueror capto truculenter tot 
+
+Decretum aggredior modi vox aveho ea aufero versus culpa. Blanditiis fugiat voluptatem bestia. Somniculosus textilis clibanus ducimus itaque corrumpo fuga abundans.
+
+* Deleo cado vulgaris cornu victus tondeo surgo cognatus.
+* Including some `const a = '42';` here.
+* Ducimus celebrer audentia adimpleo socius velit.
+
+```javascript
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { PrintablesIcon } from "@/components/icons";
+import { PostLi } from "@/components/post-li";
+import { getPostItems } from "@/model/post";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const posts = await getPostItems({ data: { start: 0, end: 3 } });
+    return { posts };
+  },
+  component: Component,
+});
+
+export function Component() {
+  const { posts } = Route.useLoaderData();
+
+  return (
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        {/* Welcome */}
+        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
+          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
+          <div className="grid auto-rows-max gap-4">
+            <h1 className="text-5xl font-bold">Welcome</h1>
+            <p>
+              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
+            </p>
+            <div className="inline-grid w-max grid-flow-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+                render={
+                  <a
+                    href="https://www.printables.com/social/212303-spencer_duball/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                nativeButton={false}
+              >
+                <PrintablesIcon />
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-b" />
+
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
+            {posts.map((post) => (
+              <PostLi key={post.id} data={post} />
+            ))}
+          </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: 1 }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts
+            <HugeiconsIcon
+              strokeWidth={2}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
+```
+
+* Terror utique vindico ait virga.
+* Including some `const a = '42';` here.
+* Sortitus attollo civis.
+
+### vesco vulgo succurro
+Tyrannus defluo tergum rem animi deporto. Certus doloremque ciminatio. Amiculum coruscus sum culpo admoneo amo tersus verumtamen pecto sodalitas.
+
+---
+
+Check out [this link](https://sniveling-knickers.com/ "correptius viscus aspicio") for more info.
+
+**decor confugo** Culpo demo conatus curso vigilo umquam similique. *conservo eligendi super* Theologus tersus talus..

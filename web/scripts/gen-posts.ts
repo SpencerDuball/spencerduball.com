@@ -49,15 +49,15 @@ function generateMdElement() {
     () =>
       faker.helpers.arrayElement([
         // ordered
-        `\n1.${faker.lorem.sentence()}\n2.${faker.lorem.sentence()}\n3.${faker.lorem.sentence()}`,
+        `\n1. ${faker.lorem.sentence()}\n2. ${faker.lorem.sentence()}\n3. ${faker.lorem.sentence()}`,
         // unordered
-        `\n-${faker.lorem.sentence()}\n-${faker.lorem.sentence()}\n-${faker.lorem.sentence()}`,
+        `\n- ${faker.lorem.sentence()}\n- ${faker.lorem.sentence()}\n- ${faker.lorem.sentence()}`,
         // ordered (nested - one level)
-        `\n1.${faker.lorem.sentence()}\n  1.${faker.lorem.sentence()}\n  2.${faker.lorem.sentence()}\n  3.${faker.lorem.sentence()}\n2.${faker.lorem.sentence()}\n  1.${faker.lorem.sentence()}\n  2.${faker.lorem.sentence()}\n  3.${faker.lorem.sentence()}\n3.${faker.lorem.sentence()}\n  1.${faker.lorem.sentence()}\n  2.${faker.lorem.sentence()}\n  3.${faker.lorem.sentence()}`,
+        `\n1. ${faker.lorem.sentence()}\n  1. ${faker.lorem.sentence()}\n  2. ${faker.lorem.sentence()}\n  3. ${faker.lorem.sentence()}\n2. ${faker.lorem.sentence()}\n  1. ${faker.lorem.sentence()}\n  2. ${faker.lorem.sentence()}\n  3. ${faker.lorem.sentence()}\n3. ${faker.lorem.sentence()}\n  1. ${faker.lorem.sentence()}\n  2. ${faker.lorem.sentence()}\n  3. ${faker.lorem.sentence()}`,
         // unordered (nested - one level)
-        `\n-${faker.lorem.sentence()}\n  -${faker.lorem.sentence()}\n  -${faker.lorem.sentence()}\n  -${faker.lorem.sentence()}\n-${faker.lorem.sentence()}\n  1.${faker.lorem.sentence()}\n  2.${faker.lorem.sentence()}\n  3.${faker.lorem.sentence()}`,
+        `\n- ${faker.lorem.sentence()}\n  - ${faker.lorem.sentence()}\n  - ${faker.lorem.sentence()}\n  - ${faker.lorem.sentence()}\n- ${faker.lorem.sentence()}\n  1. ${faker.lorem.sentence()}\n  2. ${faker.lorem.sentence()}\n  3. ${faker.lorem.sentence()}`,
         // mixed (nested - many levels)
-        `\n1.${faker.lorem.sentence()}\n  1.${faker.lorem.sentence()}\n    1.${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n    2.${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n    3.${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n      -${faker.lorem.sentence()}\n  2.${faker.lorem.sentence()}\n    -${faker.lorem.sentence()}\n    -${faker.lorem.sentence()}\n    -${faker.lorem.sentence()}\n  3.${faker.lorem.sentence()}\n    1.${faker.lorem.sentence()}\n    2.${faker.lorem.sentence()}\n    3.${faker.lorem.sentence()}\n2.${faker.lorem.sentence()}\n  1.${faker.lorem.sentence()}\n  2.${faker.lorem.sentence()}\n  3.${faker.lorem.sentence()}\n3.${faker.lorem.sentence()}\n  1.${faker.lorem.sentence()}\n  2.${faker.lorem.sentence()}\n  3.${faker.lorem.sentence()}`,
+        `\n1. ${faker.lorem.sentence()}\n  1. ${faker.lorem.sentence()}\n    1. ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n    2. ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n    3. ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n      - ${faker.lorem.sentence()}\n  2. ${faker.lorem.sentence()}\n    - ${faker.lorem.sentence()}\n    - ${faker.lorem.sentence()}\n    - ${faker.lorem.sentence()}\n  3. ${faker.lorem.sentence()}\n    1. ${faker.lorem.sentence()}\n    2. ${faker.lorem.sentence()}\n    3. ${faker.lorem.sentence()}\n2. ${faker.lorem.sentence()}\n  1. ${faker.lorem.sentence()}\n  2. ${faker.lorem.sentence()}\n  3. ${faker.lorem.sentence()}\n3. ${faker.lorem.sentence()}\n  1. ${faker.lorem.sentence()}\n  2. ${faker.lorem.sentence()}\n  3. ${faker.lorem.sentence()}`,
       ]),
     // table
     () =>
@@ -65,7 +65,7 @@ function generateMdElement() {
         // commonmark
         `\n| ${faker.lorem.word()} | ${faker.lorem.word()} |\n| --- | --- |\n| ${faker.number.int()} | ${faker.lorem.word()} |\n| ${faker.number.int()} | ${faker.lorem.word()} |`,
         // markdoc
-        `\n{% table %}\n* ${faker.lorem.word()}\n* ${faker.lorem.word()}\n---\n* ${faker.number.int()}\n* ${faker.lorem.word()}\n---\n* ${faker.number.int()}\n* ${faker.lorem.word()}\n---\n* ${faker.number.int()}\n* ${faker.lorem.word()}\n{% table %}`,
+        `\n{% table %}\n* ${faker.lorem.word()}\n* ${faker.lorem.word()}\n---\n* ${faker.number.int()}\n* ${faker.lorem.word()}\n---\n* ${faker.number.int()}\n* ${faker.lorem.word()}\n---\n* ${faker.number.int()}\n* ${faker.lorem.word()}\n{% /table %}`,
       ]),
     // code (inline)
     () => `\n* ${faker.lorem.sentence()}\n* Including some \`const a = '42';\` here.\n* ${faker.lorem.sentence()}`,

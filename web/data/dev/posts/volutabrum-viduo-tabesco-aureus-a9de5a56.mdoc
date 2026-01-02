@@ -1,0 +1,157 @@
+---
+id: a9de5a56
+slug: volutabrum-viduo-tabesco-aureus
+title: 'Volutabrum viduo tabesco aureus molestias quisquam abutor '
+summary: >-
+  Corrupti neque speculum suggero. Demergo odit unde molestias repudiandae arcus. Supra
+  valde in nesciunt desolo cernuus tenax caelestis nobis. Illo velociter arbor conturbo
+  subseco validus antiquus. Alo earum somniculosus clarus trado.
+createdAt: '2025-12-05T03:59:06.248Z'
+---
+# Volutabrum viduo tabesco aureus molestias quisquam abutor 
+
+Dedico vulpes vapulus cupressus repellendus creta testimonium aegrotatio bene decumbo. Aiunt tredecim asperiores tondeo cimentarius animus auxilium atqui. Taedium solus conicio celer vere alias vitium tertius bestia.
+
+---
+
+1. Vomito cado turpis caute quaerat.
+  1. Consequatur videlicet unus ascisco.
+    1. Adsum curto vomica vita veritas pax.
+      - Sub speciosus repellendus adnuo uberrime terreo cito hic sumo.
+      - Trans vitiosus veritas ultio curto altus.
+      - Decerno atrox sumptus audentia sollers conor uxor ex solium.
+    2. Terreo verumtamen tumultus.
+      - Abstergo debitis culpa.
+      - Decimus temptatio considero tero uter.
+      - Virtus caecus utroque cenaculum tantillus tero quos mollitia.
+    3. Facere bonus succedo volva vinculum tunc aequus.
+      - Commemoro bestia stabilis vesica assentator curvo tabgo.
+      - Tamisium clamo substantia certe libero sunt aeneus suasoria.
+      - Esse agnitio solvo arcus decens titulus triduana.
+  2. Rerum earum cum talis titulus acer.
+    - Vociferor basium addo creator utrum tunc exercitationem.
+    - Thema summisse sursum conitor alius colligo consectetur tres peior capio.
+    - Ipsa defetiscor claro.
+  3. Alii deprimo arguo dens velut cicuta.
+    1. Deduco tempora caritas harum volaticus delicate tamdiu comedo cinis.
+    2. Deficio angulus desipio earum curis cito vorago.
+    3. Quaerat depopulo a desidero candidus thymbra vitiosus video.
+2. Collum clibanus vesica vilitas summisse bos sollicito creo.
+  1. Cognatus voco cura doloribus basium aegrus adsuesco tendo voluptas.
+  2. Audax terror stipes surculus adinventitias circumvenio admitto deprimo creber despecto.
+  3. Videlicet tonsor quod cohors aliquid quod utilis aduro nulla.
+3. Thesis carmen natus defetiscor aperio modi animi voco.
+  1. Abduco conduco praesentium accendo tredecim ex rem capto sit tergum.
+  2. Animus avarus sodalitas arx.
+  3. Vigor quis vetus thalassinus.
+
+```javascript
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { PrintablesIcon } from "@/components/icons";
+import { PostLi } from "@/components/post-li";
+import { getPostItems } from "@/model/post";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const posts = await getPostItems({ data: { start: 0, end: 3 } });
+    return { posts };
+  },
+  component: Component,
+});
+
+export function Component() {
+  const { posts } = Route.useLoaderData();
+
+  return (
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        {/* Welcome */}
+        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
+          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
+          <div className="grid auto-rows-max gap-4">
+            <h1 className="text-5xl font-bold">Welcome</h1>
+            <p>
+              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
+            </p>
+            <div className="inline-grid w-max grid-flow-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+                render={
+                  <a
+                    href="https://www.printables.com/social/212303-spencer_duball/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                nativeButton={false}
+              >
+                <PrintablesIcon />
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-b" />
+
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
+            {posts.map((post) => (
+              <PostLi key={post.id} data={post} />
+            ))}
+          </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: 1 }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts
+            <HugeiconsIcon
+              strokeWidth={2}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
+```
+
+## amor causa dignissimos
+Aufero cumque tenus adduco turbo. Animus tamquam textilis quasi vitiosus speculum agnitio convoco antepono. Ars peior commodi quidem verumtamen cenaculum.
+Doloribus thermae anser aqua vivo asperiores comprehendo. Deporto tabula terror condico pariatur ducimus villa porro tristis. Vulgus adaugeo caute sponte aptus.
+
+---
+
+# avarus venia taedium
+Paens sortitus ubi sollicito umerus capto. Damno cogito tondeo aqua nulla eum caecus cedo id carpo. Adficio a odit.
+Cenaculum temptatio vis. Alveus amaritudo curo vallum. Canto titulus demitto.
