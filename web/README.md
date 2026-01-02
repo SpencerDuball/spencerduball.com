@@ -21,7 +21,7 @@ https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&ic
   - [x] Create the base configuration for markdoc (only need frontmatter validation to this point)
   - [x] Update the `model/post.ts` server functions & caching
   - [x] Update the `routes/posts.p.$slug.tsx` to render with Markdoc
-  - [ ] Update the styles.css to use tailwind colors not shadcn colors.
+  - [x] Update the styles.css to use tailwind colors not shadcn colors.
   - [ ] Use the tailwind prose as reference to build out the correct styles for all markdoc components. Use semantic styles
   - [ ] Complete the initial set of components for Markdoc that are already supported
   - [ ] Complete the initial layout and design for the post displays

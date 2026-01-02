@@ -24,7 +24,7 @@ function RouteComponent() {
     <div className="grid justify-items-center">
       <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
         <div>Hello "/posts/p/$slug"! {frontmatter.id}</div>
-        <article className="grid w-full max-w-none">{Content}</article>
+        <div className="prose prose-stone dark:prose-invert grid w-full max-w-none">{Content}</div>
       </div>
     </div>
   );

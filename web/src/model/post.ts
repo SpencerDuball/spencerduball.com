@@ -10,7 +10,6 @@ import fs from "node:fs/promises";
 import { serverEnv } from "@/lib/utils.server";
 import Markdoc from "@markdoc/markdoc";
 import { ZYamlString } from "@/lib/utils";
-import { MarkdocConfig } from "@/components/mdoc";
 
 // -------------------------------------------------------------------------------------
 // Validation
@@ -124,7 +123,7 @@ export const getPost = createServerFn({ method: "GET" })
     const ast = await fs.readFile(fpath, { encoding: "utf-8" }).then((src) => Markdoc.parse(src));
 
     // extract the content & frontmatter
-    const content = z.string().parse(JSON.stringify(Markdoc.transform(ast, MarkdocConfig)));
+    const content = z.string().parse(JSON.stringify(Markdoc.transform(ast)));
     const frontmatter = ZYamlString.pipe(ZPost).parse(ast.attributes?.frontmatter);
 
     return { content: JSON.parse(content), frontmatter };
