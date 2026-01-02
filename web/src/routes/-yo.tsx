@@ -32,10 +32,10 @@ let defaultModifiers = {
       {
         fontSize: rem(14),
         lineHeight: round(24 / 14),
-        p: {
-          marginTop: em(16, 14),
-          marginBottom: em(16, 14),
-        },
+        // p: {
+        //   marginTop: em(16, 14),
+        //   marginBottom: em(16, 14),
+        // },
         '[class~="lead"]': {
           fontSize: em(18, 14),
           lineHeight: round(28 / 18),
@@ -53,23 +53,23 @@ let defaultModifiers = {
         //   marginBottom: em(24, 30),
         //   lineHeight: round(36 / 30),
         // },
-        h2: {
-          fontSize: em(20, 14),
-          marginTop: em(32, 20),
-          marginBottom: em(16, 20),
-          lineHeight: round(28 / 20),
-        },
-        h3: {
-          fontSize: em(18, 14),
-          marginTop: em(28, 18),
-          marginBottom: em(8, 18),
-          lineHeight: round(28 / 18),
-        },
-        h4: {
-          marginTop: em(20, 14),
-          marginBottom: em(8, 14),
-          lineHeight: round(20 / 14),
-        },
+        // h2: {
+        //   fontSize: em(20, 14),
+        //   marginTop: em(32, 20),
+        //   marginBottom: em(16, 20),
+        //   lineHeight: round(28 / 20),
+        // },
+        // h3: {
+        //   fontSize: em(18, 14),
+        //   marginTop: em(28, 18),
+        //   marginBottom: em(8, 18),
+        //   lineHeight: round(28 / 18),
+        // },
+        // h4: {
+        //   marginTop: em(20, 14),
+        //   marginBottom: em(8, 14),
+        //   lineHeight: round(20 / 14),
+        // },
         img: {
           marginTop: em(24, 14),
           marginBottom: em(24, 14),
@@ -97,12 +97,12 @@ let defaultModifiers = {
         code: {
           fontSize: em(12, 14),
         },
-        "h2 code": {
-          fontSize: em(18, 20),
-        },
-        "h3 code": {
-          fontSize: em(16, 18),
-        },
+        // "h2 code": {
+        //   fontSize: em(18, 20),
+        // },
+        // "h3 code": {
+        //   fontSize: em(16, 18),
+        // },
         pre: {
           fontSize: em(12, 14),
           lineHeight: round(20 / 12),
@@ -172,15 +172,15 @@ let defaultModifiers = {
         "hr + *": {
           marginTop: "0",
         },
-        "h2 + *": {
-          marginTop: "0",
-        },
-        "h3 + *": {
-          marginTop: "0",
-        },
-        "h4 + *": {
-          marginTop: "0",
-        },
+        // "h2 + *": {
+        //   marginTop: "0",
+        // },
+        // "h3 + *": {
+        //   marginTop: "0",
+        // },
+        // "h4 + *": {
+        //   marginTop: "0",
+        // },
         table: {
           fontSize: em(12, 14),
           lineHeight: round(18 / 12),
@@ -237,10 +237,10 @@ let defaultModifiers = {
       {
         fontSize: rem(16),
         lineHeight: round(28 / 16),
-        p: {
-          marginTop: em(20, 16),
-          marginBottom: em(20, 16),
-        },
+        // p: {
+        //   marginTop: em(20, 16),
+        //   marginBottom: em(20, 16),
+        // },
         '[class~="lead"]': {
           fontSize: em(20, 16),
           lineHeight: round(32 / 20),
@@ -258,23 +258,23 @@ let defaultModifiers = {
         //   marginBottom: em(32, 36),
         //   lineHeight: round(40 / 36),
         // },
-        h2: {
-          fontSize: em(24, 16),
-          marginTop: em(48, 24),
-          marginBottom: em(24, 24),
-          lineHeight: round(32 / 24),
-        },
-        h3: {
-          fontSize: em(20, 16),
-          marginTop: em(32, 20),
-          marginBottom: em(12, 20),
-          lineHeight: round(32 / 20),
-        },
-        h4: {
-          marginTop: em(24, 16),
-          marginBottom: em(8, 16),
-          lineHeight: round(24 / 16),
-        },
+        // h2: {
+        //   fontSize: em(24, 16),
+        //   marginTop: em(48, 24),
+        //   marginBottom: em(24, 24),
+        //   lineHeight: round(32 / 24),
+        // },
+        // h3: {
+        //   fontSize: em(20, 16),
+        //   marginTop: em(32, 20),
+        //   marginBottom: em(12, 20),
+        //   lineHeight: round(32 / 20),
+        // },
+        // h4: {
+        //   marginTop: em(24, 16),
+        //   marginBottom: em(8, 16),
+        //   lineHeight: round(24 / 16),
+        // },
         img: {
           marginTop: em(32, 16),
           marginBottom: em(32, 16),
@@ -302,12 +302,12 @@ let defaultModifiers = {
         code: {
           fontSize: em(14, 16),
         },
-        "h2 code": {
-          fontSize: em(21, 24),
-        },
-        "h3 code": {
-          fontSize: em(18, 20),
-        },
+        // "h2 code": {
+        //   fontSize: em(21, 24),
+        // },
+        // "h3 code": {
+        //   fontSize: em(18, 20),
+        // },
         pre: {
           fontSize: em(14, 16),
           lineHeight: round(24 / 14),
@@ -377,15 +377,15 @@ let defaultModifiers = {
         "hr + *": {
           marginTop: "0",
         },
-        "h2 + *": {
-          marginTop: "0",
-        },
-        "h3 + *": {
-          marginTop: "0",
-        },
-        "h4 + *": {
-          marginTop: "0",
-        },
+        // "h2 + *": {
+        //   marginTop: "0",
+        // },
+        // "h3 + *": {
+        //   marginTop: "0",
+        // },
+        // "h4 + *": {
+        //   marginTop: "0",
+        // },
         table: {
           fontSize: em(14, 16),
           lineHeight: round(24 / 14),
@@ -442,10 +442,10 @@ let defaultModifiers = {
       {
         fontSize: rem(18),
         lineHeight: round(32 / 18),
-        p: {
-          marginTop: em(24, 18),
-          marginBottom: em(24, 18),
-        },
+        // p: {
+        //   marginTop: em(24, 18),
+        //   marginBottom: em(24, 18),
+        // },
         '[class~="lead"]': {
           fontSize: em(22, 18),
           lineHeight: round(32 / 22),
@@ -463,23 +463,23 @@ let defaultModifiers = {
         //   marginBottom: em(40, 48),
         //   lineHeight: round(48 / 48),
         // },
-        h2: {
-          fontSize: em(30, 18),
-          marginTop: em(56, 30),
-          marginBottom: em(32, 30),
-          lineHeight: round(40 / 30),
-        },
-        h3: {
-          fontSize: em(24, 18),
-          marginTop: em(40, 24),
-          marginBottom: em(16, 24),
-          lineHeight: round(36 / 24),
-        },
-        h4: {
-          marginTop: em(32, 18),
-          marginBottom: em(8, 18),
-          lineHeight: round(28 / 18),
-        },
+        // h2: {
+        //   fontSize: em(30, 18),
+        //   marginTop: em(56, 30),
+        //   marginBottom: em(32, 30),
+        //   lineHeight: round(40 / 30),
+        // },
+        // h3: {
+        //   fontSize: em(24, 18),
+        //   marginTop: em(40, 24),
+        //   marginBottom: em(16, 24),
+        //   lineHeight: round(36 / 24),
+        // },
+        // h4: {
+        //   marginTop: em(32, 18),
+        //   marginBottom: em(8, 18),
+        //   lineHeight: round(28 / 18),
+        // },
         img: {
           marginTop: em(32, 18),
           marginBottom: em(32, 18),
@@ -507,12 +507,12 @@ let defaultModifiers = {
         code: {
           fontSize: em(16, 18),
         },
-        "h2 code": {
-          fontSize: em(26, 30),
-        },
-        "h3 code": {
-          fontSize: em(21, 24),
-        },
+        // "h2 code": {
+        //   fontSize: em(26, 30),
+        // },
+        // "h3 code": {
+        //   fontSize: em(21, 24),
+        // },
         pre: {
           fontSize: em(16, 18),
           lineHeight: round(28 / 16),
@@ -582,15 +582,15 @@ let defaultModifiers = {
         "hr + *": {
           marginTop: "0",
         },
-        "h2 + *": {
-          marginTop: "0",
-        },
-        "h3 + *": {
-          marginTop: "0",
-        },
-        "h4 + *": {
-          marginTop: "0",
-        },
+        // "h2 + *": {
+        //   marginTop: "0",
+        // },
+        // "h3 + *": {
+        //   marginTop: "0",
+        // },
+        // "h4 + *": {
+        //   marginTop: "0",
+        // },
         table: {
           fontSize: em(16, 18),
           lineHeight: round(24 / 16),
@@ -647,10 +647,10 @@ let defaultModifiers = {
       {
         fontSize: rem(20),
         lineHeight: round(36 / 20),
-        p: {
-          marginTop: em(24, 20),
-          marginBottom: em(24, 20),
-        },
+        // p: {
+        //   marginTop: em(24, 20),
+        //   marginBottom: em(24, 20),
+        // },
         '[class~="lead"]': {
           fontSize: em(24, 20),
           lineHeight: round(36 / 24),
@@ -668,23 +668,23 @@ let defaultModifiers = {
         //   marginBottom: em(48, 56),
         //   lineHeight: round(56 / 56),
         // },
-        h2: {
-          fontSize: em(36, 20),
-          marginTop: em(56, 36),
-          marginBottom: em(32, 36),
-          lineHeight: round(40 / 36),
-        },
-        h3: {
-          fontSize: em(30, 20),
-          marginTop: em(48, 30),
-          marginBottom: em(20, 30),
-          lineHeight: round(40 / 30),
-        },
-        h4: {
-          marginTop: em(36, 20),
-          marginBottom: em(12, 20),
-          lineHeight: round(32 / 20),
-        },
+        // h2: {
+        //   fontSize: em(36, 20),
+        //   marginTop: em(56, 36),
+        //   marginBottom: em(32, 36),
+        //   lineHeight: round(40 / 36),
+        // },
+        // h3: {
+        //   fontSize: em(30, 20),
+        //   marginTop: em(48, 30),
+        //   marginBottom: em(20, 30),
+        //   lineHeight: round(40 / 30),
+        // },
+        // h4: {
+        //   marginTop: em(36, 20),
+        //   marginBottom: em(12, 20),
+        //   lineHeight: round(32 / 20),
+        // },
         img: {
           marginTop: em(40, 20),
           marginBottom: em(40, 20),
@@ -712,12 +712,12 @@ let defaultModifiers = {
         code: {
           fontSize: em(18, 20),
         },
-        "h2 code": {
-          fontSize: em(31, 36),
-        },
-        "h3 code": {
-          fontSize: em(27, 30),
-        },
+        // "h2 code": {
+        //   fontSize: em(31, 36),
+        // },
+        // "h3 code": {
+        //   fontSize: em(27, 30),
+        // },
         pre: {
           fontSize: em(18, 20),
           lineHeight: round(32 / 18),
@@ -787,15 +787,15 @@ let defaultModifiers = {
         "hr + *": {
           marginTop: "0",
         },
-        "h2 + *": {
-          marginTop: "0",
-        },
-        "h3 + *": {
-          marginTop: "0",
-        },
-        "h4 + *": {
-          marginTop: "0",
-        },
+        // "h2 + *": {
+        //   marginTop: "0",
+        // },
+        // "h3 + *": {
+        //   marginTop: "0",
+        // },
+        // "h4 + *": {
+        //   marginTop: "0",
+        // },
         table: {
           fontSize: em(18, 20),
           lineHeight: round(28 / 18),
@@ -852,10 +852,10 @@ let defaultModifiers = {
       {
         fontSize: rem(24),
         lineHeight: round(40 / 24),
-        p: {
-          marginTop: em(32, 24),
-          marginBottom: em(32, 24),
-        },
+        // p: {
+        //   marginTop: em(32, 24),
+        //   marginBottom: em(32, 24),
+        // },
         '[class~="lead"]': {
           fontSize: em(30, 24),
           lineHeight: round(44 / 30),
@@ -873,23 +873,23 @@ let defaultModifiers = {
         //   marginBottom: em(56, 64),
         //   lineHeight: round(64 / 64),
         // },
-        h2: {
-          fontSize: em(48, 24),
-          marginTop: em(72, 48),
-          marginBottom: em(40, 48),
-          lineHeight: round(52 / 48),
-        },
-        h3: {
-          fontSize: em(36, 24),
-          marginTop: em(56, 36),
-          marginBottom: em(24, 36),
-          lineHeight: round(44 / 36),
-        },
-        h4: {
-          marginTop: em(40, 24),
-          marginBottom: em(16, 24),
-          lineHeight: round(36 / 24),
-        },
+        // h2: {
+        //   fontSize: em(48, 24),
+        //   marginTop: em(72, 48),
+        //   marginBottom: em(40, 48),
+        //   lineHeight: round(52 / 48),
+        // },
+        // h3: {
+        //   fontSize: em(36, 24),
+        //   marginTop: em(56, 36),
+        //   marginBottom: em(24, 36),
+        //   lineHeight: round(44 / 36),
+        // },
+        // h4: {
+        //   marginTop: em(40, 24),
+        //   marginBottom: em(16, 24),
+        //   lineHeight: round(36 / 24),
+        // },
         img: {
           marginTop: em(48, 24),
           marginBottom: em(48, 24),
@@ -917,12 +917,12 @@ let defaultModifiers = {
         code: {
           fontSize: em(20, 24),
         },
-        "h2 code": {
-          fontSize: em(42, 48),
-        },
-        "h3 code": {
-          fontSize: em(32, 36),
-        },
+        // "h2 code": {
+        //   fontSize: em(42, 48),
+        // },
+        // "h3 code": {
+        //   fontSize: em(32, 36),
+        // },
         pre: {
           fontSize: em(20, 24),
           lineHeight: round(36 / 20),
@@ -992,15 +992,15 @@ let defaultModifiers = {
         "hr + *": {
           marginTop: "0",
         },
-        "h2 + *": {
-          marginTop: "0",
-        },
-        "h3 + *": {
-          marginTop: "0",
-        },
-        "h4 + *": {
-          marginTop: "0",
-        },
+        // "h2 + *": {
+        //   marginTop: "0",
+        // },
+        // "h3 + *": {
+        //   marginTop: "0",
+        // },
+        // "h4 + *": {
+        //   marginTop: "0",
+        // },
         table: {
           fontSize: em(20, 24),
           lineHeight: round(28 / 20),
@@ -1412,7 +1412,7 @@ module.exports = {
       {
         color: "var(--tw-prose-body)",
         maxWidth: "65ch",
-        p: {}, // Required to maintain correct order when merging
+        // p: {}, // Required to maintain correct order when merging
         '[class~="lead"]': {
           color: "var(--tw-prose-lead)",
         },
@@ -1504,30 +1504,30 @@ module.exports = {
         //   fontWeight: "900",
         //   color: "inherit",
         // },
-        h2: {
-          color: "var(--tw-prose-headings)",
-          fontWeight: "700",
-        },
-        "h2 strong": {
-          fontWeight: "800",
-          color: "inherit",
-        },
-        h3: {
-          color: "var(--tw-prose-headings)",
-          fontWeight: "600",
-        },
-        "h3 strong": {
-          fontWeight: "700",
-          color: "inherit",
-        },
-        h4: {
-          color: "var(--tw-prose-headings)",
-          fontWeight: "600",
-        },
-        "h4 strong": {
-          fontWeight: "700",
-          color: "inherit",
-        },
+        // h2: {
+        //   color: "var(--tw-prose-headings)",
+        //   fontWeight: "700",
+        // },
+        // "h2 strong": {
+        //   fontWeight: "800",
+        //   color: "inherit",
+        // },
+        // h3: {
+        //   color: "var(--tw-prose-headings)",
+        //   fontWeight: "600",
+        // },
+        // "h3 strong": {
+        //   fontWeight: "700",
+        //   color: "inherit",
+        // },
+        // h4: {
+        //   color: "var(--tw-prose-headings)",
+        //   fontWeight: "600",
+        // },
+        // "h4 strong": {
+        //   fontWeight: "700",
+        //   color: "inherit",
+        // },
         img: {}, // Required to maintain correct order when merging
         picture: {
           display: "block",
@@ -1552,18 +1552,18 @@ module.exports = {
         "a code": {
           color: "inherit",
         },
-        "h1 code": {
-          color: "inherit",
-        },
-        "h2 code": {
-          color: "inherit",
-        },
-        "h3 code": {
-          color: "inherit",
-        },
-        "h4 code": {
-          color: "inherit",
-        },
+        // "h1 code": {
+        //   color: "inherit",
+        // },
+        // "h2 code": {
+        //   color: "inherit",
+        // },
+        // "h3 code": {
+        //   color: "inherit",
+        // },
+        // "h4 code": {
+        //   color: "inherit",
+        // },
         "blockquote code": {
           color: "inherit",
         },

@@ -85,7 +85,7 @@ function Divider({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn("grid w-full justify-items-center", className)} {...props}>
       <div className="w-full max-w-4xl px-4">
-        <div className="w-full border-b" />
+        <hr className="w-full" />
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ This is a template for a new TanStack Start project with React, TypeScript, and 
 
 https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&iconLibrary=hugeicons&font=jetbrains-mono&radius=none
 
+https://play.tailwindcss.com/OPEUJYQM9Q
+
 # Todo
 
 - [x] Consolidate the "Welcome" from the index page
