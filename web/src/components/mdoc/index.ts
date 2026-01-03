@@ -1,4 +1,4 @@
-import { type Config } from "@markdoc/markdoc";
+import { type Config, type Node } from "@markdoc/markdoc";
 import { heading, Heading } from "./heading";
 import { paragraph, Paragraph } from "./paragraph";
 import { hr, HorizontalRow } from "./hr";

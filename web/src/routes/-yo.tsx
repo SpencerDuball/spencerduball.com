@@ -70,10 +70,10 @@ let defaultModifiers = {
         //   marginBottom: em(8, 14),
         //   lineHeight: round(20 / 14),
         // },
-        img: {
-          marginTop: em(24, 14),
-          marginBottom: em(24, 14),
-        },
+        // img: {
+        //   marginTop: em(24, 14),
+        //   marginBottom: em(24, 14),
+        // },
         picture: {
           marginTop: em(24, 14),
           marginBottom: em(24, 14),
@@ -275,10 +275,10 @@ let defaultModifiers = {
         //   marginBottom: em(8, 16),
         //   lineHeight: round(24 / 16),
         // },
-        img: {
-          marginTop: em(32, 16),
-          marginBottom: em(32, 16),
-        },
+        // img: {
+        //   marginTop: em(32, 16),
+        //   marginBottom: em(32, 16),
+        // },
         picture: {
           marginTop: em(32, 16),
           marginBottom: em(32, 16),
@@ -480,10 +480,10 @@ let defaultModifiers = {
         //   marginBottom: em(8, 18),
         //   lineHeight: round(28 / 18),
         // },
-        img: {
-          marginTop: em(32, 18),
-          marginBottom: em(32, 18),
-        },
+        // img: {
+        //   marginTop: em(32, 18),
+        //   marginBottom: em(32, 18),
+        // },
         picture: {
           marginTop: em(32, 18),
           marginBottom: em(32, 18),
@@ -685,10 +685,10 @@ let defaultModifiers = {
         //   marginBottom: em(12, 20),
         //   lineHeight: round(32 / 20),
         // },
-        img: {
-          marginTop: em(40, 20),
-          marginBottom: em(40, 20),
-        },
+        // img: {
+        //   marginTop: em(40, 20),
+        //   marginBottom: em(40, 20),
+        // },
         picture: {
           marginTop: em(40, 20),
           marginBottom: em(40, 20),
@@ -890,10 +890,10 @@ let defaultModifiers = {
         //   marginBottom: em(16, 24),
         //   lineHeight: round(36 / 24),
         // },
-        img: {
-          marginTop: em(48, 24),
-          marginBottom: em(48, 24),
-        },
+        // img: {
+        //   marginTop: em(48, 24),
+        //   marginBottom: em(48, 24),
+        // },
         picture: {
           marginTop: em(48, 24),
           marginBottom: em(48, 24),
@@ -1528,7 +1528,7 @@ module.exports = {
         //   fontWeight: "700",
         //   color: "inherit",
         // },
-        img: {}, // Required to maintain correct order when merging
+        // img: {}, // Required to maintain correct order when merging
         picture: {
           display: "block",
         },
