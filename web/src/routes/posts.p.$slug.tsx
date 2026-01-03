@@ -23,7 +23,7 @@ function RouteComponent() {
 
   return (
     <div className="grid justify-items-center">
-      <div className="grid w-full max-w-4xl gap-10 py-12 *:max-w-4xl *:px-4">
+      <div className="grid w-full max-w-4xl gap-10 py-12 *:max-w-4xl *:overflow-hidden *:px-4">
         <div>Hello "/posts/p/$slug"! {frontmatter.id}</div>
         {Content}
       </div>

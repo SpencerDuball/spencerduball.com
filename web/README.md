@@ -24,7 +24,7 @@ https://play.tailwindcss.com/OPEUJYQM9Q
   - [x] Update the `model/post.ts` server functions & caching
   - [x] Update the `routes/posts.p.$slug.tsx` to render with Markdoc
   - [x] Update the styles.css to use tailwind colors not shadcn colors.
-  - [ ] Use the tailwind prose as reference to build out the correct styles for all markdoc components. Use semantic styles
+  - [x] Use the tailwind prose as reference to build out the correct styles for all markdoc components. Use semantic styles
   - [ ] Complete the initial set of components for Markdoc that are already supported
   - [ ] Complete the initial layout and design for the post displays
   - [ ] Ensure a table of contents for both desktop and mobile is available
