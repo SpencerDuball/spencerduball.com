@@ -5,8 +5,8 @@ const pre = tv({
   base: "text-grey-200 bg-grey-800 dark:text-grey-300 overflow-x-auto dark:bg-[oklch(0_0_0/0.5)]",
   variants: {
     size: {
-      sm: "mt-5 mb-5 rounded-[3.5rem] text-[0.75rem] leading-5",
-      base: "",
+      sm: "mt-5 mb-5 rounded-lg ps-4 pe-4 pt-2 pb-2 text-xs leading-5",
+      base: "mt-6 mb-6 rounded-[0.375rem] ps-4 pe-4 pt-3 pb-3 text-sm leading-6",
       lg: "",
       xl: "",
       "2xl": "",
@@ -18,11 +18,11 @@ const code = tv({
   base: "rounded-none border-none bg-transparent p-0 before:content-none after:content-none",
   variants: {
     size: {
-      sm: "",
-      base: "",
-      lg: "",
-      xl: "",
-      "2xl": "",
+      sm: "text-xs",
+      base: "text-sm",
+      lg: "text-base",
+      xl: "text-lg",
+      "2xl": "text-lg",
     },
   },
 });

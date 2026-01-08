@@ -1,16 +1,8 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { z } from "zod/v4";
 import yaml from "js-yaml";
+import { cn } from "tailwind-variants";
 
-/**
- * The shadcn helper for merging classes
- *
- * @param inputs The class strings.
- */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export { cn };
 
 // -------------------------------------------------------------------------------------
 // Zod Utilities

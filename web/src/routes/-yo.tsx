@@ -94,26 +94,26 @@ let defaultModifiers = {
           paddingBottom: em(2, 14),
           paddingInlineStart: em(5, 14),
         },
-        code: {
-          fontSize: em(12, 14),
-        },
+        // code: {
+        //   fontSize: em(12, 14),
+        // },
         // "h2 code": {
         //   fontSize: em(18, 20),
         // },
         // "h3 code": {
         //   fontSize: em(16, 18),
         // },
-        pre: {
-          fontSize: em(12, 14),
-          lineHeight: round(20 / 12),
-          marginTop: em(20, 12),
-          marginBottom: em(20, 12),
-          borderRadius: rem(4),
-          paddingTop: em(8, 12),
-          paddingInlineEnd: em(12, 12),
-          paddingBottom: em(8, 12),
-          paddingInlineStart: em(12, 12),
-        },
+        // pre: {
+        //   fontSize: em(12, 14),
+        //   lineHeight: round(20 / 12),
+        //   marginTop: em(20, 12),
+        //   marginBottom: em(20, 12),
+        //   borderRadius: rem(4),
+        //   paddingTop: em(8, 12),
+        //   paddingInlineEnd: em(12, 12),
+        //   paddingBottom: em(8, 12),
+        //   paddingInlineStart: em(12, 12),
+        // },
         ol: {
           marginTop: em(16, 14),
           marginBottom: em(16, 14),
@@ -299,9 +299,9 @@ let defaultModifiers = {
           paddingBottom: em(3, 16),
           paddingInlineStart: em(6, 16),
         },
-        code: {
-          fontSize: em(14, 16),
-        },
+        // code: {
+        //   fontSize: em(14, 16),
+        // },
         // "h2 code": {
         //   fontSize: em(21, 24),
         // },
@@ -504,9 +504,9 @@ let defaultModifiers = {
           paddingBottom: em(4, 18),
           paddingInlineStart: em(8, 18),
         },
-        code: {
-          fontSize: em(16, 18),
-        },
+        // code: {
+        //   fontSize: em(16, 18),
+        // },
         // "h2 code": {
         //   fontSize: em(26, 30),
         // },
@@ -709,9 +709,9 @@ let defaultModifiers = {
           paddingBottom: em(5, 20),
           paddingInlineStart: em(8, 20),
         },
-        code: {
-          fontSize: em(18, 20),
-        },
+        // code: {
+        //   fontSize: em(18, 20),
+        // },
         // "h2 code": {
         //   fontSize: em(31, 36),
         // },
@@ -914,9 +914,9 @@ let defaultModifiers = {
           paddingBottom: em(6, 24),
           paddingInlineStart: em(8, 24),
         },
-        code: {
-          fontSize: em(20, 24),
-        },
+        // code: {
+        //   fontSize: em(20, 24),
+        // },
         // "h2 code": {
         //   fontSize: em(42, 48),
         // },
