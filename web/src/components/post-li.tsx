@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Calendar01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { CalendarDays } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export interface IPostLi {
@@ -30,7 +29,7 @@ export function PostLi({ data, className, ...props }: PostLiProps) {
         {data.title}
       </Link>
       <div className="text-muted-foreground grid auto-cols-max grid-flow-col items-center gap-2">
-        <HugeiconsIcon strokeWidth={2} className="h-5 w-5" icon={Calendar01Icon} />
+        <CalendarDays className="h-5 w-5" />
         <p className="text-muted-foreground text-sm italic">
           {data.modifiedAt ? "Updated: " : ""}
           {date.format(data.modifiedAt || data.createdAt)} ▪ {time.format(data.modifiedAt || data.createdAt)}

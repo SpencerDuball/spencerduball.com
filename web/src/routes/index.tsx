@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { ArrowRight, Github, Twitter } from "lucide-react";
 import { PrintablesIcon } from "@/components/icons";
 import { PostLi } from "@/components/post-li";
 import { getPostItems } from "@/model/post";
@@ -38,7 +37,7 @@ export function Component() {
                 render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
                 nativeButton={false}
               >
-                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+                <Twitter />
               </Button>
               <Button
                 variant="outline"
@@ -47,7 +46,7 @@ export function Component() {
                 render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
                 nativeButton={false}
               >
-                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+                <Github />
               </Button>
               <Button
                 variant="outline"
@@ -85,11 +84,7 @@ export function Component() {
             className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
           >
             All Posts
-            <HugeiconsIcon
-              strokeWidth={2}
-              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
-              icon={ArrowRight02Icon}
-            />
+            <ArrowRight className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
           </Link>
         </section>
       </div>

@@ -2,8 +2,7 @@ import React from "react";
 import * as P from "@/components/ui/pagination";
 import { Link, LinkOptions, RegisteredRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // -------------------------------------------------------------------------------------
@@ -134,7 +133,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
               page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent",
             )}
           >
-            <HugeiconsIcon strokeWidth={2} icon={ArrowLeft01Icon} />
+            <ArrowLeft />
             Prev
           </Button>
         </li>
@@ -152,7 +151,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
             )}
           >
             Next
-            <HugeiconsIcon strokeWidth={2} icon={ArrowRight01Icon} />
+            <ArrowRight />
           </Button>
         </li>
       </ol>
@@ -164,7 +163,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           disabled={page.current === 1}
           className={cn(page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent")}
         >
-          <HugeiconsIcon strokeWidth={2} icon={ArrowLeft01Icon} />
+          <ArrowLeft />
           Prev
         </Button>
         {desktop.map((item, idx) => (
@@ -180,7 +179,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           )}
         >
           Next
-          <HugeiconsIcon strokeWidth={2} icon={ArrowRight01Icon} />
+          <ArrowRight />
         </Button>
       </ol>
     </>

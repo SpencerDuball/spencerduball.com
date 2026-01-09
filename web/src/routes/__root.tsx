@@ -5,18 +5,7 @@ import appCss from "../styles.css?url";
 import { clientThemeScript, PrefsProvider, usePrefs, usePrefsDispatch } from "@/components/ctx/prefs/context";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Cancel01Icon,
-  CopyrightIcon,
-  GithubIcon,
-  Menu11Icon,
-  Moon01Icon,
-  NewTwitterIcon,
-  Search01Icon,
-  SolarSystem01Icon,
-  Sun03Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { X, Copyright, Github, Menu, Moon, Twitter, Search, MonitorCog, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog } from "@base-ui/react/dialog";
 import { PrintablesIcon } from "@/components/icons";
@@ -107,7 +96,7 @@ function Footer({ className, ...props }: React.ComponentProps<"footer">) {
             render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
             nativeButton={false}
           >
-            <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+            <Twitter />
           </Button>
           <Button
             variant="ghost"
@@ -116,7 +105,7 @@ function Footer({ className, ...props }: React.ComponentProps<"footer">) {
             render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
             nativeButton={false}
           >
-            <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+            <Github />
           </Button>
           <Button
             variant="ghost"
@@ -138,7 +127,7 @@ function Footer({ className, ...props }: React.ComponentProps<"footer">) {
         {/* Right Side Footer */}
         <div className="flex items-center gap-1 text-sm">
           Copyright
-          <HugeiconsIcon strokeWidth={2} className="h-4 w-4" icon={CopyrightIcon} />
+          <Copyright className="h-4 w-4" />
           2026
         </div>
       </div>
@@ -154,16 +143,16 @@ function ThemeButton({ ...props }: React.ComponentProps<typeof Button>) {
   const { theme } = usePrefs();
   const dispatch = usePrefsDispatch();
 
-  const [icon, setIcon] = React.useState(SolarSystem01Icon);
+  const [Icon, setIcon] = React.useState<React.ForwardRefExoticComponent<any>>(MonitorCog);
   React.useEffect(() => {
-    if (theme.app.actual === "system") setIcon(SolarSystem01Icon);
-    else if (theme.app.actual === "dark") setIcon(Moon01Icon);
-    else if (theme.app.actual === "light") setIcon(Sun03Icon);
+    if (theme.app.actual === "system") setIcon(MonitorCog);
+    else if (theme.app.actual === "dark") setIcon(Moon);
+    else if (theme.app.actual === "light") setIcon(Sun);
   }, [theme.app.actual]);
 
   return (
     <Button variant="outline" size="icon-lg" onClick={() => dispatch({ type: "theme.app.toggle" })} {...props}>
-      <HugeiconsIcon strokeWidth={2} icon={icon} />
+      <Icon />
     </Button>
   );
 }
@@ -230,7 +219,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
             variant="outline"
             className="hover:text-foreground text-muted-foreground grid w-40 grid-flow-col justify-start"
           >
-            <HugeiconsIcon strokeWidth={2} icon={Search01Icon} />
+            <Search />
             Search ...
           </Button>
           <ThemeButton />
@@ -247,7 +236,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
         {/* Right Side Header */}
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
           <Dialog.Trigger render={<Button size="icon-lg" variant="outline" />}>
-            <HugeiconsIcon strokeWidth={2} icon={Menu11Icon} />
+            <Menu />
           </Dialog.Trigger>
 
           <Dialog.Portal className="absolute top-0 left-0 h-full w-full">
@@ -265,7 +254,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
                         <p className="text-xl font-bold tracking-tighter">Spencer Duball</p>
                       </Link>
                       <Dialog.Close render={<Button size="icon-lg" variant="outline" />}>
-                        <HugeiconsIcon strokeWidth={2} icon={Cancel01Icon} />
+                        <X />
                       </Dialog.Close>
                     </div>
                   </div>
