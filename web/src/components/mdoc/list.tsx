@@ -1,20 +1,19 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
 type ListProps = ({ ordered: true } & React.ComponentProps<"ol">) | ({ ordered: false } & React.ComponentProps<"ul">);
 
 export function List(props: ListProps) {
   if (props.ordered) {
-    const { ordered, className, ...rest } = props;
-    return <ol className={cn("", className)} {...rest} />;
+    const { ordered, ...rest } = props;
+    return <ol {...rest} />;
   } else {
-    const { ordered, className, ...rest } = props;
-    return <ul className={cn("", className)} {...rest} />;
+    const { ordered, ...rest } = props;
+    return <ul {...rest} />;
   }
 }
 
-export function ListItem({ className, ...props }: React.ComponentProps<"li">) {
-  return <li className={cn("", className)} {...props} />;
+export function ListItem(props: React.ComponentProps<"li">) {
+  return <li {...props} />;
 }
 
 export const list: Schema = {

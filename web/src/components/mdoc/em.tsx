@@ -1,8 +1,7 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
-export function Emphasis({ className, ...props }: React.ComponentProps<"em">) {
-  return <em className={cn("", className)} {...props} />;
+export function Emphasis(props: React.ComponentProps<"em">) {
+  return <em {...props} />;
 }
 
 export const em: Schema = {

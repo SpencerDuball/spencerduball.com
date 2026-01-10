@@ -1,8 +1,7 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
-export function Blockquote({ className, ...props }: React.ComponentProps<"blockquote">) {
-  return <blockquote className={cn("", className)} {...props} />;
+export function Blockquote(props: React.ComponentProps<"blockquote">) {
+  return <blockquote {...props} />;
 }
 
 export const blockquote: Schema = {

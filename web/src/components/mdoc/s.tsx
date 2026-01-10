@@ -1,8 +1,7 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
-export function Strikethrough({ className, ...props }: React.ComponentProps<"s">) {
-  return <s className={cn("", className)} {...props} />;
+export function Strikethrough(props: React.ComponentProps<"s">) {
+  return <s {...props} />;
 }
 
 export const s: Schema = {

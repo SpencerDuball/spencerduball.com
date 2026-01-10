@@ -1,28 +1,27 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
-export function Table({ className, ...props }: React.ComponentProps<"table">) {
-  return <table className={cn("", className)} {...props} />;
+export function Table(props: React.ComponentProps<"table">) {
+  return <table {...props} />;
 }
 
-export function TableHead({ className, ...props }: React.ComponentProps<"thead">) {
-  return <thead className={cn("", className)} {...props} />;
+export function TableHead(props: React.ComponentProps<"thead">) {
+  return <thead {...props} />;
 }
 
-export function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
-  return <tbody className={cn("", className)} {...props} />;
+export function TableBody(props: React.ComponentProps<"tbody">) {
+  return <tbody {...props} />;
 }
 
-export function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
-  return <tr className={cn("", className)} {...props} />;
+export function TableRow(props: React.ComponentProps<"tr">) {
+  return <tr {...props} />;
 }
 
-export function TableData({ className, ...props }: React.ComponentProps<"td">) {
-  return <td className={cn("", className)} {...props} />;
+export function TableData(props: React.ComponentProps<"td">) {
+  return <td {...props} />;
 }
 
-export function TableHeader({ className, ...props }: React.ComponentProps<"th">) {
-  return <th className={cn("", className)} {...props} />;
+export function TableHeader(props: React.ComponentProps<"th">) {
+  return <th {...props} />;
 }
 
 export const table: Schema = {

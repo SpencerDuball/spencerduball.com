@@ -1,8 +1,7 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
-export function Strong({ className, ...props }: React.ComponentProps<"strong">) {
-  return <strong className={cn("", className)} {...props} />;
+export function Strong(props: React.ComponentProps<"strong">) {
+  return <strong {...props} />;
 }
 
 export const strong: Schema = {

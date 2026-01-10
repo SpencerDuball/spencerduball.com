@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod/v4";
 import Markdoc from "@markdoc/markdoc";
 import { components } from "@/components/mdoc";
+import { cn } from "tailwind-variants";
 
 export const Route = createFileRoute("/posts/p/$slug")({
   params: {
@@ -23,9 +24,16 @@ function RouteComponent() {
 
   return (
     <div className="grid justify-items-center">
-      <div className="grid w-full max-w-4xl gap-10 py-12 *:max-w-4xl *:overflow-hidden *:px-4">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
         <div>Hello "/posts/p/$slug"! {frontmatter.id}</div>
-        {Content}
+        <article
+          className={cn(
+            "prose prose-grey dark:prose-invert max-w-4xl overflow-hidden",
+            /* Fix for ordered list markers. */ "prose-ol:pl-8",
+          )}
+        >
+          {Content}
+        </article>
       </div>
     </div>
   );

@@ -1,8 +1,7 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
-export function Hardbreak({ className, ...props }: React.ComponentProps<"br">) {
-  return <br className={cn("", className)} {...props} />;
+export function Hardbreak(props: React.ComponentProps<"br">) {
+  return <br {...props} />;
 }
 
 export const hardbreak: Schema = {

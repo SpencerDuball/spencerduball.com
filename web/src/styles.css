@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/jetbrains-mono";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -45,7 +46,7 @@
 
 :root {
   --background: var(--color-grey-50);
-  --foreground: var(--color-grey-800);
+  --foreground: var(--color-grey-900);
   --card: var(--color-grey-50);
   --card-foreground: var(--color-grey-950);
   --popover: var(--color-grey-50);
@@ -80,7 +81,7 @@
 
 .dark {
   --background: var(--color-grey-950);
-  --foreground: var(--color-grey-200);
+  --foreground: var(--color-grey-50);
   --card: var(--color-grey-900);
   --card-foreground: var(--color-grey-50);
   --popover: var(--color-grey-900);
@@ -173,4 +174,39 @@
 @theme {
   --breakpoint-2xs: 24rem; /* 384px */
   --breakpoint-xs: 30rem; /* 480px */
+}
+
+@utility prose-grey {
+  --tw-prose-body: var(--color-grey-800);
+  --tw-prose-headings: var(--color-grey-900);
+  --tw-prose-lead: var(--color-grey-700);
+  --tw-prose-links: var(--color-grey-900);
+  --tw-prose-bold: var(--color-grey-900);
+  --tw-prose-counters: var(--color-grey-600);
+  --tw-prose-bullets: var(--color-grey-400);
+  --tw-prose-hr: var(--color-grey-300);
+  --tw-prose-quotes: var(--color-grey-900);
+  --tw-prose-quote-borders: var(--color-grey-300);
+  --tw-prose-captions: var(--color-grey-700);
+  --tw-prose-code: var(--color-grey-900);
+  --tw-prose-pre-code: var(--color-grey-100);
+  --tw-prose-pre-bg: var(--color-grey-900);
+  --tw-prose-th-borders: var(--color-grey-300);
+  --tw-prose-td-borders: var(--color-grey-200);
+  --tw-prose-invert-body: var(--color-grey-200);
+  --tw-prose-invert-headings: var(--color-grey-50);
+  --tw-prose-invert-lead: var(--color-grey-300);
+  --tw-prose-invert-links: var(--color-grey-50);
+  --tw-prose-invert-bold: var(--color-grey-50);
+  --tw-prose-invert-counters: var(--color-grey-400);
+  --tw-prose-invert-bullets: var(--color-grey-600);
+  --tw-prose-invert-hr: var(--color-grey-700);
+  --tw-prose-invert-quotes: var(--color-grey-100);
+  --tw-prose-invert-quote-borders: var(--color-grey-700);
+  --tw-prose-invert-captions: var(--color-grey-400);
+  --tw-prose-invert-code: var(--color-grey-50);
+  --tw-prose-invert-pre-code: var(--color-grey-300);
+  --tw-prose-invert-pre-bg: rgb(0 0 0 / 50%);
+  --tw-prose-invert-th-borders: var(--color-grey-600);
+  --tw-prose-invert-td-borders: var(--color-grey-700);
 }

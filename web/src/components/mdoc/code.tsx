@@ -1,12 +1,7 @@
 import Markdoc, { type Schema } from "@markdoc/markdoc";
-import { cn } from "tailwind-variants";
 
-export function Code({ content, className, ...props }: React.ComponentProps<"code">) {
-  return (
-    <code className={cn("", className)} {...props}>
-      {content}
-    </code>
-  );
+export function Code({ content, ...props }: React.ComponentProps<"code">) {
+  return <code {...props}>{content}</code>;
 }
 
 export const code: Schema = {
