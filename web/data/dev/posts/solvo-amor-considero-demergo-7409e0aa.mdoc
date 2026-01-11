@@ -1,0 +1,262 @@
+---
+id: 7409e0aa
+slug: solvo-amor-considero-demergo
+title: 'Solvo amor considero demergo '
+summary: >-
+  Acquiro deduco thymbra ultra adnuo tot. Demoror curso appono arceo neque. Ab tenuis
+  depraedor. Solium constans doloremque varius contra tego antiquus thymum somnus demum.
+  Benevolentia aequitas vilis temeritas.
+createdAt: '2025-11-25T02:08:17.851Z'
+modifiedAt: '2025-12-01T06:18:33.431Z'
+---
+
+Vulariter causa triduana aperio stabilis tego succurro ante abstergo. Communis bene decor cruciamentum debilito crur. Acidus tergeo creta vestrum utrum.
+
+* Iure artificiose defluo subseco copiose certe repudiandae admoneo conatus.
+* Including some `const a = '42';` here.
+* Viduo administratio abundans sed defessus vulariter terror atque vivo.
+
+```json
+{
+  "first_name": "George",
+  "last_name": "Washington",
+  "birthday": "1732-02-22",
+  "address": {
+    "street_address": "3200 Mount Vernon Memorial Highway",
+    "city": "Mount Vernon",
+    "state": "Virginia",
+    "country": "United States"
+  }
+}
+```
+
+> Stillicidium ustulo contigo talus compono tutamen.
+> — *Shannon Thiel Sr.*
+
+- Vel unus delectus catena vivo sol tutamen accendo.
+   - Alioqui quia uterque timor clarus.
+   - Templum aeternus creta appositus substantia error vicissitudo vulpes.
+   - Culpo uter turba volutabrum venustas dignissimos adeo assentator.
+- Supellex solium cubo tam tandem vulnero thorax saepe adeptio volutabrum.
+   1. Terreo bestia tabernus velit quod absque adicio allatus confido.
+   2. Coadunatio auditor adulescens cernuus bene cursim sumptus virga varius convoco.
+   3. Eius valens vociferor repellendus vulgus unus curriculum vobis sui.
+
+```javascript
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { PrintablesIcon } from "@/components/icons";
+import { PostLi } from "@/components/post-li";
+import { getPostItems } from "@/model/post";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const posts = await getPostItems({ data: { start: 0, end: 3 } });
+    return { posts };
+  },
+  component: Component,
+});
+
+export function Component() {
+  const { posts } = Route.useLoaderData();
+
+  return (
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        {/* Welcome */}
+        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
+          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
+          <div className="grid auto-rows-max gap-4">
+            <h1 className="text-5xl font-bold">Welcome</h1>
+            <p>
+              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
+            </p>
+            <div className="inline-grid w-max grid-flow-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+                render={
+                  <a
+                    href="https://www.printables.com/social/212303-spencer_duball/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                nativeButton={false}
+              >
+                <PrintablesIcon />
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-b" />
+
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
+            {posts.map((post) => (
+              <PostLi key={post.id} data={post} />
+            ))}
+          </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: 1 }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts
+            <HugeiconsIcon
+              strokeWidth={2}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
+```
+
+# uberrime aut cauda
+Stipes subnecto carmen adulescens talio vero. Tempus territo ducimus vos. Turbo comitatus voluptas.
+Tabesco aspernatur tergo deleo inventore confugo. In via deludo ubi caput praesentium talis minus ver. Ullam caste caveo coniuratio.
+
+* Canis angulus blanditiis rerum ulterius demoror comminor color accendo.
+* Including some `const a = '42';` here.
+* Tantillus dapifer paens clamo.
+
+```javascript
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight02Icon, GithubIcon, NewTwitterIcon } from "@hugeicons/core-free-icons";
+import { PrintablesIcon } from "@/components/icons";
+import { PostLi } from "@/components/post-li";
+import { getPostItems } from "@/model/post";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+    const posts = await getPostItems({ data: { start: 0, end: 3 } });
+    return { posts };
+  },
+  component: Component,
+});
+
+export function Component() {
+  const { posts } = Route.useLoaderData();
+
+  return (
+    <div className="grid justify-items-center">
+      <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
+        {/* Welcome */}
+        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
+          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
+          <div className="grid auto-rows-max gap-4">
+            <h1 className="text-5xl font-bold">Welcome</h1>
+            <p>
+              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
+              find something that sparks your curiosity.
+            </p>
+            <div className="inline-grid w-max grid-flow-col items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={NewTwitterIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+                nativeButton={false}
+              >
+                <HugeiconsIcon strokeWidth={2} icon={GithubIcon} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+                render={
+                  <a
+                    href="https://www.printables.com/social/212303-spencer_duball/about"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                nativeButton={false}
+              >
+                <PrintablesIcon />
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="border-b" />
+
+        {/* Posts */}
+        <section className="grid gap-6">
+          <h1 className="text-2xl font-bold">Posts</h1>
+          <div className="grid auto-rows-max gap-6">
+            {posts.map((post) => (
+              <PostLi key={post.id} data={post} />
+            ))}
+          </div>
+          <Link
+            to="/posts/$page"
+            params={{ page: 1 }}
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+          >
+            All Posts
+            <HugeiconsIcon
+              strokeWidth={2}
+              className="transition-transform duration-200 ease-out group-hover:translate-x-1"
+              icon={ArrowRight02Icon}
+            />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
+```
+
+# adsidue vigilo pel
+Carmen trepide cibo aqua sapiente demoror conculco. Abduco cerno suasoria ulciscor ago validus verecundia claustrum. Cervus attero totus peior patior auctus terga.
+Vulgus crinis consequatur textor vir. Aveho appello nulla despecto vilis aureus victus campana corroboro. Tamen nulla absque super bonus.
+Absque audax virgo desidero omnis. Articulus victus sortitus delicate curiositas. Delectus bis possimus tamisium modi nobis infit desidero.
+
+* Beneficium volo civitas adflicto.
+* Including some `const a = '42';` here.
+* Commodi armarium brevis conor absorbeo aeternus copiose.

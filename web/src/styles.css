@@ -45,14 +45,14 @@
 }
 
 :root {
-  --background: var(--color-grey-50);
+  --background: white;
   --foreground: var(--color-grey-900);
   --card: var(--color-grey-50);
   --card-foreground: var(--color-grey-950);
   --popover: var(--color-grey-50);
   --popover-foreground: var(--color-grey-950);
   --primary: var(--color-primary-600);
-  --primary-foreground: var(--color-primary-50);
+  --primary-foreground: white;
   --secondary: var(--color-grey-100);
   --secondary-foreground: var(--color-grey-900);
   --muted: var(--color-grey-100);

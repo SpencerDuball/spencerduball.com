@@ -7,7 +7,7 @@ import process from "node:process";
 import fg, { type Entry } from "fast-glob";
 import { difference, intersection } from "@/lib/set";
 import fs from "node:fs/promises";
-import { serverEnv } from "@/lib/utils.server";
+import { MarkdocUtil, serverEnv } from "@/lib/utils.server";
 import Markdoc from "@markdoc/markdoc";
 import { ZYamlString } from "@/lib/utils";
 import { MarkdocConfig } from "@/components/mdoc";
@@ -122,10 +122,12 @@ export const getPost = createServerFn({ method: "GET" })
 
     // read in the file & extract ast
     const ast = await fs.readFile(fpath, { encoding: "utf-8" }).then((src) => Markdoc.parse(src));
+    MarkdocUtil.clearBoundaryMargins(ast);
 
     // extract the content & frontmatter
     const content = z.string().parse(JSON.stringify(Markdoc.transform(ast, MarkdocConfig)));
     const frontmatter = ZYamlString.pipe(ZPost).parse(ast.attributes?.frontmatter);
+    const toc = MarkdocUtil.buildToc(ast);
 
-    return { content: JSON.parse(content), frontmatter };
+    return { content: JSON.parse(content), frontmatter, toc };
   });

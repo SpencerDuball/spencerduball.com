@@ -98,7 +98,7 @@ function generatePost() {
 
   // create the body
   const sectionCount = normalRandom(6, 2);
-  let body = `# ${title}\n\n${faker.lorem.paragraphs(1)}\n`;
+  let body = `${faker.lorem.paragraphs(1)}\n`;
   for (let i = 0; i < sectionCount; i++) body += generateMdElement() + "\n";
 
   // create the full file string

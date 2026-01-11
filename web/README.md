@@ -25,11 +25,15 @@ https://play.tailwindcss.com/OPEUJYQM9Q
   - [x] Update the `routes/posts.p.$slug.tsx` to render with Markdoc
   - [x] Update the styles.css to use tailwind colors not shadcn colors.
   - [x] Use the tailwind prose as reference to build out the correct styles for all markdoc components. Use semantic styles
-  - [ ] Complete the initial set of components for Markdoc that are already supported
-  - [ ] Complete the initial layout and design for the post displays
-  - [ ] Ensure a table of contents for both desktop and mobile is available
-  - [ ] Start adding the custom tags wanted from the Material for Mkdocs site, just use Markdoc tags - this is probably just better.
+  - [x] Complete the initial set of components for Markdoc that are already supported
+  - [x] Update the script to remove the header from the article contents
+  - [x] Add a markdown AST modification to remove margin on first item
+  - [x] Add the description field with in markdoc with frontmatter
+  - [x] Ensure a table of contents for both desktop and mobile is available
+  - [x] Complete the initial layout and design for the post displays
+  - [ ] Update the fence component with shiki
 - [ ] Add better error handling and `errorComponent` to the routes with path parameters.
+- [ ] Add CSS transitions for the blog posts & custom image component
 - [ ] Add in the "moving ants" underline animation to the BlogLi elements
 - [ ] Add in the "moving wavy" underline animation to the top-level navigation
 - [ ] (maybe) Add an icon animation to the title for "Posts", "Projects", "Series" headers. Could be a quill moving, construction hammer, lights in series or train?
