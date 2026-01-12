@@ -31,7 +31,7 @@ https://play.tailwindcss.com/OPEUJYQM9Q
   - [x] Add the description field with in markdoc with frontmatter
   - [x] Ensure a table of contents for both desktop and mobile is available
   - [x] Complete the initial layout and design for the post displays
-  - [ ] Update the fence component with shiki
+  - [x] Update the fence component with shiki
 - [ ] Add better error handling and `errorComponent` to the routes with path parameters.
 - [ ] Add CSS transitions for the blog posts & custom image component
 - [ ] Add in the "moving ants" underline animation to the BlogLi elements

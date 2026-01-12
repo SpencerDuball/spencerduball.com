@@ -7,7 +7,6 @@ import { components } from "@/components/mdoc";
 import { cn } from "tailwind-variants";
 import { ArrowLeft, CalendarDays, ChevronRight } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/posts/p/$slug")({
   params: {

@@ -52,6 +52,7 @@
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "shadcn": "^3.6.2",
+    "shiki": "^3.21.0",
     "typescript": "^5.7.2",
     "vite": "^7.1.7",
     "vitest": "^3.0.5",

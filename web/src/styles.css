@@ -77,6 +77,9 @@
   --sidebar-accent-foreground: var(--color-grey-900);
   --sidebar-border: var(--color-grey-200);
   --sidebar-ring: var(--color-grey-400);
+
+  /* Tells OS to use the light styles for things such as scrollbars */
+  color-scheme: light;
 }
 
 .dark {
@@ -111,6 +114,9 @@
   --sidebar-accent-foreground: var(--color-grey-50);
   --sidebar-border: color-mix(in oklch, var(--color-grey-50), transparent 90%);
   --sidebar-ring: var(--color-grey-500);
+
+  /* Tells OS to use the dark styles for things such as scrollbars */
+  color-scheme: dark;
 }
 
 @theme inline {
