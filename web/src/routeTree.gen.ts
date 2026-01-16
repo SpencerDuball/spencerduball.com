@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SeriesPageRouteImport } from './routes/series.$page'
 import { Route as ProjectsPageRouteImport } from './routes/projects.$page'
 import { Route as PostsPageRouteImport } from './routes/posts.$page'
 import { Route as PostsPSlugRouteImport } from './routes/posts.p.$slug'
 
+const R404Route = R404RouteImport.update({
+  id: '/404',
+  path: '/404',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const PostsPSlugRoute = PostsPSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/404': typeof R404Route
   '/posts/$page': typeof PostsPageRoute
   '/projects/$page': typeof ProjectsPageRoute
   '/series/$page': typeof SeriesPageRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/404': typeof R404Route
   '/posts/$page': typeof PostsPageRoute
   '/projects/$page': typeof ProjectsPageRoute
   '/series/$page': typeof SeriesPageRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/404': typeof R404Route
   '/posts/$page': typeof PostsPageRoute
   '/projects/$page': typeof ProjectsPageRoute
   '/series/$page': typeof SeriesPageRoute
@@ -67,6 +76,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/404'
     | '/posts/$page'
     | '/projects/$page'
     | '/series/$page'
@@ -74,6 +84,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/404'
     | '/posts/$page'
     | '/projects/$page'
     | '/series/$page'
@@ -81,6 +92,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/404'
     | '/posts/$page'
     | '/projects/$page'
     | '/series/$page'
@@ -89,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R404Route: typeof R404Route
   PostsPageRoute: typeof PostsPageRoute
   ProjectsPageRoute: typeof ProjectsPageRoute
   SeriesPageRoute: typeof SeriesPageRoute
@@ -97,6 +110,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/404': {
+      id: '/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof R404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -137,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R404Route: R404Route,
   PostsPageRoute: PostsPageRoute,
   ProjectsPageRoute: ProjectsPageRoute,
   SeriesPageRoute: SeriesPageRoute,

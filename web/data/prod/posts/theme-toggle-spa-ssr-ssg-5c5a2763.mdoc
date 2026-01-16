@@ -1,0 +1,176 @@
+---
+id: 5c5a2763
+slug: theme-toggle-spa-ssr-ssg 
+title: Theme Toggle for SPA, SSR, SSG - No Flash!
+summary: >-
+  Getting light/dark mode on a site is tricky and the solution varies depending on the
+  deployment method. This post breaks down the browser's critical rendering path and
+  provides a solution for all three.
+createdAt: '2026-01-16T12:28:53.968Z'
+---
+
+A website with dark and light mode is almost table stakes now but every time I work on a new project, I always need to revisit the method of implementing a seamless theme experience that prevents [Flash of Unstyled Content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/).
+
+The way to tackle this problem differs when building for a SPA (Single Page Application), SSR (Server Side Rendered), or SSG (Static Site Generator). There are also many different framework to chose from such as Tanstack Router, Tanstack Start (SSR), Tanstack Start (SSG), NextJS, Remix, React Router, etc - all of which may have different methods of injecting into the rendering process. This post will peel back the layers of how browsers rendering sites and show how we can implement the perfect theme toggle.
+
+## Critical Rendering Path
+
+![Critical Rendering Page](/posts/p/5c5a2763/critical-rendering-path.light.png) {% class="block dark:hidden" %}
+
+![Critical Rendering Page](/posts/p/5c5a2763/critical-rendering-path.dark.png) {% class="hidden dark:block" %}
+
+[How Browsers Work](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work) is an excellent read explaining how browsers render a page. The article describes the 5 steps in the [Critical Rendering Path](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/Critical_rendering_path):
+
+1. Building the DOM Tree
+
+   Parses the html and builds the DOM tree. When parsing there are blocking and non-blocking resources in the tree. When a blocking resource is encountered it pauses the parsing of the HTML and waits for that resource. When a non-blocking resource is encountered (images, css, scripts*) requests are kicked off in parallel to download them as the DOM tree is parsed.
+
+   Scripts without “async”, “defer”, or “module” are blocking resources (and the only HTML-blocking resource type?). Until a blocking script is downloaded and executed, the parsing of the HTML cannot resume thus rendering is blocked in this step.
+
+   Another interesting tidbit is that scripts may depend on the CSS, so until a script can run the CSSOM for all linked stylesheets encountered in the DOM tree prior to this blocking script must be downloaded and CSSOM computed with their instructions.
+
+2. Building the CSSOM Tree
+
+   The CSSOM is similar to the DOM but for CSS. The construction and parsing of this tree runs in parallel to the construction of the DOM tree. When parsing there are blocking and non-blocking resources in the tree.
+
+   Anything that uses `@import` is a blocking resource (such as other `.css` files). When other resources are encountered in the CSSOM (such as linked fonts, `@font-face`) these are non-blocking. The requests for these resources are kicked off in parallel.
+
+   Note that fonts will never block painting of the elements on the screen, it may only prevent the font glyphs from displaying momentarily before a potential fallback is displayed.
+
+3. Building the Render Tree
+
+   The render tree is the process of taking the DOM tree and applying the CSSOM to it. All styles are added to the DOM elements creating the render tree.
+
+4. Layout / Reflow
+
+   The layout (positioning, sizing, etc) of all items on the page are determined. The first computation is called “layout” and subsequent calculations are called “reflow”.
+
+5. Paint
+
+   In the painting or rasterization phase, the browser converts each box calculated in the layout phase to actual pixels on the screen.
+
+## A Timeline of Events 
+
+![Loading Waterfall](/posts/p/5c5a2763/waterfall.light.png) {% class="block dark:hidden" %}
+
+![Loading Waterfall](/posts/p/5c5a2763/waterfall.dark.png) {% class="hidden dark:block" %}
+
+This diagram shows the timing and events involved in rendering the same (hypothetical) application with different methods: SPA v SSR v SSG.
+
+## Single Page Application (SPA)
+
+With a SPA we can see that we get the First Contentful Paint (FCP) at 135ms. This paint will show on screen the HTML shell that all SPAs first send over. This is typically an HTML document with just the `<body>` and a `<div>`.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="The description of the page." />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>My SPA App</title>
+    <script type="module" crossorigin src="/assets/index.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
+```
+
+The `<div>` typically occupies no visible region in the browser (zero width, zero height) so this will not be visible to users when rendered. The `<body>` will be visible and if there are any classes in the shipped CSS that modify it’s background color, they will be displayed! This is important because solutions like [tailwindcss](https://tailwindcss.com/) do set the initial background color which will flash the screen during this shell load phase.
+
+```css
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply font-sans bg-background text-foreground; /* <-- Here: bg-background */
+  }
+  html {
+    @apply font-sans;
+  }
+  button:not([disabled]),
+  [role="button"]:not([disabled]) {
+    cursor: pointer;
+  }
+}
+```
+
+If we remove this class from the `<body>` will have a background that is transparent. If we reload again we will see white even if our browser is set to dark mode (typically through OS settings). This is because by default the canvas is white - regardless of OS theme. We can add a single tag to the `<html>` to tell the browser to use an appropriate background color based upon OS theme:
+
+```html
+<head>
+    <meta name="color-scheme" content="light dark">
+</head>
+```
+
+This works well and will prevent FOUC, but now our <body> does not have the background color our app prescribes. We have the freedom to manually apply the style to the <body> ideally with useLayoutEffect or useEffect in React, or for some framework we can implement this in code that runs before React renders such as a loader in Remix or Tanstack.
+
+This is a solution that works for SPA but not for SSR or SSG apps, and this solution is a bit complicated to say the least - but fear not, a universal solution is coming (skip to universal solution)!
+
+## Server Side Rendered (SSR)
+
+With an SSR app we get Largest Contentful Paint (LCP) at 190ms. This paint will show the full site page which was rendered on the server. We don’t have the same challenge as a SPA where we need to show the browser default background for a temporary initial paint, but we do need a way to select the appropriate theme before the page is displayed. This is typically handled via cookies.
+
+The cookie approach works by storing the preferred theme in a cookie which is sent with every request to the sever. The server will see this and add the appropriate styles to the HTML document it creates + sends over, and then upon initial paint the correct theme is displayed. The caveat is that the browser needs to send the stored theme, and upon initial visit to the site there will not be a stored cookie. This means at least once (upon initial visit) users will get FOUC.
+
+The typical way to handle this is pick the least offensive default theme when requests are received that do not have a theme cookie. Many sites pick the dark theme because a momentarily dark screen at daytime is less jarring than a flash of white at night.
+
+This solution works for SSR but not for SPA or SSG apps - but feat not, a universal solution is coming I promise (skip to universal solution)!
+
+## Static Site Generation (SSG)
+
+With an SSG app we get Largest Contentful Paint (LCP) at 150ms. This network flow is identical to the SSR except there is no sever processing time to build our page on demand. Another caveat is there is no server processing to read+apply a theme cookie.
+
+An SSG site is the trickiest to solve the theme problem for because we can't build a page with the correct theme before we send the HTML like an SSR site, we also have the full content of our page (not a blank shell) so we can't fallback to the transparency of the body to display the browser's default canvas color like a SPA. We have only one tool in the toolbox and it actually works for all app types (the universal solution): SPA, SSR, SSG.
+
+This article opened with a discussion around how browsers work and render things on the page. This is where that information ties back in because we see that scripts can be injected into the HTML that block the HTML parsing and render of a page. We can add a very small blocking script to the HTML which reads the correct theme either in localStorage, media query, or any other method and then sets the style for the page before the rest of the HTML is processed.
+
+```html
+ <!doctype html>
+ <html lang="en">
+	 <head>
+		 <!-- ...rest of head... -->
+		 <script>
+		   try {
+         const theme = localStorage.getItem('theme');
+         const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  
+         let colorMode = 'light';
+                  
+         if (theme === 'dark' || (theme === 'system' && supportDarkMode) || (!theme && supportDarkMode)) {
+           colorMode = 'dark';
+         }
+                  
+         if (colorMode === 'dark') {
+           document.documentElement.classList.add('dark');
+         } else {
+           document.documentElement.classList.remove('dark');
+         }
+       } catch (e) {}
+		 </script>
+	 </head>
+	 <body>
+		 <!-- ...rest of body... -->
+	 </body>
+ </html>
+```
+
+There are three points to note with this approach:
+
+1. We are technically blocking the critical rendering path, however with a small script like this the block is so minimal that it is imperceivable to users.
+
+2. This solution only works where JavaScript is enabled. Again this should not matter too much as all of these solutions assume we are using React (which requires JavaScript) and even if JavaScript wasn’t enabled this wouldn’t break your app - it would only give FOUC.
+
+3. We must tell React that there are expected hydration mismatches on the `<html>` element (server may render with `class="light"` but client may change this to `class="dark"`). This is exactly what `supressHydrationWarning` is for.
+
+## Just Give Me The Code!
+
+For each of these methods I have posts written with their implementation with full examples that can be viewed/downloaded from Github, or opened directly in your browser via Stackblitz. Enjoy!
+

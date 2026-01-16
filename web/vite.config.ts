@@ -21,6 +21,10 @@ const config = defineConfig({
         failOnError: true,
       },
       sitemap: { host: "localhost:3000" },
+      pages: [
+        // Github Pages expectes a custom 404 at "/404.html"
+        { path: "/404", prerender: { enabled: true, outputPath: "/404.html" } },
+      ],
     }),
     react(),
   ],

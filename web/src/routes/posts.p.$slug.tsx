@@ -1,11 +1,12 @@
 import React from "react";
 import { getPost } from "@/model/post";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { z } from "zod/v4";
 import Markdoc from "@markdoc/markdoc";
 import { components } from "@/components/mdoc";
 import { cn } from "tailwind-variants";
 import { ArrowLeft, CalendarDays } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/posts/p/$slug")({
   params: {
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/posts/p/$slug")({
     return { content, frontmatter, toc };
   },
   component: RouteComponent,
+  notFoundComponent: NotFoundComponent,
 });
 
 interface TocItem {
@@ -69,12 +71,12 @@ function RouteComponent() {
             <ArrowLeft className="transition-transform duration-200 ease-out group-hover:-translate-x-1" />
             Go Back
           </button>
-          <div className="grid w-full gap-4">
+          <div className="grid w-full gap-3 md:gap-4">
             <h1 className="text-primary w-fit text-4xl font-bold md:text-5xl">{frontmatter.title}</h1>
             <p className="text-muted-foreground text-base md:text-lg">{frontmatter.summary}</p>
-            <div className="text-muted-foreground grid auto-cols-max grid-flow-col items-center gap-2 md:gap-3">
-              <CalendarDays className="h-5 w-5 md:h-6 md:w-6" />
-              <p className="text-muted-foreground text-sm italic md:text-base">
+            <div className="text-muted-foreground grid auto-cols-max grid-flow-col items-center gap-2">
+              <CalendarDays className="h-5 w-5" />
+              <p className="text-muted-foreground text-sm italic">
                 {frontmatter.modifiedAt ? "Updated: " : ""}
                 {date.format(frontmatter.modifiedAt || frontmatter.createdAt)} ▪{" "}
                 {time.format(frontmatter.modifiedAt || frontmatter.createdAt)}
@@ -92,6 +94,22 @@ function RouteComponent() {
           {Content}
         </article>
         {/* Footer */}
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------------------------------
+// ErrorComponent
+// -------------------------------------------------------------------------------------
+function NotFoundComponent() {
+  return (
+    <div className="grid h-full w-full place-items-center">
+      <div className="grid gap-4">
+        <h1 className="text text-8xl font-bold">404</h1>
+        <Button size="lg" variant="link" nativeButton={false} render={<Link to="/" />}>
+          Back To Home
+        </Button>
       </div>
     </div>
   );

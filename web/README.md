@@ -4,8 +4,6 @@ This is a template for a new TanStack Start project with React, TypeScript, and 
 
 # Shadcn Styles
 
-https://ui.shadcn.com/create?base=base&style=lyra&baseColor=stone&theme=amber&iconLibrary=hugeicons&font=jetbrains-mono&radius=none
-
 https://play.tailwindcss.com/OPEUJYQM9Q
 
 # Todo
@@ -18,7 +16,7 @@ https://play.tailwindcss.com/OPEUJYQM9Q
 - [x] Correct the favicons to use correct dark favicon
 - [x] Generate all metadata (head, favicon, etc) for publishing, use `realfavicongenerator.net` for this
 - [x] Create a global 404 route
-- [ ] Setup the Markdoc
+- [x] Setup the Markdoc
   - [x] Update the generator script for sample posts, should have .mdoc extension
   - [x] Create the base configuration for markdoc (only need frontmatter validation to this point)
   - [x] Update the `model/post.ts` server functions & caching
@@ -32,7 +30,7 @@ https://play.tailwindcss.com/OPEUJYQM9Q
   - [x] Ensure a table of contents for both desktop and mobile is available
   - [x] Complete the initial layout and design for the post displays
   - [x] Update the fence component with shiki
-- [ ] Add better error handling and `errorComponent` to the routes with path parameters.
+- [x] Add better error handling and `errorComponent` to the routes with path parameters.
 - [ ] Add CSS transitions for the blog posts & custom image component
 - [ ] Add in the "moving ants" underline animation to the BlogLi elements
 - [ ] Add in the "moving wavy" underline animation to the top-level navigation
