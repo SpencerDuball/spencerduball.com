@@ -20,50 +20,47 @@ export function Component() {
     <div className="grid justify-items-center">
       <div className="grid w-full max-w-4xl gap-10 px-4 py-12">
         {/* Welcome */}
-        <section className="grid gap-4 md:grid-flow-col md:grid-cols-[max-content_1fr]">
-          <div className="bg-secondary h-32 w-32 border md:h-auto md:w-52" />
-          <div className="grid auto-rows-max gap-4">
-            <h1 className="text-5xl font-bold">Welcome</h1>
-            <p>
-              Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
-              Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you
-              find something that sparks your curiosity.
-            </p>
-            <div className="inline-grid w-max grid-flow-col items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon-lg"
-                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
-                render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
-                nativeButton={false}
-              >
-                <Twitter />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon-lg"
-                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
-                render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
-                nativeButton={false}
-              >
-                <Github />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon-lg"
-                className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
-                render={
-                  <a
-                    href="https://www.printables.com/social/212303-spencer_duball/about"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                }
-                nativeButton={false}
-              >
-                <PrintablesIcon />
-              </Button>
-            </div>
+        <section className="grid auto-rows-max gap-4">
+          <h1 className="text-5xl font-bold">Welcome</h1>
+          <p>
+            Hello from my corner of the web! I write about web development, homelabs, networks, 3D printing, and more.
+            Check out some projects I have worked on, or a series of posts breaking down complex topics. I hope you find
+            something that sparks your curiosity.
+          </p>
+          <div className="inline-grid w-max grid-flow-col items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon-lg"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+              render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+              nativeButton={false}
+            >
+              <Twitter />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-lg"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary"
+              render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
+              nativeButton={false}
+            >
+              <Github />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-lg"
+              className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary text-stone-700 dark:text-stone-300"
+              render={
+                <a
+                  href="https://www.printables.com/social/212303-spencer_duball/about"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+              nativeButton={false}
+            >
+              <PrintablesIcon />
+            </Button>
           </div>
         </section>
 
