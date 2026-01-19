@@ -66,9 +66,9 @@ function RouteComponent() {
         <div className="grid gap-4">
           <button
             onClick={() => router.history.back()}
-            className="group hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary grid w-fit grid-flow-col items-center gap-2"
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary grid w-fit grid-flow-col items-center gap-2"
           >
-            <ArrowLeft className="transition-transform duration-200 ease-out group-hover:-translate-x-1" />
+            <ArrowLeft />
             Go Back
           </button>
           <div className="grid w-full gap-3 md:gap-4">

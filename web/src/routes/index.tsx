@@ -78,10 +78,10 @@ export function Component() {
           <Link
             to="/posts/$page"
             params={{ page: 1 }}
-            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary group mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
+            className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
           >
             All Posts
-            <ArrowRight className="transition-transform duration-200 ease-out group-hover:translate-x-1" />
+            <ArrowRight />
           </Link>
         </section>
       </div>
