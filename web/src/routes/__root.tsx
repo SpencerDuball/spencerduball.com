@@ -198,7 +198,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
               )}
             >
               Projects
-            </Link>
+            </Link> */}
             <Link
               to="/series/$page"
               params={{ page: 1 }}
@@ -208,7 +208,7 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
               )}
             >
               Series
-            </Link> */}
+            </Link>
           </nav>
         </div>
 
@@ -268,10 +268,10 @@ function Header({ className, ...props }: React.ComponentProps<"header">) {
                         </Link>
                         {/* <Link to="/projects/$page" params={{ page: 1 }}>
                           Projects
-                        </Link>
+                        </Link> */}
                         <Link to="/series/$page" params={{ page: 1 }}>
                           Series
-                        </Link> */}
+                        </Link>
 
                         <div className="grid auto-rows-max justify-start gap-4">
                           <p className="text-muted-foreground text-sm">Settings</p>

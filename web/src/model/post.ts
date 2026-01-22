@@ -7,7 +7,6 @@ import process from "node:process";
 import fg, { type Entry } from "fast-glob";
 import { difference, intersection } from "@/lib/set";
 import fs from "node:fs/promises";
-import { serverEnv } from "@/lib/utils.server";
 import Markdoc from "@markdoc/markdoc";
 import { ZYamlString } from "@/lib/utils";
 import { MarkdocUtil, config } from "@/lib/mdoc";
@@ -29,11 +28,6 @@ export type TPostLi = z.infer<typeof ZPost>;
 // -------------------------------------------------------------------------------------
 // Local Methods
 // -------------------------------------------------------------------------------------
-
-/**
- * The relative path to the data folder for the environment.
- */
-const RelDataPath = serverEnv.NODE_ENV === "production" ? "prod" : serverEnv.NODE_ENV === "test" ? "test" : "dev";
 
 const cache: Map<string, { mtime: Date; post: TPostLi }> = new Map();
 
@@ -73,7 +67,7 @@ export const getPostItems = createServerFn({ method: "GET" })
   .inputValidator((data: { start: number; end: number }) => data)
   .handler(async ({ data: { start, end } }) => {
     // collect all posts and determine which need updated
-    const postEntries = await fg.glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", "*.mdoc"), {
+    const postEntries = await fg.glob(path.resolve(process.cwd(), "data", "posts", "*.mdoc"), {
       stats: true,
     });
     const { toDelete, toUpdate, toCreate } = getPostActions(postEntries);
@@ -102,7 +96,7 @@ export const getPostItems = createServerFn({ method: "GET" })
 export const getTotalPostItems = createServerFn({ method: "GET" })
   .middleware([staticFunctionMiddleware])
   .handler(async () => {
-    const posts = await fg.glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", "*.mdoc"));
+    const posts = await fg.glob(path.resolve(process.cwd(), "data", "posts", "*.mdoc"));
     return posts.length;
   });
 
@@ -115,9 +109,7 @@ export const getPost = createServerFn({ method: "GET" })
     if (!id) throw notFound();
 
     // find the file path
-    const fpath = await fg
-      .glob(path.resolve(process.cwd(), "data", RelDataPath, "posts", `*-${id}.mdoc`))
-      .then((res) => res.pop());
+    const fpath = await fg.glob(path.resolve(process.cwd(), "data", "posts", `*-${id}.mdoc`)).then((res) => res.pop());
     if (!fpath) throw notFound();
 
     // read in the file & extract ast
