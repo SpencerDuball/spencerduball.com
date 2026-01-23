@@ -25,9 +25,9 @@ The way to tackle this problem differs when building for a SPA (Single Page Appl
 
    Parses the html and builds the DOM tree. When parsing there are blocking and non-blocking resources in the tree. When a blocking resource is encountered it pauses the parsing of the HTML and waits for that resource. When a non-blocking resource is encountered (images, css, scripts*) requests are kicked off in parallel to download them as the DOM tree is parsed.
 
-   Scripts without “async”, “defer”, or “module” are blocking resources (and the only HTML-blocking resource type?). Until a blocking script is downloaded and executed, the parsing of the HTML cannot resume thus rendering is blocked in this step.
+   *Scripts without “async”, “defer”, or “module” are blocking resources. Until a blocking script is downloaded and executed, the parsing of the HTML cannot resume thus rendering is blocked in this step.
 
-   Another interesting tidbit is that scripts may depend on the CSS, so until a script can run the CSSOM for all linked stylesheets encountered in the DOM tree prior to this blocking script must be downloaded and CSSOM computed with their instructions.
+   Another interesting tidbit is that scripts may depend on the CSS, so before a script can run the CSSOM for all linked stylesheets encountered in the DOM tree prior to this blocking script must be downloaded and CSSOM computed with their instructions.
 
 2. Building the CSSOM Tree
 
@@ -69,20 +69,22 @@ With a SPA we can see that we get the First Contentful Paint (FCP) at 135ms. Thi
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="The description of the page." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="The personal site for Spencer Duball." />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
-    <title>My SPA App</title>
-    <script type="module" crossorigin src="/assets/index.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index.css" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <title>Spencer Duball</title>
   </head>
   <body>
     <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
 ```
 
-The `<div>` typically occupies no visible region in the browser (zero width, zero height) so this will not be visible to users when rendered. The `<body>` will be visible and if there are any classes in the shipped CSS that modify it’s background color, they will be displayed! This is important because solutions like [tailwindcss](https://tailwindcss.com/) do set the initial background color which will flash the screen during this shell load phase.
+The `<div>` typically occupies no visible region in the browser (zero width, zero height) so this will not be visible to users when rendered. The `<body>` will be visible and if there are any classes in the shipped CSS that modify it’s background color, they will be displayed! This is important because solutions like [shadcn](https://ui.shadcn.com/) do set the initial background color which will flash the screen during this shell load phase.
 
 ```css
 @layer base {
@@ -110,19 +112,19 @@ If we remove this class from the `<body>` will have a background that is transpa
 </head>
 ```
 
-This works well and will prevent FOUC, but now our <body> does not have the background color our app prescribes. We have the freedom to manually apply the style to the <body> ideally with useLayoutEffect or useEffect in React, or for some framework we can implement this in code that runs before React renders such as a loader in Remix or Tanstack.
+This works well and will prevent FOUC, but now our <body> does not have the background color our app prescribes. We have the freedom to manually apply the style to the <body> ideally with useLayoutEffect or useEffect in React, or with some frameworks we can implement this in code that runs before React renders such as a loader in Remix or Tanstack.
 
-This is a solution that works for SPA but not for SSR or SSG apps, and this solution is a bit complicated to say the least - but fear not, a universal solution is coming (skip to universal solution)!
+This is a solution that works for SPA but not for SSR or SSG apps. Checkout follow up post about setting up a SPA with theme toggle for more info: [Toggle Theme for SPA - No Flash!](/posts/p/theme-toggle-spa-cd614384).
 
 ## Server Side Rendered (SSR)
 
-With an SSR app we get Largest Contentful Paint (LCP) at 190ms. This paint will show the full site page which was rendered on the server. We don’t have the same challenge as a SPA where we need to show the browser default background for a temporary initial paint, but we do need a way to select the appropriate theme before the page is displayed. This is typically handled via cookies.
+With an SSR app we get Largest Contentful Paint (LCP) at 190ms. This paint will show the full site page which was rendered on the server. We don't have the same challenge as a SPA where we need to show the browser default background for a temporary initial paint, but we do need a way to select the appropriate theme before the page is displayed. This is typically handled via cookies.
 
-The cookie approach works by storing the preferred theme in a cookie which is sent with every request to the sever. The server will see this and add the appropriate styles to the HTML document it creates + sends over, and then upon initial paint the correct theme is displayed. The caveat is that the browser needs to send the stored theme, and upon initial visit to the site there will not be a stored cookie. This means at least once (upon initial visit) users will get FOUC.
+The cookie approach works by storing the preferred theme in a cookie which is sent with every request to the sever. The server will see this and add the appropriate styles to the HTML document it creates + sends over, and then upon initial paint the correct theme is displayed. The caveat is that the browser needs to send the stored theme, and upon initial visit to the site there will not be a stored cookie. This means at least once (upon initial visit) users may get FOUC.
 
 The typical way to handle this is pick the least offensive default theme when requests are received that do not have a theme cookie. Many sites pick the dark theme because a momentarily dark screen at daytime is less jarring than a flash of white at night.
 
-This solution works for SSR but not for SPA or SSG apps - but feat not, a universal solution is coming I promise (skip to universal solution)!
+This solution works for SSR but not for SPA or SSG apps, check out the full post on implementing a theme toggle for SSR apps for more info: [Toggle Theme for SSR - No Flash!](/posts/p/theme-toggle-ssr-93bc8e8b).
 
 ## Static Site Generation (SSG)
 
@@ -138,22 +140,18 @@ This article opened with a discussion around how browsers work and render things
 	 <head>
 		 <!-- ...rest of head... -->
 		 <script>
-		   try {
-         const theme = localStorage.getItem('theme');
-         const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  
-         let colorMode = 'light';
-                  
-         if (theme === 'dark' || (theme === 'system' && supportDarkMode) || (!theme && supportDarkMode)) {
-           colorMode = 'dark';
-         }
-                  
-         if (colorMode === 'dark') {
-           document.documentElement.classList.add('dark');
-         } else {
-           document.documentElement.classList.remove('dark');
-         }
-       } catch (e) {}
+            try {
+              const theme = localStorage.getItem('theme');
+              const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        
+              let colorMode = 'light';
+                        
+              if (theme === 'dark' || (theme === 'system' && supportDarkMode) || (!theme && supportDarkMode))
+                colorMode = 'dark';
+                        
+              if (colorMode === 'dark') document.documentElement.classList.add('dark');
+              else document.documentElement.classList.remove('dark');
+            } catch (e) {}
 		 </script>
 	 </head>
 	 <body>
@@ -169,6 +167,8 @@ There are three points to note with this approach:
 2. This solution only works where JavaScript is enabled. Again this should not matter too much as all of these solutions assume we are using React (which requires JavaScript) and even if JavaScript wasn’t enabled this wouldn’t break your app - it would only give FOUC.
 
 3. We must tell React that there are expected hydration mismatches on the `<html>` element (server may render with `class="light"` but client may change this to `class="dark"`). This is exactly what `supressHydrationWarning` is for.
+
+Check out the SSG post for a full example and explaination: [Theme Toggle for SSG - No Flash!](/posts/p/theme-toggle-ssg-604504da).
 
 ## Just Give Me The Code!
 
