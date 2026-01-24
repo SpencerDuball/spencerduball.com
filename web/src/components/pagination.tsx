@@ -2,7 +2,7 @@ import React from "react";
 import * as P from "@/components/ui/pagination";
 import { Link, LinkOptions, RegisteredRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { RiArrowLeftLine, RiArrowRightLine } from "@remixicon/react";
 import { cn } from "@/lib/utils";
 
 // -------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
               page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent",
             )}
           >
-            <ArrowLeft />
+            <RiArrowLeftLine />
             Prev
           </Button>
         </li>
@@ -151,7 +151,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
             )}
           >
             Next
-            <ArrowRight />
+            <RiArrowRightLine />
           </Button>
         </li>
       </ol>
@@ -163,7 +163,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           disabled={page.current === 1}
           className={cn(page.current === 1 && "text-muted-foreground hover:text-muted-foreground hover:bg-transparent")}
         >
-          <ArrowLeft />
+          <RiArrowLeftLine />
           Prev
         </Button>
         {desktop.map((item, idx) => (
@@ -179,7 +179,7 @@ export function Pagination<TTo extends LinkOptions["to"]>({
           )}
         >
           Next
-          <ArrowRight />
+          <RiArrowRightLine />
         </Button>
       </ol>
     </>

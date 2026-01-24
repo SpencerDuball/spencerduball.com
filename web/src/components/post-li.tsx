@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { CalendarDays } from "lucide-react";
+import { RiCalendar2Line } from "@remixicon/react";
 import { Link } from "@tanstack/react-router";
 
 export interface IPostLi {
@@ -30,7 +30,7 @@ export function PostLi({ data, className, ...props }: PostLiProps) {
       </Link>
       <p className="text-muted-foreground">{data.summary}</p>
       <div className="grid auto-cols-max grid-flow-col items-center gap-2">
-        <CalendarDays className="text-muted-foreground h-5 w-5" />
+        <RiCalendar2Line className="text-muted-foreground h-5 w-5" />
         <p className="text-muted-foreground text-sm italic">
           {data.modifiedAt ? "Updated: " : ""}
           {date.format(data.modifiedAt || data.createdAt)} ▪ {time.format(data.modifiedAt || data.createdAt)}

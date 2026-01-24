@@ -5,7 +5,7 @@ import { z } from "zod/v4";
 import Markdoc from "@markdoc/markdoc";
 import { components } from "@/components/mdoc";
 import { cn } from "tailwind-variants";
-import { ArrowLeft, CalendarDays } from "lucide-react";
+import { RiArrowLeftLine, RiCalendarLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/posts/p/$slug")({
@@ -68,14 +68,14 @@ function RouteComponent() {
             onClick={() => router.history.back()}
             className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary grid w-fit grid-flow-col items-center gap-2"
           >
-            <ArrowLeft />
+            <RiArrowLeftLine />
             Go Back
           </button>
           <div className="grid w-full gap-3 md:gap-4">
             <h1 className="text-primary w-fit text-4xl font-bold md:text-5xl">{frontmatter.title}</h1>
             <p className="text-muted-foreground text-base md:text-lg">{frontmatter.summary}</p>
             <div className="text-muted-foreground grid auto-cols-max grid-flow-col items-center gap-2">
-              <CalendarDays className="h-5 w-5" />
+              <RiCalendarLine className="h-5 w-5" />
               <p className="text-muted-foreground text-sm italic">
                 {frontmatter.modifiedAt ? "Updated: " : ""}
                 {date.format(frontmatter.modifiedAt || frontmatter.createdAt)} ▪{" "}

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Github, Twitter } from "lucide-react";
+import { RiArrowRightLine, RiGithubLine, RiTwitterXLine } from "@remixicon/react";
 import { PrintablesIcon } from "@/components/icons";
 import { PostLi } from "@/components/post-li";
 import { getPostItems } from "@/model/post";
@@ -35,7 +35,7 @@ export function Component() {
               render={<a href="https://x.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
               nativeButton={false}
             >
-              <Twitter />
+              <RiTwitterXLine />
             </Button>
             <Button
               variant="outline"
@@ -44,7 +44,7 @@ export function Component() {
               render={<a href="https://github.com/SpencerDuball" target="_blank" rel="noopener noreferrer" />}
               nativeButton={false}
             >
-              <Github />
+              <RiGithubLine />
             </Button>
             <Button
               variant="outline"
@@ -81,7 +81,7 @@ export function Component() {
             className="hover:text-primary dark:hover:text-primary active:text-primary dark:active:text-primary mt-6 inline-flex w-fit items-center gap-2 py-2 text-lg"
           >
             All Posts
-            <ArrowRight />
+            <RiArrowRightLine />
           </Link>
         </section>
       </div>
