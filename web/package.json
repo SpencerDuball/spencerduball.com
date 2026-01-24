@@ -28,6 +28,7 @@
     "@tanstack/react-start": "^1.152.0",
     "@tanstack/router-plugin": "^1.151.6",
     "@tanstack/start-static-server-functions": "^1.152.0",
+    "embla-carousel-react": "^8.6.0",
     "fast-glob": "^3.3.3",
     "immer": "^11.1.3",
     "js-yaml": "^4.1.1",

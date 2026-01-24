@@ -13,6 +13,7 @@ import { s } from "./nodes/s";
 import { link } from "./nodes/link";
 import { code } from "./nodes/code";
 import { hardbreak } from "./nodes/hardbreak";
+import { carousel } from "./tags/carousel";
 
 // -------------------------------------------------------------------------------------
 // Utilities
@@ -137,5 +138,7 @@ export const config: Config = {
     code,
     hardbreak,
   },
-  tags: {},
+  tags: {
+    carousel,
+  },
 };

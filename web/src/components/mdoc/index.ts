@@ -12,6 +12,7 @@ import { Strikethrough } from "./s";
 import { Link } from "./link";
 import { Code } from "./code";
 import { Hardbreak } from "./hardbreak";
+import { Carousel } from "./carousel";
 
 export const components = {
   Heading,
@@ -34,4 +35,5 @@ export const components = {
   Link,
   Code,
   Hardbreak,
+  Carousel,
 };
