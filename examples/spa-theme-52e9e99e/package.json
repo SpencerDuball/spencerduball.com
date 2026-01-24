@@ -15,7 +15,7 @@
     "url": "https://github.com/SpencerDuball/spencerduball.com/issues"
   },
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "vite",
     "build": "vite build && tsc",
     "preview": "vite preview",
     "test": "vitest run"

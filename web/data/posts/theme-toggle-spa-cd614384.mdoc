@@ -10,4 +10,102 @@ summary: >-
 createdAt: '2026-01-18T12:17:36.972Z'
 ---
 
-Hello there
+This post will get hands on implementing the theme toggle for a SPA. The example developed in this post will use Tanstack Router and Shadcn however the implementation should be agnostic to your framework and styling solution.
+
+1. Migrate to remix icons
+2. Update the code blocks to allow for multiple files and a max size. This may require custom tag.
+3. Create a carousel component for images
+
+## Create Project
+
+To follow along, create a new tanstack project with shadcn built-in. You can do this with the following commands:
+
+1. Create Tanstack Router + TailwindCSS + Shadcn Application
+```bash
+# Create a fresh Tanstack Router application with TailwindCSS and Shadcn
+➜  npx create-tsrouter-app@latest
+┌  Let's configure your TanStack application
+│
+◇  Select the router type:
+│  File Router - File-based routing structure
+│
+◇  Would you like to use Tailwind CSS?
+│  Yes
+│
+◇  What add-ons would you like for your project?
+└  Shadcn
+```
+
+2. (Optional) Use tweakcn to get a custom theme! {% start="3" %}
+
+```bash
+npx shadcn@latest add https://tweakcn.com/r/themes/darkmatter.json
+```
+
+3. Add in a demo component
+
+## Create a Project
+
+To follow along, create a project
+
+---
+
+This post will get hands on implementing the theme toggle for a SPA using Tanstack Router with TailwindCSS+Shadcn for styling. It's helpful to take a look at a timeline of events comparing between a SPA, SSR, and SSG site. Note some key milestones such as FCP, LCP, and TTI.
+
+![Loading Waterfall](/posts/p/theme-toggle/waterfall.light.png) {% class="block dark:hidden" %}
+
+![Loading Waterfall](/posts/p/theme-toggle/waterfall.dark.png) {% class="hidden dark:block" %}
+
+From this waterfall we can see for a SPA, there are two renders that are important for preventing [Flash of Unstyled Content FOUC](https://webkit.org/blog/66/the-fouc-problem/): rendering the application shell and rendering the hydrated application.
+
+## Rendering the Application Shell
+
+When a SPA is requested from a server first an HTML shell is sent back. This is just an HTML document with a mostly blank `<body>`, however the `<head>` will have links to the resources your application needs.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="The personal site for Spencer Duball." />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <title>Spencer Duball</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+We know from the [Critical Rendering Path](/posts/p/theme-toggle-spa-ssr-ssg-5c5a2763#critical-rendering-path) that three steps will run in parallel:
+- Build DOM Tree
+- Preload Parser
+- Build CSSOM Tree
+
+The preload parser will make requests for all linked resources as the DOM is parsed. Since the `script` is `type="module"` it will be non-blocking, and before the CSSOM Tree can be build the `<link rel="stylesheet" href="/src/styles.css" />` must be downloaded.
+
+After both the DOM Tree and CSSOM Tree finish being built, a blank shell will render with all of the styles from the `<link rel="stylesheet" href="/src/styles.css" />`. Since we are using shadcn there is typically a style that sets the background color based upon the theme. We need to remove this from the stylesheet and add this class dynamically later!
+
+```diff
+@layer base {
+  ...
+  body {
+-   @apply font-sans text-foreground bg-background;
++   @apply font-sans text-foreground;
+  }
+  ...
+}
+```
+
+Below is an example where the system (OS) theme is set to dark, the `bg-background` class is added back to the `styles.css`, and the network is throttled to 3G speeds. We can see that the background color flashes white for the initial shell render.
+
+## Rendering the Hydrated Application
+
+> Checkout the [Theme Toggle for SPA, SSR, SSG - No Flash!]() if you haven't seen it. It will cover strategies at the conceptual level for theme toggles when you are building for a SPA, SSR, or SSG site.
