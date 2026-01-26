@@ -10,6 +10,41 @@ summary: >-
 createdAt: '2026-01-18T12:17:36.972Z'
 ---
 
+{% multifence %}
+  {% fencefile %}
+    ```bash
+    # Create a fresh Tanstack Router application with TailwindCSS and Shadcn
+    ➜  npx create-tsrouter-app@latest
+    ┌  Let's configure your TanStack application
+    │
+    ◇  Select the router type:
+    │  File Router - File-based routing structure
+    │
+    ◇  Would you like to use Tailwind CSS?
+    │  Yes
+    │
+    ◇  What add-ons would you like for your project?
+    └  Shadcn
+    ```
+  {% /fencefile %}
+  {% fencefile %}
+    ```bash
+    # Create a fresh Tanstack Router application with TailwindCSS and Shadcn
+    ➜  npx create-tsrouter-app@latest
+    ┌  Let's configure your TanStack application
+    │
+    ◇  Select the router type:
+    │  File Router - File-based routing structure
+    │
+    ◇  Would you like to use Tailwind CSS?
+    │  Yes
+    │
+    ◇  What add-ons would you like for your project?
+    └  Shadcn
+    ```
+  {% /fencefile %}
+{% /multifence %}
+
 This post will get hands on implementing the theme toggle for a SPA. The example developed in this post will use Tanstack Router and Shadcn however the implementation should be agnostic to your framework and styling solution.
 
 1. Migrate to remix icons
@@ -49,12 +84,20 @@ npx shadcn@latest add https://tweakcn.com/r/themes/darkmatter.json
 To follow along, create a project
 
 {% carousel %}
-![Loading Waterfall](/posts/p/theme-toggle/waterfall.light.png)
-![Loading Waterfall](/posts/p/theme-toggle/waterfall.dark.png)
-![Loading Waterfall](/posts/p/theme-toggle/waterfall.light.png)
-![Loading Waterfall](/posts/p/theme-toggle/waterfall.dark.png)
-![Loading Waterfall](/posts/p/theme-toggle/waterfall.light.png)
+  ![Loading Waterfall](/posts/p/theme-toggle/waterfall.light.png)
+  ![Loading Waterfall](/posts/p/theme-toggle/waterfall.dark.png)
+  ![Loading Waterfall](/posts/p/theme-toggle/waterfall.light.png)
+  ![Loading Waterfall](/posts/p/theme-toggle/waterfall.dark.png)
+  ![Loading Waterfall](/posts/p/theme-toggle/waterfall.light.png)
 {% /carousel %}
+
+
+
+This post will get hands on implementing the theme toggle for a SPA using Tanstack Router with TailwindCSS+Shadcn for styling. It's helpful to take a look at a timeline of events comparing between a SPA, SSR, and SSG site. Note some key milestones such as FCP, LCP, and TTI.
+
+This post will get hands on implementing the theme toggle for a SPA using Tanstack Router with TailwindCSS+Shadcn for styling. It's helpful to take a look at a timeline of events comparing between a SPA, SSR, and SSG site. Note some key milestones such as FCP, LCP, and TTI.
+
+This post will get hands on implementing the theme toggle for a SPA using Tanstack Router with TailwindCSS+Shadcn for styling. It's helpful to take a look at a timeline of events comparing between a SPA, SSR, and SSG site. Note some key milestones such as FCP, LCP, and TTI.
 
 ---
 

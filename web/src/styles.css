@@ -4,6 +4,7 @@
 @import "@fontsource-variable/geist-mono";
 @import "@fontsource-variable/jetbrains-mono";
 @plugin "@tailwindcss/typography";
+@config "./lib/mdoc/typography.js";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -200,39 +201,4 @@
 @theme {
   --breakpoint-2xs: 24rem; /* 384px */
   --breakpoint-xs: 30rem; /* 480px */
-}
-
-@utility prose-grey {
-  --tw-prose-body: var(--color-gray-800);
-  --tw-prose-headings: var(--color-gray-900);
-  --tw-prose-lead: var(--color-gray-700);
-  --tw-prose-links: var(--color-gray-900);
-  --tw-prose-bold: var(--color-gray-900);
-  --tw-prose-counters: var(--color-gray-600);
-  --tw-prose-bullets: var(--color-gray-400);
-  --tw-prose-hr: var(--color-gray-300);
-  --tw-prose-quotes: var(--color-gray-900);
-  --tw-prose-quote-borders: var(--color-gray-300);
-  --tw-prose-captions: var(--color-gray-700);
-  --tw-prose-code: var(--color-gray-900);
-  --tw-prose-pre-code: var(--color-gray-100);
-  --tw-prose-pre-bg: var(--color-gray-900);
-  --tw-prose-th-borders: var(--color-gray-300);
-  --tw-prose-td-borders: var(--color-gray-200);
-  --tw-prose-invert-body: var(--color-gray-200);
-  --tw-prose-invert-headings: var(--color-gray-50);
-  --tw-prose-invert-lead: var(--color-gray-300);
-  --tw-prose-invert-links: var(--color-gray-50);
-  --tw-prose-invert-bold: var(--color-gray-50);
-  --tw-prose-invert-counters: var(--color-gray-400);
-  --tw-prose-invert-bullets: var(--color-gray-600);
-  --tw-prose-invert-hr: var(--color-gray-700);
-  --tw-prose-invert-quotes: var(--color-gray-100);
-  --tw-prose-invert-quote-borders: var(--color-gray-700);
-  --tw-prose-invert-captions: var(--color-gray-400);
-  --tw-prose-invert-code: var(--color-gray-50);
-  --tw-prose-invert-pre-code: var(--color-gray-300);
-  --tw-prose-invert-pre-bg: rgb(0 0 0 / 50%);
-  --tw-prose-invert-th-borders: var(--color-gray-600);
-  --tw-prose-invert-td-borders: var(--color-gray-700);
 }

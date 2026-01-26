@@ -40,15 +40,15 @@ export function Carousel({ children, className, ...props }: React.ComponentProps
   const images = React.Children.toArray(children);
 
   return (
-    <UiCarousel className={cn("w-full", className)} {...props}>
+    <UiCarousel className={cn("my-8 w-full", className)} {...props}>
       <CarouselContent>
         {images.map((image, idx) => (
-          <CarouselItem className="[&>img]:mb-4" key={idx}>
+          <CarouselItem className="[&>img]:my-0" key={idx}>
             {image}
           </CarouselItem>
         ))}
       </CarouselContent>
-      <SlideSelector length={images.length} />
+      <SlideSelector className="mt-4" length={images.length} />
     </UiCarousel>
   );
 }

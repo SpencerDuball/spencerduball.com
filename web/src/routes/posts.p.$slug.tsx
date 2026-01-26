@@ -87,7 +87,7 @@ function RouteComponent() {
         {/* Content */}
         <article
           className={cn(
-            "prose prose-sm md:prose-base prose-grey dark:prose-invert prose:first:mt-0 max-w-4xl overflow-hidden",
+            "prose prose-sm md:prose-base prose-gray dark:prose-invert prose:first:mt-0 max-w-4xl overflow-hidden",
             /* Fix for ordered list markers. */ "prose-ol:pl-8",
           )}
         >

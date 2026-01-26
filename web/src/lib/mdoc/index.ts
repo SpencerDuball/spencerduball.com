@@ -14,6 +14,7 @@ import { link } from "./nodes/link";
 import { code } from "./nodes/code";
 import { hardbreak } from "./nodes/hardbreak";
 import { carousel } from "./tags/carousel";
+import { fencefile, multifence } from "./tags/multifence";
 
 // -------------------------------------------------------------------------------------
 // Utilities
@@ -140,5 +141,7 @@ export const config: Config = {
   },
   tags: {
     carousel,
+    multifence,
+    fencefile,
   },
 };

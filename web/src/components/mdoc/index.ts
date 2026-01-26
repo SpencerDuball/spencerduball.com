@@ -13,6 +13,7 @@ import { Link } from "./link";
 import { Code } from "./code";
 import { Hardbreak } from "./hardbreak";
 import { Carousel } from "./carousel";
+import { FenceFile, MultiFence } from "./multifence";
 
 export const components = {
   Heading,
@@ -36,4 +37,6 @@ export const components = {
   Code,
   Hardbreak,
   Carousel,
+  MultiFence,
+  FenceFile,
 };
