@@ -10,17 +10,12 @@ module.exports = {
                 color: "var(--tw-prose-pre-code)",
                 backgroundColor: "var(--tw-prose-pre-bg)",
                 fontWeight: "400",
-                borderWidth: "1px",
-                borderColor: "var(--color-gray-700)",
               },
-              ".multifence div:first-of-type": {
-                backgroundColor: "var(--color-gray-900)",
-              },
-              ".multifence hr": {
-                borderColor: "var(--color-gray-700)",
-              },
-              ".fencefile": {
-                backgroundColor: "var(--tw-prose-pre-bg)",
+              ".fencefile pre": {
+                backgroundColor: "transparent",
+                marginTop: "0 !important",
+                marginBottom: "0 !important",
+                paddingTop: "0 !important",
               },
             },
           ],
@@ -28,17 +23,16 @@ module.exports = {
         sm: {
           css: [
             {
-              ".multifence": {},
-              ".multifence div:first-of-type": {
-                paddingTop: "0.25rem",
-                paddingBottom: "0.25rem",
-                paddingLeft: "1rem",
-                paddingRight: "1rem",
+              ".multifence": {
+                borderRadius: "0.25rem !important",
               },
-              ".multifence hr": {
-                marginTop: "0",
-                marginBottom: "0",
+              ".multifence-tab": {
+                paddingTop: "0.25em !important",
+                paddingBottom: "0.25em !important",
+                paddingLeft: "1em !important",
+                paddingRight: "1em !important",
               },
+
               ".fencefile": {},
             },
           ],
@@ -46,16 +40,14 @@ module.exports = {
         base: {
           css: [
             {
-              ".multifence": {},
-              ".multifence div:first-of-type": {
-                paddingTop: "0.25rem",
-                paddingBottom: "0.25rem",
-                paddingLeft: "1rem",
-                paddingRight: "1rem",
+              ".multifence": {
+                borderRadius: "0.375rem",
               },
-              ".multifence hr": {
-                marginTop: "0",
-                marginBottom: "0",
+              ".multifence-tab": {
+                paddingTop: "0.25em",
+                paddingBottom: "0.25em",
+                paddingLeft: "1em",
+                paddingRight: "1em",
               },
               ".fencefile": {},
             },

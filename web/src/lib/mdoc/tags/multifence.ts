@@ -8,4 +8,7 @@ export const multifence: Schema = {
 export const fencefile: Schema = {
   render: "FenceFile",
   children: ["fence"],
+  attributes: {
+    value: { type: String, required: true, default: false },
+  },
 };

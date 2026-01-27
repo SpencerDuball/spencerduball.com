@@ -113,7 +113,8 @@ export const getPost = createServerFn({ method: "GET" })
     if (!fpath) throw notFound();
 
     // read in the file & extract ast
-    const ast = await fs.readFile(fpath, { encoding: "utf-8" }).then((src) => Markdoc.parse(src));
+    const tokenizer = new Markdoc.Tokenizer({ allowIndentation: true });
+    const ast = await fs.readFile(fpath, { encoding: "utf-8" }).then((src) => Markdoc.parse(tokenizer.tokenize(src)));
     MarkdocUtil.clearBoundaryMargins(ast);
 
     // extract the content & frontmatter
