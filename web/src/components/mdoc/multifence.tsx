@@ -1,8 +1,14 @@
 import { cn } from "tailwind-variants";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { isValidElement } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-export function MultiFence({ className, children, ...props }: React.ComponentProps<"div">) {
+export function MultiFence({
+  scrollarea,
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div"> & { scrollarea?: string }) {
   const files = React.Children.toArray(children)
     .filter(isValidElement)
     .map((child) => child.props as React.ComponentProps<typeof FenceFile>);
@@ -16,7 +22,10 @@ export function MultiFence({ className, children, ...props }: React.ComponentPro
           </TabsTrigger>
         ))}
       </TabsList>
-      {children}
+      <ScrollArea className={scrollarea}>
+        {children}
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </Tabs>
   );
 }

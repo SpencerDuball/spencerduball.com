@@ -16,6 +16,7 @@ module.exports = {
                 marginTop: "0 !important",
                 marginBottom: "0 !important",
                 paddingTop: "0 !important",
+                overflowX: "visible",
               },
             },
           ],
@@ -32,7 +33,6 @@ module.exports = {
                 paddingLeft: "1em !important",
                 paddingRight: "1em !important",
               },
-
               ".fencefile": {},
             },
           ],

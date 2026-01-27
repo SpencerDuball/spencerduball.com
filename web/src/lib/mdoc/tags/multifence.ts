@@ -3,6 +3,9 @@ import { type Schema } from "@markdoc/markdoc";
 export const multifence: Schema = {
   render: "MultiFence",
   children: ["fencefile"],
+  attributes: {
+    scrollarea: { type: String, required: false },
+  },
 };
 
 export const fencefile: Schema = {
