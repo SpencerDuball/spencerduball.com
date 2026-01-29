@@ -84,7 +84,7 @@ export function useInFenceFile() {
 export function FenceFile({ className, ...props }: React.ComponentProps<typeof TabsContent>) {
   return (
     <InFenceFile.Provider value={true}>
-      <TabsContent className={cn("fencefile", className)} {...props} />;
+      <TabsContent className={cn("fencefile", className)} {...props} />
     </InFenceFile.Provider>
   );
 }
