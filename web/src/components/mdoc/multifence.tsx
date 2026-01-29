@@ -15,14 +15,14 @@ export function MultiFence({
 
   return (
     <Tabs defaultValue={files[0].value} className={cn("multifence", className)} {...props}>
-      <TabsList variant="line" className="dark multifence-tab">
+      <TabsList variant="line" className="dark">
         {files.map((file, idx) => (
           <TabsTrigger key={idx} value={file.value}>
             {file.value}
           </TabsTrigger>
         ))}
       </TabsList>
-      <ScrollArea className={scrollarea}>
+      <ScrollArea className={cn("h-auto", scrollarea)}>
         {children}
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
