@@ -6,6 +6,12 @@ module.exports = {
         DEFAULT: {
           css: [
             {
+              pre: {
+                backgroundColor: "transparent",
+                marginTop: "0 !important",
+                marginBottom: "0 !important",
+                overflowX: "visible",
+              },
               ".multifence": {
                 color: "var(--tw-prose-pre-code)",
                 backgroundColor: "var(--tw-prose-pre-bg)",
@@ -24,8 +30,15 @@ module.exports = {
         sm: {
           css: [
             {
+              ".fence": {
+                borderRadius: "0.25rem !important",
+                marginTop: "1.66em",
+                marginBottom: "1.66em",
+              },
               ".multifence": {
                 borderRadius: "0.25rem !important",
+                marginTop: "1.66em",
+                marginBottom: "1.66em",
               },
               ".multifence-tab": {
                 paddingTop: "0.25em !important",
@@ -40,8 +53,15 @@ module.exports = {
         base: {
           css: [
             {
+              ".fence": {
+                borderRadius: "0.375rem",
+                marginTop: "1.71em",
+                marginBottom: "1.71em",
+              },
               ".multifence": {
                 borderRadius: "0.375rem",
+                marginTop: "1.71em",
+                marginBottom: "1.71em",
               },
               ".multifence-tab": {
                 paddingTop: "0.25em",
