@@ -19,8 +19,9 @@ function PaginationLink<TTo extends LinkOptions["to"]>({ to, params, isActive, .
     <Button
       variant={isActive ? "outline" : "ghost"}
       size="icon"
-      render={<Link to={to} params={params} />}
-      nativeButton={false}
+      render={isActive ? undefined : <Link to={to} params={params} />}
+      nativeButton={isActive}
+      disabled={isActive}
       {...props}
     />
   );

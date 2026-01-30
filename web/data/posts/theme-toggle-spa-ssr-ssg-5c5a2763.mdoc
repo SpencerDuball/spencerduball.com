@@ -5,13 +5,13 @@ title: Theme Toggle for SPA, SSR, SSG - No Flash!
 summary: >-
   Getting light/dark mode on a site is tricky and the solution varies depending on the
   deployment method. This post breaks down the browser's critical rendering path and
-  provides a solution for all three.
+  provides a solution for the three most common deployment methods.
 createdAt: '2026-01-15T12:28:53.968Z'
 ---
 
 A website with dark and light mode is almost table stakes now but every time I work on a new project, I always need to revisit the method of implementing a seamless theme experience that prevents [Flash of Unstyled Content (FOUC)](https://webkit.org/blog/66/the-fouc-problem/).
 
-The way to tackle this problem differs when building for a SPA (Single Page Application), SSR (Server Side Rendered), or SSG (Static Site Generator). There are also many different framework to chose from such as Tanstack Router, Tanstack Start (SSR), Tanstack Start (SSG), NextJS, Remix, React Router, etc - all of which may have different methods of injecting into the rendering process. This post will peel back the layers of how browsers rendering sites and show how we can implement the perfect theme toggle.
+The way to tackle this problem differs when building for a SPA (Single Page Application), SSR (Server Side Rendered), or SSG (Static Site Generator). There are also many different frameworks to chose from such as Tanstack Router, Tanstack Start (SSR), Tanstack Start (SSG), NextJS, Remix, React Router, etc - all of which may have different methods of injecting into the rendering process. This post will peel back the layers of how browsers rendering sites and show how we can implement the perfect theme toggle.
 
 ## Critical Rendering Path
 
@@ -59,7 +59,7 @@ This diagram shows the timing and events involved in rendering the same (hypothe
 
 ## Single Page Application (SPA)
 
-With a SPA we can see that we get the First Contentful Paint (FCP) at 135ms. This paint will show on screen the HTML shell that all SPAs first send over. This is typically an HTML document with just the `<body>` and a `<div>`.
+With a SPA we can see that we get the First Contentful Paint (FCP) at 135ms. This paint will render the HTML shell that all SPAs first send over. This is typically an HTML document with just the `<body>` and a `<div>`.
 
 ```html
 <!doctype html>
@@ -128,7 +128,7 @@ This solution works for SSR but not for SPA or SSG apps, check out the full post
 
 ## Static Site Generation (SSG)
 
-With an SSG app we get Largest Contentful Paint (LCP) at 150ms. This network flow is identical to the SSR except there is no sever processing time to build our page on demand. Another caveat is there is no server processing to read+apply a theme cookie.
+With an SSG app we get Largest Contentful Paint (LCP) at 150ms. This network flow is identical to the SSR except there is no sever processing time to build our page on demand. A downside of this is there is no server processing to read+apply a theme cookie.
 
 An SSG site is the trickiest to solve the theme problem for because we can't build a page with the correct theme before we send the HTML like an SSR site, we also have the full content of our page (not a blank shell) so we can't fallback to the transparency of the body to display the browser's default canvas color like a SPA. We have only one tool in the toolbox and it actually works for all app types (the universal solution): SPA, SSR, SSG.
 
